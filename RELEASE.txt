@@ -1,0 +1,2 @@
+- Improve handling of time-out in case of invalid IP address in yRegisterHub 
+- Publish library to GitHub
