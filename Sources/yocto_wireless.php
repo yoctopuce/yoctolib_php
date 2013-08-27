@@ -1,47 +1,47 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 9979 2013-02-22 13:45:33Z seb $
+ * $Id: yocto_wireless.php 12337 2013-08-14 15:22:22Z mvuilleu $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
- * Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
+ *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
- * 1) If you have obtained this file from www.yoctopuce.com,
- *    Yoctopuce Sarl licenses to you (hereafter Licensee) the
- *    right to use, modify, copy, and integrate this source file
- *    into your own solution for the sole purpose of interfacing
- *    a Yoctopuce product with Licensee's solution.
+ *  Yoctopuce Sarl (hereafter Licensor) grants to you a perpetual
+ *  non-exclusive license to use, modify, copy and integrate this
+ *  file into your software for the sole purpose of interfacing 
+ *  with Yoctopuce products. 
  *
- *    The use of this file and all relationship between Yoctopuce 
- *    and Licensee are governed by Yoctopuce General Terms and 
- *    Conditions.
+ *  You may reproduce and distribute copies of this file in 
+ *  source or object form, as long as the sole purpose of this
+ *  code is to interface with Yoctopuce products. You must retain 
+ *  this notice in the distributed source file.
  *
- *    THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
- *    WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
- *    WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
- *    FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
- *    EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
- *    INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
- *    COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *    SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
- *    LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
- *    CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
- *    BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
- *    WARRANTY, OR OTHERWISE.
+ *  You should refer to Yoctopuce General Terms and Conditions
+ *  for additional information regarding your rights and 
+ *  obligations.
  *
- * 2) If your intent is not to interface with Yoctopuce products,
- *    you are not entitled to use, read or create any derived
- *    material from this source file.
+ *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
+ *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
+ *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
+ *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
+ *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
+ *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
+ *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
+ *  WARRANTY, OR OTHERWISE.
  *
  *********************************************************************/
 
 
-//--- (return codes)
-//--- (end of return codes)
-//--- (YWireless definitions)
+//--- (generated code: return codes)
+//--- (end of generated code: return codes)
+//--- (generated code: YWireless definitions)
 if(!defined('Y_SECURITY_UNKNOWN')) define('Y_SECURITY_UNKNOWN', 0);
 if(!defined('Y_SECURITY_OPEN')) define('Y_SECURITY_OPEN', 1);
 if(!defined('Y_SECURITY_WEP')) define('Y_SECURITY_WEP', 2);
@@ -55,7 +55,59 @@ if(!defined('Y_SSID_INVALID')) define('Y_SSID_INVALID', Y_INVALID_STRING);
 if(!defined('Y_CHANNEL_INVALID')) define('Y_CHANNEL_INVALID', Y_INVALID_UNSIGNED);
 if(!defined('Y_MESSAGE_INVALID')) define('Y_MESSAGE_INVALID', Y_INVALID_STRING);
 if(!defined('Y_WLANCONFIG_INVALID')) define('Y_WLANCONFIG_INVALID', Y_INVALID_STRING);
-//--- (end of YWireless definitions)
+//--- (end of generated code: YWireless definitions)
+
+//--- (generated code: YWlanRecord definitions)
+//--- (end of generated code: YWlanRecord definitions)
+
+/**
+ * YWlanRecord Class: description of a file on the device filesystem
+ */
+class YWlanRecord
+{
+    protected $_ssid;
+    protected $_channel;
+    protected $_sec;
+    protected $_rssi;
+    
+    function __construct($str_json)
+    {
+        $loadval = json_decode($str_json, TRUE);
+        $this->_ssid = $loadval['ssid'];
+        $this->_channel = $loadval['channel'];
+        $this->_sec = $loadval['sec'];
+        $this->_rssi  = $loadval['rssi'];
+    }
+    
+
+    //--- (generated code: YWlanRecord implementation)
+
+    public function get_ssid()
+    {
+        return $this->_ssid;
+    }
+
+    public function get_channel()
+    {
+        return $this->_channel;
+    }
+
+    public function get_security()
+    {
+        return $this->_sec;
+    }
+
+    public function get_linkQuality()
+    {
+        return $this->_rssi;
+    }
+
+    //--- (end of generated code: YWlanRecord implementation)
+
+}
+
+
+
 
 /**
  * YWireless Class: Wireless function interface
@@ -64,7 +116,7 @@ if(!defined('Y_WLANCONFIG_INVALID')) define('Y_WLANCONFIG_INVALID', Y_INVALID_ST
  */
 class YWireless extends YFunction
 {
-    //--- (YWireless implementation)
+    //--- (generated code: YWireless implementation)
     const LOGICALNAME_INVALID = Y_INVALID_STRING;
     const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
     const LINKQUALITY_INVALID = Y_INVALID_UNSIGNED;
@@ -214,7 +266,7 @@ class YWireless extends YFunction
     /**
      * Changes the configuration of the wireless lan interface to create an ad-hoc
      * wireless network, without using an access point. If a security key is specified,
-     * the network will be protected by WEP128, since WPA is not standardized for
+     * the network is protected by WEP128, since WPA is not standardized for
      * ad-hoc networks.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      * 
@@ -229,6 +281,29 @@ class YWireless extends YFunction
     {
         $rest_val = sprintf("ADHOC:%s\\%s", $str_ssid, $str_securityKey);
         return $this->_setAttr("wlanConfig",$rest_val);
+    }
+
+    /**
+     * Returns a list of YWlanRecord objects which describe detected Wireless networks.
+     * This list is not updated when the module is already connected to an acces point (infrastructure mode).
+     * To force an update of this list, adhocNetwork() must be called to disconnect
+     * the module from the current network. The returned list must be unallocated by caller,
+     * 
+     * @return a list of YWlanRecord objects, containing the SSID, channel,
+     *         link quality and the type of security of the wireless network.
+     * 
+     * On failure, throws an exception or returns an empty list.
+     */
+    public function get_detectedWlans()
+    {
+        // $json is a bin;
+        $list = Array();
+        $res = Array();
+        $json = $this->_download('wlan.json?by=name');
+        $list = $this->_json_get_array($json);
+        foreach($list as $EACH) { $res[] = new YWlanRecord($EACH); };
+        return $res;
+        
     }
 
     public function logicalName()
@@ -318,17 +393,17 @@ class YWireless extends YFunction
         return self::FindWireless($next_hwid);
     }
 
-    //--- (end of YWireless implementation)
+    //--- (end of generated code: YWireless implementation)
 
     function __construct($str_func)
     {
-        //--- (YWireless constructor)
+        //--- (generated code: YWireless constructor)
         parent::__construct('Wireless', $str_func);
-        //--- (end of YWireless constructor)
+        //--- (end of generated code: YWireless constructor)
     }
 };
 
-//--- (Wireless functions)
+//--- (generated code: Wireless functions)
 
 /**
  * Retrieves a wireless lan interface for a given identifier.
@@ -372,5 +447,5 @@ function yFirstWireless()
     return YWireless::FirstWireless();
 }
 
-//--- (end of Wireless functions)
+//--- (end of generated code: Wireless functions)
 ?>

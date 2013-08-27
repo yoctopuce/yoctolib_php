@@ -1,2 +1,4 @@
-- Improve handling of time-out in case of invalid IP address in yRegisterHub 
-- Publish library to GitHub
+- clarify license agreement
+- add get_lastLogs() method to YModule class
+- minor fixes 
+- fix error reporting during yRegisterHub() if exceptions are disabled

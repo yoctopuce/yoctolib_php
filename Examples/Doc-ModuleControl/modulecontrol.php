@@ -12,7 +12,7 @@
 
   // Setup the API to use the VirtualHub on local machine
   if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
-      die("Cannot contact VirtualHub on 127.0.0.1");
+      die("Cannot contact VirtualHub on 127.0.0.1 : ".$errmsg);
   }
 
   @$serial = $_GET['serial'];
@@ -55,6 +55,7 @@
   }
   printf('upTime: %s sec<br>',intVal($module->get_upTime()/1000));
   printf('USB current: %smA<br>',$module->get_usbCurrent());
+  printf('logs:<br><pre>%s</pre>',$module->get_lastLogs());
 ?>  
 <input type='submit' value='refresh'>
 </FORM>

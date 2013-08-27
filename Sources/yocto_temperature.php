@@ -1,40 +1,40 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 11112 2013-04-16 14:51:20Z mvuilleu $
+ * $Id: yocto_temperature.php 12324 2013-08-13 15:10:31Z mvuilleu $
  *
  * Implements yFindTemperature(), the high-level API for Temperature functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
- * Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
+ *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
- * 1) If you have obtained this file from www.yoctopuce.com,
- *    Yoctopuce Sarl licenses to you (hereafter Licensee) the
- *    right to use, modify, copy, and integrate this source file
- *    into your own solution for the sole purpose of interfacing
- *    a Yoctopuce product with Licensee's solution.
+ *  Yoctopuce Sarl (hereafter Licensor) grants to you a perpetual
+ *  non-exclusive license to use, modify, copy and integrate this
+ *  file into your software for the sole purpose of interfacing 
+ *  with Yoctopuce products. 
  *
- *    The use of this file and all relationship between Yoctopuce 
- *    and Licensee are governed by Yoctopuce General Terms and 
- *    Conditions.
+ *  You may reproduce and distribute copies of this file in 
+ *  source or object form, as long as the sole purpose of this
+ *  code is to interface with Yoctopuce products. You must retain 
+ *  this notice in the distributed source file.
  *
- *    THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
- *    WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
- *    WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
- *    FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
- *    EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
- *    INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
- *    COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *    SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
- *    LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
- *    CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
- *    BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
- *    WARRANTY, OR OTHERWISE.
+ *  You should refer to Yoctopuce General Terms and Conditions
+ *  for additional information regarding your rights and 
+ *  obligations.
  *
- * 2) If your intent is not to interface with Yoctopuce products,
- *    you are not entitled to use, read or create any derived
- *    material from this source file.
+ *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
+ *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
+ *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
+ *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
+ *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
+ *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
+ *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
+ *  WARRANTY, OR OTHERWISE.
  *
  *********************************************************************/
 
@@ -50,6 +50,9 @@ if(!defined('Y_SENSORTYPE_TYPE_N')) define('Y_SENSORTYPE_TYPE_N', 4);
 if(!defined('Y_SENSORTYPE_TYPE_R')) define('Y_SENSORTYPE_TYPE_R', 5);
 if(!defined('Y_SENSORTYPE_TYPE_S')) define('Y_SENSORTYPE_TYPE_S', 6);
 if(!defined('Y_SENSORTYPE_TYPE_T')) define('Y_SENSORTYPE_TYPE_T', 7);
+if(!defined('Y_SENSORTYPE_PT100_4WIRES')) define('Y_SENSORTYPE_PT100_4WIRES', 8);
+if(!defined('Y_SENSORTYPE_PT100_3WIRES')) define('Y_SENSORTYPE_PT100_3WIRES', 9);
+if(!defined('Y_SENSORTYPE_PT100_2WIRES')) define('Y_SENSORTYPE_PT100_2WIRES', 10);
 if(!defined('Y_SENSORTYPE_INVALID')) define('Y_SENSORTYPE_INVALID', -1);
 if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
 if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
@@ -58,8 +61,8 @@ if(!defined('Y_CURRENTVALUE_INVALID')) define('Y_CURRENTVALUE_INVALID', Y_INVALI
 if(!defined('Y_LOWESTVALUE_INVALID')) define('Y_LOWESTVALUE_INVALID', Y_INVALID_FLOAT);
 if(!defined('Y_HIGHESTVALUE_INVALID')) define('Y_HIGHESTVALUE_INVALID', Y_INVALID_FLOAT);
 if(!defined('Y_CURRENTRAWVALUE_INVALID')) define('Y_CURRENTRAWVALUE_INVALID', Y_INVALID_FLOAT);
-if(!defined('Y_RESOLUTION_INVALID')) define('Y_RESOLUTION_INVALID', Y_INVALID_FLOAT);
 if(!defined('Y_CALIBRATIONPARAM_INVALID')) define('Y_CALIBRATIONPARAM_INVALID', Y_INVALID_STRING);
+if(!defined('Y_RESOLUTION_INVALID')) define('Y_RESOLUTION_INVALID', Y_INVALID_FLOAT);
 //--- (end of YTemperature definitions)
 
 /**
@@ -78,8 +81,8 @@ class YTemperature extends YFunction
     const LOWESTVALUE_INVALID = Y_INVALID_FLOAT;
     const HIGHESTVALUE_INVALID = Y_INVALID_FLOAT;
     const CURRENTRAWVALUE_INVALID = Y_INVALID_FLOAT;
-    const RESOLUTION_INVALID = Y_INVALID_FLOAT;
     const CALIBRATIONPARAM_INVALID = Y_INVALID_STRING;
+    const RESOLUTION_INVALID = Y_INVALID_FLOAT;
     const SENSORTYPE_DIGITAL = 0;
     const SENSORTYPE_TYPE_K = 1;
     const SENSORTYPE_TYPE_E = 2;
@@ -88,6 +91,9 @@ class YTemperature extends YFunction
     const SENSORTYPE_TYPE_R = 5;
     const SENSORTYPE_TYPE_S = 6;
     const SENSORTYPE_TYPE_T = 7;
+    const SENSORTYPE_PT100_4WIRES = 8;
+    const SENSORTYPE_PT100_3WIRES = 9;
+    const SENSORTYPE_PT100_2WIRES = 10;
     const SENSORTYPE_INVALID = -1;
     public  $_calibrationOffset = -32767;
 
@@ -227,25 +233,6 @@ class YTemperature extends YFunction
         return (is_null($json_val) ? Y_CURRENTRAWVALUE_INVALID : $json_val/65536.0);
     }
 
-    public function set_resolution($newval)
-    {
-        $rest_val = strval(round($newval*65536.0));
-        return $this->_setAttr("resolution",$rest_val);
-    }
-
-    /**
-     * Returns the resolution of the measured values. The resolution corresponds to the numerical precision
-     * of the values, which is not always the same as the actual precision of the sensor.
-     * 
-     * @return a floating point number corresponding to the resolution of the measured values
-     * 
-     * On failure, throws an exception or returns Y_RESOLUTION_INVALID.
-     */
-    public function get_resolution()
-    {   $json_val = $this->_getAttr("resolution");
-        return (is_null($json_val) ? Y_RESOLUTION_INVALID : 1.0 / round(65536.0/$json_val));
-    }
-
     public function get_calibrationParam()
     {   $json_val = $this->_getAttr("calibrationParam");
         return (is_null($json_val) ? Y_CALIBRATIONPARAM_INVALID : $json_val);
@@ -262,7 +249,7 @@ class YTemperature extends YFunction
      * a possible perturbation of the measure caused by an enclosure. It is possible
      * to configure up to five correction points. Correction points must be provided
      * in ascending order, and be in the range of the sensor. The device will automatically
-     * perform a lineat interpolatation of the error correction between specified
+     * perform a linear interpolation of the error correction between specified
      * points. Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      * 
@@ -290,11 +277,25 @@ class YTemperature extends YFunction
     }
 
     /**
-     * Returns the tempeture sensor type.
+     * Returns the resolution of the measured values. The resolution corresponds to the numerical precision
+     * of the values, which is not always the same as the actual precision of the sensor.
+     * 
+     * @return a floating point number corresponding to the resolution of the measured values
+     * 
+     * On failure, throws an exception or returns Y_RESOLUTION_INVALID.
+     */
+    public function get_resolution()
+    {   $json_val = $this->_getAttr("resolution");
+        return (is_null($json_val) ? Y_RESOLUTION_INVALID : ($json_val > 100 ? 1.0 / round(65536.0/$json_val) : 0.001 / round(67.0/$json_val)));
+    }
+
+    /**
+     * Returns the temperature sensor type.
      * 
      * @return a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
-     * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S and
-     * Y_SENSORTYPE_TYPE_T corresponding to the tempeture sensor type
+     * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
+     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES and
+     * Y_SENSORTYPE_PT100_2WIRES corresponding to the temperature sensor type
      * 
      * On failure, throws an exception or returns Y_SENSORTYPE_INVALID.
      */
@@ -305,13 +306,14 @@ class YTemperature extends YFunction
 
     /**
      * Modify the temperature sensor type.  This function is used to
-     * to define the type of thermo couple (K,E...) used with the device.
+     * to define the type of thermocouple (K,E...) used with the device.
      * This will have no effect if module is using a digital sensor.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      * 
      * @param newval : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
-     * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S and Y_SENSORTYPE_TYPE_T
+     * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
+     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES and Y_SENSORTYPE_PT100_2WIRES
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -353,17 +355,14 @@ class YTemperature extends YFunction
     public function currentRawValue()
     { return get_currentRawValue(); }
 
-    public function setResolution($newval)
-    { return set_resolution($newval); }
-
-    public function resolution()
-    { return get_resolution(); }
-
     public function calibrationParam()
     { return get_calibrationParam(); }
 
     public function setCalibrationParam($newval)
     { return set_calibrationParam($newval); }
+
+    public function resolution()
+    { return get_resolution(); }
 
     public function sensorType()
     { return get_sensorType(); }

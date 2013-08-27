@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_genericsensor.php 12324 2013-08-13 15:10:31Z mvuilleu $
  *
- * Implements yFindLightSensor(), the high-level API for LightSensor functions
+ * Implements yFindGenericSensor(), the high-level API for GenericSensor functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -41,7 +41,7 @@
 
 //--- (return codes)
 //--- (end of return codes)
-//--- (YLightSensor definitions)
+//--- (YGenericSensor definitions)
 if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
 if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
 if(!defined('Y_UNIT_INVALID')) define('Y_UNIT_INVALID', Y_INVALID_STRING);
@@ -50,18 +50,22 @@ if(!defined('Y_LOWESTVALUE_INVALID')) define('Y_LOWESTVALUE_INVALID', Y_INVALID_
 if(!defined('Y_HIGHESTVALUE_INVALID')) define('Y_HIGHESTVALUE_INVALID', Y_INVALID_FLOAT);
 if(!defined('Y_CURRENTRAWVALUE_INVALID')) define('Y_CURRENTRAWVALUE_INVALID', Y_INVALID_FLOAT);
 if(!defined('Y_CALIBRATIONPARAM_INVALID')) define('Y_CALIBRATIONPARAM_INVALID', Y_INVALID_STRING);
+if(!defined('Y_SIGNALVALUE_INVALID')) define('Y_SIGNALVALUE_INVALID', Y_INVALID_FLOAT);
+if(!defined('Y_SIGNALUNIT_INVALID')) define('Y_SIGNALUNIT_INVALID', Y_INVALID_STRING);
+if(!defined('Y_SIGNALRANGE_INVALID')) define('Y_SIGNALRANGE_INVALID', Y_INVALID_STRING);
+if(!defined('Y_VALUERANGE_INVALID')) define('Y_VALUERANGE_INVALID', Y_INVALID_STRING);
 if(!defined('Y_RESOLUTION_INVALID')) define('Y_RESOLUTION_INVALID', Y_INVALID_FLOAT);
-//--- (end of YLightSensor definitions)
+//--- (end of YGenericSensor definitions)
 
 /**
- * YLightSensor Class: LightSensor function interface
+ * YGenericSensor Class: GenericSensor function interface
  * 
  * The Yoctopuce application programming interface allows you to read an instant
  * measure of the sensor, as well as the minimal and maximal values observed.
  */
-class YLightSensor extends YFunction
+class YGenericSensor extends YFunction
 {
-    //--- (YLightSensor implementation)
+    //--- (YGenericSensor implementation)
     const LOGICALNAME_INVALID = Y_INVALID_STRING;
     const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
     const UNIT_INVALID = Y_INVALID_STRING;
@@ -70,13 +74,17 @@ class YLightSensor extends YFunction
     const HIGHESTVALUE_INVALID = Y_INVALID_FLOAT;
     const CURRENTRAWVALUE_INVALID = Y_INVALID_FLOAT;
     const CALIBRATIONPARAM_INVALID = Y_INVALID_STRING;
+    const SIGNALVALUE_INVALID = Y_INVALID_FLOAT;
+    const SIGNALUNIT_INVALID = Y_INVALID_STRING;
+    const SIGNALRANGE_INVALID = Y_INVALID_STRING;
+    const VALUERANGE_INVALID = Y_INVALID_STRING;
     const RESOLUTION_INVALID = Y_INVALID_FLOAT;
     public  $_calibrationOffset = 0;
 
     /**
-     * Returns the logical name of the light sensor.
+     * Returns the logical name of the generic sensor.
      * 
-     * @return a string corresponding to the logical name of the light sensor
+     * @return a string corresponding to the logical name of the generic sensor
      * 
      * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
      */
@@ -86,12 +94,12 @@ class YLightSensor extends YFunction
     }
 
     /**
-     * Changes the logical name of the light sensor. You can use yCheckLogicalName()
+     * Changes the logical name of the generic sensor. You can use yCheckLogicalName()
      * prior to this call to make sure that your parameter is valid.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      * 
-     * @param newval : a string corresponding to the logical name of the light sensor
+     * @param newval : a string corresponding to the logical name of the generic sensor
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -104,9 +112,9 @@ class YLightSensor extends YFunction
     }
 
     /**
-     * Returns the current value of the light sensor (no more than 6 characters).
+     * Returns the current value of the generic sensor (no more than 6 characters).
      * 
-     * @return a string corresponding to the current value of the light sensor (no more than 6 characters)
+     * @return a string corresponding to the current value of the generic sensor (no more than 6 characters)
      * 
      * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
      */
@@ -123,14 +131,25 @@ class YLightSensor extends YFunction
      * On failure, throws an exception or returns Y_UNIT_INVALID.
      */
     public function get_unit()
-    {   $json_val = $this->_getFixedAttr("unit");
+    {   $json_val = $this->_getAttr("unit");
         return (is_null($json_val) ? Y_UNIT_INVALID : $json_val);
     }
 
-    public function set_currentValue($newval)
+    /**
+     * Changes the measuring unit for the measured value.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     * 
+     * @param newval : a string corresponding to the measuring unit for the measured value
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_unit($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
-        return $this->_setAttr("currentValue",$rest_val);
+        $rest_val = $newval;
+        return $this->_setAttr("unit",$rest_val);
     }
 
     /**
@@ -146,26 +165,7 @@ class YLightSensor extends YFunction
             $res = YAPI::applyCalibration($this);
             if($res != Y_CURRENTVALUE_INVALID) return $res;
         }
-        return (is_null($json_val) ? Y_CURRENTVALUE_INVALID : round($json_val/6553.6) / 10);
-    }
-
-    /**
-     * Changes the sensor-specific calibration parameter so that the current value
-     * matches a desired target (linear scaling).
-     * 
-     * @param calibratedVal : the desired target value.
-     * 
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function calibrate($float_calibratedVal)
-    {
-        $rest_val = strval(round($float_calibratedVal*65536.0));
-        return $this->_setAttr("currentValue",$rest_val);
+        return (is_null($json_val) ? Y_CURRENTVALUE_INVALID : round($json_val/65.536) / 1000);
     }
 
     /**
@@ -192,7 +192,7 @@ class YLightSensor extends YFunction
      */
     public function get_lowestValue()
     {   $json_val = $this->_getAttr("lowestValue");
-        return (is_null($json_val) ? Y_LOWESTVALUE_INVALID : round($json_val/6553.6) / 10);
+        return (is_null($json_val) ? Y_LOWESTVALUE_INVALID : round($json_val/65.536) / 1000);
     }
 
     /**
@@ -219,13 +219,13 @@ class YLightSensor extends YFunction
      */
     public function get_highestValue()
     {   $json_val = $this->_getAttr("highestValue");
-        return (is_null($json_val) ? Y_HIGHESTVALUE_INVALID : round($json_val/6553.6) / 10);
+        return (is_null($json_val) ? Y_HIGHESTVALUE_INVALID : round($json_val/65.536) / 1000);
     }
 
     /**
-     * Returns the unrounded and uncalibrated raw value returned by the sensor.
+     * Returns the uncalibrated, unrounded raw value returned by the sensor.
      * 
-     * @return a floating point number corresponding to the unrounded and uncalibrated raw value returned by the sensor
+     * @return a floating point number corresponding to the uncalibrated, unrounded raw value returned by the sensor
      * 
      * On failure, throws an exception or returns Y_CURRENTRAWVALUE_INVALID.
      */
@@ -278,6 +278,101 @@ class YLightSensor extends YFunction
     }
 
     /**
+     * Returns the measured value of the electrical signal used by the sensor.
+     * 
+     * @return a floating point number corresponding to the measured value of the electrical signal used by the sensor
+     * 
+     * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
+     */
+    public function get_signalValue()
+    {   $json_val = $this->_getAttr("signalValue");
+        return (is_null($json_val) ? Y_SIGNALVALUE_INVALID : round($json_val/65.536) / 1000);
+    }
+
+    /**
+     * Returns the measuring unit of the electrical signal used by the sensor.
+     * 
+     * @return a string corresponding to the measuring unit of the electrical signal used by the sensor
+     * 
+     * On failure, throws an exception or returns Y_SIGNALUNIT_INVALID.
+     */
+    public function get_signalUnit()
+    {   $json_val = $this->_getFixedAttr("signalUnit");
+        return (is_null($json_val) ? Y_SIGNALUNIT_INVALID : $json_val);
+    }
+
+    /**
+     * Returns the electric signal range used by the sensor.
+     * 
+     * @return a string corresponding to the electric signal range used by the sensor
+     * 
+     * On failure, throws an exception or returns Y_SIGNALRANGE_INVALID.
+     */
+    public function get_signalRange()
+    {   $json_val = $this->_getAttr("signalRange");
+        return (is_null($json_val) ? Y_SIGNALRANGE_INVALID : $json_val);
+    }
+
+    /**
+     * Changes the electric signal range used by the sensor.
+     * 
+     * @param newval : a string corresponding to the electric signal range used by the sensor
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_signalRange($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("signalRange",$rest_val);
+    }
+
+    /**
+     * Returns the physical value range measured by the sensor.
+     * 
+     * @return a string corresponding to the physical value range measured by the sensor
+     * 
+     * On failure, throws an exception or returns Y_VALUERANGE_INVALID.
+     */
+    public function get_valueRange()
+    {   $json_val = $this->_getAttr("valueRange");
+        return (is_null($json_val) ? Y_VALUERANGE_INVALID : $json_val);
+    }
+
+    /**
+     * Changes the physical value range measured by the sensor. The range change may have a side effect
+     * on the display resolution, as it may be adapted automatically.
+     * 
+     * @param newval : a string corresponding to the physical value range measured by the sensor
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_valueRange($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("valueRange",$rest_val);
+    }
+
+    /**
+     * Changes the resolution of the measured physical values. The resolution corresponds to the numerical precision
+     * when displaying value. It does not change the precision of the measure itself.
+     * 
+     * @param newval : a floating point number corresponding to the resolution of the measured physical values
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_resolution($newval)
+    {
+        $rest_val = strval(round($newval*65536.0));
+        return $this->_setAttr("resolution",$rest_val);
+    }
+
+    /**
      * Returns the resolution of the measured values. The resolution corresponds to the numerical precision
      * of the values, which is not always the same as the actual precision of the sensor.
      * 
@@ -302,8 +397,8 @@ class YLightSensor extends YFunction
     public function unit()
     { return get_unit(); }
 
-    public function setCurrentValue($newval)
-    { return set_currentValue($newval); }
+    public function setUnit($newval)
+    { return set_unit($newval); }
 
     public function currentValue()
     { return get_currentValue(); }
@@ -329,24 +424,45 @@ class YLightSensor extends YFunction
     public function setCalibrationParam($newval)
     { return set_calibrationParam($newval); }
 
+    public function signalValue()
+    { return get_signalValue(); }
+
+    public function signalUnit()
+    { return get_signalUnit(); }
+
+    public function signalRange()
+    { return get_signalRange(); }
+
+    public function setSignalRange($newval)
+    { return set_signalRange($newval); }
+
+    public function valueRange()
+    { return get_valueRange(); }
+
+    public function setValueRange($newval)
+    { return set_valueRange($newval); }
+
+    public function setResolution($newval)
+    { return set_resolution($newval); }
+
     public function resolution()
     { return get_resolution(); }
 
     /**
-     * Continues the enumeration of light sensors started using yFirstLightSensor().
+     * Continues the enumeration of generic sensors started using yFirstGenericSensor().
      * 
-     * @return a pointer to a YLightSensor object, corresponding to
-     *         a light sensor currently online, or a null pointer
-     *         if there are no more light sensors to enumerate.
+     * @return a pointer to a YGenericSensor object, corresponding to
+     *         a generic sensor currently online, or a null pointer
+     *         if there are no more generic sensors to enumerate.
      */
-    public function nextLightSensor()
+    public function nextGenericSensor()
     {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
         if($next_hwid == null) return null;
-        return yFindLightSensor($next_hwid);
+        return yFindGenericSensor($next_hwid);
     }
 
     /**
-     * Retrieves a light sensor for a given identifier.
+     * Retrieves a generic sensor for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -356,53 +472,53 @@ class YLightSensor extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      * 
-     * This function does not require that the light sensor is online at the time
+     * This function does not require that the generic sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YLightSensor.isOnline() to test if the light sensor is
+     * Use the method YGenericSensor.isOnline() to test if the generic sensor is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a light sensor by logical name, no error is notified: the first instance
+     * a generic sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      * 
-     * @param func : a string that uniquely characterizes the light sensor
+     * @param func : a string that uniquely characterizes the generic sensor
      * 
-     * @return a YLightSensor object allowing you to drive the light sensor.
+     * @return a YGenericSensor object allowing you to drive the generic sensor.
      */
-    public static function FindLightSensor($str_func)
-    {   $obj_func = YAPI::getFunction('LightSensor', $str_func);
+    public static function FindGenericSensor($str_func)
+    {   $obj_func = YAPI::getFunction('GenericSensor', $str_func);
         if($obj_func) return $obj_func;
-        return new YLightSensor($str_func);
+        return new YGenericSensor($str_func);
     }
 
     /**
-     * Starts the enumeration of light sensors currently accessible.
-     * Use the method YLightSensor.nextLightSensor() to iterate on
-     * next light sensors.
+     * Starts the enumeration of generic sensors currently accessible.
+     * Use the method YGenericSensor.nextGenericSensor() to iterate on
+     * next generic sensors.
      * 
-     * @return a pointer to a YLightSensor object, corresponding to
-     *         the first light sensor currently online, or a null pointer
+     * @return a pointer to a YGenericSensor object, corresponding to
+     *         the first generic sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstLightSensor()
-    {   $next_hwid = YAPI::getFirstHardwareId('LightSensor');
+    public static function FirstGenericSensor()
+    {   $next_hwid = YAPI::getFirstHardwareId('GenericSensor');
         if($next_hwid == null) return null;
-        return self::FindLightSensor($next_hwid);
+        return self::FindGenericSensor($next_hwid);
     }
 
-    //--- (end of YLightSensor implementation)
+    //--- (end of YGenericSensor implementation)
 
     function __construct($str_func)
     {
-        //--- (YLightSensor constructor)
-        parent::__construct('LightSensor', $str_func);
-        //--- (end of YLightSensor constructor)
+        //--- (YGenericSensor constructor)
+        parent::__construct('GenericSensor', $str_func);
+        //--- (end of YGenericSensor constructor)
     }
 };
 
-//--- (LightSensor functions)
+//--- (GenericSensor functions)
 
 /**
- * Retrieves a light sensor for a given identifier.
+ * Retrieves a generic sensor for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -412,36 +528,36 @@ class YLightSensor extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  * 
- * This function does not require that the light sensor is online at the time
+ * This function does not require that the generic sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YLightSensor.isOnline() to test if the light sensor is
+ * Use the method YGenericSensor.isOnline() to test if the generic sensor is
  * indeed online at a given time. In case of ambiguity when looking for
- * a light sensor by logical name, no error is notified: the first instance
+ * a generic sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  * 
- * @param func : a string that uniquely characterizes the light sensor
+ * @param func : a string that uniquely characterizes the generic sensor
  * 
- * @return a YLightSensor object allowing you to drive the light sensor.
+ * @return a YGenericSensor object allowing you to drive the generic sensor.
  */
-function yFindLightSensor($str_func)
+function yFindGenericSensor($str_func)
 {
-    return YLightSensor::FindLightSensor($str_func);
+    return YGenericSensor::FindGenericSensor($str_func);
 }
 
 /**
- * Starts the enumeration of light sensors currently accessible.
- * Use the method YLightSensor.nextLightSensor() to iterate on
- * next light sensors.
+ * Starts the enumeration of generic sensors currently accessible.
+ * Use the method YGenericSensor.nextGenericSensor() to iterate on
+ * next generic sensors.
  * 
- * @return a pointer to a YLightSensor object, corresponding to
- *         the first light sensor currently online, or a null pointer
+ * @return a pointer to a YGenericSensor object, corresponding to
+ *         the first generic sensor currently online, or a null pointer
  *         if there are none.
  */
-function yFirstLightSensor()
+function yFirstGenericSensor()
 {
-    return YLightSensor::FirstLightSensor();
+    return YGenericSensor::FirstGenericSensor();
 }
 
-//--- (end of LightSensor functions)
+//--- (end of GenericSensor functions)
 ?>
