@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_anbutton.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindAnButton(), the high-level API for AnButton functions
+ * Implements YAnButton, the high-level API for AnButton functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,29 +38,27 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YAnButton return codes)
+//--- (end of YAnButton return codes)
 //--- (YAnButton definitions)
-if(!defined('Y_ANALOGCALIBRATION_OFF')) define('Y_ANALOGCALIBRATION_OFF', 0);
-if(!defined('Y_ANALOGCALIBRATION_ON')) define('Y_ANALOGCALIBRATION_ON', 1);
-if(!defined('Y_ANALOGCALIBRATION_INVALID')) define('Y_ANALOGCALIBRATION_INVALID', -1);
-if(!defined('Y_ISPRESSED_FALSE')) define('Y_ISPRESSED_FALSE', 0);
-if(!defined('Y_ISPRESSED_TRUE')) define('Y_ISPRESSED_TRUE', 1);
-if(!defined('Y_ISPRESSED_INVALID')) define('Y_ISPRESSED_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_CALIBRATEDVALUE_INVALID')) define('Y_CALIBRATEDVALUE_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_RAWVALUE_INVALID')) define('Y_RAWVALUE_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_CALIBRATIONMAX_INVALID')) define('Y_CALIBRATIONMAX_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_CALIBRATIONMIN_INVALID')) define('Y_CALIBRATIONMIN_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_SENSITIVITY_INVALID')) define('Y_SENSITIVITY_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_LASTTIMEPRESSED_INVALID')) define('Y_LASTTIMEPRESSED_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_LASTTIMERELEASED_INVALID')) define('Y_LASTTIMERELEASED_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_PULSECOUNTER_INVALID')) define('Y_PULSECOUNTER_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_PULSETIMER_INVALID')) define('Y_PULSETIMER_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_ANALOGCALIBRATION_OFF'))      define('Y_ANALOGCALIBRATION_OFF',     0);
+if(!defined('Y_ANALOGCALIBRATION_ON'))       define('Y_ANALOGCALIBRATION_ON',      1);
+if(!defined('Y_ANALOGCALIBRATION_INVALID'))  define('Y_ANALOGCALIBRATION_INVALID', -1);
+if(!defined('Y_ISPRESSED_FALSE'))            define('Y_ISPRESSED_FALSE',           0);
+if(!defined('Y_ISPRESSED_TRUE'))             define('Y_ISPRESSED_TRUE',            1);
+if(!defined('Y_ISPRESSED_INVALID'))          define('Y_ISPRESSED_INVALID',         -1);
+if(!defined('Y_CALIBRATEDVALUE_INVALID'))    define('Y_CALIBRATEDVALUE_INVALID',   YAPI_INVALID_UINT);
+if(!defined('Y_RAWVALUE_INVALID'))           define('Y_RAWVALUE_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_CALIBRATIONMAX_INVALID'))     define('Y_CALIBRATIONMAX_INVALID',    YAPI_INVALID_UINT);
+if(!defined('Y_CALIBRATIONMIN_INVALID'))     define('Y_CALIBRATIONMIN_INVALID',    YAPI_INVALID_UINT);
+if(!defined('Y_SENSITIVITY_INVALID'))        define('Y_SENSITIVITY_INVALID',       YAPI_INVALID_UINT);
+if(!defined('Y_LASTTIMEPRESSED_INVALID'))    define('Y_LASTTIMEPRESSED_INVALID',   YAPI_INVALID_LONG);
+if(!defined('Y_LASTTIMERELEASED_INVALID'))   define('Y_LASTTIMERELEASED_INVALID',  YAPI_INVALID_LONG);
+if(!defined('Y_PULSECOUNTER_INVALID'))       define('Y_PULSECOUNTER_INVALID',      YAPI_INVALID_LONG);
+if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',        YAPI_INVALID_LONG);
 //--- (end of YAnButton definitions)
 
+//--- (YAnButton declaration)
 /**
  * YAnButton Class: AnButton function interface
  * 
@@ -73,65 +71,86 @@ if(!defined('Y_PULSETIMER_INVALID')) define('Y_PULSETIMER_INVALID', Y_INVALID_UN
  */
 class YAnButton extends YFunction
 {
-    //--- (YAnButton implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const CALIBRATEDVALUE_INVALID = Y_INVALID_UNSIGNED;
-    const RAWVALUE_INVALID = Y_INVALID_UNSIGNED;
-    const ANALOGCALIBRATION_OFF = 0;
-    const ANALOGCALIBRATION_ON = 1;
-    const ANALOGCALIBRATION_INVALID = -1;
-    const CALIBRATIONMAX_INVALID = Y_INVALID_UNSIGNED;
-    const CALIBRATIONMIN_INVALID = Y_INVALID_UNSIGNED;
-    const SENSITIVITY_INVALID = Y_INVALID_UNSIGNED;
-    const ISPRESSED_FALSE = 0;
-    const ISPRESSED_TRUE = 1;
-    const ISPRESSED_INVALID = -1;
-    const LASTTIMEPRESSED_INVALID = Y_INVALID_UNSIGNED;
-    const LASTTIMERELEASED_INVALID = Y_INVALID_UNSIGNED;
-    const PULSECOUNTER_INVALID = Y_INVALID_UNSIGNED;
-    const PULSETIMER_INVALID = Y_INVALID_UNSIGNED;
+    const CALIBRATEDVALUE_INVALID        = YAPI_INVALID_UINT;
+    const RAWVALUE_INVALID               = YAPI_INVALID_UINT;
+    const ANALOGCALIBRATION_OFF          = 0;
+    const ANALOGCALIBRATION_ON           = 1;
+    const ANALOGCALIBRATION_INVALID      = -1;
+    const CALIBRATIONMAX_INVALID         = YAPI_INVALID_UINT;
+    const CALIBRATIONMIN_INVALID         = YAPI_INVALID_UINT;
+    const SENSITIVITY_INVALID            = YAPI_INVALID_UINT;
+    const ISPRESSED_FALSE                = 0;
+    const ISPRESSED_TRUE                 = 1;
+    const ISPRESSED_INVALID              = -1;
+    const LASTTIMEPRESSED_INVALID        = YAPI_INVALID_LONG;
+    const LASTTIMERELEASED_INVALID       = YAPI_INVALID_LONG;
+    const PULSECOUNTER_INVALID           = YAPI_INVALID_LONG;
+    const PULSETIMER_INVALID             = YAPI_INVALID_LONG;
+    //--- (end of YAnButton declaration)
 
-    /**
-     * Returns the logical name of the analog input.
-     * 
-     * @return a string corresponding to the logical name of the analog input
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YAnButton attributes)
+    protected $_calibratedValue          = Y_CALIBRATEDVALUE_INVALID;    // UInt31
+    protected $_rawValue                 = Y_RAWVALUE_INVALID;           // UInt31
+    protected $_analogCalibration        = Y_ANALOGCALIBRATION_INVALID;  // OnOff
+    protected $_calibrationMax           = Y_CALIBRATIONMAX_INVALID;     // UInt31
+    protected $_calibrationMin           = Y_CALIBRATIONMIN_INVALID;     // UInt31
+    protected $_sensitivity              = Y_SENSITIVITY_INVALID;        // UInt31
+    protected $_isPressed                = Y_ISPRESSED_INVALID;          // Bool
+    protected $_lastTimePressed          = Y_LASTTIMEPRESSED_INVALID;    // Time
+    protected $_lastTimeReleased         = Y_LASTTIMERELEASED_INVALID;   // Time
+    protected $_pulseCounter             = Y_PULSECOUNTER_INVALID;       // UInt
+    protected $_pulseTimer               = Y_PULSETIMER_INVALID;         // Time
+    //--- (end of YAnButton attributes)
 
-    /**
-     * Changes the logical name of the analog input. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the analog input
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YAnButton constructor)
+        parent::__construct($str_func);
+        $this->_className = 'AnButton';
+
+        //--- (end of YAnButton constructor)
     }
 
-    /**
-     * Returns the current value of the analog input (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the analog input (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YAnButton implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'calibratedValue':
+            $this->_calibratedValue = intval($val);
+            return 1;
+        case 'rawValue':
+            $this->_rawValue = intval($val);
+            return 1;
+        case 'analogCalibration':
+            $this->_analogCalibration = intval($val);
+            return 1;
+        case 'calibrationMax':
+            $this->_calibrationMax = intval($val);
+            return 1;
+        case 'calibrationMin':
+            $this->_calibrationMin = intval($val);
+            return 1;
+        case 'sensitivity':
+            $this->_sensitivity = intval($val);
+            return 1;
+        case 'isPressed':
+            $this->_isPressed = intval($val);
+            return 1;
+        case 'lastTimePressed':
+            $this->_lastTimePressed = intval($val);
+            return 1;
+        case 'lastTimeReleased':
+            $this->_lastTimeReleased = intval($val);
+            return 1;
+        case 'pulseCounter':
+            $this->_pulseCounter = intval($val);
+            return 1;
+        case 'pulseTimer':
+            $this->_pulseTimer = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -142,8 +161,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_CALIBRATEDVALUE_INVALID.
      */
     public function get_calibratedValue()
-    {   $json_val = $this->_getAttr("calibratedValue");
-        return (is_null($json_val) ? Y_CALIBRATEDVALUE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALIBRATEDVALUE_INVALID;
+            }
+        }
+        return $this->_calibratedValue;
     }
 
     /**
@@ -154,8 +178,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_RAWVALUE_INVALID.
      */
     public function get_rawValue()
-    {   $json_val = $this->_getAttr("rawValue");
-        return (is_null($json_val) ? Y_RAWVALUE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RAWVALUE_INVALID;
+            }
+        }
+        return $this->_rawValue;
     }
 
     /**
@@ -166,8 +195,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_ANALOGCALIBRATION_INVALID.
      */
     public function get_analogCalibration()
-    {   $json_val = $this->_getAttr("analogCalibration");
-        return (is_null($json_val) ? Y_ANALOGCALIBRATION_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ANALOGCALIBRATION_INVALID;
+            }
+        }
+        return $this->_analogCalibration;
     }
 
     /**
@@ -195,8 +229,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_CALIBRATIONMAX_INVALID.
      */
     public function get_calibrationMax()
-    {   $json_val = $this->_getAttr("calibrationMax");
-        return (is_null($json_val) ? Y_CALIBRATIONMAX_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALIBRATIONMAX_INVALID;
+            }
+        }
+        return $this->_calibrationMax;
     }
 
     /**
@@ -227,8 +266,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_CALIBRATIONMIN_INVALID.
      */
     public function get_calibrationMin()
-    {   $json_val = $this->_getAttr("calibrationMin");
-        return (is_null($json_val) ? Y_CALIBRATIONMIN_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALIBRATIONMIN_INVALID;
+            }
+        }
+        return $this->_calibrationMin;
     }
 
     /**
@@ -259,8 +303,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_SENSITIVITY_INVALID.
      */
     public function get_sensitivity()
-    {   $json_val = $this->_getAttr("sensitivity");
-        return (is_null($json_val) ? Y_SENSITIVITY_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SENSITIVITY_INVALID;
+            }
+        }
+        return $this->_sensitivity;
     }
 
     /**
@@ -293,8 +342,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_ISPRESSED_INVALID.
      */
     public function get_isPressed()
-    {   $json_val = $this->_getAttr("isPressed");
-        return (is_null($json_val) ? Y_ISPRESSED_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ISPRESSED_INVALID;
+            }
+        }
+        return $this->_isPressed;
     }
 
     /**
@@ -308,8 +362,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_LASTTIMEPRESSED_INVALID.
      */
     public function get_lastTimePressed()
-    {   $json_val = $this->_getAttr("lastTimePressed");
-        return (is_null($json_val) ? Y_LASTTIMEPRESSED_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LASTTIMEPRESSED_INVALID;
+            }
+        }
+        return $this->_lastTimePressed;
     }
 
     /**
@@ -323,8 +382,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_LASTTIMERELEASED_INVALID.
      */
     public function get_lastTimeReleased()
-    {   $json_val = $this->_getAttr("lastTimeReleased");
-        return (is_null($json_val) ? Y_LASTTIMERELEASED_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LASTTIMERELEASED_INVALID;
+            }
+        }
+        return $this->_lastTimeReleased;
     }
 
     /**
@@ -335,8 +399,13 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_PULSECOUNTER_INVALID.
      */
     public function get_pulseCounter()
-    {   $json_val = $this->_getAttr("pulseCounter");
-        return (is_null($json_val) ? Y_PULSECOUNTER_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PULSECOUNTER_INVALID;
+            }
+        }
+        return $this->_pulseCounter;
     }
 
     public function set_pulseCounter($newval)
@@ -366,18 +435,48 @@ class YAnButton extends YFunction
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
-    {   $json_val = $this->_getAttr("pulseTimer");
-        return (is_null($json_val) ? Y_PULSETIMER_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PULSETIMER_INVALID;
+            }
+        }
+        return $this->_pulseTimer;
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves an analog input for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the analog input is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YAnButton.isOnline() to test if the analog input is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * an analog input by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the analog input
+     * 
+     * @return a YAnButton object allowing you to drive the analog input.
+     */
+    public static function FindAnButton($func)
+    {
+        // $obj                    is a YAnButton;
+        $obj = YFunction::_FindFromCache('AnButton', $func);
+        if ($obj == null) {
+            $obj = new YAnButton($func);
+            YFunction::_AddToCache('AnButton', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function calibratedValue()
     { return get_calibratedValue(); }
@@ -441,35 +540,6 @@ class YAnButton extends YFunction
     }
 
     /**
-     * Retrieves an analog input for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the analog input is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YAnButton.isOnline() to test if the analog input is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * an analog input by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the analog input
-     * 
-     * @return a YAnButton object allowing you to drive the analog input.
-     */
-    public static function FindAnButton($str_func)
-    {   $obj_func = YAPI::getFunction('AnButton', $str_func);
-        if($obj_func) return $obj_func;
-        return new YAnButton($str_func);
-    }
-
-    /**
      * Starts the enumeration of analog inputs currently accessible.
      * Use the method YAnButton.nextAnButton() to iterate on
      * next analog inputs.
@@ -486,12 +556,6 @@ class YAnButton extends YFunction
 
     //--- (end of YAnButton implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YAnButton constructor)
-        parent::__construct('AnButton', $str_func);
-        //--- (end of YAnButton constructor)
-    }
 };
 
 //--- (AnButton functions)
@@ -519,9 +583,9 @@ class YAnButton extends YFunction
  * 
  * @return a YAnButton object allowing you to drive the analog input.
  */
-function yFindAnButton($str_func)
+function yFindAnButton($func)
 {
-    return YAnButton::FindAnButton($str_func);
+    return YAnButton::FindAnButton($func);
 }
 
 /**

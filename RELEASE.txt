@@ -1,4 +1,2 @@
-- clarify license agreement
-- add get_lastLogs() method to YModule class
-- minor fixes 
-- fix error reporting during yRegisterHub() if exceptions are disabled
+- add YAPI.RegisterHubDiscoveryCallback and YAPI.TriggerHubDiscovery
+- minor bug fixes

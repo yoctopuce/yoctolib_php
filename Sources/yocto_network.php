@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 12337 2013-08-14 15:22:22Z mvuilleu $
+ * $Id: yocto_network.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindNetwork(), the high-level API for Network functions
+ * Implements YNetwork, the high-level API for Network functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,48 +38,46 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YNetwork return codes)
+//--- (end of YNetwork return codes)
 //--- (YNetwork definitions)
-if(!defined('Y_READINESS_DOWN')) define('Y_READINESS_DOWN', 0);
-if(!defined('Y_READINESS_EXISTS')) define('Y_READINESS_EXISTS', 1);
-if(!defined('Y_READINESS_LINKED')) define('Y_READINESS_LINKED', 2);
-if(!defined('Y_READINESS_LAN_OK')) define('Y_READINESS_LAN_OK', 3);
-if(!defined('Y_READINESS_WWW_OK')) define('Y_READINESS_WWW_OK', 4);
-if(!defined('Y_READINESS_INVALID')) define('Y_READINESS_INVALID', -1);
-if(!defined('Y_DISCOVERABLE_FALSE')) define('Y_DISCOVERABLE_FALSE', 0);
-if(!defined('Y_DISCOVERABLE_TRUE')) define('Y_DISCOVERABLE_TRUE', 1);
-if(!defined('Y_DISCOVERABLE_INVALID')) define('Y_DISCOVERABLE_INVALID', -1);
-if(!defined('Y_CALLBACKMETHOD_POST')) define('Y_CALLBACKMETHOD_POST', 0);
-if(!defined('Y_CALLBACKMETHOD_GET')) define('Y_CALLBACKMETHOD_GET', 1);
-if(!defined('Y_CALLBACKMETHOD_PUT')) define('Y_CALLBACKMETHOD_PUT', 2);
-if(!defined('Y_CALLBACKMETHOD_INVALID')) define('Y_CALLBACKMETHOD_INVALID', -1);
-if(!defined('Y_CALLBACKENCODING_FORM')) define('Y_CALLBACKENCODING_FORM', 0);
-if(!defined('Y_CALLBACKENCODING_JSON')) define('Y_CALLBACKENCODING_JSON', 1);
+if(!defined('Y_READINESS_DOWN'))             define('Y_READINESS_DOWN',            0);
+if(!defined('Y_READINESS_EXISTS'))           define('Y_READINESS_EXISTS',          1);
+if(!defined('Y_READINESS_LINKED'))           define('Y_READINESS_LINKED',          2);
+if(!defined('Y_READINESS_LAN_OK'))           define('Y_READINESS_LAN_OK',          3);
+if(!defined('Y_READINESS_WWW_OK'))           define('Y_READINESS_WWW_OK',          4);
+if(!defined('Y_READINESS_INVALID'))          define('Y_READINESS_INVALID',         -1);
+if(!defined('Y_DISCOVERABLE_FALSE'))         define('Y_DISCOVERABLE_FALSE',        0);
+if(!defined('Y_DISCOVERABLE_TRUE'))          define('Y_DISCOVERABLE_TRUE',         1);
+if(!defined('Y_DISCOVERABLE_INVALID'))       define('Y_DISCOVERABLE_INVALID',      -1);
+if(!defined('Y_CALLBACKMETHOD_POST'))        define('Y_CALLBACKMETHOD_POST',       0);
+if(!defined('Y_CALLBACKMETHOD_GET'))         define('Y_CALLBACKMETHOD_GET',        1);
+if(!defined('Y_CALLBACKMETHOD_PUT'))         define('Y_CALLBACKMETHOD_PUT',        2);
+if(!defined('Y_CALLBACKMETHOD_INVALID'))     define('Y_CALLBACKMETHOD_INVALID',    -1);
+if(!defined('Y_CALLBACKENCODING_FORM'))      define('Y_CALLBACKENCODING_FORM',     0);
+if(!defined('Y_CALLBACKENCODING_JSON'))      define('Y_CALLBACKENCODING_JSON',     1);
 if(!defined('Y_CALLBACKENCODING_JSON_ARRAY')) define('Y_CALLBACKENCODING_JSON_ARRAY', 2);
-if(!defined('Y_CALLBACKENCODING_CSV')) define('Y_CALLBACKENCODING_CSV', 3);
+if(!defined('Y_CALLBACKENCODING_CSV'))       define('Y_CALLBACKENCODING_CSV',      3);
 if(!defined('Y_CALLBACKENCODING_YOCTO_API')) define('Y_CALLBACKENCODING_YOCTO_API', 4);
-if(!defined('Y_CALLBACKENCODING_INVALID')) define('Y_CALLBACKENCODING_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_MACADDRESS_INVALID')) define('Y_MACADDRESS_INVALID', Y_INVALID_STRING);
-if(!defined('Y_IPADDRESS_INVALID')) define('Y_IPADDRESS_INVALID', Y_INVALID_STRING);
-if(!defined('Y_SUBNETMASK_INVALID')) define('Y_SUBNETMASK_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ROUTER_INVALID')) define('Y_ROUTER_INVALID', Y_INVALID_STRING);
-if(!defined('Y_IPCONFIG_INVALID')) define('Y_IPCONFIG_INVALID', Y_INVALID_STRING);
-if(!defined('Y_PRIMARYDNS_INVALID')) define('Y_PRIMARYDNS_INVALID', Y_INVALID_STRING);
-if(!defined('Y_SECONDARYDNS_INVALID')) define('Y_SECONDARYDNS_INVALID', Y_INVALID_STRING);
-if(!defined('Y_USERPASSWORD_INVALID')) define('Y_USERPASSWORD_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADMINPASSWORD_INVALID')) define('Y_ADMINPASSWORD_INVALID', Y_INVALID_STRING);
-if(!defined('Y_WWWWATCHDOGDELAY_INVALID')) define('Y_WWWWATCHDOGDELAY_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_CALLBACKURL_INVALID')) define('Y_CALLBACKURL_INVALID', Y_INVALID_STRING);
-if(!defined('Y_CALLBACKCREDENTIALS_INVALID')) define('Y_CALLBACKCREDENTIALS_INVALID', Y_INVALID_STRING);
-if(!defined('Y_CALLBACKMINDELAY_INVALID')) define('Y_CALLBACKMINDELAY_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_CALLBACKMAXDELAY_INVALID')) define('Y_CALLBACKMAXDELAY_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_POECURRENT_INVALID')) define('Y_POECURRENT_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_CALLBACKENCODING_INVALID'))   define('Y_CALLBACKENCODING_INVALID',  -1);
+if(!defined('Y_MACADDRESS_INVALID'))         define('Y_MACADDRESS_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_IPADDRESS_INVALID'))          define('Y_IPADDRESS_INVALID',         YAPI_INVALID_STRING);
+if(!defined('Y_SUBNETMASK_INVALID'))         define('Y_SUBNETMASK_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_ROUTER_INVALID'))             define('Y_ROUTER_INVALID',            YAPI_INVALID_STRING);
+if(!defined('Y_IPCONFIG_INVALID'))           define('Y_IPCONFIG_INVALID',          YAPI_INVALID_STRING);
+if(!defined('Y_PRIMARYDNS_INVALID'))         define('Y_PRIMARYDNS_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_SECONDARYDNS_INVALID'))       define('Y_SECONDARYDNS_INVALID',      YAPI_INVALID_STRING);
+if(!defined('Y_USERPASSWORD_INVALID'))       define('Y_USERPASSWORD_INVALID',      YAPI_INVALID_STRING);
+if(!defined('Y_ADMINPASSWORD_INVALID'))      define('Y_ADMINPASSWORD_INVALID',     YAPI_INVALID_STRING);
+if(!defined('Y_WWWWATCHDOGDELAY_INVALID'))   define('Y_WWWWATCHDOGDELAY_INVALID',  YAPI_INVALID_UINT);
+if(!defined('Y_CALLBACKURL_INVALID'))        define('Y_CALLBACKURL_INVALID',       YAPI_INVALID_STRING);
+if(!defined('Y_CALLBACKCREDENTIALS_INVALID')) define('Y_CALLBACKCREDENTIALS_INVALID', YAPI_INVALID_STRING);
+if(!defined('Y_CALLBACKMINDELAY_INVALID'))   define('Y_CALLBACKMINDELAY_INVALID',  YAPI_INVALID_UINT);
+if(!defined('Y_CALLBACKMAXDELAY_INVALID'))   define('Y_CALLBACKMAXDELAY_INVALID',  YAPI_INVALID_UINT);
+if(!defined('Y_POECURRENT_INVALID'))         define('Y_POECURRENT_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YNetwork definitions)
 
+//--- (YNetwork declaration)
 /**
  * YNetwork Class: Network function interface
  * 
@@ -88,94 +86,144 @@ if(!defined('Y_POECURRENT_INVALID')) define('Y_POECURRENT_INVALID', Y_INVALID_UN
  */
 class YNetwork extends YFunction
 {
-    //--- (YNetwork implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const READINESS_DOWN = 0;
-    const READINESS_EXISTS = 1;
-    const READINESS_LINKED = 2;
-    const READINESS_LAN_OK = 3;
-    const READINESS_WWW_OK = 4;
-    const READINESS_INVALID = -1;
-    const MACADDRESS_INVALID = Y_INVALID_STRING;
-    const IPADDRESS_INVALID = Y_INVALID_STRING;
-    const SUBNETMASK_INVALID = Y_INVALID_STRING;
-    const ROUTER_INVALID = Y_INVALID_STRING;
-    const IPCONFIG_INVALID = Y_INVALID_STRING;
-    const PRIMARYDNS_INVALID = Y_INVALID_STRING;
-    const SECONDARYDNS_INVALID = Y_INVALID_STRING;
-    const USERPASSWORD_INVALID = Y_INVALID_STRING;
-    const ADMINPASSWORD_INVALID = Y_INVALID_STRING;
-    const DISCOVERABLE_FALSE = 0;
-    const DISCOVERABLE_TRUE = 1;
-    const DISCOVERABLE_INVALID = -1;
-    const WWWWATCHDOGDELAY_INVALID = Y_INVALID_UNSIGNED;
-    const CALLBACKURL_INVALID = Y_INVALID_STRING;
-    const CALLBACKMETHOD_POST = 0;
-    const CALLBACKMETHOD_GET = 1;
-    const CALLBACKMETHOD_PUT = 2;
-    const CALLBACKMETHOD_INVALID = -1;
-    const CALLBACKENCODING_FORM = 0;
-    const CALLBACKENCODING_JSON = 1;
-    const CALLBACKENCODING_JSON_ARRAY = 2;
-    const CALLBACKENCODING_CSV = 3;
-    const CALLBACKENCODING_YOCTO_API = 4;
-    const CALLBACKENCODING_INVALID = -1;
-    const CALLBACKCREDENTIALS_INVALID = Y_INVALID_STRING;
-    const CALLBACKMINDELAY_INVALID = Y_INVALID_UNSIGNED;
-    const CALLBACKMAXDELAY_INVALID = Y_INVALID_UNSIGNED;
-    const POECURRENT_INVALID = Y_INVALID_UNSIGNED;
+    const READINESS_DOWN                 = 0;
+    const READINESS_EXISTS               = 1;
+    const READINESS_LINKED               = 2;
+    const READINESS_LAN_OK               = 3;
+    const READINESS_WWW_OK               = 4;
+    const READINESS_INVALID              = -1;
+    const MACADDRESS_INVALID             = YAPI_INVALID_STRING;
+    const IPADDRESS_INVALID              = YAPI_INVALID_STRING;
+    const SUBNETMASK_INVALID             = YAPI_INVALID_STRING;
+    const ROUTER_INVALID                 = YAPI_INVALID_STRING;
+    const IPCONFIG_INVALID               = YAPI_INVALID_STRING;
+    const PRIMARYDNS_INVALID             = YAPI_INVALID_STRING;
+    const SECONDARYDNS_INVALID           = YAPI_INVALID_STRING;
+    const USERPASSWORD_INVALID           = YAPI_INVALID_STRING;
+    const ADMINPASSWORD_INVALID          = YAPI_INVALID_STRING;
+    const DISCOVERABLE_FALSE             = 0;
+    const DISCOVERABLE_TRUE              = 1;
+    const DISCOVERABLE_INVALID           = -1;
+    const WWWWATCHDOGDELAY_INVALID       = YAPI_INVALID_UINT;
+    const CALLBACKURL_INVALID            = YAPI_INVALID_STRING;
+    const CALLBACKMETHOD_POST            = 0;
+    const CALLBACKMETHOD_GET             = 1;
+    const CALLBACKMETHOD_PUT             = 2;
+    const CALLBACKMETHOD_INVALID         = -1;
+    const CALLBACKENCODING_FORM          = 0;
+    const CALLBACKENCODING_JSON          = 1;
+    const CALLBACKENCODING_JSON_ARRAY    = 2;
+    const CALLBACKENCODING_CSV           = 3;
+    const CALLBACKENCODING_YOCTO_API     = 4;
+    const CALLBACKENCODING_INVALID       = -1;
+    const CALLBACKCREDENTIALS_INVALID    = YAPI_INVALID_STRING;
+    const CALLBACKMINDELAY_INVALID       = YAPI_INVALID_UINT;
+    const CALLBACKMAXDELAY_INVALID       = YAPI_INVALID_UINT;
+    const POECURRENT_INVALID             = YAPI_INVALID_UINT;
+    //--- (end of YNetwork declaration)
 
-    /**
-     * Returns the logical name of the network interface, corresponding to the network name of the module.
-     * 
-     * @return a string corresponding to the logical name of the network interface, corresponding to the
-     * network name of the module
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YNetwork attributes)
+    protected $_readiness                = Y_READINESS_INVALID;          // Readiness
+    protected $_macAddress               = Y_MACADDRESS_INVALID;         // MACAddress
+    protected $_ipAddress                = Y_IPADDRESS_INVALID;          // IPAddress
+    protected $_subnetMask               = Y_SUBNETMASK_INVALID;         // IPAddress
+    protected $_router                   = Y_ROUTER_INVALID;             // IPAddress
+    protected $_ipConfig                 = Y_IPCONFIG_INVALID;           // IPConfig
+    protected $_primaryDNS               = Y_PRIMARYDNS_INVALID;         // IPAddress
+    protected $_secondaryDNS             = Y_SECONDARYDNS_INVALID;       // IPAddress
+    protected $_userPassword             = Y_USERPASSWORD_INVALID;       // UserPassword
+    protected $_adminPassword            = Y_ADMINPASSWORD_INVALID;      // AdminPassword
+    protected $_discoverable             = Y_DISCOVERABLE_INVALID;       // Bool
+    protected $_wwwWatchdogDelay         = Y_WWWWATCHDOGDELAY_INVALID;   // UInt31
+    protected $_callbackUrl              = Y_CALLBACKURL_INVALID;        // Text
+    protected $_callbackMethod           = Y_CALLBACKMETHOD_INVALID;     // HTTPMethod
+    protected $_callbackEncoding         = Y_CALLBACKENCODING_INVALID;   // CallbackEncoding
+    protected $_callbackCredentials      = Y_CALLBACKCREDENTIALS_INVALID; // Credentials
+    protected $_callbackMinDelay         = Y_CALLBACKMINDELAY_INVALID;   // UInt31
+    protected $_callbackMaxDelay         = Y_CALLBACKMAXDELAY_INVALID;   // UInt31
+    protected $_poeCurrent               = Y_POECURRENT_INVALID;         // UsedCurrent
+    //--- (end of YNetwork attributes)
 
-    /**
-     * Changes the logical name of the network interface, corresponding to the network name of the module.
-     * You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the network interface, corresponding
-     * to the network name of the module
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YNetwork constructor)
+        parent::__construct($str_func);
+        $this->_className = 'Network';
+
+        //--- (end of YNetwork constructor)
     }
 
-    /**
-     * Returns the current value of the network interface (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the network interface (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YNetwork implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'readiness':
+            $this->_readiness = intval($val);
+            return 1;
+        case 'macAddress':
+            $this->_macAddress = $val;
+            return 1;
+        case 'ipAddress':
+            $this->_ipAddress = $val;
+            return 1;
+        case 'subnetMask':
+            $this->_subnetMask = $val;
+            return 1;
+        case 'router':
+            $this->_router = $val;
+            return 1;
+        case 'ipConfig':
+            $this->_ipConfig = $val;
+            return 1;
+        case 'primaryDNS':
+            $this->_primaryDNS = $val;
+            return 1;
+        case 'secondaryDNS':
+            $this->_secondaryDNS = $val;
+            return 1;
+        case 'userPassword':
+            $this->_userPassword = $val;
+            return 1;
+        case 'adminPassword':
+            $this->_adminPassword = $val;
+            return 1;
+        case 'discoverable':
+            $this->_discoverable = intval($val);
+            return 1;
+        case 'wwwWatchdogDelay':
+            $this->_wwwWatchdogDelay = intval($val);
+            return 1;
+        case 'callbackUrl':
+            $this->_callbackUrl = $val;
+            return 1;
+        case 'callbackMethod':
+            $this->_callbackMethod = intval($val);
+            return 1;
+        case 'callbackEncoding':
+            $this->_callbackEncoding = intval($val);
+            return 1;
+        case 'callbackCredentials':
+            $this->_callbackCredentials = $val;
+            return 1;
+        case 'callbackMinDelay':
+            $this->_callbackMinDelay = intval($val);
+            return 1;
+        case 'callbackMaxDelay':
+            $this->_callbackMaxDelay = intval($val);
+            return 1;
+        case 'poeCurrent':
+            $this->_poeCurrent = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
      * Returns the current established working mode of the network interface.
      * Level zero (DOWN_0) means that no hardware link has been detected. Either there is no signal
      * on the network cable, or the selected wireless access point cannot be detected.
-     * Level 1 (LIVE_1) is reached when the network is detected, but is not yet connected,
+     * Level 1 (LIVE_1) is reached when the network is detected, but is not yet connected.
      * For a wireless network, this shows that the requested SSID is present.
      * Level 2 (LINK_2) is reached when the hardware connection is established.
      * For a wired network connection, level 2 means that the cable is attached at both ends.
@@ -193,8 +241,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_READINESS_INVALID.
      */
     public function get_readiness()
-    {   $json_val = $this->_getAttr("readiness");
-        return (is_null($json_val) ? Y_READINESS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_READINESS_INVALID;
+            }
+        }
+        return $this->_readiness;
     }
 
     /**
@@ -206,12 +259,17 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_MACADDRESS_INVALID.
      */
     public function get_macAddress()
-    {   $json_val = $this->_getFixedAttr("macAddress");
-        return (is_null($json_val) ? Y_MACADDRESS_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MACADDRESS_INVALID;
+            }
+        }
+        return $this->_macAddress;
     }
 
     /**
-     * Returns the IP address currently in use by the device. The adress may have been configured
+     * Returns the IP address currently in use by the device. The address may have been configured
      * statically, or provided by a DHCP server.
      * 
      * @return a string corresponding to the IP address currently in use by the device
@@ -219,8 +277,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_IPADDRESS_INVALID.
      */
     public function get_ipAddress()
-    {   $json_val = $this->_getAttr("ipAddress");
-        return (is_null($json_val) ? Y_IPADDRESS_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_IPADDRESS_INVALID;
+            }
+        }
+        return $this->_ipAddress;
     }
 
     /**
@@ -231,8 +294,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_SUBNETMASK_INVALID.
      */
     public function get_subnetMask()
-    {   $json_val = $this->_getAttr("subnetMask");
-        return (is_null($json_val) ? Y_SUBNETMASK_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SUBNETMASK_INVALID;
+            }
+        }
+        return $this->_subnetMask;
     }
 
     /**
@@ -243,13 +311,23 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_ROUTER_INVALID.
      */
     public function get_router()
-    {   $json_val = $this->_getAttr("router");
-        return (is_null($json_val) ? Y_ROUTER_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ROUTER_INVALID;
+            }
+        }
+        return $this->_router;
     }
 
     public function get_ipConfig()
-    {   $json_val = $this->_getAttr("ipConfig");
-        return (is_null($json_val) ? Y_IPCONFIG_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_IPCONFIG_INVALID;
+            }
+        }
+        return $this->_ipConfig;
     }
 
     public function set_ipConfig($newval)
@@ -273,9 +351,9 @@ class YNetwork extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function useDHCP($str_fallbackIpAddr,$int_fallbackSubnetMaskLen,$str_fallbackRouter)
+    public function useDHCP($fallbackIpAddr,$fallbackSubnetMaskLen,$fallbackRouter)
     {
-        $rest_val = sprintf("DHCP:%s/%d/%s", $str_fallbackIpAddr, $int_fallbackSubnetMaskLen, $str_fallbackRouter);
+        $rest_val = sprintf("DHCP:%s/%d/%s", $fallbackIpAddr, $fallbackSubnetMaskLen, $fallbackRouter);
         return $this->_setAttr("ipConfig",$rest_val);
     }
 
@@ -291,9 +369,9 @@ class YNetwork extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function useStaticIP($str_ipAddress,$int_subnetMaskLen,$str_router)
+    public function useStaticIP($ipAddress,$subnetMaskLen,$router)
     {
-        $rest_val = sprintf("STATIC:%s/%d/%s", $str_ipAddress, $int_subnetMaskLen, $str_router);
+        $rest_val = sprintf("STATIC:%s/%d/%s", $ipAddress, $subnetMaskLen, $router);
         return $this->_setAttr("ipConfig",$rest_val);
     }
 
@@ -305,8 +383,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_PRIMARYDNS_INVALID.
      */
     public function get_primaryDNS()
-    {   $json_val = $this->_getAttr("primaryDNS");
-        return (is_null($json_val) ? Y_PRIMARYDNS_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PRIMARYDNS_INVALID;
+            }
+        }
+        return $this->_primaryDNS;
     }
 
     /**
@@ -334,16 +417,21 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_SECONDARYDNS_INVALID.
      */
     public function get_secondaryDNS()
-    {   $json_val = $this->_getAttr("secondaryDNS");
-        return (is_null($json_val) ? Y_SECONDARYDNS_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SECONDARYDNS_INVALID;
+            }
+        }
+        return $this->_secondaryDNS;
     }
 
     /**
-     * Changes the IP address of the secondarz name server to be used by the module.
+     * Changes the IP address of the secondary name server to be used by the module.
      * When using DHCP, if a value is specified, it overrides the value received from the DHCP server.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      * 
-     * @param newval : a string corresponding to the IP address of the secondarz name server to be used by the module
+     * @param newval : a string corresponding to the IP address of the secondary name server to be used by the module
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -365,8 +453,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_USERPASSWORD_INVALID.
      */
     public function get_userPassword()
-    {   $json_val = $this->_getAttr("userPassword");
-        return (is_null($json_val) ? Y_USERPASSWORD_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_USERPASSWORD_INVALID;
+            }
+        }
+        return $this->_userPassword;
     }
 
     /**
@@ -398,8 +491,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_ADMINPASSWORD_INVALID.
      */
     public function get_adminPassword()
-    {   $json_val = $this->_getAttr("adminPassword");
-        return (is_null($json_val) ? Y_ADMINPASSWORD_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ADMINPASSWORD_INVALID;
+            }
+        }
+        return $this->_adminPassword;
     }
 
     /**
@@ -432,8 +530,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_DISCOVERABLE_INVALID.
      */
     public function get_discoverable()
-    {   $json_val = $this->_getAttr("discoverable");
-        return (is_null($json_val) ? Y_DISCOVERABLE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DISCOVERABLE_INVALID;
+            }
+        }
+        return $this->_discoverable;
     }
 
     /**
@@ -466,13 +569,18 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_WWWWATCHDOGDELAY_INVALID.
      */
     public function get_wwwWatchdogDelay()
-    {   $json_val = $this->_getAttr("wwwWatchdogDelay");
-        return (is_null($json_val) ? Y_WWWWATCHDOGDELAY_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_WWWWATCHDOGDELAY_INVALID;
+            }
+        }
+        return $this->_wwwWatchdogDelay;
     }
 
     /**
      * Changes the allowed downtime of the WWW link (in seconds) before triggering an automated
-     * reboot to try to recover Internet connectivity. A zero value disable automated reboot
+     * reboot to try to recover Internet connectivity. A zero value disables automated reboot
      * in case of Internet connectivity loss. The smallest valid non-zero timeout is
      * 90 seconds.
      * 
@@ -498,8 +606,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKURL_INVALID.
      */
     public function get_callbackUrl()
-    {   $json_val = $this->_getAttr("callbackUrl");
-        return (is_null($json_val) ? Y_CALLBACKURL_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKURL_INVALID;
+            }
+        }
+        return $this->_callbackUrl;
     }
 
     /**
@@ -527,8 +640,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKMETHOD_INVALID.
      */
     public function get_callbackMethod()
-    {   $json_val = $this->_getAttr("callbackMethod");
-        return (is_null($json_val) ? Y_CALLBACKMETHOD_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKMETHOD_INVALID;
+            }
+        }
+        return $this->_callbackMethod;
     }
 
     /**
@@ -557,8 +675,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKENCODING_INVALID.
      */
     public function get_callbackEncoding()
-    {   $json_val = $this->_getAttr("callbackEncoding");
-        return (is_null($json_val) ? Y_CALLBACKENCODING_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKENCODING_INVALID;
+            }
+        }
+        return $this->_callbackEncoding;
     }
 
     /**
@@ -588,8 +711,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKCREDENTIALS_INVALID.
      */
     public function get_callbackCredentials()
-    {   $json_val = $this->_getAttr("callbackCredentials");
-        return (is_null($json_val) ? Y_CALLBACKCREDENTIALS_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKCREDENTIALS_INVALID;
+            }
+        }
+        return $this->_callbackCredentials;
     }
 
     /**
@@ -628,9 +756,9 @@ class YNetwork extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function callbackLogin($str_username,$str_password)
+    public function callbackLogin($username,$password)
     {
-        $rest_val = sprintf("%s:%s", $str_username, $str_password);
+        $rest_val = sprintf("%s:%s", $username, $password);
         return $this->_setAttr("callbackCredentials",$rest_val);
     }
 
@@ -642,8 +770,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKMINDELAY_INVALID.
      */
     public function get_callbackMinDelay()
-    {   $json_val = $this->_getAttr("callbackMinDelay");
-        return (is_null($json_val) ? Y_CALLBACKMINDELAY_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKMINDELAY_INVALID;
+            }
+        }
+        return $this->_callbackMinDelay;
     }
 
     /**
@@ -670,8 +803,13 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_CALLBACKMAXDELAY_INVALID.
      */
     public function get_callbackMaxDelay()
-    {   $json_val = $this->_getAttr("callbackMaxDelay");
-        return (is_null($json_val) ? Y_CALLBACKMAXDELAY_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKMAXDELAY_INVALID;
+            }
+        }
+        return $this->_callbackMaxDelay;
     }
 
     /**
@@ -701,35 +839,65 @@ class YNetwork extends YFunction
      * On failure, throws an exception or returns Y_POECURRENT_INVALID.
      */
     public function get_poeCurrent()
-    {   $json_val = $this->_getAttr("poeCurrent");
-        return (is_null($json_val) ? Y_POECURRENT_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POECURRENT_INVALID;
+            }
+        }
+        return $this->_poeCurrent;
     }
 
     /**
-     * Pings str_host to test the network connectivity. Sends four requests ICMP ECHO_REQUEST from the
+     * Retrieves a network interface for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the network interface is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YNetwork.isOnline() to test if the network interface is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a network interface by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the network interface
+     * 
+     * @return a YNetwork object allowing you to drive the network interface.
+     */
+    public static function FindNetwork($func)
+    {
+        // $obj                    is a YNetwork;
+        $obj = YFunction::_FindFromCache('Network', $func);
+        if ($obj == null) {
+            $obj = new YNetwork($func);
+            YFunction::_AddToCache('Network', $func, $obj);
+        }
+        return $obj;
+    }
+
+    /**
+     * Pings str_host to test the network connectivity. Sends four ICMP ECHO_REQUEST requests from the
      * module to the target str_host. This method returns a string with the result of the
-     * 4 ICMP ECHO_REQUEST result.
+     * 4 ICMP ECHO_REQUEST requests.
      * 
      * @param host : the hostname or the IP address of the target
      * 
      * @return a string with the result of the ping.
      */
-    public function ping($str_host)
+    public function ping($host)
     {
-        // $content is a bin;
-        $content = $this->_download(sprintf('ping.txt?host=%s',$str_host));
+        // $content                is a bin;
+        // may throw an exception
+        $content = $this->_download(sprintf('ping.txt?host=%s',$host));
         return $content;
-        
     }
-
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
 
     public function readiness()
     { return get_readiness(); }
@@ -841,35 +1009,6 @@ class YNetwork extends YFunction
     }
 
     /**
-     * Retrieves a network interface for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the network interface is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YNetwork.isOnline() to test if the network interface is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a network interface by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the network interface
-     * 
-     * @return a YNetwork object allowing you to drive the network interface.
-     */
-    public static function FindNetwork($str_func)
-    {   $obj_func = YAPI::getFunction('Network', $str_func);
-        if($obj_func) return $obj_func;
-        return new YNetwork($str_func);
-    }
-
-    /**
      * Starts the enumeration of network interfaces currently accessible.
      * Use the method YNetwork.nextNetwork() to iterate on
      * next network interfaces.
@@ -886,12 +1025,6 @@ class YNetwork extends YFunction
 
     //--- (end of YNetwork implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YNetwork constructor)
-        parent::__construct('Network', $str_func);
-        //--- (end of YNetwork constructor)
-    }
 };
 
 //--- (Network functions)
@@ -919,9 +1052,9 @@ class YNetwork extends YFunction
  * 
  * @return a YNetwork object allowing you to drive the network interface.
  */
-function yFindNetwork($str_func)
+function yFindNetwork($func)
 {
-    return YNetwork::FindNetwork($str_func);
+    return YNetwork::FindNetwork($func);
 }
 
 /**

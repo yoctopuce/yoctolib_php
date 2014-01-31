@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_relay.php 14078 2013-12-19 02:12:19Z mvuilleu $
  *
- * Implements yFindRelay(), the high-level API for Relay functions
+ * Implements YRelay, the high-level API for Relay functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,32 +38,27 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YRelay return codes)
+//--- (end of YRelay return codes)
 //--- (YRelay definitions)
-if(!defined('Y_STATE_A')) define('Y_STATE_A', 0);
-if(!defined('Y_STATE_B')) define('Y_STATE_B', 1);
-if(!defined('Y_STATE_INVALID')) define('Y_STATE_INVALID', -1);
-if(!defined('Y_OUTPUT_OFF')) define('Y_OUTPUT_OFF', 0);
-if(!defined('Y_OUTPUT_ON')) define('Y_OUTPUT_ON', 1);
-if(!defined('Y_OUTPUT_INVALID')) define('Y_OUTPUT_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_PULSETIMER_INVALID')) define('Y_PULSETIMER_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_DELAYEDPULSETIMER_INVALID')) define('Y_DELAYEDPULSETIMER_INVALID', null);
-if(!defined('Y_COUNTDOWN_INVALID')) define('Y_COUNTDOWN_INVALID', Y_INVALID_UNSIGNED);
-
-if(!defined('CLASS_YDELAYEDPULSE')) {
-    define('CLASS_YDELAYEDPULSE',true);
-    class YDelayedPulse extends YAggregate {
-        public $target = 0;
-        public $ms = 0;
-        public $moving = 0;
-    };
-}
+if(!defined('Y_STATE_A'))                    define('Y_STATE_A',                   0);
+if(!defined('Y_STATE_B'))                    define('Y_STATE_B',                   1);
+if(!defined('Y_STATE_INVALID'))              define('Y_STATE_INVALID',             -1);
+if(!defined('Y_STATEATPOWERON_UNCHANGED'))   define('Y_STATEATPOWERON_UNCHANGED',  0);
+if(!defined('Y_STATEATPOWERON_A'))           define('Y_STATEATPOWERON_A',          1);
+if(!defined('Y_STATEATPOWERON_B'))           define('Y_STATEATPOWERON_B',          2);
+if(!defined('Y_STATEATPOWERON_INVALID'))     define('Y_STATEATPOWERON_INVALID',    -1);
+if(!defined('Y_OUTPUT_OFF'))                 define('Y_OUTPUT_OFF',                0);
+if(!defined('Y_OUTPUT_ON'))                  define('Y_OUTPUT_ON',                 1);
+if(!defined('Y_OUTPUT_INVALID'))             define('Y_OUTPUT_INVALID',            -1);
+if(!defined('Y_MAXTIMEONSTATEA_INVALID'))    define('Y_MAXTIMEONSTATEA_INVALID',   YAPI_INVALID_LONG);
+if(!defined('Y_MAXTIMEONSTATEB_INVALID'))    define('Y_MAXTIMEONSTATEB_INVALID',   YAPI_INVALID_LONG);
+if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',        YAPI_INVALID_LONG);
+if(!defined('Y_DELAYEDPULSETIMER_INVALID'))  define('Y_DELAYEDPULSETIMER_INVALID', null);
+if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',         YAPI_INVALID_LONG);
 //--- (end of YRelay definitions)
 
+//--- (YRelay declaration)
 /**
  * YRelay Class: Relay function interface
  * 
@@ -77,58 +72,74 @@ if(!defined('CLASS_YDELAYEDPULSE')) {
  */
 class YRelay extends YFunction
 {
-    //--- (YRelay implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const STATE_A = 0;
-    const STATE_B = 1;
-    const STATE_INVALID = -1;
-    const OUTPUT_OFF = 0;
-    const OUTPUT_ON = 1;
-    const OUTPUT_INVALID = -1;
-    const PULSETIMER_INVALID = Y_INVALID_UNSIGNED;
-    const COUNTDOWN_INVALID = Y_INVALID_UNSIGNED;
+    const STATE_A                        = 0;
+    const STATE_B                        = 1;
+    const STATE_INVALID                  = -1;
+    const STATEATPOWERON_UNCHANGED       = 0;
+    const STATEATPOWERON_A               = 1;
+    const STATEATPOWERON_B               = 2;
+    const STATEATPOWERON_INVALID         = -1;
+    const MAXTIMEONSTATEA_INVALID        = YAPI_INVALID_LONG;
+    const MAXTIMEONSTATEB_INVALID        = YAPI_INVALID_LONG;
+    const OUTPUT_OFF                     = 0;
+    const OUTPUT_ON                      = 1;
+    const OUTPUT_INVALID                 = -1;
+    const PULSETIMER_INVALID             = YAPI_INVALID_LONG;
+    const DELAYEDPULSETIMER_INVALID      = null;
+    const COUNTDOWN_INVALID              = YAPI_INVALID_LONG;
+    //--- (end of YRelay declaration)
 
-    /**
-     * Returns the logical name of the relay.
-     * 
-     * @return a string corresponding to the logical name of the relay
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YRelay attributes)
+    protected $_state                    = Y_STATE_INVALID;              // Toggle
+    protected $_stateAtPowerOn           = Y_STATEATPOWERON_INVALID;     // ToggleAtPowerOn
+    protected $_maxTimeOnStateA          = Y_MAXTIMEONSTATEA_INVALID;    // Time
+    protected $_maxTimeOnStateB          = Y_MAXTIMEONSTATEB_INVALID;    // Time
+    protected $_output                   = Y_OUTPUT_INVALID;             // OnOff
+    protected $_pulseTimer               = Y_PULSETIMER_INVALID;         // Time
+    protected $_delayedPulseTimer        = Y_DELAYEDPULSETIMER_INVALID;  // DelayedPulse
+    protected $_countdown                = Y_COUNTDOWN_INVALID;          // Time
+    //--- (end of YRelay attributes)
 
-    /**
-     * Changes the logical name of the relay. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the relay
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YRelay constructor)
+        parent::__construct($str_func);
+        $this->_className = 'Relay';
+
+        //--- (end of YRelay constructor)
     }
 
-    /**
-     * Returns the current value of the relay (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the relay (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YRelay implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'state':
+            $this->_state = intval($val);
+            return 1;
+        case 'stateAtPowerOn':
+            $this->_stateAtPowerOn = intval($val);
+            return 1;
+        case 'maxTimeOnStateA':
+            $this->_maxTimeOnStateA = intval($val);
+            return 1;
+        case 'maxTimeOnStateB':
+            $this->_maxTimeOnStateB = intval($val);
+            return 1;
+        case 'output':
+            $this->_output = intval($val);
+            return 1;
+        case 'pulseTimer':
+            $this->_pulseTimer = intval($val);
+            return 1;
+        case 'delayedPulseTimer':
+            $this->_delayedPulseTimer = $val;
+            return 1;
+        case 'countdown':
+            $this->_countdown = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -140,8 +151,13 @@ class YRelay extends YFunction
      * On failure, throws an exception or returns Y_STATE_INVALID.
      */
     public function get_state()
-    {   $json_val = $this->_getAttr("state");
-        return (is_null($json_val) ? Y_STATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_STATE_INVALID;
+            }
+        }
+        return $this->_state;
     }
 
     /**
@@ -161,6 +177,111 @@ class YRelay extends YFunction
     }
 
     /**
+     * Returns the state of the relays at device startup (A for the idle position, B for the active
+     * position, UNCHANGED for no change).
+     * 
+     * @return a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and Y_STATEATPOWERON_B
+     * corresponding to the state of the relays at device startup (A for the idle position, B for the
+     * active position, UNCHANGED for no change)
+     * 
+     * On failure, throws an exception or returns Y_STATEATPOWERON_INVALID.
+     */
+    public function get_stateAtPowerOn()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_STATEATPOWERON_INVALID;
+            }
+        }
+        return $this->_stateAtPowerOn;
+    }
+
+    /**
+     * Preset the state of the relays at device startup (A for the idle position,
+     * B for the active position, UNCHANGED for no modification). Remember to call the matching module saveToFlash()
+     * method, otherwise this call will have no effect.
+     * 
+     * @param newval : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and Y_STATEATPOWERON_B
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_stateAtPowerOn($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("stateAtPowerOn",$rest_val);
+    }
+
+    /**
+     * Retourne the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state A before automatically
+     * switching back in to B state. Zero means no maximum time.
+     * 
+     * @return an integer
+     * 
+     * On failure, throws an exception or returns Y_MAXTIMEONSTATEA_INVALID.
+     */
+    public function get_maxTimeOnStateA()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MAXTIMEONSTATEA_INVALID;
+            }
+        }
+        return $this->_maxTimeOnStateA;
+    }
+
+    /**
+     * Sets the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state A before automatically
+     * switching back in to B state. Use zero for no maximum time.
+     * 
+     * @param newval : an integer
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_maxTimeOnStateA($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("maxTimeOnStateA",$rest_val);
+    }
+
+    /**
+     * Retourne the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B before automatically
+     * switching back in to A state. Zero means no maximum time.
+     * 
+     * @return an integer
+     * 
+     * On failure, throws an exception or returns Y_MAXTIMEONSTATEB_INVALID.
+     */
+    public function get_maxTimeOnStateB()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MAXTIMEONSTATEB_INVALID;
+            }
+        }
+        return $this->_maxTimeOnStateB;
+    }
+
+    /**
+     * Sets the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B before automatically
+     * switching back in to A state. Use zero for no maximum time.
+     * 
+     * @param newval : an integer
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_maxTimeOnStateB($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("maxTimeOnStateB",$rest_val);
+    }
+
+    /**
      * Returns the output state of the relays, when used as a simple switch (single throw).
      * 
      * @return either Y_OUTPUT_OFF or Y_OUTPUT_ON, according to the output state of the relays, when used
@@ -169,8 +290,13 @@ class YRelay extends YFunction
      * On failure, throws an exception or returns Y_OUTPUT_INVALID.
      */
     public function get_output()
-    {   $json_val = $this->_getAttr("output");
-        return (is_null($json_val) ? Y_OUTPUT_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_OUTPUT_INVALID;
+            }
+        }
+        return $this->_output;
     }
 
     /**
@@ -200,8 +326,13 @@ class YRelay extends YFunction
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
-    {   $json_val = $this->_getAttr("pulseTimer");
-        return (is_null($json_val) ? Y_PULSETIMER_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PULSETIMER_INVALID;
+            }
+        }
+        return $this->_pulseTimer;
     }
 
     public function set_pulseTimer($newval)
@@ -220,15 +351,20 @@ class YRelay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function pulse($int_ms_duration)
+    public function pulse($ms_duration)
     {
-        $rest_val = strval($int_ms_duration);
+        $rest_val = strval($ms_duration);
         return $this->_setAttr("pulseTimer",$rest_val);
     }
 
     public function get_delayedPulseTimer()
-    {   $json_val = $this->_getAttr("delayedPulseTimer");
-        return (is_null($json_val) ? Y_DELAYEDPULSETIMER_INVALID : new YDelayedPulse($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DELAYEDPULSETIMER_INVALID;
+            }
+        }
+        return $this->_delayedPulseTimer;
     }
 
     public function set_delayedPulseTimer($newval)
@@ -247,9 +383,9 @@ class YRelay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function delayedPulse($int_ms_delay,$int_ms_duration)
+    public function delayedPulse($ms_delay,$ms_duration)
     {
-        $rest_val = strval($int_ms_delay).":".strval($int_ms_duration);
+        $rest_val = strval($ms_delay).":".strval($ms_duration);
         return $this->_setAttr("delayedPulseTimer",$rest_val);
     }
 
@@ -263,24 +399,72 @@ class YRelay extends YFunction
      * On failure, throws an exception or returns Y_COUNTDOWN_INVALID.
      */
     public function get_countdown()
-    {   $json_val = $this->_getAttr("countdown");
-        return (is_null($json_val) ? Y_COUNTDOWN_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_COUNTDOWN_INVALID;
+            }
+        }
+        return $this->_countdown;
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a relay for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the relay is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YRelay.isOnline() to test if the relay is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a relay by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the relay
+     * 
+     * @return a YRelay object allowing you to drive the relay.
+     */
+    public static function FindRelay($func)
+    {
+        // $obj                    is a YRelay;
+        $obj = YFunction::_FindFromCache('Relay', $func);
+        if ($obj == null) {
+            $obj = new YRelay($func);
+            YFunction::_AddToCache('Relay', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function state()
     { return get_state(); }
 
     public function setState($newval)
     { return set_state($newval); }
+
+    public function stateAtPowerOn()
+    { return get_stateAtPowerOn(); }
+
+    public function setStateAtPowerOn($newval)
+    { return set_stateAtPowerOn($newval); }
+
+    public function maxTimeOnStateA()
+    { return get_maxTimeOnStateA(); }
+
+    public function setMaxTimeOnStateA($newval)
+    { return set_maxTimeOnStateA($newval); }
+
+    public function maxTimeOnStateB()
+    { return get_maxTimeOnStateB(); }
+
+    public function setMaxTimeOnStateB($newval)
+    { return set_maxTimeOnStateB($newval); }
 
     public function output()
     { return get_output(); }
@@ -317,35 +501,6 @@ class YRelay extends YFunction
     }
 
     /**
-     * Retrieves a relay for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the relay is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YRelay.isOnline() to test if the relay is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a relay by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the relay
-     * 
-     * @return a YRelay object allowing you to drive the relay.
-     */
-    public static function FindRelay($str_func)
-    {   $obj_func = YAPI::getFunction('Relay', $str_func);
-        if($obj_func) return $obj_func;
-        return new YRelay($str_func);
-    }
-
-    /**
      * Starts the enumeration of relays currently accessible.
      * Use the method YRelay.nextRelay() to iterate on
      * next relays.
@@ -362,12 +517,6 @@ class YRelay extends YFunction
 
     //--- (end of YRelay implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YRelay constructor)
-        parent::__construct('Relay', $str_func);
-        //--- (end of YRelay constructor)
-    }
 };
 
 //--- (Relay functions)
@@ -395,9 +544,9 @@ class YRelay extends YFunction
  * 
  * @return a YRelay object allowing you to drive the relay.
  */
-function yFindRelay($str_func)
+function yFindRelay($func)
 {
-    return YRelay::FindRelay($str_func);
+    return YRelay::FindRelay($func);
 }
 
 /**

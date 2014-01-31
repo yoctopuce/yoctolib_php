@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupschedule.php 12469 2013-08-22 10:11:58Z seb $
+ * $Id: yocto_wakeupschedule.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindWakeUpSchedule(), the high-level API for WakeUpSchedule functions
+ * Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,99 +38,107 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YWakeUpSchedule return codes)
+//--- (end of YWakeUpSchedule return codes)
 //--- (YWakeUpSchedule definitions)
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_MINUTESA_INVALID')) define('Y_MINUTESA_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_MINUTESB_INVALID')) define('Y_MINUTESB_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_HOURS_INVALID')) define('Y_HOURS_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_WEEKDAYS_INVALID')) define('Y_WEEKDAYS_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_MONTHDAYS_INVALID')) define('Y_MONTHDAYS_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_MONTHS_INVALID')) define('Y_MONTHS_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_NEXTOCCURENCE_INVALID')) define('Y_NEXTOCCURENCE_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_MINUTESA_INVALID'))           define('Y_MINUTESA_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_MINUTESB_INVALID'))           define('Y_MINUTESB_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_HOURS_INVALID'))              define('Y_HOURS_INVALID',             YAPI_INVALID_UINT);
+if(!defined('Y_WEEKDAYS_INVALID'))           define('Y_WEEKDAYS_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_MONTHDAYS_INVALID'))          define('Y_MONTHDAYS_INVALID',         YAPI_INVALID_UINT);
+if(!defined('Y_MONTHS_INVALID'))             define('Y_MONTHS_INVALID',            YAPI_INVALID_UINT);
+if(!defined('Y_NEXTOCCURENCE_INVALID'))      define('Y_NEXTOCCURENCE_INVALID',     YAPI_INVALID_LONG);
 //--- (end of YWakeUpSchedule definitions)
 
+//--- (YWakeUpSchedule declaration)
 /**
  * YWakeUpSchedule Class: WakeUpSchedule function interface
  * 
- * The WakeUpSchedule function implements a wake-up condition. The wake-up time is
- * specified as a set of months and/or days and/or hours and/or minutes where the
- * wake-up should happen.
+ * The WakeUpSchedule function implements a wake up condition. The wake up time is
+ * specified as a set of months and/or days and/or hours and/or minutes when the
+ * wake up should happen.
  */
 class YWakeUpSchedule extends YFunction
 {
-    //--- (YWakeUpSchedule implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const MINUTESA_INVALID = Y_INVALID_UNSIGNED;
-    const MINUTESB_INVALID = Y_INVALID_UNSIGNED;
-    const HOURS_INVALID = Y_INVALID_UNSIGNED;
-    const WEEKDAYS_INVALID = Y_INVALID_UNSIGNED;
-    const MONTHDAYS_INVALID = Y_INVALID_UNSIGNED;
-    const MONTHS_INVALID = Y_INVALID_UNSIGNED;
-    const NEXTOCCURENCE_INVALID = Y_INVALID_UNSIGNED;
+    const MINUTESA_INVALID               = YAPI_INVALID_UINT;
+    const MINUTESB_INVALID               = YAPI_INVALID_UINT;
+    const HOURS_INVALID                  = YAPI_INVALID_UINT;
+    const WEEKDAYS_INVALID               = YAPI_INVALID_UINT;
+    const MONTHDAYS_INVALID              = YAPI_INVALID_UINT;
+    const MONTHS_INVALID                 = YAPI_INVALID_UINT;
+    const NEXTOCCURENCE_INVALID          = YAPI_INVALID_LONG;
+    //--- (end of YWakeUpSchedule declaration)
 
-    /**
-     * Returns the logical name of the wake-up schedule.
-     * 
-     * @return a string corresponding to the logical name of the wake-up schedule
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YWakeUpSchedule attributes)
+    protected $_minutesA                 = Y_MINUTESA_INVALID;           // MinOfHalfHourBits
+    protected $_minutesB                 = Y_MINUTESB_INVALID;           // MinOfHalfHourBits
+    protected $_hours                    = Y_HOURS_INVALID;              // HoursOfDayBits
+    protected $_weekDays                 = Y_WEEKDAYS_INVALID;           // DaysOfWeekBits
+    protected $_monthDays                = Y_MONTHDAYS_INVALID;          // DaysOfMonthBits
+    protected $_months                   = Y_MONTHS_INVALID;             // MonthsOfYearBits
+    protected $_nextOccurence            = Y_NEXTOCCURENCE_INVALID;      // UTCTime
+    //--- (end of YWakeUpSchedule attributes)
 
-    /**
-     * Changes the logical name of the wake-up schedule. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the wake-up schedule
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YWakeUpSchedule constructor)
+        parent::__construct($str_func);
+        $this->_className = 'WakeUpSchedule';
+
+        //--- (end of YWakeUpSchedule constructor)
+    }
+
+    //--- (YWakeUpSchedule implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'minutesA':
+            $this->_minutesA = intval($val);
+            return 1;
+        case 'minutesB':
+            $this->_minutesB = intval($val);
+            return 1;
+        case 'hours':
+            $this->_hours = intval($val);
+            return 1;
+        case 'weekDays':
+            $this->_weekDays = intval($val);
+            return 1;
+        case 'monthDays':
+            $this->_monthDays = intval($val);
+            return 1;
+        case 'months':
+            $this->_months = intval($val);
+            return 1;
+        case 'nextOccurence':
+            $this->_nextOccurence = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
-     * Returns the current value of the wake-up schedule (no more than 6 characters).
+     * Returns the minutes in the 00-29 interval of each hour scheduled for wake up.
      * 
-     * @return a string corresponding to the current value of the wake-up schedule (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
-    }
-
-    /**
-     * Returns the minutes 00-29 of each hour scheduled for wake-up.
-     * 
-     * @return an integer corresponding to the minutes 00-29 of each hour scheduled for wake-up
+     * @return an integer corresponding to the minutes in the 00-29 interval of each hour scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_MINUTESA_INVALID.
      */
     public function get_minutesA()
-    {   $json_val = $this->_getAttr("minutesA");
-        return (is_null($json_val) ? Y_MINUTESA_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MINUTESA_INVALID;
+            }
+        }
+        return $this->_minutesA;
     }
 
     /**
-     * Changes the minutes 00-29 where a wake up must take place.
+     * Changes the minutes in the 00-29 interval when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the minutes 00-29 where a wake up must take place
+     * @param newval : an integer corresponding to the minutes in the 00-29 interval when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -143,21 +151,26 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the minutes 30-59 of each hour scheduled for wake-up.
+     * Returns the minutes in the 30-59 intervalof each hour scheduled for wake up.
      * 
-     * @return an integer corresponding to the minutes 30-59 of each hour scheduled for wake-up
+     * @return an integer corresponding to the minutes in the 30-59 intervalof each hour scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_MINUTESB_INVALID.
      */
     public function get_minutesB()
-    {   $json_val = $this->_getAttr("minutesB");
-        return (is_null($json_val) ? Y_MINUTESB_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MINUTESB_INVALID;
+            }
+        }
+        return $this->_minutesB;
     }
 
     /**
-     * Changes the minutes 30-59 where a wake up must take place.
+     * Changes the minutes in the 30-59 interval when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the minutes 30-59 where a wake up must take place
+     * @param newval : an integer corresponding to the minutes in the 30-59 interval when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -170,21 +183,26 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the hours  scheduled for wake-up.
+     * Returns the hours scheduled for wake up.
      * 
-     * @return an integer corresponding to the hours  scheduled for wake-up
+     * @return an integer corresponding to the hours scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_HOURS_INVALID.
      */
     public function get_hours()
-    {   $json_val = $this->_getAttr("hours");
-        return (is_null($json_val) ? Y_HOURS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_HOURS_INVALID;
+            }
+        }
+        return $this->_hours;
     }
 
     /**
-     * Changes the hours where a wake up must take place.
+     * Changes the hours when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the hours where a wake up must take place
+     * @param newval : an integer corresponding to the hours when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -197,21 +215,26 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the days of week scheduled for wake-up.
+     * Returns the days of the week scheduled for wake up.
      * 
-     * @return an integer corresponding to the days of week scheduled for wake-up
+     * @return an integer corresponding to the days of the week scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_WEEKDAYS_INVALID.
      */
     public function get_weekDays()
-    {   $json_val = $this->_getAttr("weekDays");
-        return (is_null($json_val) ? Y_WEEKDAYS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_WEEKDAYS_INVALID;
+            }
+        }
+        return $this->_weekDays;
     }
 
     /**
-     * Changes the days of the week where a wake up must take place.
+     * Changes the days of the week when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the days of the week where a wake up must take place
+     * @param newval : an integer corresponding to the days of the week when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -224,21 +247,26 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the days of week scheduled for wake-up.
+     * Returns the days of the month scheduled for wake up.
      * 
-     * @return an integer corresponding to the days of week scheduled for wake-up
+     * @return an integer corresponding to the days of the month scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_MONTHDAYS_INVALID.
      */
     public function get_monthDays()
-    {   $json_val = $this->_getAttr("monthDays");
-        return (is_null($json_val) ? Y_MONTHDAYS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MONTHDAYS_INVALID;
+            }
+        }
+        return $this->_monthDays;
     }
 
     /**
-     * Changes the days of the week where a wake up must take place.
+     * Changes the days of the month when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the days of the week where a wake up must take place
+     * @param newval : an integer corresponding to the days of the month when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -251,21 +279,26 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the days of week scheduled for wake-up.
+     * Returns the months scheduled for wake up.
      * 
-     * @return an integer corresponding to the days of week scheduled for wake-up
+     * @return an integer corresponding to the months scheduled for wake up
      * 
      * On failure, throws an exception or returns Y_MONTHS_INVALID.
      */
     public function get_months()
-    {   $json_val = $this->_getAttr("months");
-        return (is_null($json_val) ? Y_MONTHS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MONTHS_INVALID;
+            }
+        }
+        return $this->_months;
     }
 
     /**
-     * Changes the days of the week where a wake up must take place.
+     * Changes the months when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the days of the week where a wake up must take place
+     * @param newval : an integer corresponding to the months when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -278,55 +311,84 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Returns the  nextwake up date/time (seconds) wake up occurence
+     * Returns the date/time (seconds) of the next wake up occurence
      * 
-     * @return an integer corresponding to the  nextwake up date/time (seconds) wake up occurence
+     * @return an integer corresponding to the date/time (seconds) of the next wake up occurence
      * 
      * On failure, throws an exception or returns Y_NEXTOCCURENCE_INVALID.
      */
     public function get_nextOccurence()
-    {   $json_val = $this->_getAttr("nextOccurence");
-        return (is_null($json_val) ? Y_NEXTOCCURENCE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_NEXTOCCURENCE_INVALID;
+            }
+        }
+        return $this->_nextOccurence;
     }
 
     /**
-     * Returns every the minutes of each hour scheduled for wake-up.
+     * Retrieves a wake up schedule for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the wake up schedule is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YWakeUpSchedule.isOnline() to test if the wake up schedule is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a wake up schedule by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the wake up schedule
+     * 
+     * @return a YWakeUpSchedule object allowing you to drive the wake up schedule.
+     */
+    public static function FindWakeUpSchedule($func)
+    {
+        // $obj                    is a YWakeUpSchedule;
+        $obj = YFunction::_FindFromCache('WakeUpSchedule', $func);
+        if ($obj == null) {
+            $obj = new YWakeUpSchedule($func);
+            YFunction::_AddToCache('WakeUpSchedule', $func, $obj);
+        }
+        return $obj;
+    }
+
+    /**
+     * Returns all the minutes of each hour that are scheduled for wake up.
      */
     public function get_minutes()
     {
-        // $res is a long;
+        // $res                    is a long;
+        // may throw an exception
         $res = $this->get_minutesB();
-        $res = $res << 30;
+        $res = (($res) << (30));
         $res = $res + $this->get_minutesA();
         return $res;
-        
     }
 
     /**
      * Changes all the minutes where a wake up must take place.
      * 
-     * @param bitmap : Minutes 00-59 of each hour scheduled for wake-up.,
+     * @param bitmap : Minutes 00-59 of each hour scheduled for wake up.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_minutes($long_bitmap)
+    public function set_minutes($bitmap)
     {
-        $this->set_minutesA($long_bitmap & 0x3fffffff);
-        $long_bitmap = $long_bitmap >> 30;
-        return $this->set_minutesB($long_bitmap & 0x3fffffff);
-        
+        $this->set_minutesA((($bitmap) & (0x3fffffff)));
+        $bitmap = (($bitmap) >> (30));
+        return $this->set_minutesB((($bitmap) & (0x3fffffff)));
     }
-
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
 
     public function minutesA()
     { return get_minutesA(); }
@@ -368,11 +430,11 @@ class YWakeUpSchedule extends YFunction
     { return get_nextOccurence(); }
 
     /**
-     * Continues the enumeration of wake-up schedules started using yFirstWakeUpSchedule().
+     * Continues the enumeration of wake up schedules started using yFirstWakeUpSchedule().
      * 
      * @return a pointer to a YWakeUpSchedule object, corresponding to
-     *         a wake-up schedule currently online, or a null pointer
-     *         if there are no more wake-up schedules to enumerate.
+     *         a wake up schedule currently online, or a null pointer
+     *         if there are no more wake up schedules to enumerate.
      */
     public function nextWakeUpSchedule()
     {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
@@ -381,41 +443,12 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
-     * Retrieves a wake-up schedule for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the wake-up schedule is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWakeUpSchedule.isOnline() to test if the wake-up schedule is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a wake-up schedule by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the wake-up schedule
-     * 
-     * @return a YWakeUpSchedule object allowing you to drive the wake-up schedule.
-     */
-    public static function FindWakeUpSchedule($str_func)
-    {   $obj_func = YAPI::getFunction('WakeUpSchedule', $str_func);
-        if($obj_func) return $obj_func;
-        return new YWakeUpSchedule($str_func);
-    }
-
-    /**
-     * Starts the enumeration of wake-up schedules currently accessible.
+     * Starts the enumeration of wake up schedules currently accessible.
      * Use the method YWakeUpSchedule.nextWakeUpSchedule() to iterate on
-     * next wake-up schedules.
+     * next wake up schedules.
      * 
      * @return a pointer to a YWakeUpSchedule object, corresponding to
-     *         the first wake-up schedule currently online, or a null pointer
+     *         the first wake up schedule currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstWakeUpSchedule()
@@ -426,18 +459,12 @@ class YWakeUpSchedule extends YFunction
 
     //--- (end of YWakeUpSchedule implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YWakeUpSchedule constructor)
-        parent::__construct('WakeUpSchedule', $str_func);
-        //--- (end of YWakeUpSchedule constructor)
-    }
 };
 
 //--- (WakeUpSchedule functions)
 
 /**
- * Retrieves a wake-up schedule for a given identifier.
+ * Retrieves a wake up schedule for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -447,30 +474,30 @@ class YWakeUpSchedule extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  * 
- * This function does not require that the wake-up schedule is online at the time
+ * This function does not require that the wake up schedule is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YWakeUpSchedule.isOnline() to test if the wake-up schedule is
+ * Use the method YWakeUpSchedule.isOnline() to test if the wake up schedule is
  * indeed online at a given time. In case of ambiguity when looking for
- * a wake-up schedule by logical name, no error is notified: the first instance
+ * a wake up schedule by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  * 
- * @param func : a string that uniquely characterizes the wake-up schedule
+ * @param func : a string that uniquely characterizes the wake up schedule
  * 
- * @return a YWakeUpSchedule object allowing you to drive the wake-up schedule.
+ * @return a YWakeUpSchedule object allowing you to drive the wake up schedule.
  */
-function yFindWakeUpSchedule($str_func)
+function yFindWakeUpSchedule($func)
 {
-    return YWakeUpSchedule::FindWakeUpSchedule($str_func);
+    return YWakeUpSchedule::FindWakeUpSchedule($func);
 }
 
 /**
- * Starts the enumeration of wake-up schedules currently accessible.
+ * Starts the enumeration of wake up schedules currently accessible.
  * Use the method YWakeUpSchedule.nextWakeUpSchedule() to iterate on
- * next wake-up schedules.
+ * next wake up schedules.
  * 
  * @return a pointer to a YWakeUpSchedule object, corresponding to
- *         the first wake-up schedule currently online, or a null pointer
+ *         the first wake up schedule currently online, or a null pointer
  *         if there are none.
  */
 function yFirstWakeUpSchedule()

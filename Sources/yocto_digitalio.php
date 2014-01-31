@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 12323 2013-08-13 15:09:18Z mvuilleu $
+ * $Id: yocto_digitalio.php 14528 2014-01-16 16:19:06Z mvuilleu $
  *
- * Implements yFindDigitalIO(), the high-level API for DigitalIO functions
+ * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,83 +38,91 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YDigitalIO return codes)
+//--- (end of YDigitalIO return codes)
 //--- (YDigitalIO definitions)
-if(!defined('Y_OUTPUTVOLTAGE_USB_5V')) define('Y_OUTPUTVOLTAGE_USB_5V', 0);
-if(!defined('Y_OUTPUTVOLTAGE_USB_3V3')) define('Y_OUTPUTVOLTAGE_USB_3V3', 1);
-if(!defined('Y_OUTPUTVOLTAGE_EXT_V')) define('Y_OUTPUTVOLTAGE_EXT_V', 2);
-if(!defined('Y_OUTPUTVOLTAGE_INVALID')) define('Y_OUTPUTVOLTAGE_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_PORTSTATE_INVALID')) define('Y_PORTSTATE_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_PORTDIRECTION_INVALID')) define('Y_PORTDIRECTION_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_PORTOPENDRAIN_INVALID')) define('Y_PORTOPENDRAIN_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_PORTSIZE_INVALID')) define('Y_PORTSIZE_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_COMMAND_INVALID')) define('Y_COMMAND_INVALID', Y_INVALID_STRING);
+if(!defined('Y_OUTPUTVOLTAGE_USB_5V'))       define('Y_OUTPUTVOLTAGE_USB_5V',      0);
+if(!defined('Y_OUTPUTVOLTAGE_USB_3V'))       define('Y_OUTPUTVOLTAGE_USB_3V',      1);
+if(!defined('Y_OUTPUTVOLTAGE_EXT_V'))        define('Y_OUTPUTVOLTAGE_EXT_V',       2);
+if(!defined('Y_OUTPUTVOLTAGE_INVALID'))      define('Y_OUTPUTVOLTAGE_INVALID',     -1);
+if(!defined('Y_PORTSTATE_INVALID'))          define('Y_PORTSTATE_INVALID',         YAPI_INVALID_UINT);
+if(!defined('Y_PORTDIRECTION_INVALID'))      define('Y_PORTDIRECTION_INVALID',     YAPI_INVALID_UINT);
+if(!defined('Y_PORTOPENDRAIN_INVALID'))      define('Y_PORTOPENDRAIN_INVALID',     YAPI_INVALID_UINT);
+if(!defined('Y_PORTPOLARITY_INVALID'))       define('Y_PORTPOLARITY_INVALID',      YAPI_INVALID_UINT);
+if(!defined('Y_PORTSIZE_INVALID'))           define('Y_PORTSIZE_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YDigitalIO definitions)
 
+//--- (YDigitalIO declaration)
 /**
  * YDigitalIO Class: Digital IO function interface
  * 
- * ....
+ * The Yoctopuce application programming interface allows you to switch the state of each
+ * bit of the I/O port. You can switch all bits at once, or one by one. The library
+ * can also automatically generate short pulses of a determined duration. Electrical behavior
+ * of each I/O can be modified (open drain and reverse polarity).
  */
 class YDigitalIO extends YFunction
 {
-    //--- (YDigitalIO implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const PORTSTATE_INVALID = Y_INVALID_UNSIGNED;
-    const PORTDIRECTION_INVALID = Y_INVALID_UNSIGNED;
-    const PORTOPENDRAIN_INVALID = Y_INVALID_UNSIGNED;
-    const PORTSIZE_INVALID = Y_INVALID_UNSIGNED;
-    const OUTPUTVOLTAGE_USB_5V = 0;
-    const OUTPUTVOLTAGE_USB_3V3 = 1;
-    const OUTPUTVOLTAGE_EXT_V = 2;
-    const OUTPUTVOLTAGE_INVALID = -1;
-    const COMMAND_INVALID = Y_INVALID_STRING;
+    const PORTSTATE_INVALID              = YAPI_INVALID_UINT;
+    const PORTDIRECTION_INVALID          = YAPI_INVALID_UINT;
+    const PORTOPENDRAIN_INVALID          = YAPI_INVALID_UINT;
+    const PORTPOLARITY_INVALID           = YAPI_INVALID_UINT;
+    const PORTSIZE_INVALID               = YAPI_INVALID_UINT;
+    const OUTPUTVOLTAGE_USB_5V           = 0;
+    const OUTPUTVOLTAGE_USB_3V           = 1;
+    const OUTPUTVOLTAGE_EXT_V            = 2;
+    const OUTPUTVOLTAGE_INVALID          = -1;
+    const COMMAND_INVALID                = YAPI_INVALID_STRING;
+    //--- (end of YDigitalIO declaration)
 
-    /**
-     * Returns the logical name of the digital IO port.
-     * 
-     * @return a string corresponding to the logical name of the digital IO port
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YDigitalIO attributes)
+    protected $_portState                = Y_PORTSTATE_INVALID;          // BitByte
+    protected $_portDirection            = Y_PORTDIRECTION_INVALID;      // BitByte
+    protected $_portOpenDrain            = Y_PORTOPENDRAIN_INVALID;      // BitByte
+    protected $_portPolarity             = Y_PORTPOLARITY_INVALID;       // BitByte
+    protected $_portSize                 = Y_PORTSIZE_INVALID;           // UInt31
+    protected $_outputVoltage            = Y_OUTPUTVOLTAGE_INVALID;      // IOVoltage
+    protected $_command                  = Y_COMMAND_INVALID;            // Text
+    //--- (end of YDigitalIO attributes)
 
-    /**
-     * Changes the logical name of the digital IO port. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the digital IO port
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YDigitalIO constructor)
+        parent::__construct($str_func);
+        $this->_className = 'DigitalIO';
+
+        //--- (end of YDigitalIO constructor)
     }
 
-    /**
-     * Returns the current value of the digital IO port (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the digital IO port (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YDigitalIO implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'portState':
+            $this->_portState = intval($val);
+            return 1;
+        case 'portDirection':
+            $this->_portDirection = intval($val);
+            return 1;
+        case 'portOpenDrain':
+            $this->_portOpenDrain = intval($val);
+            return 1;
+        case 'portPolarity':
+            $this->_portPolarity = intval($val);
+            return 1;
+        case 'portSize':
+            $this->_portSize = intval($val);
+            return 1;
+        case 'outputVoltage':
+            $this->_outputVoltage = intval($val);
+            return 1;
+        case 'command':
+            $this->_command = $val;
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -125,8 +133,13 @@ class YDigitalIO extends YFunction
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
     public function get_portState()
-    {   $json_val = $this->_getAttr("portState");
-        return (is_null($json_val) ? Y_PORTSTATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTSTATE_INVALID;
+            }
+        }
+        return $this->_portState;
     }
 
     /**
@@ -154,13 +167,18 @@ class YDigitalIO extends YFunction
      * On failure, throws an exception or returns Y_PORTDIRECTION_INVALID.
      */
     public function get_portDirection()
-    {   $json_val = $this->_getAttr("portDirection");
-        return (is_null($json_val) ? Y_PORTDIRECTION_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTDIRECTION_INVALID;
+            }
+        }
+        return $this->_portDirection;
     }
 
     /**
      * Changes the IO direction of all bits of the port: 0 makes a bit an input, 1 makes it an output.
-     * Remember to call the saveToFlash() method  to make sure the setting will be kept after a reboot.
+     * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
      * 
      * @param newval : an integer corresponding to the IO direction of all bits of the port: 0 makes a bit
      * an input, 1 makes it an output
@@ -176,22 +194,28 @@ class YDigitalIO extends YFunction
     }
 
     /**
-     * Returns the electrical interface for each bit of the port. 0 makes a bit a regular input/output, 1 makes
-     * it an open-drain (open-collector) input/output.
+     * Returns the electrical interface for each bit of the port. For each bit set to 0  the matching I/O
+     * works in the regular,
+     * intuitive way, for each bit set to 1, the I/O works in reverse mode.
      * 
      * @return an integer corresponding to the electrical interface for each bit of the port
      * 
      * On failure, throws an exception or returns Y_PORTOPENDRAIN_INVALID.
      */
     public function get_portOpenDrain()
-    {   $json_val = $this->_getAttr("portOpenDrain");
-        return (is_null($json_val) ? Y_PORTOPENDRAIN_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTOPENDRAIN_INVALID;
+            }
+        }
+        return $this->_portOpenDrain;
     }
 
     /**
      * Changes the electrical interface for each bit of the port. 0 makes a bit a regular input/output, 1 makes
      * it an open-drain (open-collector) input/output. Remember to call the
-     * saveToFlash() method  to make sure the setting will be kept after a reboot.
+     * saveToFlash() method  to make sure the setting is kept after a reboot.
      * 
      * @param newval : an integer corresponding to the electrical interface for each bit of the port
      * 
@@ -206,6 +230,41 @@ class YDigitalIO extends YFunction
     }
 
     /**
+     * Returns the polarity of all the bits of the port.  For each bit set to 0, the matching I/O works the regular,
+     * intuitive way; for each bit set to 1, the I/O works in reverse mode.
+     * 
+     * @return an integer corresponding to the polarity of all the bits of the port
+     * 
+     * On failure, throws an exception or returns Y_PORTPOLARITY_INVALID.
+     */
+    public function get_portPolarity()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTPOLARITY_INVALID;
+            }
+        }
+        return $this->_portPolarity;
+    }
+
+    /**
+     * Changes the polarity of all the bits of the port: 0 makes a bit an input, 1 makes it an output.
+     * Remember to call the saveToFlash() method  to make sure the setting will be kept after a reboot.
+     * 
+     * @param newval : an integer corresponding to the polarity of all the bits of the port: 0 makes a bit
+     * an input, 1 makes it an output
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_portPolarity($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("portPolarity",$rest_val);
+    }
+
+    /**
      * Returns the number of bits implemented in the I/O port.
      * 
      * @return an integer corresponding to the number of bits implemented in the I/O port
@@ -213,28 +272,38 @@ class YDigitalIO extends YFunction
      * On failure, throws an exception or returns Y_PORTSIZE_INVALID.
      */
     public function get_portSize()
-    {   $json_val = $this->_getAttr("portSize");
-        return (is_null($json_val) ? Y_PORTSIZE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTSIZE_INVALID;
+            }
+        }
+        return $this->_portSize;
     }
 
     /**
      * Returns the voltage source used to drive output bits.
      * 
-     * @return a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V3 and Y_OUTPUTVOLTAGE_EXT_V
+     * @return a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V and Y_OUTPUTVOLTAGE_EXT_V
      * corresponding to the voltage source used to drive output bits
      * 
      * On failure, throws an exception or returns Y_OUTPUTVOLTAGE_INVALID.
      */
     public function get_outputVoltage()
-    {   $json_val = $this->_getAttr("outputVoltage");
-        return (is_null($json_val) ? Y_OUTPUTVOLTAGE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_OUTPUTVOLTAGE_INVALID;
+            }
+        }
+        return $this->_outputVoltage;
     }
 
     /**
      * Changes the voltage source used to drive output bits.
-     * Remember to call the saveToFlash() method  to make sure the setting will be kept after a reboot.
+     * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
      * 
-     * @param newval : a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V3 and
+     * @param newval : a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V and
      * Y_OUTPUTVOLTAGE_EXT_V corresponding to the voltage source used to drive output bits
      * 
      * @return YAPI_SUCCESS if the call succeeds.
@@ -248,194 +317,19 @@ class YDigitalIO extends YFunction
     }
 
     public function get_command()
-    {   $json_val = $this->_getAttr("command");
-        return (is_null($json_val) ? Y_COMMAND_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_COMMAND_INVALID;
+            }
+        }
+        return $this->_command;
     }
 
     public function set_command($newval)
     {
         $rest_val = $newval;
         return $this->_setAttr("command",$rest_val);
-    }
-
-    /**
-     * Set a single bit of the I/O port.
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * @param bitval: the value of the bit (1 or 0)
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_bitState($int_bitno,$int_bitval)
-    {
-        if (!($int_bitval >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitval', YAPI_INVALID_ARGUMENT);
-        if (!($int_bitval <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitval', YAPI_INVALID_ARGUMENT);
-        return $this->set_command(sprintf('%c%d',82+bitval, bitno)); 
-        
-    }
-
-    /**
-     * Returns the value of a single bit of the I/O port.
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * 
-     * @return the bit value (0 or 1)
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function get_bitState($int_bitno)
-    {
-        // $portVal is a int;
-        $portVal = $this->get_portState();
-        return (((($portVal) >> ($int_bitno))) & (1));
-        
-    }
-
-    /**
-     * Revert a single bit of the I/O port.
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function toggle_bitState($int_bitno)
-    {
-        return $this->set_command(sprintf('T%d', bitno)); 
-        
-    }
-
-    /**
-     * Change  the direction of a single bit from the I/O port.
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * @param bitdirection: direction to set, 0 makes the bit an input, 1 makes it an output.
-     *         Remember to call the   saveToFlash() method to make sure the setting will be kept after a reboot.
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_bitDirection($int_bitno,$int_bitdirection)
-    {
-        if (!($int_bitdirection >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid direction', YAPI_INVALID_ARGUMENT);
-        if (!($int_bitdirection <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid direction', YAPI_INVALID_ARGUMENT);
-        return $this->set_command(sprintf('%c%d',73+6*bitdirection, bitno)); 
-        
-    }
-
-    /**
-     * Change  the direction of a single bit from the I/O port (0 means the bit is an input, 1  an output).
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function get_bitDirection($int_bitno)
-    {
-        // $portDir is a int;
-        $portDir = $this->get_portDirection();
-        return (((($portDir) >> ($int_bitno))) & (1));
-        
-    }
-
-    /**
-     * Change  the electrical interface of a single bit from the I/O port.
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * @param opendrain: value to set, 0 makes a bit a regular input/output, 1 makes
-     *         it an open-drain (open-collector) input/output. Remember to call the
-     *         saveToFlash() method to make sure the setting will be kept after a reboot.
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_bitOpenDrain($int_bitno,$int_opendrain)
-    {
-        if (!($int_opendrain >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid state', YAPI_INVALID_ARGUMENT);
-        if (!($int_opendrain <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid state', YAPI_INVALID_ARGUMENT);
-        return $this->set_command(sprintf('%c%d',100-32*opendrain, bitno)); 
-        
-    }
-
-    /**
-     * Returns the type of electrical interface of a single bit from the I/O port. (0 means the bit is an
-     * input, 1  an output).
-     * 
-     * @param bitno: the bit number; lowest bit is index 0
-     * 
-     * @return   0 means the a bit is a regular input/output, 1means the b it an open-drain
-     * (open-collector) input/output.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function get_bitOpenDrain($int_bitno)
-    {
-        // $portOpenDrain is a int;
-        $portOpenDrain = $this->get_portOpenDrain();
-        return (((($portOpenDrain) >> ($int_bitno))) & (1));
-        
-    }
-
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
-
-    public function portState()
-    { return get_portState(); }
-
-    public function setPortState($newval)
-    { return set_portState($newval); }
-
-    public function portDirection()
-    { return get_portDirection(); }
-
-    public function setPortDirection($newval)
-    { return set_portDirection($newval); }
-
-    public function portOpenDrain()
-    { return get_portOpenDrain(); }
-
-    public function setPortOpenDrain($newval)
-    { return set_portOpenDrain($newval); }
-
-    public function portSize()
-    { return get_portSize(); }
-
-    public function outputVoltage()
-    { return get_outputVoltage(); }
-
-    public function setOutputVoltage($newval)
-    { return set_outputVoltage($newval); }
-
-    public function command()
-    { return get_command(); }
-
-    public function setCommand($newval)
-    { return set_command($newval); }
-
-    /**
-     * Continues the enumeration of digital IO port started using yFirstDigitalIO().
-     * 
-     * @return a pointer to a YDigitalIO object, corresponding to
-     *         a digital IO port currently online, or a null pointer
-     *         if there are no more digital IO port to enumerate.
-     */
-    public function nextDigitalIO()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
-        if($next_hwid == null) return null;
-        return yFindDigitalIO($next_hwid);
     }
 
     /**
@@ -461,16 +355,262 @@ class YDigitalIO extends YFunction
      * 
      * @return a YDigitalIO object allowing you to drive the digital IO port.
      */
-    public static function FindDigitalIO($str_func)
-    {   $obj_func = YAPI::getFunction('DigitalIO', $str_func);
-        if($obj_func) return $obj_func;
-        return new YDigitalIO($str_func);
+    public static function FindDigitalIO($func)
+    {
+        // $obj                    is a YDigitalIO;
+        $obj = YFunction::_FindFromCache('DigitalIO', $func);
+        if ($obj == null) {
+            $obj = new YDigitalIO($func);
+            YFunction::_AddToCache('DigitalIO', $func, $obj);
+        }
+        return $obj;
     }
 
     /**
-     * Starts the enumeration of digital IO port currently accessible.
+     * Sets a single bit of the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * @param bitstate: the state of the bit (1 or 0)
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bitState($bitno,$bitstate)
+    {
+        if (!($bitstate >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitstate',YAPI_INVALID_ARGUMENT);
+        if (!($bitstate <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitstate',YAPI_INVALID_ARGUMENT);
+        return $this->set_command(sprintf('%c%d',82+$bitstate, $bitno));
+    }
+
+    /**
+     * Returns the state of a single bit of the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * 
+     * @return the bit state (0 or 1)
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function get_bitState($bitno)
+    {
+        // $portVal                is a int;
+        $portVal = $this->get_portState();
+        return (((($portVal) >> ($bitno))) & (1));
+    }
+
+    /**
+     * Reverts a single bit of the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function toggle_bitState($bitno)
+    {
+        return $this->set_command(sprintf('T%d', $bitno));
+    }
+
+    /**
+     * Changes  the direction of a single bit from the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * @param bitdirection: direction to set, 0 makes the bit an input, 1 makes it an output.
+     *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bitDirection($bitno,$bitdirection)
+    {
+        if (!($bitdirection >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid direction',YAPI_INVALID_ARGUMENT);
+        if (!($bitdirection <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid direction',YAPI_INVALID_ARGUMENT);
+        return $this->set_command(sprintf('%c%d',73+6*$bitdirection, $bitno));
+    }
+
+    /**
+     * Returns the direction of a single bit from the I/O port (0 means the bit is an input, 1  an output).
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function get_bitDirection($bitno)
+    {
+        // $portDir                is a int;
+        $portDir = $this->get_portDirection();
+        return (((($portDir) >> ($bitno))) & (1));
+    }
+
+    /**
+     * Changes the polarity of a single bit from the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0.
+     * @param bitpolarity: polarity to set, 0 makes the I/O work in regular mode, 1 makes the I/O  works
+     * in reverse mode.
+     *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bitPolarity($bitno,$bitpolarity)
+    {
+        if (!($bitpolarity >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitpolarity',YAPI_INVALID_ARGUMENT);
+        if (!($bitpolarity <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid bitpolarity',YAPI_INVALID_ARGUMENT);
+        return $this->set_command(sprintf('%c%d',110+4*$bitpolarity, $bitno));
+    }
+
+    /**
+     * Returns the polarity of a single bit from the I/O port (0 means the I/O works in regular mode, 1
+     * means the I/O  works in reverse mode).
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function get_bitPolarity($bitno)
+    {
+        // $portPol                is a int;
+        $portPol = $this->get_portPolarity();
+        return (((($portPol) >> ($bitno))) & (1));
+    }
+
+    /**
+     * Changes  the electrical interface of a single bit from the I/O port.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * @param opendrain: 0 makes a bit a regular input/output, 1 makes
+     *         it an open-drain (open-collector) input/output. Remember to call the
+     *         saveToFlash() method to make sure the setting is kept after a reboot.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bitOpenDrain($bitno,$opendrain)
+    {
+        if (!($opendrain >= 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid state',YAPI_INVALID_ARGUMENT);
+        if (!($opendrain <= 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid state',YAPI_INVALID_ARGUMENT);
+        return $this->set_command(sprintf('%c%d',100-32*$opendrain, $bitno));
+    }
+
+    /**
+     * Returns the type of electrical interface of a single bit from the I/O port. (0 means the bit is an
+     * input, 1  an output).
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * 
+     * @return   0 means the a bit is a regular input/output, 1 means the bit is an open-drain
+     *         (open-collector) input/output.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function get_bitOpenDrain($bitno)
+    {
+        // $portOpenDrain          is a int;
+        $portOpenDrain = $this->get_portOpenDrain();
+        return (((($portOpenDrain) >> ($bitno))) & (1));
+    }
+
+    /**
+     * Triggers a pulse on a single bit for a specified duration. The specified bit
+     * will be turned to 1, and then back to 0 after the given duration.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * @param ms_duration: desired pulse duration in milliseconds. Be aware that the device time
+     *         resolution is not guaranteed up to the millisecond.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function pulse($bitno,$ms_duration)
+    {
+        return $this->set_command(sprintf('Z%d,0,%d', $bitno,$ms_duration));
+    }
+
+    /**
+     * Schedules a pulse on a single bit for a specified duration. The specified bit
+     * will be turned to 1, and then back to 0 after the given duration.
+     * 
+     * @param bitno: the bit number; lowest bit has index 0
+     * @param ms_delay : waiting time before the pulse, in milliseconds
+     * @param ms_duration: desired pulse duration in milliseconds. Be aware that the device time
+     *         resolution is not guaranteed up to the millisecond.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function delayedPulse($bitno,$ms_delay,$ms_duration)
+    {
+        return $this->set_command(sprintf('Z%d,%d,%d',$bitno,$ms_delay,$ms_duration));
+    }
+
+    public function portState()
+    { return get_portState(); }
+
+    public function setPortState($newval)
+    { return set_portState($newval); }
+
+    public function portDirection()
+    { return get_portDirection(); }
+
+    public function setPortDirection($newval)
+    { return set_portDirection($newval); }
+
+    public function portOpenDrain()
+    { return get_portOpenDrain(); }
+
+    public function setPortOpenDrain($newval)
+    { return set_portOpenDrain($newval); }
+
+    public function portPolarity()
+    { return get_portPolarity(); }
+
+    public function setPortPolarity($newval)
+    { return set_portPolarity($newval); }
+
+    public function portSize()
+    { return get_portSize(); }
+
+    public function outputVoltage()
+    { return get_outputVoltage(); }
+
+    public function setOutputVoltage($newval)
+    { return set_outputVoltage($newval); }
+
+    public function command()
+    { return get_command(); }
+
+    public function setCommand($newval)
+    { return set_command($newval); }
+
+    /**
+     * Continues the enumeration of digital IO ports started using yFirstDigitalIO().
+     * 
+     * @return a pointer to a YDigitalIO object, corresponding to
+     *         a digital IO port currently online, or a null pointer
+     *         if there are no more digital IO ports to enumerate.
+     */
+    public function nextDigitalIO()
+    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+        if($next_hwid == null) return null;
+        return yFindDigitalIO($next_hwid);
+    }
+
+    /**
+     * Starts the enumeration of digital IO ports currently accessible.
      * Use the method YDigitalIO.nextDigitalIO() to iterate on
-     * next digital IO port.
+     * next digital IO ports.
      * 
      * @return a pointer to a YDigitalIO object, corresponding to
      *         the first digital IO port currently online, or a null pointer
@@ -484,12 +624,6 @@ class YDigitalIO extends YFunction
 
     //--- (end of YDigitalIO implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YDigitalIO constructor)
-        parent::__construct('DigitalIO', $str_func);
-        //--- (end of YDigitalIO constructor)
-    }
 };
 
 //--- (DigitalIO functions)
@@ -517,15 +651,15 @@ class YDigitalIO extends YFunction
  * 
  * @return a YDigitalIO object allowing you to drive the digital IO port.
  */
-function yFindDigitalIO($str_func)
+function yFindDigitalIO($func)
 {
-    return YDigitalIO::FindDigitalIO($str_func);
+    return YDigitalIO::FindDigitalIO($func);
 }
 
 /**
- * Starts the enumeration of digital IO port currently accessible.
+ * Starts the enumeration of digital IO ports currently accessible.
  * Use the method YDigitalIO.nextDigitalIO() to iterate on
- * next digital IO port.
+ * next digital IO ports.
  * 
  * @return a pointer to a YDigitalIO object, corresponding to
  *         the first digital IO port currently online, or a null pointer

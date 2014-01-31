@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_colorled.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindColorLed(), the high-level API for ColorLed functions
+ * Implements YColorLed, the high-level API for ColorLed functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,28 +38,17 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YColorLed return codes)
+//--- (end of YColorLed return codes)
 //--- (YColorLed definitions)
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_RGBCOLOR_INVALID')) define('Y_RGBCOLOR_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_HSLCOLOR_INVALID')) define('Y_HSLCOLOR_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_RGBMOVE_INVALID')) define('Y_RGBMOVE_INVALID', null);
-if(!defined('Y_HSLMOVE_INVALID')) define('Y_HSLMOVE_INVALID', null);
-if(!defined('Y_RGBCOLORATPOWERON_INVALID')) define('Y_RGBCOLORATPOWERON_INVALID', Y_INVALID_UNSIGNED);
-
-if(!defined('CLASS_YMOVE')) {
-    define('CLASS_YMOVE',true);
-    class YMove extends YAggregate {
-        public $target = 0;
-        public $ms = 0;
-        public $moving = 0;
-    };
-}
+if(!defined('Y_RGBCOLOR_INVALID'))           define('Y_RGBCOLOR_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_HSLCOLOR_INVALID'))           define('Y_HSLCOLOR_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_RGBMOVE_INVALID'))            define('Y_RGBMOVE_INVALID',           null);
+if(!defined('Y_HSLMOVE_INVALID'))            define('Y_HSLMOVE_INVALID',           null);
+if(!defined('Y_RGBCOLORATPOWERON_INVALID'))  define('Y_RGBCOLORATPOWERON_INVALID', YAPI_INVALID_UINT);
 //--- (end of YColorLed definitions)
 
+//--- (YColorLed declaration)
 /**
  * YColorLed Class: ColorLed function interface
  * 
@@ -72,53 +61,52 @@ if(!defined('CLASS_YMOVE')) {
  */
 class YColorLed extends YFunction
 {
-    //--- (YColorLed implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const RGBCOLOR_INVALID = Y_INVALID_UNSIGNED;
-    const HSLCOLOR_INVALID = Y_INVALID_UNSIGNED;
-    const RGBCOLORATPOWERON_INVALID = Y_INVALID_UNSIGNED;
+    const RGBCOLOR_INVALID               = YAPI_INVALID_UINT;
+    const HSLCOLOR_INVALID               = YAPI_INVALID_UINT;
+    const RGBMOVE_INVALID                = null;
+    const HSLMOVE_INVALID                = null;
+    const RGBCOLORATPOWERON_INVALID      = YAPI_INVALID_UINT;
+    //--- (end of YColorLed declaration)
 
-    /**
-     * Returns the logical name of the RGB led.
-     * 
-     * @return a string corresponding to the logical name of the RGB led
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YColorLed attributes)
+    protected $_rgbColor                 = Y_RGBCOLOR_INVALID;           // U24Color
+    protected $_hslColor                 = Y_HSLCOLOR_INVALID;           // U24Color
+    protected $_rgbMove                  = Y_RGBMOVE_INVALID;            // Move
+    protected $_hslMove                  = Y_HSLMOVE_INVALID;            // Move
+    protected $_rgbColorAtPowerOn        = Y_RGBCOLORATPOWERON_INVALID;  // U24Color
+    //--- (end of YColorLed attributes)
 
-    /**
-     * Changes the logical name of the RGB led. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the RGB led
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YColorLed constructor)
+        parent::__construct($str_func);
+        $this->_className = 'ColorLed';
+
+        //--- (end of YColorLed constructor)
     }
 
-    /**
-     * Returns the current value of the RGB led (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the RGB led (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YColorLed implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'rgbColor':
+            $this->_rgbColor = intval($val);
+            return 1;
+        case 'hslColor':
+            $this->_hslColor = intval($val);
+            return 1;
+        case 'rgbMove':
+            $this->_rgbMove = $val;
+            return 1;
+        case 'hslMove':
+            $this->_hslMove = $val;
+            return 1;
+        case 'rgbColorAtPowerOn':
+            $this->_rgbColorAtPowerOn = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -129,8 +117,13 @@ class YColorLed extends YFunction
      * On failure, throws an exception or returns Y_RGBCOLOR_INVALID.
      */
     public function get_rgbColor()
-    {   $json_val = $this->_getAttr("rgbColor");
-        return (is_null($json_val) ? Y_RGBCOLOR_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RGBCOLOR_INVALID;
+            }
+        }
+        return $this->_rgbColor;
     }
 
     /**
@@ -156,8 +149,13 @@ class YColorLed extends YFunction
      * On failure, throws an exception or returns Y_HSLCOLOR_INVALID.
      */
     public function get_hslColor()
-    {   $json_val = $this->_getAttr("hslColor");
-        return (is_null($json_val) ? Y_HSLCOLOR_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_HSLCOLOR_INVALID;
+            }
+        }
+        return $this->_hslColor;
     }
 
     /**
@@ -176,8 +174,13 @@ class YColorLed extends YFunction
     }
 
     public function get_rgbMove()
-    {   $json_val = $this->_getAttr("rgbMove");
-        return (is_null($json_val) ? Y_RGBMOVE_INVALID : new YMove($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RGBMOVE_INVALID;
+            }
+        }
+        return $this->_rgbMove;
     }
 
     public function set_rgbMove($newval)
@@ -196,15 +199,20 @@ class YColorLed extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function rgbMove($int_rgb_target,$int_ms_duration)
+    public function rgbMove($rgb_target,$ms_duration)
     {
-        $rest_val = strval($int_rgb_target).":".strval($int_ms_duration);
+        $rest_val = strval($rgb_target).":".strval($ms_duration);
         return $this->_setAttr("rgbMove",$rest_val);
     }
 
     public function get_hslMove()
-    {   $json_val = $this->_getAttr("hslMove");
-        return (is_null($json_val) ? Y_HSLMOVE_INVALID : new YMove($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_HSLMOVE_INVALID;
+            }
+        }
+        return $this->_hslMove;
     }
 
     public function set_hslMove($newval)
@@ -223,9 +231,9 @@ class YColorLed extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function hslMove($int_hsl_target,$int_ms_duration)
+    public function hslMove($hsl_target,$ms_duration)
     {
-        $rest_val = strval($int_hsl_target).":".strval($int_ms_duration);
+        $rest_val = strval($hsl_target).":".strval($ms_duration);
         return $this->_setAttr("hslMove",$rest_val);
     }
 
@@ -237,8 +245,13 @@ class YColorLed extends YFunction
      * On failure, throws an exception or returns Y_RGBCOLORATPOWERON_INVALID.
      */
     public function get_rgbColorAtPowerOn()
-    {   $json_val = $this->_getAttr("rgbColorAtPowerOn");
-        return (is_null($json_val) ? Y_RGBCOLORATPOWERON_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RGBCOLORATPOWERON_INVALID;
+            }
+        }
+        return $this->_rgbColorAtPowerOn;
     }
 
     /**
@@ -260,14 +273,39 @@ class YColorLed extends YFunction
         return $this->_setAttr("rgbColorAtPowerOn",$rest_val);
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves an RGB led for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the RGB led is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YColorLed.isOnline() to test if the RGB led is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * an RGB led by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the RGB led
+     * 
+     * @return a YColorLed object allowing you to drive the RGB led.
+     */
+    public static function FindColorLed($func)
+    {
+        // $obj                    is a YColorLed;
+        $obj = YFunction::_FindFromCache('ColorLed', $func);
+        if ($obj == null) {
+            $obj = new YColorLed($func);
+            YFunction::_AddToCache('ColorLed', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function rgbColor()
     { return get_rgbColor(); }
@@ -307,35 +345,6 @@ class YColorLed extends YFunction
     }
 
     /**
-     * Retrieves an RGB led for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the RGB led is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YColorLed.isOnline() to test if the RGB led is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * an RGB led by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the RGB led
-     * 
-     * @return a YColorLed object allowing you to drive the RGB led.
-     */
-    public static function FindColorLed($str_func)
-    {   $obj_func = YAPI::getFunction('ColorLed', $str_func);
-        if($obj_func) return $obj_func;
-        return new YColorLed($str_func);
-    }
-
-    /**
      * Starts the enumeration of RGB leds currently accessible.
      * Use the method YColorLed.nextColorLed() to iterate on
      * next RGB leds.
@@ -352,12 +361,6 @@ class YColorLed extends YFunction
 
     //--- (end of YColorLed implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YColorLed constructor)
-        parent::__construct('ColorLed', $str_func);
-        //--- (end of YColorLed constructor)
-    }
 };
 
 //--- (ColorLed functions)
@@ -385,9 +388,9 @@ class YColorLed extends YFunction
  * 
  * @return a YColorLed object allowing you to drive the RGB led.
  */
-function yFindColorLed($str_func)
+function yFindColorLed($func)
 {
-    return YColorLed::FindColorLed($str_func);
+    return YColorLed::FindColorLed($func);
 }
 
 /**

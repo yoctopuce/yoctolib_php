@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_wakeupmonitor.php 13979 2013-12-12 09:05:25Z mvuilleu $
  *
- * Implements yFindWakeUpMonitor(), the high-level API for WakeUpMonitor functions
+ * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,127 +38,132 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YWakeUpMonitor return codes)
+//--- (end of YWakeUpMonitor return codes)
 //--- (YWakeUpMonitor definitions)
-if(!defined('Y_WAKEUPREASON_USBPOWER')) define('Y_WAKEUPREASON_USBPOWER', 0);
-if(!defined('Y_WAKEUPREASON_EXTPOWER')) define('Y_WAKEUPREASON_EXTPOWER', 1);
-if(!defined('Y_WAKEUPREASON_ENDOFSLEEP')) define('Y_WAKEUPREASON_ENDOFSLEEP', 2);
-if(!defined('Y_WAKEUPREASON_EXTSIG1')) define('Y_WAKEUPREASON_EXTSIG1', 3);
-if(!defined('Y_WAKEUPREASON_EXTSIG2')) define('Y_WAKEUPREASON_EXTSIG2', 4);
-if(!defined('Y_WAKEUPREASON_EXTSIG3')) define('Y_WAKEUPREASON_EXTSIG3', 5);
-if(!defined('Y_WAKEUPREASON_EXTSIG4')) define('Y_WAKEUPREASON_EXTSIG4', 6);
-if(!defined('Y_WAKEUPREASON_SCHEDULE1')) define('Y_WAKEUPREASON_SCHEDULE1', 7);
-if(!defined('Y_WAKEUPREASON_SCHEDULE2')) define('Y_WAKEUPREASON_SCHEDULE2', 8);
-if(!defined('Y_WAKEUPREASON_SCHEDULE3')) define('Y_WAKEUPREASON_SCHEDULE3', 9);
-if(!defined('Y_WAKEUPREASON_SCHEDULE4')) define('Y_WAKEUPREASON_SCHEDULE4', 10);
-if(!defined('Y_WAKEUPREASON_SCHEDULE5')) define('Y_WAKEUPREASON_SCHEDULE5', 11);
-if(!defined('Y_WAKEUPREASON_SCHEDULE6')) define('Y_WAKEUPREASON_SCHEDULE6', 12);
-if(!defined('Y_WAKEUPREASON_INVALID')) define('Y_WAKEUPREASON_INVALID', -1);
-if(!defined('Y_WAKEUPSTATE_SLEEPING')) define('Y_WAKEUPSTATE_SLEEPING', 0);
-if(!defined('Y_WAKEUPSTATE_AWAKE')) define('Y_WAKEUPSTATE_AWAKE', 1);
-if(!defined('Y_WAKEUPSTATE_INVALID')) define('Y_WAKEUPSTATE_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_POWERDURATION_INVALID')) define('Y_POWERDURATION_INVALID', Y_INVALID_SIGNED);
-if(!defined('Y_SLEEPCOUNTDOWN_INVALID')) define('Y_SLEEPCOUNTDOWN_INVALID', Y_INVALID_SIGNED);
-if(!defined('Y_NEXTWAKEUP_INVALID')) define('Y_NEXTWAKEUP_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_RTCTIME_INVALID')) define('Y_RTCTIME_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_WAKEUPREASON_USBPOWER'))      define('Y_WAKEUPREASON_USBPOWER',     0);
+if(!defined('Y_WAKEUPREASON_EXTPOWER'))      define('Y_WAKEUPREASON_EXTPOWER',     1);
+if(!defined('Y_WAKEUPREASON_ENDOFSLEEP'))    define('Y_WAKEUPREASON_ENDOFSLEEP',   2);
+if(!defined('Y_WAKEUPREASON_EXTSIG1'))       define('Y_WAKEUPREASON_EXTSIG1',      3);
+if(!defined('Y_WAKEUPREASON_EXTSIG2'))       define('Y_WAKEUPREASON_EXTSIG2',      4);
+if(!defined('Y_WAKEUPREASON_EXTSIG3'))       define('Y_WAKEUPREASON_EXTSIG3',      5);
+if(!defined('Y_WAKEUPREASON_EXTSIG4'))       define('Y_WAKEUPREASON_EXTSIG4',      6);
+if(!defined('Y_WAKEUPREASON_SCHEDULE1'))     define('Y_WAKEUPREASON_SCHEDULE1',    7);
+if(!defined('Y_WAKEUPREASON_SCHEDULE2'))     define('Y_WAKEUPREASON_SCHEDULE2',    8);
+if(!defined('Y_WAKEUPREASON_SCHEDULE3'))     define('Y_WAKEUPREASON_SCHEDULE3',    9);
+if(!defined('Y_WAKEUPREASON_SCHEDULE4'))     define('Y_WAKEUPREASON_SCHEDULE4',    10);
+if(!defined('Y_WAKEUPREASON_SCHEDULE5'))     define('Y_WAKEUPREASON_SCHEDULE5',    11);
+if(!defined('Y_WAKEUPREASON_SCHEDULE6'))     define('Y_WAKEUPREASON_SCHEDULE6',    12);
+if(!defined('Y_WAKEUPREASON_INVALID'))       define('Y_WAKEUPREASON_INVALID',      -1);
+if(!defined('Y_WAKEUPSTATE_SLEEPING'))       define('Y_WAKEUPSTATE_SLEEPING',      0);
+if(!defined('Y_WAKEUPSTATE_AWAKE'))          define('Y_WAKEUPSTATE_AWAKE',         1);
+if(!defined('Y_WAKEUPSTATE_INVALID'))        define('Y_WAKEUPSTATE_INVALID',       -1);
+if(!defined('Y_POWERDURATION_INVALID'))      define('Y_POWERDURATION_INVALID',     YAPI_INVALID_INT);
+if(!defined('Y_SLEEPCOUNTDOWN_INVALID'))     define('Y_SLEEPCOUNTDOWN_INVALID',    YAPI_INVALID_INT);
+if(!defined('Y_NEXTWAKEUP_INVALID'))         define('Y_NEXTWAKEUP_INVALID',        YAPI_INVALID_LONG);
+if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',           YAPI_INVALID_LONG);
 //--- (end of YWakeUpMonitor definitions)
 
+//--- (YWakeUpMonitor declaration)
 /**
  * YWakeUpMonitor Class: WakeUpMonitor function interface
  * 
- * 
+ * The WakeUpMonitor function handles globally all wake-up sources, as well
+ * as automated sleep mode.
  */
 class YWakeUpMonitor extends YFunction
 {
-    //--- (YWakeUpMonitor implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const POWERDURATION_INVALID = Y_INVALID_SIGNED;
-    const SLEEPCOUNTDOWN_INVALID = Y_INVALID_SIGNED;
-    const NEXTWAKEUP_INVALID = Y_INVALID_UNSIGNED;
-    const WAKEUPREASON_USBPOWER = 0;
-    const WAKEUPREASON_EXTPOWER = 1;
-    const WAKEUPREASON_ENDOFSLEEP = 2;
-    const WAKEUPREASON_EXTSIG1 = 3;
-    const WAKEUPREASON_EXTSIG2 = 4;
-    const WAKEUPREASON_EXTSIG3 = 5;
-    const WAKEUPREASON_EXTSIG4 = 6;
-    const WAKEUPREASON_SCHEDULE1 = 7;
-    const WAKEUPREASON_SCHEDULE2 = 8;
-    const WAKEUPREASON_SCHEDULE3 = 9;
-    const WAKEUPREASON_SCHEDULE4 = 10;
-    const WAKEUPREASON_SCHEDULE5 = 11;
-    const WAKEUPREASON_SCHEDULE6 = 12;
-    const WAKEUPREASON_INVALID = -1;
-    const WAKEUPSTATE_SLEEPING = 0;
-    const WAKEUPSTATE_AWAKE = 1;
-    const WAKEUPSTATE_INVALID = -1;
-    const RTCTIME_INVALID = Y_INVALID_UNSIGNED;
-    public  $_endOfTime = 2145960000;
+    const POWERDURATION_INVALID          = YAPI_INVALID_INT;
+    const SLEEPCOUNTDOWN_INVALID         = YAPI_INVALID_INT;
+    const NEXTWAKEUP_INVALID             = YAPI_INVALID_LONG;
+    const WAKEUPREASON_USBPOWER          = 0;
+    const WAKEUPREASON_EXTPOWER          = 1;
+    const WAKEUPREASON_ENDOFSLEEP        = 2;
+    const WAKEUPREASON_EXTSIG1           = 3;
+    const WAKEUPREASON_EXTSIG2           = 4;
+    const WAKEUPREASON_EXTSIG3           = 5;
+    const WAKEUPREASON_EXTSIG4           = 6;
+    const WAKEUPREASON_SCHEDULE1         = 7;
+    const WAKEUPREASON_SCHEDULE2         = 8;
+    const WAKEUPREASON_SCHEDULE3         = 9;
+    const WAKEUPREASON_SCHEDULE4         = 10;
+    const WAKEUPREASON_SCHEDULE5         = 11;
+    const WAKEUPREASON_SCHEDULE6         = 12;
+    const WAKEUPREASON_INVALID           = -1;
+    const WAKEUPSTATE_SLEEPING           = 0;
+    const WAKEUPSTATE_AWAKE              = 1;
+    const WAKEUPSTATE_INVALID            = -1;
+    const RTCTIME_INVALID                = YAPI_INVALID_LONG;
+    //--- (end of YWakeUpMonitor declaration)
 
-    /**
-     * Returns the logical name of the monitor.
-     * 
-     * @return a string corresponding to the logical name of the monitor
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YWakeUpMonitor attributes)
+    protected $_powerDuration            = Y_POWERDURATION_INVALID;      // Int
+    protected $_sleepCountdown           = Y_SLEEPCOUNTDOWN_INVALID;     // Int
+    protected $_nextWakeUp               = Y_NEXTWAKEUP_INVALID;         // UTCTime
+    protected $_wakeUpReason             = Y_WAKEUPREASON_INVALID;       // WakeUpReason
+    protected $_wakeUpState              = Y_WAKEUPSTATE_INVALID;        // WakeUpState
+    protected $_rtcTime                  = Y_RTCTIME_INVALID;            // UTCTime
+    protected $_endOfTime                = 2145960000;                   // UInt31 (constant)
+    //--- (end of YWakeUpMonitor attributes)
 
-    /**
-     * Changes the logical name of the monitor. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the monitor
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YWakeUpMonitor constructor)
+        parent::__construct($str_func);
+        $this->_className = 'WakeUpMonitor';
+
+        //--- (end of YWakeUpMonitor constructor)
+    }
+
+    //--- (YWakeUpMonitor implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'powerDuration':
+            $this->_powerDuration = intval($val);
+            return 1;
+        case 'sleepCountdown':
+            $this->_sleepCountdown = intval($val);
+            return 1;
+        case 'nextWakeUp':
+            $this->_nextWakeUp = intval($val);
+            return 1;
+        case 'wakeUpReason':
+            $this->_wakeUpReason = intval($val);
+            return 1;
+        case 'wakeUpState':
+            $this->_wakeUpState = intval($val);
+            return 1;
+        case 'rtcTime':
+            $this->_rtcTime = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
-     * Returns the current value of the monitor (no more than 6 characters).
+     * Returns the maximal wake up time (in seconds) before automatically going to sleep.
      * 
-     * @return a string corresponding to the current value of the monitor (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
-    }
-
-    /**
-     * Returns the maximal wake up time (seconds) before going to sleep automatically.
-     * 
-     * @return an integer corresponding to the maximal wake up time (seconds) before going to sleep automatically
+     * @return an integer corresponding to the maximal wake up time (in seconds) before automatically going to sleep
      * 
      * On failure, throws an exception or returns Y_POWERDURATION_INVALID.
      */
     public function get_powerDuration()
-    {   $json_val = $this->_getAttr("powerDuration");
-        return (is_null($json_val) ? Y_POWERDURATION_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POWERDURATION_INVALID;
+            }
+        }
+        return $this->_powerDuration;
     }
 
     /**
-     * Changes the maximal wake up time (seconds) before going to sleep automatically.
+     * Changes the maximal wake up time (seconds) before automatically going to sleep.
      * 
-     * @param newval : an integer corresponding to the maximal wake up time (seconds) before going to
-     * sleep automatically
+     * @param newval : an integer corresponding to the maximal wake up time (seconds) before automatically
+     * going to sleep
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -171,21 +176,26 @@ class YWakeUpMonitor extends YFunction
     }
 
     /**
-     * Returns the delay before next sleep.
+     * Returns the delay before the  next sleep period.
      * 
-     * @return an integer corresponding to the delay before next sleep
+     * @return an integer corresponding to the delay before the  next sleep period
      * 
      * On failure, throws an exception or returns Y_SLEEPCOUNTDOWN_INVALID.
      */
     public function get_sleepCountdown()
-    {   $json_val = $this->_getAttr("sleepCountdown");
-        return (is_null($json_val) ? Y_SLEEPCOUNTDOWN_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SLEEPCOUNTDOWN_INVALID;
+            }
+        }
+        return $this->_sleepCountdown;
     }
 
     /**
-     * Changes the delay before next sleep.
+     * Changes the delay before the next sleep period.
      * 
-     * @param newval : an integer corresponding to the delay before next sleep
+     * @param newval : an integer corresponding to the delay before the next sleep period
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -198,21 +208,26 @@ class YWakeUpMonitor extends YFunction
     }
 
     /**
-     * Returns the next scheduled wake-up date/time (UNIX format)
+     * Returns the next scheduled wake up date/time (UNIX format)
      * 
-     * @return an integer corresponding to the next scheduled wake-up date/time (UNIX format)
+     * @return an integer corresponding to the next scheduled wake up date/time (UNIX format)
      * 
      * On failure, throws an exception or returns Y_NEXTWAKEUP_INVALID.
      */
     public function get_nextWakeUp()
-    {   $json_val = $this->_getAttr("nextWakeUp");
-        return (is_null($json_val) ? Y_NEXTWAKEUP_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_NEXTWAKEUP_INVALID;
+            }
+        }
+        return $this->_nextWakeUp;
     }
 
     /**
-     * Changes the days of the week where a wake up must take place.
+     * Changes the days of the week when a wake up must take place.
      * 
-     * @param newval : an integer corresponding to the days of the week where a wake up must take place
+     * @param newval : an integer corresponding to the days of the week when a wake up must take place
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -225,18 +240,24 @@ class YWakeUpMonitor extends YFunction
     }
 
     /**
-     * Return the last wake up reason.
+     * Returns the latest wake up reason.
      * 
      * @return a value among Y_WAKEUPREASON_USBPOWER, Y_WAKEUPREASON_EXTPOWER, Y_WAKEUPREASON_ENDOFSLEEP,
      * Y_WAKEUPREASON_EXTSIG1, Y_WAKEUPREASON_EXTSIG2, Y_WAKEUPREASON_EXTSIG3, Y_WAKEUPREASON_EXTSIG4,
      * Y_WAKEUPREASON_SCHEDULE1, Y_WAKEUPREASON_SCHEDULE2, Y_WAKEUPREASON_SCHEDULE3,
-     * Y_WAKEUPREASON_SCHEDULE4, Y_WAKEUPREASON_SCHEDULE5 and Y_WAKEUPREASON_SCHEDULE6
+     * Y_WAKEUPREASON_SCHEDULE4, Y_WAKEUPREASON_SCHEDULE5 and Y_WAKEUPREASON_SCHEDULE6 corresponding to
+     * the latest wake up reason
      * 
      * On failure, throws an exception or returns Y_WAKEUPREASON_INVALID.
      */
     public function get_wakeUpReason()
-    {   $json_val = $this->_getAttr("wakeUpReason");
-        return (is_null($json_val) ? Y_WAKEUPREASON_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_WAKEUPREASON_INVALID;
+            }
+        }
+        return $this->_wakeUpReason;
     }
 
     /**
@@ -247,8 +268,13 @@ class YWakeUpMonitor extends YFunction
      * On failure, throws an exception or returns Y_WAKEUPSTATE_INVALID.
      */
     public function get_wakeUpState()
-    {   $json_val = $this->_getAttr("wakeUpState");
-        return (is_null($json_val) ? Y_WAKEUPSTATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_WAKEUPSTATE_INVALID;
+            }
+        }
+        return $this->_wakeUpState;
     }
 
     public function set_wakeUpState($newval)
@@ -258,21 +284,59 @@ class YWakeUpMonitor extends YFunction
     }
 
     public function get_rtcTime()
-    {   $json_val = $this->_getAttr("rtcTime");
-        return (is_null($json_val) ? Y_RTCTIME_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RTCTIME_INVALID;
+            }
+        }
+        return $this->_rtcTime;
     }
 
     /**
-     * Forces a wakeup.
+     * Retrieves a monitor for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the monitor is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YWakeUpMonitor.isOnline() to test if the monitor is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a monitor by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the monitor
+     * 
+     * @return a YWakeUpMonitor object allowing you to drive the monitor.
+     */
+    public static function FindWakeUpMonitor($func)
+    {
+        // $obj                    is a YWakeUpMonitor;
+        $obj = YFunction::_FindFromCache('WakeUpMonitor', $func);
+        if ($obj == null) {
+            $obj = new YWakeUpMonitor($func);
+            YFunction::_AddToCache('WakeUpMonitor', $func, $obj);
+        }
+        return $obj;
+    }
+
+    /**
+     * Forces a wake up.
      */
     public function wakeUp()
     {
         return $this->set_wakeUpState(Y_WAKEUPSTATE_AWAKE);
-        
     }
 
     /**
-     * Go to sleep until the next wakeup condition is met,  the
+     * Goes to sleep until the next wake up condition is met,  the
      * RTC time must have been set before calling this function.
      * 
      * @param secBeforeSleep : number of seconds before going into sleep mode,
@@ -281,19 +345,18 @@ class YWakeUpMonitor extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function sleep($int_secBeforeSleep)
+    public function sleep($secBeforeSleep)
     {
-        // $currTime is a int;
+        // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set', YAPI_RTC_NOT_READY);
+        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set',YAPI_RTC_NOT_READY);
         $this->set_nextWakeUp($this->_endOfTime);
-        $this->set_sleepCountdown($int_secBeforeSleep);
-        return YAPI_SUCCESS; 
-        
+        $this->set_sleepCountdown($secBeforeSleep);
+        return YAPI_SUCCESS;
     }
 
     /**
-     * Go to sleep for a specific time or until the next wakeup condition is met, the
+     * Goes to sleep for a specific duration or until the next wake up condition is met, the
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
      * 
@@ -304,19 +367,18 @@ class YWakeUpMonitor extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function sleepFor($int_secUntilWakeUp,$int_secBeforeSleep)
+    public function sleepFor($secUntilWakeUp,$secBeforeSleep)
     {
-        // $currTime is a int;
+        // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set', YAPI_RTC_NOT_READY);
-        $this->set_nextWakeUp($currTime+$int_secUntilWakeUp);
-        $this->set_sleepCountdown($int_secBeforeSleep);
-        return YAPI_SUCCESS; 
-        
+        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set',YAPI_RTC_NOT_READY);
+        $this->set_nextWakeUp($currTime+$secUntilWakeUp);
+        $this->set_sleepCountdown($secBeforeSleep);
+        return YAPI_SUCCESS;
     }
 
     /**
-     * Go to sleep until a specific date is reached or until the next wakeup condition is met, the
+     * Go to sleep until a specific date is reached or until the next wake up condition is met, the
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
      * 
@@ -327,19 +389,18 @@ class YWakeUpMonitor extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function sleepUntil($int_wakeUpTime,$int_secBeforeSleep)
+    public function sleepUntil($wakeUpTime,$secBeforeSleep)
     {
-        // $currTime is a int;
+        // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set', YAPI_RTC_NOT_READY);
-        $this->set_nextWakeUp($int_wakeUpTime);
-        $this->set_sleepCountdown($int_secBeforeSleep);
-        return YAPI_SUCCESS; 
-        
+        if (!($currTime != 0)) return $this->_throw( YAPI_RTC_NOT_READY, 'RTC time not set',YAPI_RTC_NOT_READY);
+        $this->set_nextWakeUp($wakeUpTime);
+        $this->set_sleepCountdown($secBeforeSleep);
+        return YAPI_SUCCESS;
     }
 
     /**
-     * Reset the sleep countdown.
+     * Resets the sleep countdown.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -348,18 +409,8 @@ class YWakeUpMonitor extends YFunction
     {
         $this->set_sleepCountdown(0);
         $this->set_nextWakeUp(0);
-        return YAPI_SUCCESS; 
-        
+        return YAPI_SUCCESS;
     }
-
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
 
     public function powerDuration()
     { return get_powerDuration(); }
@@ -405,35 +456,6 @@ class YWakeUpMonitor extends YFunction
     }
 
     /**
-     * Retrieves a monitor for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the monitor is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWakeUpMonitor.isOnline() to test if the monitor is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a monitor by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the monitor
-     * 
-     * @return a YWakeUpMonitor object allowing you to drive the monitor.
-     */
-    public static function FindWakeUpMonitor($str_func)
-    {   $obj_func = YAPI::getFunction('WakeUpMonitor', $str_func);
-        if($obj_func) return $obj_func;
-        return new YWakeUpMonitor($str_func);
-    }
-
-    /**
      * Starts the enumeration of monitors currently accessible.
      * Use the method YWakeUpMonitor.nextWakeUpMonitor() to iterate on
      * next monitors.
@@ -450,12 +472,6 @@ class YWakeUpMonitor extends YFunction
 
     //--- (end of YWakeUpMonitor implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YWakeUpMonitor constructor)
-        parent::__construct('WakeUpMonitor', $str_func);
-        //--- (end of YWakeUpMonitor constructor)
-    }
 };
 
 //--- (WakeUpMonitor functions)
@@ -483,9 +499,9 @@ class YWakeUpMonitor extends YFunction
  * 
  * @return a YWakeUpMonitor object allowing you to drive the monitor.
  */
-function yFindWakeUpMonitor($str_func)
+function yFindWakeUpMonitor($func)
 {
-    return YWakeUpMonitor::FindWakeUpMonitor($str_func);
+    return YWakeUpMonitor::FindWakeUpMonitor($func);
 }
 
 /**

@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_realtimeclock.php 13979 2013-12-12 09:05:25Z mvuilleu $
  *
- * Implements yFindRealTimeClock(), the high-level API for RealTimeClock functions
+ * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,20 +38,18 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YRealTimeClock return codes)
+//--- (end of YRealTimeClock return codes)
 //--- (YRealTimeClock definitions)
-if(!defined('Y_TIMESET_FALSE')) define('Y_TIMESET_FALSE', 0);
-if(!defined('Y_TIMESET_TRUE')) define('Y_TIMESET_TRUE', 1);
-if(!defined('Y_TIMESET_INVALID')) define('Y_TIMESET_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_UNIXTIME_INVALID')) define('Y_UNIXTIME_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_DATETIME_INVALID')) define('Y_DATETIME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_UTCOFFSET_INVALID')) define('Y_UTCOFFSET_INVALID', Y_INVALID_SIGNED);
+if(!defined('Y_TIMESET_FALSE'))              define('Y_TIMESET_FALSE',             0);
+if(!defined('Y_TIMESET_TRUE'))               define('Y_TIMESET_TRUE',              1);
+if(!defined('Y_TIMESET_INVALID'))            define('Y_TIMESET_INVALID',           -1);
+if(!defined('Y_UNIXTIME_INVALID'))           define('Y_UNIXTIME_INVALID',          YAPI_INVALID_LONG);
+if(!defined('Y_DATETIME_INVALID'))           define('Y_DATETIME_INVALID',          YAPI_INVALID_STRING);
+if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',         YAPI_INVALID_INT);
 //--- (end of YRealTimeClock definitions)
 
+//--- (YRealTimeClock declaration)
 /**
  * YRealTimeClock Class: Real Time Clock function interface
  * 
@@ -62,56 +60,49 @@ if(!defined('Y_UTCOFFSET_INVALID')) define('Y_UTCOFFSET_INVALID', Y_INVALID_SIGN
  */
 class YRealTimeClock extends YFunction
 {
-    //--- (YRealTimeClock implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const UNIXTIME_INVALID = Y_INVALID_UNSIGNED;
-    const DATETIME_INVALID = Y_INVALID_STRING;
-    const UTCOFFSET_INVALID = Y_INVALID_SIGNED;
-    const TIMESET_FALSE = 0;
-    const TIMESET_TRUE = 1;
-    const TIMESET_INVALID = -1;
+    const UNIXTIME_INVALID               = YAPI_INVALID_LONG;
+    const DATETIME_INVALID               = YAPI_INVALID_STRING;
+    const UTCOFFSET_INVALID              = YAPI_INVALID_INT;
+    const TIMESET_FALSE                  = 0;
+    const TIMESET_TRUE                   = 1;
+    const TIMESET_INVALID                = -1;
+    //--- (end of YRealTimeClock declaration)
 
-    /**
-     * Returns the logical name of the clock.
-     * 
-     * @return a string corresponding to the logical name of the clock
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YRealTimeClock attributes)
+    protected $_unixTime                 = Y_UNIXTIME_INVALID;           // UTCTime
+    protected $_dateTime                 = Y_DATETIME_INVALID;           // Text
+    protected $_utcOffset                = Y_UTCOFFSET_INVALID;          // Int
+    protected $_timeSet                  = Y_TIMESET_INVALID;            // Bool
+    //--- (end of YRealTimeClock attributes)
 
-    /**
-     * Changes the logical name of the clock. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the clock
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YRealTimeClock constructor)
+        parent::__construct($str_func);
+        $this->_className = 'RealTimeClock';
+
+        //--- (end of YRealTimeClock constructor)
     }
 
-    /**
-     * Returns the current value of the clock (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the clock (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YRealTimeClock implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'unixTime':
+            $this->_unixTime = intval($val);
+            return 1;
+        case 'dateTime':
+            $this->_dateTime = $val;
+            return 1;
+        case 'utcOffset':
+            $this->_utcOffset = intval($val);
+            return 1;
+        case 'timeSet':
+            $this->_timeSet = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -123,8 +114,13 @@ class YRealTimeClock extends YFunction
      * On failure, throws an exception or returns Y_UNIXTIME_INVALID.
      */
     public function get_unixTime()
-    {   $json_val = $this->_getAttr("unixTime");
-        return (is_null($json_val) ? Y_UNIXTIME_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_UNIXTIME_INVALID;
+            }
+        }
+        return $this->_unixTime;
     }
 
     /**
@@ -151,8 +147,13 @@ class YRealTimeClock extends YFunction
      * On failure, throws an exception or returns Y_DATETIME_INVALID.
      */
     public function get_dateTime()
-    {   $json_val = $this->_getAttr("dateTime");
-        return (is_null($json_val) ? Y_DATETIME_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DATETIME_INVALID;
+            }
+        }
+        return $this->_dateTime;
     }
 
     /**
@@ -163,8 +164,13 @@ class YRealTimeClock extends YFunction
      * On failure, throws an exception or returns Y_UTCOFFSET_INVALID.
      */
     public function get_utcOffset()
-    {   $json_val = $this->_getAttr("utcOffset");
-        return (is_null($json_val) ? Y_UTCOFFSET_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_UTCOFFSET_INVALID;
+            }
+        }
+        return $this->_utcOffset;
     }
 
     /**
@@ -194,18 +200,48 @@ class YRealTimeClock extends YFunction
      * On failure, throws an exception or returns Y_TIMESET_INVALID.
      */
     public function get_timeSet()
-    {   $json_val = $this->_getAttr("timeSet");
-        return (is_null($json_val) ? Y_TIMESET_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_TIMESET_INVALID;
+            }
+        }
+        return $this->_timeSet;
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a clock for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the clock is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YRealTimeClock.isOnline() to test if the clock is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a clock by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the clock
+     * 
+     * @return a YRealTimeClock object allowing you to drive the clock.
+     */
+    public static function FindRealTimeClock($func)
+    {
+        // $obj                    is a YRealTimeClock;
+        $obj = YFunction::_FindFromCache('RealTimeClock', $func);
+        if ($obj == null) {
+            $obj = new YRealTimeClock($func);
+            YFunction::_AddToCache('RealTimeClock', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function unixTime()
     { return get_unixTime(); }
@@ -239,35 +275,6 @@ class YRealTimeClock extends YFunction
     }
 
     /**
-     * Retrieves a clock for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the clock is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YRealTimeClock.isOnline() to test if the clock is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a clock by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the clock
-     * 
-     * @return a YRealTimeClock object allowing you to drive the clock.
-     */
-    public static function FindRealTimeClock($str_func)
-    {   $obj_func = YAPI::getFunction('RealTimeClock', $str_func);
-        if($obj_func) return $obj_func;
-        return new YRealTimeClock($str_func);
-    }
-
-    /**
      * Starts the enumeration of clocks currently accessible.
      * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
      * next clocks.
@@ -284,12 +291,6 @@ class YRealTimeClock extends YFunction
 
     //--- (end of YRealTimeClock implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YRealTimeClock constructor)
-        parent::__construct('RealTimeClock', $str_func);
-        //--- (end of YRealTimeClock constructor)
-    }
 };
 
 //--- (RealTimeClock functions)
@@ -317,9 +318,9 @@ class YRealTimeClock extends YFunction
  * 
  * @return a YRealTimeClock object allowing you to drive the clock.
  */
-function yFindRealTimeClock($str_func)
+function yFindRealTimeClock($func)
 {
-    return YRealTimeClock::FindRealTimeClock($str_func);
+    return YRealTimeClock::FindRealTimeClock($func);
 }
 
 /**

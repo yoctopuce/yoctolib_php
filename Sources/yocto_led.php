@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_led.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindLed(), the high-level API for Led functions
+ * Implements YLed, the high-level API for Led functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,25 +38,23 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YLed return codes)
+//--- (end of YLed return codes)
 //--- (YLed definitions)
-if(!defined('Y_POWER_OFF')) define('Y_POWER_OFF', 0);
-if(!defined('Y_POWER_ON')) define('Y_POWER_ON', 1);
-if(!defined('Y_POWER_INVALID')) define('Y_POWER_INVALID', -1);
-if(!defined('Y_BLINKING_STILL')) define('Y_BLINKING_STILL', 0);
-if(!defined('Y_BLINKING_RELAX')) define('Y_BLINKING_RELAX', 1);
-if(!defined('Y_BLINKING_AWARE')) define('Y_BLINKING_AWARE', 2);
-if(!defined('Y_BLINKING_RUN')) define('Y_BLINKING_RUN', 3);
-if(!defined('Y_BLINKING_CALL')) define('Y_BLINKING_CALL', 4);
-if(!defined('Y_BLINKING_PANIC')) define('Y_BLINKING_PANIC', 5);
-if(!defined('Y_BLINKING_INVALID')) define('Y_BLINKING_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_LUMINOSITY_INVALID')) define('Y_LUMINOSITY_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_POWER_OFF'))                  define('Y_POWER_OFF',                 0);
+if(!defined('Y_POWER_ON'))                   define('Y_POWER_ON',                  1);
+if(!defined('Y_POWER_INVALID'))              define('Y_POWER_INVALID',             -1);
+if(!defined('Y_BLINKING_STILL'))             define('Y_BLINKING_STILL',            0);
+if(!defined('Y_BLINKING_RELAX'))             define('Y_BLINKING_RELAX',            1);
+if(!defined('Y_BLINKING_AWARE'))             define('Y_BLINKING_AWARE',            2);
+if(!defined('Y_BLINKING_RUN'))               define('Y_BLINKING_RUN',              3);
+if(!defined('Y_BLINKING_CALL'))              define('Y_BLINKING_CALL',             4);
+if(!defined('Y_BLINKING_PANIC'))             define('Y_BLINKING_PANIC',            5);
+if(!defined('Y_BLINKING_INVALID'))           define('Y_BLINKING_INVALID',          -1);
+if(!defined('Y_LUMINOSITY_INVALID'))         define('Y_LUMINOSITY_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YLed definitions)
 
+//--- (YLed declaration)
 /**
  * YLed Class: Led function interface
  * 
@@ -66,61 +64,50 @@ if(!defined('Y_LUMINOSITY_INVALID')) define('Y_LUMINOSITY_INVALID', Y_INVALID_UN
  */
 class YLed extends YFunction
 {
-    //--- (YLed implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const POWER_OFF = 0;
-    const POWER_ON = 1;
-    const POWER_INVALID = -1;
-    const LUMINOSITY_INVALID = Y_INVALID_UNSIGNED;
-    const BLINKING_STILL = 0;
-    const BLINKING_RELAX = 1;
-    const BLINKING_AWARE = 2;
-    const BLINKING_RUN = 3;
-    const BLINKING_CALL = 4;
-    const BLINKING_PANIC = 5;
-    const BLINKING_INVALID = -1;
+    const POWER_OFF                      = 0;
+    const POWER_ON                       = 1;
+    const POWER_INVALID                  = -1;
+    const LUMINOSITY_INVALID             = YAPI_INVALID_UINT;
+    const BLINKING_STILL                 = 0;
+    const BLINKING_RELAX                 = 1;
+    const BLINKING_AWARE                 = 2;
+    const BLINKING_RUN                   = 3;
+    const BLINKING_CALL                  = 4;
+    const BLINKING_PANIC                 = 5;
+    const BLINKING_INVALID               = -1;
+    //--- (end of YLed declaration)
 
-    /**
-     * Returns the logical name of the led.
-     * 
-     * @return a string corresponding to the logical name of the led
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YLed attributes)
+    protected $_power                    = Y_POWER_INVALID;              // OnOff
+    protected $_luminosity               = Y_LUMINOSITY_INVALID;         // Percent
+    protected $_blinking                 = Y_BLINKING_INVALID;           // Blink
+    //--- (end of YLed attributes)
 
-    /**
-     * Changes the logical name of the led. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the led
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YLed constructor)
+        parent::__construct($str_func);
+        $this->_className = 'Led';
+
+        //--- (end of YLed constructor)
     }
 
-    /**
-     * Returns the current value of the led (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the led (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YLed implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'power':
+            $this->_power = intval($val);
+            return 1;
+        case 'luminosity':
+            $this->_luminosity = intval($val);
+            return 1;
+        case 'blinking':
+            $this->_blinking = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -131,8 +118,13 @@ class YLed extends YFunction
      * On failure, throws an exception or returns Y_POWER_INVALID.
      */
     public function get_power()
-    {   $json_val = $this->_getAttr("power");
-        return (is_null($json_val) ? Y_POWER_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POWER_INVALID;
+            }
+        }
+        return $this->_power;
     }
 
     /**
@@ -158,8 +150,13 @@ class YLed extends YFunction
      * On failure, throws an exception or returns Y_LUMINOSITY_INVALID.
      */
     public function get_luminosity()
-    {   $json_val = $this->_getAttr("luminosity");
-        return (is_null($json_val) ? Y_LUMINOSITY_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LUMINOSITY_INVALID;
+            }
+        }
+        return $this->_luminosity;
     }
 
     /**
@@ -186,8 +183,13 @@ class YLed extends YFunction
      * On failure, throws an exception or returns Y_BLINKING_INVALID.
      */
     public function get_blinking()
-    {   $json_val = $this->_getAttr("blinking");
-        return (is_null($json_val) ? Y_BLINKING_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BLINKING_INVALID;
+            }
+        }
+        return $this->_blinking;
     }
 
     /**
@@ -206,14 +208,39 @@ class YLed extends YFunction
         return $this->_setAttr("blinking",$rest_val);
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a led for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the led is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YLed.isOnline() to test if the led is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a led by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the led
+     * 
+     * @return a YLed object allowing you to drive the led.
+     */
+    public static function FindLed($func)
+    {
+        // $obj                    is a YLed;
+        $obj = YFunction::_FindFromCache('Led', $func);
+        if ($obj == null) {
+            $obj = new YLed($func);
+            YFunction::_AddToCache('Led', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function power()
     { return get_power(); }
@@ -247,35 +274,6 @@ class YLed extends YFunction
     }
 
     /**
-     * Retrieves a led for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the led is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YLed.isOnline() to test if the led is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a led by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the led
-     * 
-     * @return a YLed object allowing you to drive the led.
-     */
-    public static function FindLed($str_func)
-    {   $obj_func = YAPI::getFunction('Led', $str_func);
-        if($obj_func) return $obj_func;
-        return new YLed($str_func);
-    }
-
-    /**
      * Starts the enumeration of leds currently accessible.
      * Use the method YLed.nextLed() to iterate on
      * next leds.
@@ -292,12 +290,6 @@ class YLed extends YFunction
 
     //--- (end of YLed implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YLed constructor)
-        parent::__construct('Led', $str_func);
-        //--- (end of YLed constructor)
-    }
 };
 
 //--- (Led functions)
@@ -325,9 +317,9 @@ class YLed extends YFunction
  * 
  * @return a YLed object allowing you to drive the led.
  */
-function yFindLed($str_func)
+function yFindLed($func)
 {
-    return YLed::FindLed($str_func);
+    return YLed::FindLed($func);
 }
 
 /**

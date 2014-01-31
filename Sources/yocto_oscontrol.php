@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_oscontrol.php 12337 2013-08-14 15:22:22Z mvuilleu $
+ * $Id: yocto_oscontrol.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindOsControl(), the high-level API for OsControl functions
+ * Implements YOsControl, the high-level API for OsControl functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,15 +38,13 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YOsControl return codes)
+//--- (end of YOsControl return codes)
 //--- (YOsControl definitions)
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID')) define('Y_SHUTDOWNCOUNTDOWN_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID'))  define('Y_SHUTDOWNCOUNTDOWN_INVALID', YAPI_INVALID_UINT);
 //--- (end of YOsControl definitions)
 
+//--- (YOsControl declaration)
 /**
  * YOsControl Class: OS control
  * 
@@ -56,52 +54,32 @@ if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID')) define('Y_SHUTDOWNCOUNTDOWN_INVALID'
  */
 class YOsControl extends YFunction
 {
-    //--- (YOsControl implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const SHUTDOWNCOUNTDOWN_INVALID = Y_INVALID_UNSIGNED;
+    const SHUTDOWNCOUNTDOWN_INVALID      = YAPI_INVALID_UINT;
+    //--- (end of YOsControl declaration)
 
-    /**
-     * Returns the logical name of the OS control, corresponding to the network name of the module.
-     * 
-     * @return a string corresponding to the logical name of the OS control, corresponding to the network
-     * name of the module
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YOsControl attributes)
+    protected $_shutdownCountdown        = Y_SHUTDOWNCOUNTDOWN_INVALID;  // UInt31
+    //--- (end of YOsControl attributes)
 
-    /**
-     * Changes the logical name of the OS control. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the OS control
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YOsControl constructor)
+        parent::__construct($str_func);
+        $this->_className = 'OsControl';
+
+        //--- (end of YOsControl constructor)
     }
 
-    /**
-     * Returns the current value of the OS control (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the OS control (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YOsControl implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'shutdownCountdown':
+            $this->_shutdownCountdown = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -114,57 +92,19 @@ class YOsControl extends YFunction
      * On failure, throws an exception or returns Y_SHUTDOWNCOUNTDOWN_INVALID.
      */
     public function get_shutdownCountdown()
-    {   $json_val = $this->_getAttr("shutdownCountdown");
-        return (is_null($json_val) ? Y_SHUTDOWNCOUNTDOWN_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SHUTDOWNCOUNTDOWN_INVALID;
+            }
+        }
+        return $this->_shutdownCountdown;
     }
 
     public function set_shutdownCountdown($newval)
     {
         $rest_val = strval($newval);
         return $this->_setAttr("shutdownCountdown",$rest_val);
-    }
-
-    /**
-     * Schedules an OS shutdown after a given number of seconds.
-     * 
-     * @param secBeforeShutDown : number of seconds before shutdown
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function shutdown($int_secBeforeShutDown)
-    {
-        $rest_val = strval($int_secBeforeShutDown);
-        return $this->_setAttr("shutdownCountdown",$rest_val);
-    }
-
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
-
-    public function shutdownCountdown()
-    { return get_shutdownCountdown(); }
-
-    public function setShutdownCountdown($newval)
-    { return set_shutdownCountdown($newval); }
-
-    /**
-     * Continues the enumeration of OS control started using yFirstOsControl().
-     * 
-     * @return a pointer to a YOsControl object, corresponding to
-     *         OS control currently online, or a null pointer
-     *         if there are no more OS control to enumerate.
-     */
-    public function nextOsControl()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
-        if($next_hwid == null) return null;
-        return yFindOsControl($next_hwid);
     }
 
     /**
@@ -190,10 +130,48 @@ class YOsControl extends YFunction
      * 
      * @return a YOsControl object allowing you to drive the OS control.
      */
-    public static function FindOsControl($str_func)
-    {   $obj_func = YAPI::getFunction('OsControl', $str_func);
-        if($obj_func) return $obj_func;
-        return new YOsControl($str_func);
+    public static function FindOsControl($func)
+    {
+        // $obj                    is a YOsControl;
+        $obj = YFunction::_FindFromCache('OsControl', $func);
+        if ($obj == null) {
+            $obj = new YOsControl($func);
+            YFunction::_AddToCache('OsControl', $func, $obj);
+        }
+        return $obj;
+    }
+
+    /**
+     * Schedules an OS shutdown after a given number of seconds.
+     * 
+     * @param secBeforeShutDown : number of seconds before shutdown
+     * 
+     * @return YAPI_SUCCESS when the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function shutdown($secBeforeShutDown)
+    {
+        return $this->set_shutdownCountdown($secBeforeShutDown);
+    }
+
+    public function shutdownCountdown()
+    { return get_shutdownCountdown(); }
+
+    public function setShutdownCountdown($newval)
+    { return set_shutdownCountdown($newval); }
+
+    /**
+     * Continues the enumeration of OS control started using yFirstOsControl().
+     * 
+     * @return a pointer to a YOsControl object, corresponding to
+     *         OS control currently online, or a null pointer
+     *         if there are no more OS control to enumerate.
+     */
+    public function nextOsControl()
+    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+        if($next_hwid == null) return null;
+        return yFindOsControl($next_hwid);
     }
 
     /**
@@ -213,12 +191,6 @@ class YOsControl extends YFunction
 
     //--- (end of YOsControl implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YOsControl constructor)
-        parent::__construct('OsControl', $str_func);
-        //--- (end of YOsControl constructor)
-    }
 };
 
 //--- (OsControl functions)
@@ -246,9 +218,9 @@ class YOsControl extends YFunction
  * 
  * @return a YOsControl object allowing you to drive the OS control.
  */
-function yFindOsControl($str_func)
+function yFindOsControl($func)
 {
-    return YOsControl::FindOsControl($str_func);
+    return YOsControl::FindOsControl($func);
 }
 
 /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 12326 2013-08-13 15:52:20Z mvuilleu $
+ * $Id: yocto_display.php 14687 2014-01-23 11:01:59Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -41,63 +41,91 @@
 //--- (generated code: return codes)
 //--- (end of generated code: return codes)
 //--- (generated code: YDisplay definitions)
-if(!defined('Y_POWERSTATE_OFF')) define('Y_POWERSTATE_OFF', 0);
-if(!defined('Y_POWERSTATE_ON')) define('Y_POWERSTATE_ON', 1);
-if(!defined('Y_POWERSTATE_INVALID')) define('Y_POWERSTATE_INVALID', -1);
-if(!defined('Y_ORIENTATION_LEFT')) define('Y_ORIENTATION_LEFT', 0);
-if(!defined('Y_ORIENTATION_UP')) define('Y_ORIENTATION_UP', 1);
-if(!defined('Y_ORIENTATION_RIGHT')) define('Y_ORIENTATION_RIGHT', 2);
-if(!defined('Y_ORIENTATION_DOWN')) define('Y_ORIENTATION_DOWN', 3);
-if(!defined('Y_ORIENTATION_INVALID')) define('Y_ORIENTATION_INVALID', -1);
-if(!defined('Y_DISPLAYTYPE_MONO')) define('Y_DISPLAYTYPE_MONO', 0);
-if(!defined('Y_DISPLAYTYPE_GRAY')) define('Y_DISPLAYTYPE_GRAY', 1);
-if(!defined('Y_DISPLAYTYPE_RGB')) define('Y_DISPLAYTYPE_RGB', 2);
-if(!defined('Y_DISPLAYTYPE_INVALID')) define('Y_DISPLAYTYPE_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_STARTUPSEQ_INVALID')) define('Y_STARTUPSEQ_INVALID', Y_INVALID_STRING);
-if(!defined('Y_BRIGHTNESS_INVALID')) define('Y_BRIGHTNESS_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_DISPLAYWIDTH_INVALID')) define('Y_DISPLAYWIDTH_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_DISPLAYHEIGHT_INVALID')) define('Y_DISPLAYHEIGHT_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_LAYERWIDTH_INVALID')) define('Y_LAYERWIDTH_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_LAYERHEIGHT_INVALID')) define('Y_LAYERHEIGHT_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_LAYERCOUNT_INVALID')) define('Y_LAYERCOUNT_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_COMMAND_INVALID')) define('Y_COMMAND_INVALID', Y_INVALID_STRING);
+if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
+if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
+if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
+if(!defined('Y_ORIENTATION_LEFT'))           define('Y_ORIENTATION_LEFT',          0);
+if(!defined('Y_ORIENTATION_UP'))             define('Y_ORIENTATION_UP',            1);
+if(!defined('Y_ORIENTATION_RIGHT'))          define('Y_ORIENTATION_RIGHT',         2);
+if(!defined('Y_ORIENTATION_DOWN'))           define('Y_ORIENTATION_DOWN',          3);
+if(!defined('Y_ORIENTATION_INVALID'))        define('Y_ORIENTATION_INVALID',       -1);
+if(!defined('Y_DISPLAYTYPE_MONO'))           define('Y_DISPLAYTYPE_MONO',          0);
+if(!defined('Y_DISPLAYTYPE_GRAY'))           define('Y_DISPLAYTYPE_GRAY',          1);
+if(!defined('Y_DISPLAYTYPE_RGB'))            define('Y_DISPLAYTYPE_RGB',           2);
+if(!defined('Y_DISPLAYTYPE_INVALID'))        define('Y_DISPLAYTYPE_INVALID',       -1);
+if(!defined('Y_STARTUPSEQ_INVALID'))         define('Y_STARTUPSEQ_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_BRIGHTNESS_INVALID'))         define('Y_BRIGHTNESS_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_DISPLAYWIDTH_INVALID'))       define('Y_DISPLAYWIDTH_INVALID',      YAPI_INVALID_UINT);
+if(!defined('Y_DISPLAYHEIGHT_INVALID'))      define('Y_DISPLAYHEIGHT_INVALID',     YAPI_INVALID_UINT);
+if(!defined('Y_LAYERWIDTH_INVALID'))         define('Y_LAYERWIDTH_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_LAYERHEIGHT_INVALID'))        define('Y_LAYERHEIGHT_INVALID',       YAPI_INVALID_UINT);
+if(!defined('Y_LAYERCOUNT_INVALID'))         define('Y_LAYERCOUNT_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of generated code: YDisplay definitions)
 //--- (generated code: YDisplayLayer definitions)
-if(!defined('Y_ALIGN_TOP_LEFT')) define('Y_ALIGN_TOP_LEFT', 0);
-if(!defined('Y_ALIGN_CENTER_LEFT')) define('Y_ALIGN_CENTER_LEFT', 1);
-if(!defined('Y_ALIGN_BASELINE_LEFT')) define('Y_ALIGN_BASELINE_LEFT', 2);
-if(!defined('Y_ALIGN_BOTTOM_LEFT')) define('Y_ALIGN_BOTTOM_LEFT', 3);
-if(!defined('Y_ALIGN_TOP_CENTER')) define('Y_ALIGN_TOP_CENTER', 4);
-if(!defined('Y_ALIGN_CENTER')) define('Y_ALIGN_CENTER', 5);
-if(!defined('Y_ALIGN_BASELINE_CENTER')) define('Y_ALIGN_BASELINE_CENTER', 6);
-if(!defined('Y_ALIGN_BOTTOM_CENTER')) define('Y_ALIGN_BOTTOM_CENTER', 7);
-if(!defined('Y_ALIGN_TOP_DECIMAL')) define('Y_ALIGN_TOP_DECIMAL', 8);
-if(!defined('Y_ALIGN_CENTER_DECIMAL')) define('Y_ALIGN_CENTER_DECIMAL', 9);
-if(!defined('Y_ALIGN_BASELINE_DECIMAL')) define('Y_ALIGN_BASELINE_DECIMAL', 10);
-if(!defined('Y_ALIGN_BOTTOM_DECIMAL')) define('Y_ALIGN_BOTTOM_DECIMAL', 11);
-if(!defined('Y_ALIGN_TOP_RIGHT')) define('Y_ALIGN_TOP_RIGHT', 12);
-if(!defined('Y_ALIGN_CENTER_RIGHT')) define('Y_ALIGN_CENTER_RIGHT', 13);
-if(!defined('Y_ALIGN_BASELINE_RIGHT')) define('Y_ALIGN_BASELINE_RIGHT', 14);
-if(!defined('Y_ALIGN_BOTTOM_RIGHT')) define('Y_ALIGN_BOTTOM_RIGHT', 15);
+if(!defined('Y_ALIGN_TOP_LEFT'))             define('Y_ALIGN_TOP_LEFT',            0);
+if(!defined('Y_ALIGN_CENTER_LEFT'))          define('Y_ALIGN_CENTER_LEFT',         1);
+if(!defined('Y_ALIGN_BASELINE_LEFT'))        define('Y_ALIGN_BASELINE_LEFT',       2);
+if(!defined('Y_ALIGN_BOTTOM_LEFT'))          define('Y_ALIGN_BOTTOM_LEFT',         3);
+if(!defined('Y_ALIGN_TOP_CENTER'))           define('Y_ALIGN_TOP_CENTER',          4);
+if(!defined('Y_ALIGN_CENTER'))               define('Y_ALIGN_CENTER',              5);
+if(!defined('Y_ALIGN_BASELINE_CENTER'))      define('Y_ALIGN_BASELINE_CENTER',     6);
+if(!defined('Y_ALIGN_BOTTOM_CENTER'))        define('Y_ALIGN_BOTTOM_CENTER',       7);
+if(!defined('Y_ALIGN_TOP_DECIMAL'))          define('Y_ALIGN_TOP_DECIMAL',         8);
+if(!defined('Y_ALIGN_CENTER_DECIMAL'))       define('Y_ALIGN_CENTER_DECIMAL',      9);
+if(!defined('Y_ALIGN_BASELINE_DECIMAL'))     define('Y_ALIGN_BASELINE_DECIMAL',    10);
+if(!defined('Y_ALIGN_BOTTOM_DECIMAL'))       define('Y_ALIGN_BOTTOM_DECIMAL',      11);
+if(!defined('Y_ALIGN_TOP_RIGHT'))            define('Y_ALIGN_TOP_RIGHT',           12);
+if(!defined('Y_ALIGN_CENTER_RIGHT'))         define('Y_ALIGN_CENTER_RIGHT',        13);
+if(!defined('Y_ALIGN_BASELINE_RIGHT'))       define('Y_ALIGN_BASELINE_RIGHT',      14);
+if(!defined('Y_ALIGN_BOTTOM_RIGHT'))         define('Y_ALIGN_BOTTOM_RIGHT',        15);
 //--- (end of generated code: YDisplayLayer definitions)
 
+//--- (generated code: YDisplayLayer declaration)
 /**
- * YDisplayLayer Class: Image layer containing data to display
+ * YDisplayLayer Class: DisplayLayer object interface
  * 
  * A DisplayLayer is an image layer containing objects to display
- * (bitmaps, text, etc.). The content will only be displayed when
+ * (bitmaps, text, etc.). The content is displayed only when
  * the layer is active on the screen (and not masked by other
  * overlapping layers).
  */
 class YDisplayLayer
 {
+    const ALIGN_TOP_LEFT                 = 0;
+    const ALIGN_CENTER_LEFT              = 1;
+    const ALIGN_BASELINE_LEFT            = 2;
+    const ALIGN_BOTTOM_LEFT              = 3;
+    const ALIGN_TOP_CENTER               = 4;
+    const ALIGN_CENTER                   = 5;
+    const ALIGN_BASELINE_CENTER          = 6;
+    const ALIGN_BOTTOM_CENTER            = 7;
+    const ALIGN_TOP_DECIMAL              = 8;
+    const ALIGN_CENTER_DECIMAL           = 9;
+    const ALIGN_BASELINE_DECIMAL         = 10;
+    const ALIGN_BOTTOM_DECIMAL           = 11;
+    const ALIGN_TOP_RIGHT                = 12;
+    const ALIGN_CENTER_RIGHT             = 13;
+    const ALIGN_BASELINE_RIGHT           = 14;
+    const ALIGN_BOTTOM_RIGHT             = 15;
+    //--- (end of generated code: YDisplayLayer declaration)
 
-    private $_display;
-    private $_id;
-    private $_cmdbuff;
-    private $_hidden;
+    //--- (generated code: YDisplayLayer attributes)
+    //--- (end of generated code: YDisplayLayer attributes)
+    protected $_display;
+    protected $_id;
+    protected $_cmdbuff;
+    protected $_hidden;
+
+    function __construct($parent, $id)
+    {
+        //--- (generated code: YDisplayLayer constructor)
+        //--- (end of generated code: YDisplayLayer constructor)
+        $this->_display    = $parent;
+        $this->_id         = $id;
+        $this->_cmdbuff    = '';
+        $this->_hidden     = FALSE;
+    }
 
     // internal function to flush any pending command for this layer
     public function flush_now() 
@@ -137,31 +165,7 @@ class YDisplayLayer
         return $this->flush_now();
     }
 
-    function __construct($parent, $id)
-    {
-        $this->_display    = $parent;
-        $this->_id         = $id;
-        $this->_cmdbuff    = '';
-        $this->_hidden     = FALSE;
-    }
-
     //--- (generated code: YDisplayLayer implementation)
-    const ALIGN_TOP_LEFT = 0;
-    const ALIGN_CENTER_LEFT = 1;
-    const ALIGN_BASELINE_LEFT = 2;
-    const ALIGN_BOTTOM_LEFT = 3;
-    const ALIGN_TOP_CENTER = 4;
-    const ALIGN_CENTER = 5;
-    const ALIGN_BASELINE_CENTER = 6;
-    const ALIGN_BOTTOM_CENTER = 7;
-    const ALIGN_TOP_DECIMAL = 8;
-    const ALIGN_CENTER_DECIMAL = 9;
-    const ALIGN_BASELINE_DECIMAL = 10;
-    const ALIGN_BOTTOM_DECIMAL = 11;
-    const ALIGN_TOP_RIGHT = 12;
-    const ALIGN_CENTER_RIGHT = 13;
-    const ALIGN_BASELINE_RIGHT = 14;
-    const ALIGN_BOTTOM_RIGHT = 15;
 
     /**
      * Reverts the layer to its initial state (fully transparent, default settings).
@@ -175,9 +179,8 @@ class YDisplayLayer
      */
     public function reset()
     {
-        $this->_hidden = FALSE; 
-        return $this->command_flush('X'); 
-        
+        $this->_hidden = false;
+        return $this->command_flush('X');
     }
 
     /**
@@ -207,9 +210,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function selectColorPen($int_color)
+    public function selectColorPen($color)
     {
-        return $this->command_push(sprintf('c%06x',$int_color));
+        return $this->command_push(sprintf('c%06x',$color));
     }
 
     /**
@@ -226,9 +229,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function selectGrayPen($int_graylevel)
+    public function selectGrayPen($graylevel)
     {
-        return $this->command_push(sprintf('g%d',$int_graylevel));
+        return $this->command_push(sprintf('g%d',$graylevel));
     }
 
     /**
@@ -262,9 +265,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function setAntialiasingMode($bool_mode)
+    public function setAntialiasingMode($mode)
     {
-        return $this->command_push(sprintf('a%d',$bool_mode));
+        return $this->command_push(sprintf('a%d',$mode));
     }
 
     /**
@@ -277,9 +280,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawPixel($int_x,$int_y)
+    public function drawPixel($x,$y)
     {
-        return $this->command_flush(sprintf('P%d,%d',$int_x,$int_y));
+        return $this->command_flush(sprintf('P%d,%d',$x,$y));
     }
 
     /**
@@ -294,9 +297,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawRect($int_x1,$int_y1,$int_x2,$int_y2)
+    public function drawRect($x1,$y1,$x2,$y2)
     {
-        return $this->command_flush(sprintf('R%d,%d,%d,%d',$int_x1,$int_y1,$int_x2,$int_y2));
+        return $this->command_flush(sprintf('R%d,%d,%d,%d',$x1,$y1,$x2,$y2));
     }
 
     /**
@@ -311,9 +314,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawBar($int_x1,$int_y1,$int_x2,$int_y2)
+    public function drawBar($x1,$y1,$x2,$y2)
     {
-        return $this->command_flush(sprintf('B%d,%d,%d,%d',$int_x1,$int_y1,$int_x2,$int_y2));
+        return $this->command_flush(sprintf('B%d,%d,%d,%d',$x1,$y1,$x2,$y2));
     }
 
     /**
@@ -327,9 +330,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawCircle($int_x,$int_y,$int_r)
+    public function drawCircle($x,$y,$r)
     {
-        return $this->command_flush(sprintf('C%d,%d,%d',$int_x,$int_y,$int_r));
+        return $this->command_flush(sprintf('C%d,%d,%d',$x,$y,$r));
     }
 
     /**
@@ -343,9 +346,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawDisc($int_x,$int_y,$int_r)
+    public function drawDisc($x,$y,$r)
     {
-        return $this->command_flush(sprintf('D%d,%d,%d',$int_x,$int_y,$int_r));
+        return $this->command_flush(sprintf('D%d,%d,%d',$x,$y,$r));
     }
 
     /**
@@ -361,9 +364,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function selectFont($str_fontname)
+    public function selectFont($fontname)
     {
-        return $this->command_push(sprintf('&%s%c',$str_fontname,27));
+        return $this->command_push(sprintf('&%s%c',$fontname,27));
     }
 
     /**
@@ -371,8 +374,8 @@ class YDisplayLayer
      * to the specified pixel position is called the anchor point, and can be chosen among
      * several options. Text is rendered from left to right, without implicit wrapping.
      * 
-     * @param x: the distance from left of layer to the text ancor point, in pixels
-     * @param y: the distance from top of layer to the text ancor point, in pixels
+     * @param x: the distance from left of layer to the text anchor point, in pixels
+     * @param y: the distance from top of layer to the text anchor point, in pixels
      * @param anchor: the text anchor point, chosen among the Y_ALIGN enumeration:
      *         Y_ALIGN_TOP_LEFT,    Y_ALIGN_CENTER_LEFT,    Y_ALIGN_BASELINE_LEFT,    Y_ALIGN_BOTTOM_LEFT,
      *         Y_ALIGN_TOP_CENTER,  Y_ALIGN_CENTER,         Y_ALIGN_BASELINE_CENTER,  Y_ALIGN_BOTTOM_CENTER,
@@ -384,9 +387,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawText($int_x,$int_y,$enumAlign_anchor,$str_text)
+    public function drawText($x,$y,$anchor,$text)
     {
-        return $this->command_flush(sprintf('T%d,%d,%d,%s%c',$int_x,$int_y,$enumAlign_anchor,$str_text,27));
+        return $this->command_flush(sprintf('T%d,%d,%d,%s%c',$x,$y,$anchor,$text,27));
     }
 
     /**
@@ -403,10 +406,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawImage($int_x,$int_y,$str_imagename)
+    public function drawImage($x,$y,$imagename)
     {
-        return $this->command_flush(sprintf('*%d,%d,%s%c',$int_x,$int_y,$str_imagename,27));
-        
+        return $this->command_flush(sprintf('*%d,%d,%s%c',$x,$y,$imagename,27));
     }
 
     /**
@@ -429,12 +431,11 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function drawBitmap($int_x,$int_y,$int_w,$bin_bitmap,$int_bgcol)
+    public function drawBitmap($x,$y,$w,$bitmap,$bgcol)
     {
-        // $destname is a str;
-        $destname = sprintf('layer%d:%d,%d@%d,%d',$this->_id,$int_w,$int_bgcol,$int_x,$int_y);
-        return $this->_display->upload($destname,$bin_bitmap);
-        
+        // $destname               is a str;
+        $destname = sprintf('layer%d:%d,%d@%d,%d',$this->_id,$w,$bgcol,$x,$y);
+        return $this->_display->upload($destname,$bitmap);
     }
 
     /**
@@ -447,9 +448,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function moveTo($int_x,$int_y)
+    public function moveTo($x,$y)
     {
-        return $this->command_push(sprintf('@%d,%d',$int_x,$int_y));
+        return $this->command_push(sprintf('@%d,%d',$x,$y));
     }
 
     /**
@@ -464,9 +465,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function lineTo($int_x,$int_y)
+    public function lineTo($x,$y)
     {
-        return $this->command_flush(sprintf('-%d,%d',$int_x,$int_y));
+        return $this->command_flush(sprintf('-%d,%d',$x,$y));
     }
 
     /**
@@ -482,9 +483,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function consoleOut($str_text)
+    public function consoleOut($text)
     {
-        return $this->command_flush(sprintf('!%s%c',$str_text,27));
+        return $this->command_flush(sprintf('!%s%c',$text,27));
     }
 
     /**
@@ -499,10 +500,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function setConsoleMargins($int_x1,$int_y1,$int_x2,$int_y2)
+    public function setConsoleMargins($x1,$y1,$x2,$y2)
     {
-        return $this->command_push(sprintf('m%d,%d,%d,%d',$int_x1,$int_y1,$int_x2,$int_y2)); 
-        
+        return $this->command_push(sprintf('m%d,%d,%d,%d',$x1,$y1,$x2,$y2));
     }
 
     /**
@@ -516,10 +516,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function setConsoleBackground($int_bgcol)
+    public function setConsoleBackground($bgcol)
     {
-        return $this->command_push(sprintf('b%d',$int_bgcol)); 
-        
+        return $this->command_push(sprintf('b%d',$bgcol));
     }
 
     /**
@@ -532,10 +531,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function setConsoleWordWrap($bool_wordwrap)
+    public function setConsoleWordWrap($wordwrap)
     {
-        return $this->command_push(sprintf('w%d',$bool_wordwrap)); 
-        
+        return $this->command_push(sprintf('w%d',$wordwrap));
     }
 
     /**
@@ -565,10 +563,9 @@ class YDisplayLayer
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function setLayerPosition($int_x,$int_y,$int_scrollTime)
+    public function setLayerPosition($x,$y,$scrollTime)
     {
-        return $this->command_flush(sprintf('#%d,%d,%d',$int_x,$int_y,$int_scrollTime)); 
-        
+        return $this->command_flush(sprintf('#%d,%d,%d',$x,$y,$scrollTime));
     }
 
     /**
@@ -583,10 +580,9 @@ class YDisplayLayer
      */
     public function hide()
     {
-        $this->command_push('h'); 
-        $this->_hidden = TRUE; 
-        return $this->flush_now(); 
-        
+        $this->command_push('h');
+        $this->_hidden = true;
+        return $this->flush_now();
     }
 
     /**
@@ -598,9 +594,8 @@ class YDisplayLayer
      */
     public function unhide()
     {
-        $this->_hidden = FALSE; 
-        return $this->command_flush('s'); 
-        
+        $this->_hidden = false;
+        return $this->command_flush('s');
     }
 
     /**
@@ -610,8 +605,7 @@ class YDisplayLayer
      */
     public function get_display()
     {
-        return $this->_display; 
-        
+        return $this->_display;
     }
 
     /**
@@ -624,7 +618,6 @@ class YDisplayLayer
     public function get_displayWidth()
     {
         return $this->_display->get_displayWidth();
-        
     }
 
     /**
@@ -637,7 +630,6 @@ class YDisplayLayer
     public function get_displayHeight()
     {
         return $this->_display->get_displayHeight();
-        
     }
 
     /**
@@ -650,7 +642,6 @@ class YDisplayLayer
     public function get_layerWidth()
     {
         return $this->_display->get_layerWidth();
-        
     }
 
     /**
@@ -663,124 +654,151 @@ class YDisplayLayer
     public function get_layerHeight()
     {
         return $this->_display->get_layerHeight();
-        
     }
 
     public function resetHiddenFlag()
     {
-        $this->_hidden = FALSE; 
+        $this->_hidden = false;
         return YAPI_SUCCESS;
-        
     }
 
     //--- (end of generated code: YDisplayLayer implementation)
 };
 
+//--- (generated code: YDisplay declaration)
 /**
  * YDisplay Class: Display function interface
  * 
- * Yoctopuce display interface has been designed to eaasily
+ * Yoctopuce display interface has been designed to easily
  * show information and images. The device provides built-in
  * multi-layer rendering. Layers can be drawn offline, individually,
- * and freely moved on the display.
+ * and freely moved on the display. It can also replay recorded
+ * sequences (animations).
  */
 class YDisplay extends YFunction
 {
-    private $_allDisplayLayers;
-    private $_recording;
-    private $_sequence;
+    const ENABLED_FALSE                  = 0;
+    const ENABLED_TRUE                   = 1;
+    const ENABLED_INVALID                = -1;
+    const STARTUPSEQ_INVALID             = YAPI_INVALID_STRING;
+    const BRIGHTNESS_INVALID             = YAPI_INVALID_UINT;
+    const ORIENTATION_LEFT               = 0;
+    const ORIENTATION_UP                 = 1;
+    const ORIENTATION_RIGHT              = 2;
+    const ORIENTATION_DOWN               = 3;
+    const ORIENTATION_INVALID            = -1;
+    const DISPLAYWIDTH_INVALID           = YAPI_INVALID_UINT;
+    const DISPLAYHEIGHT_INVALID          = YAPI_INVALID_UINT;
+    const DISPLAYTYPE_MONO               = 0;
+    const DISPLAYTYPE_GRAY               = 1;
+    const DISPLAYTYPE_RGB                = 2;
+    const DISPLAYTYPE_INVALID            = -1;
+    const LAYERWIDTH_INVALID             = YAPI_INVALID_UINT;
+    const LAYERHEIGHT_INVALID            = YAPI_INVALID_UINT;
+    const LAYERCOUNT_INVALID             = YAPI_INVALID_UINT;
+    const COMMAND_INVALID                = YAPI_INVALID_STRING;
+    //--- (end of generated code: YDisplay declaration)
+
+    //--- (generated code: YDisplay attributes)
+    protected $_enabled                  = Y_ENABLED_INVALID;            // Bool
+    protected $_startupSeq               = Y_STARTUPSEQ_INVALID;         // Text
+    protected $_brightness               = Y_BRIGHTNESS_INVALID;         // Percent
+    protected $_orientation              = Y_ORIENTATION_INVALID;        // Orientation
+    protected $_displayWidth             = Y_DISPLAYWIDTH_INVALID;       // UInt31
+    protected $_displayHeight            = Y_DISPLAYHEIGHT_INVALID;      // UInt31
+    protected $_displayType              = Y_DISPLAYTYPE_INVALID;        // DisplayType
+    protected $_layerWidth               = Y_LAYERWIDTH_INVALID;         // UInt31
+    protected $_layerHeight              = Y_LAYERHEIGHT_INVALID;        // UInt31
+    protected $_layerCount               = Y_LAYERCOUNT_INVALID;         // UInt31
+    protected $_command                  = Y_COMMAND_INVALID;            // Text
+    //--- (end of generated code: YDisplay attributes)
+    protected $_allDisplayLayers;
+    protected $_recording;
+    protected $_sequence;
+
+    function __construct($str_func)
+    {
+        //--- (generated code: YDisplay constructor)
+        parent::__construct($str_func);
+        $this->_className = 'Display';
+
+        //--- (end of generated code: YDisplay constructor)
+        $this->_recording  = FALSE;
+        $this->_sequence   = '';
+    }
     
     //--- (generated code: YDisplay implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const POWERSTATE_OFF = 0;
-    const POWERSTATE_ON = 1;
-    const POWERSTATE_INVALID = -1;
-    const STARTUPSEQ_INVALID = Y_INVALID_STRING;
-    const BRIGHTNESS_INVALID = Y_INVALID_UNSIGNED;
-    const ORIENTATION_LEFT = 0;
-    const ORIENTATION_UP = 1;
-    const ORIENTATION_RIGHT = 2;
-    const ORIENTATION_DOWN = 3;
-    const ORIENTATION_INVALID = -1;
-    const DISPLAYWIDTH_INVALID = Y_INVALID_UNSIGNED;
-    const DISPLAYHEIGHT_INVALID = Y_INVALID_UNSIGNED;
-    const DISPLAYTYPE_MONO = 0;
-    const DISPLAYTYPE_GRAY = 1;
-    const DISPLAYTYPE_RGB = 2;
-    const DISPLAYTYPE_INVALID = -1;
-    const LAYERWIDTH_INVALID = Y_INVALID_UNSIGNED;
-    const LAYERHEIGHT_INVALID = Y_INVALID_UNSIGNED;
-    const LAYERCOUNT_INVALID = Y_INVALID_UNSIGNED;
-    const COMMAND_INVALID = Y_INVALID_STRING;
 
-    /**
-     * Returns the logical name of the display.
-     * 
-     * @return a string corresponding to the logical name of the display
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
-
-    /**
-     * Changes the logical name of the display. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the display
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function _parseAttr($name, $val)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        switch($name) {
+        case 'enabled':
+            $this->_enabled = intval($val);
+            return 1;
+        case 'startupSeq':
+            $this->_startupSeq = $val;
+            return 1;
+        case 'brightness':
+            $this->_brightness = intval($val);
+            return 1;
+        case 'orientation':
+            $this->_orientation = intval($val);
+            return 1;
+        case 'displayWidth':
+            $this->_displayWidth = intval($val);
+            return 1;
+        case 'displayHeight':
+            $this->_displayHeight = intval($val);
+            return 1;
+        case 'displayType':
+            $this->_displayType = intval($val);
+            return 1;
+        case 'layerWidth':
+            $this->_layerWidth = intval($val);
+            return 1;
+        case 'layerHeight':
+            $this->_layerHeight = intval($val);
+            return 1;
+        case 'layerCount':
+            $this->_layerCount = intval($val);
+            return 1;
+        case 'command':
+            $this->_command = $val;
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
-     * Returns the current value of the display (no more than 6 characters).
+     * Returns true if the screen is powered, false otherwise.
      * 
-     * @return a string corresponding to the current value of the display (no more than 6 characters)
+     * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the screen is powered, false otherwise
      * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
+     * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
-    }
-
-    /**
-     * Returns the power state of the display.
-     * 
-     * @return either Y_POWERSTATE_OFF or Y_POWERSTATE_ON, according to the power state of the display
-     * 
-     * On failure, throws an exception or returns Y_POWERSTATE_INVALID.
-     */
-    public function get_powerState()
-    {   $json_val = $this->_getAttr("powerState");
-        return (is_null($json_val) ? Y_POWERSTATE_INVALID : intval($json_val));
+    public function get_enabled()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ENABLED_INVALID;
+            }
+        }
+        return $this->_enabled;
     }
 
     /**
      * Changes the power state of the display.
      * 
-     * @param newval : either Y_POWERSTATE_OFF or Y_POWERSTATE_ON, according to the power state of the display
+     * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the power state of the display
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_powerState($newval)
+    public function set_enabled($newval)
     {
         $rest_val = strval($newval);
-        return $this->_setAttr("powerState",$rest_val);
+        return $this->_setAttr("enabled",$rest_val);
     }
 
     /**
@@ -791,8 +809,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_STARTUPSEQ_INVALID.
      */
     public function get_startupSeq()
-    {   $json_val = $this->_getAttr("startupSeq");
-        return (is_null($json_val) ? Y_STARTUPSEQ_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_STARTUPSEQ_INVALID;
+            }
+        }
+        return $this->_startupSeq;
     }
 
     /**
@@ -820,8 +843,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_BRIGHTNESS_INVALID.
      */
     public function get_brightness()
-    {   $json_val = $this->_getAttr("brightness");
-        return (is_null($json_val) ? Y_BRIGHTNESS_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BRIGHTNESS_INVALID;
+            }
+        }
+        return $this->_brightness;
     }
 
     /**
@@ -850,8 +878,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_ORIENTATION_INVALID.
      */
     public function get_orientation()
-    {   $json_val = $this->_getAttr("orientation");
-        return (is_null($json_val) ? Y_ORIENTATION_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ORIENTATION_INVALID;
+            }
+        }
+        return $this->_orientation;
     }
 
     /**
@@ -879,8 +912,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_DISPLAYWIDTH_INVALID.
      */
     public function get_displayWidth()
-    {   $json_val = $this->_getAttr("displayWidth");
-        return (is_null($json_val) ? Y_DISPLAYWIDTH_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DISPLAYWIDTH_INVALID;
+            }
+        }
+        return $this->_displayWidth;
     }
 
     /**
@@ -891,8 +929,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_DISPLAYHEIGHT_INVALID.
      */
     public function get_displayHeight()
-    {   $json_val = $this->_getAttr("displayHeight");
-        return (is_null($json_val) ? Y_DISPLAYHEIGHT_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DISPLAYHEIGHT_INVALID;
+            }
+        }
+        return $this->_displayHeight;
     }
 
     /**
@@ -904,8 +947,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_DISPLAYTYPE_INVALID.
      */
     public function get_displayType()
-    {   $json_val = $this->_getFixedAttr("displayType");
-        return (is_null($json_val) ? Y_DISPLAYTYPE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DISPLAYTYPE_INVALID;
+            }
+        }
+        return $this->_displayType;
     }
 
     /**
@@ -916,8 +964,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_LAYERWIDTH_INVALID.
      */
     public function get_layerWidth()
-    {   $json_val = $this->_getFixedAttr("layerWidth");
-        return (is_null($json_val) ? Y_LAYERWIDTH_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LAYERWIDTH_INVALID;
+            }
+        }
+        return $this->_layerWidth;
     }
 
     /**
@@ -928,8 +981,13 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_LAYERHEIGHT_INVALID.
      */
     public function get_layerHeight()
-    {   $json_val = $this->_getFixedAttr("layerHeight");
-        return (is_null($json_val) ? Y_LAYERHEIGHT_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LAYERHEIGHT_INVALID;
+            }
+        }
+        return $this->_layerHeight;
     }
 
     /**
@@ -940,19 +998,63 @@ class YDisplay extends YFunction
      * On failure, throws an exception or returns Y_LAYERCOUNT_INVALID.
      */
     public function get_layerCount()
-    {   $json_val = $this->_getFixedAttr("layerCount");
-        return (is_null($json_val) ? Y_LAYERCOUNT_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LAYERCOUNT_INVALID;
+            }
+        }
+        return $this->_layerCount;
     }
 
     public function get_command()
-    {   $json_val = $this->_getAttr("command");
-        return (is_null($json_val) ? Y_COMMAND_INVALID : $json_val);
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_COMMAND_INVALID;
+            }
+        }
+        return $this->_command;
     }
 
     public function set_command($newval)
     {
         $rest_val = $newval;
         return $this->_setAttr("command",$rest_val);
+    }
+
+    /**
+     * Retrieves a display for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the display is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YDisplay.isOnline() to test if the display is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a display by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the display
+     * 
+     * @return a YDisplay object allowing you to drive the display.
+     */
+    public static function FindDisplay($func)
+    {
+        // $obj                    is a YDisplay;
+        $obj = YFunction::_FindFromCache('Display', $func);
+        if ($obj == null) {
+            $obj = new YDisplay($func);
+            YFunction::_AddToCache('Display', $func, $obj);
+        }
+        return $obj;
     }
 
     /**
@@ -964,10 +1066,9 @@ class YDisplay extends YFunction
      */
     public function resetAll()
     {
-        $this->flushLayers(); 
+        $this->flushLayers();
         $this->resetHiddenLayerFlags();
-        return $this->sendCommand('Z'); 
-        
+        return $this->sendCommand('Z');
     }
 
     /**
@@ -981,11 +1082,10 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function fade($int_brightness,$int_duration)
+    public function fade($brightness,$duration)
     {
-        $this->flushLayers(); 
-        return $this->sendCommand(sprintf('+%d,%d',$int_brightness,$int_duration)); 
-        
+        $this->flushLayers();
+        return $this->sendCommand(sprintf('+%d,%d',$brightness,$duration));
     }
 
     /**
@@ -1000,10 +1100,9 @@ class YDisplay extends YFunction
     public function newSequence()
     {
         $this->flushLayers();
-        $this->_sequence = ''; 
-        $this->_recording = TRUE; 
-        return YAPI_SUCCESS; 
-        
+        $this->_sequence = '';
+        $this->_recording = true;
+        return YAPI_SUCCESS;
     }
 
     /**
@@ -1017,15 +1116,14 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function saveSequence($str_sequenceName)
+    public function saveSequence($sequenceName)
     {
         $this->flushLayers();
-        $this->_recording = FALSE; 
-        $this->_upload($str_sequenceName, $this->_sequence);
-        //We need to use YPRINTF("") for Objective-C 
-        $this->_sequence = sprintf(''); 
-        return YAPI_SUCCESS; 
-        
+        $this->_recording = false;
+        $this->_upload($sequenceName, $this->_sequence);
+        //We need to use YPRINTF("") for Objective-C
+        $this->_sequence = sprintf('');
+        return YAPI_SUCCESS;
     }
 
     /**
@@ -1038,11 +1136,10 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function playSequence($str_sequenceName)
+    public function playSequence($sequenceName)
     {
         $this->flushLayers();
-        return $this->sendCommand(sprintf('S%s',$str_sequenceName)); 
-        
+        return $this->sendCommand(sprintf('S%s',$sequenceName));
     }
 
     /**
@@ -1059,11 +1156,10 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function pauseSequence($int_delay_ms)
+    public function pauseSequence($delay_ms)
     {
-        $this->flushLayers(); 
-        return $this->sendCommand(sprintf('W%d',$int_delay_ms)); 
-        
+        $this->flushLayers();
+        return $this->sendCommand(sprintf('W%d',$delay_ms));
     }
 
     /**
@@ -1077,8 +1173,7 @@ class YDisplay extends YFunction
     public function stopSequence()
     {
         $this->flushLayers();
-        return $this->sendCommand('S'); 
-        
+        return $this->sendCommand('S');
     }
 
     /**
@@ -1093,10 +1188,9 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function upload($str_pathname,$bin_content)
+    public function upload($pathname,$content)
     {
-        return $this->_upload($str_pathname,$bin_content);
-        
+        return $this->_upload($pathname, $content);
     }
 
     /**
@@ -1113,11 +1207,10 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function copyLayerContent($int_srcLayerId,$int_dstLayerId)
+    public function copyLayerContent($srcLayerId,$dstLayerId)
     {
-        $this->flushLayers(); 
-        return $this->sendCommand(sprintf('o%d,%d',$int_srcLayerId,$int_dstLayerId)); 
-        
+        $this->flushLayers();
+        return $this->sendCommand(sprintf('o%d,%d',$srcLayerId,$dstLayerId));
     }
 
     /**
@@ -1135,27 +1228,17 @@ class YDisplay extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function swapLayerContent($int_layerIdA,$int_layerIdB)
+    public function swapLayerContent($layerIdA,$layerIdB)
     {
-        $this->flushLayers(); 
-        return $this->sendCommand(sprintf('E%d,%d',$int_layerIdA,$int_layerIdB)); 
-        
+        $this->flushLayers();
+        return $this->sendCommand(sprintf('E%d,%d',$layerIdA,$layerIdB));
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
+    public function enabled()
+    { return get_enabled(); }
 
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
-
-    public function powerState()
-    { return get_powerState(); }
-
-    public function setPowerState($newval)
-    { return set_powerState($newval); }
+    public function setEnabled($newval)
+    { return set_enabled($newval); }
 
     public function startupSeq()
     { return get_startupSeq(); }
@@ -1213,35 +1296,6 @@ class YDisplay extends YFunction
     }
 
     /**
-     * Retrieves a display for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the display is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YDisplay.isOnline() to test if the display is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a display by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the display
-     * 
-     * @return a YDisplay object allowing you to drive the display.
-     */
-    public static function FindDisplay($str_func)
-    {   $obj_func = YAPI::getFunction('Display', $str_func);
-        if($obj_func) return $obj_func;
-        return new YDisplay($str_func);
-    }
-
-    /**
      * Starts the enumeration of displays currently accessible.
      * Use the method YDisplay.nextDisplay() to iterate on
      * next displays.
@@ -1257,15 +1311,6 @@ class YDisplay extends YFunction
     }
 
     //--- (end of generated code: YDisplay implementation)
-
-    function __construct($str_func)
-    {
-        //--- (generated code: YDisplay constructor)
-        parent::__construct('Display', $str_func);
-        //--- (end of generated code: YDisplay constructor)
-        $this->_recording  = FALSE;
-        $this->_sequence   = '';
-    }
 
     /**
      * Returns a YDisplayLayer object that can be used to draw on the specified
@@ -1361,9 +1406,9 @@ class YDisplay extends YFunction
  * 
  * @return a YDisplay object allowing you to drive the display.
  */
-function yFindDisplay($str_func)
+function yFindDisplay($func)
 {
-    return YDisplay::FindDisplay($str_func);
+    return YDisplay::FindDisplay($func);
 }
 
 /**

@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 12337 2013-08-14 15:22:22Z mvuilleu $
+ * $Id: yocto_hubport.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindHubPort(), the high-level API for HubPort functions
+ * Implements YHubPort, the high-level API for HubPort functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,86 +38,75 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YHubPort return codes)
+//--- (end of YHubPort return codes)
 //--- (YHubPort definitions)
-if(!defined('Y_ENABLED_FALSE')) define('Y_ENABLED_FALSE', 0);
-if(!defined('Y_ENABLED_TRUE')) define('Y_ENABLED_TRUE', 1);
-if(!defined('Y_ENABLED_INVALID')) define('Y_ENABLED_INVALID', -1);
-if(!defined('Y_PORTSTATE_OFF')) define('Y_PORTSTATE_OFF', 0);
-if(!defined('Y_PORTSTATE_OVRLD')) define('Y_PORTSTATE_OVRLD', 1);
-if(!defined('Y_PORTSTATE_ON')) define('Y_PORTSTATE_ON', 2);
-if(!defined('Y_PORTSTATE_RUN')) define('Y_PORTSTATE_RUN', 3);
-if(!defined('Y_PORTSTATE_PROG')) define('Y_PORTSTATE_PROG', 4);
-if(!defined('Y_PORTSTATE_INVALID')) define('Y_PORTSTATE_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_BAUDRATE_INVALID')) define('Y_BAUDRATE_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
+if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
+if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
+if(!defined('Y_PORTSTATE_OFF'))              define('Y_PORTSTATE_OFF',             0);
+if(!defined('Y_PORTSTATE_OVRLD'))            define('Y_PORTSTATE_OVRLD',           1);
+if(!defined('Y_PORTSTATE_ON'))               define('Y_PORTSTATE_ON',              2);
+if(!defined('Y_PORTSTATE_RUN'))              define('Y_PORTSTATE_RUN',             3);
+if(!defined('Y_PORTSTATE_PROG'))             define('Y_PORTSTATE_PROG',            4);
+if(!defined('Y_PORTSTATE_INVALID'))          define('Y_PORTSTATE_INVALID',         -1);
+if(!defined('Y_BAUDRATE_INVALID'))           define('Y_BAUDRATE_INVALID',          YAPI_INVALID_UINT);
 //--- (end of YHubPort definitions)
 
+//--- (YHubPort declaration)
 /**
  * YHubPort Class: Yocto-hub port interface
  * 
- * 
+ * YHubPort objects provide control over the power supply for every
+ * YoctoHub port and provide information about the device connected to it.
+ * The logical name of a YHubPort is always automatically set to the
+ * unique serial number of the Yoctopuce device connected to it.
  */
 class YHubPort extends YFunction
 {
-    //--- (YHubPort implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const ENABLED_FALSE = 0;
-    const ENABLED_TRUE = 1;
-    const ENABLED_INVALID = -1;
-    const PORTSTATE_OFF = 0;
-    const PORTSTATE_OVRLD = 1;
-    const PORTSTATE_ON = 2;
-    const PORTSTATE_RUN = 3;
-    const PORTSTATE_PROG = 4;
-    const PORTSTATE_INVALID = -1;
-    const BAUDRATE_INVALID = Y_INVALID_UNSIGNED;
+    const ENABLED_FALSE                  = 0;
+    const ENABLED_TRUE                   = 1;
+    const ENABLED_INVALID                = -1;
+    const PORTSTATE_OFF                  = 0;
+    const PORTSTATE_OVRLD                = 1;
+    const PORTSTATE_ON                   = 2;
+    const PORTSTATE_RUN                  = 3;
+    const PORTSTATE_PROG                 = 4;
+    const PORTSTATE_INVALID              = -1;
+    const BAUDRATE_INVALID               = YAPI_INVALID_UINT;
+    //--- (end of YHubPort declaration)
 
-    /**
-     * Returns the logical name of the Yocto-hub port, which is always the serial number of the
-     * connected module.
-     * 
-     * @return a string corresponding to the logical name of the Yocto-hub port, which is always the
-     * serial number of the
-     *         connected module
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YHubPort attributes)
+    protected $_enabled                  = Y_ENABLED_INVALID;            // Bool
+    protected $_portState                = Y_PORTSTATE_INVALID;          // PortState
+    protected $_baudRate                 = Y_BAUDRATE_INVALID;           // BaudRate
+    //--- (end of YHubPort attributes)
 
-    /**
-     * It is not possible to configure the logical name of a Yocto-hub port. The logical
-     * name is automatically set to the serial number of the connected module.
-     * 
-     * @param newval : a string
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YHubPort constructor)
+        parent::__construct($str_func);
+        $this->_className = 'HubPort';
+
+        //--- (end of YHubPort constructor)
     }
 
-    /**
-     * Returns the current value of the Yocto-hub port (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the Yocto-hub port (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YHubPort implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'enabled':
+            $this->_enabled = intval($val);
+            return 1;
+        case 'portState':
+            $this->_portState = intval($val);
+            return 1;
+        case 'baudRate':
+            $this->_baudRate = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -129,13 +118,18 @@ class YHubPort extends YFunction
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
     public function get_enabled()
-    {   $json_val = $this->_getAttr("enabled");
-        return (is_null($json_val) ? Y_ENABLED_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ENABLED_INVALID;
+            }
+        }
+        return $this->_enabled;
     }
 
     /**
      * Changes the activation of the Yocto-hub port. If the port is enabled, the
-     * *      connected module is powered. Otherwise, port power is shut down.
+     * connected module is powered. Otherwise, port power is shut down.
      * 
      * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation of the Yocto-hub port
      * 
@@ -158,8 +152,13 @@ class YHubPort extends YFunction
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
     public function get_portState()
-    {   $json_val = $this->_getAttr("portState");
-        return (is_null($json_val) ? Y_PORTSTATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTSTATE_INVALID;
+            }
+        }
+        return $this->_portState;
     }
 
     /**
@@ -172,18 +171,48 @@ class YHubPort extends YFunction
      * On failure, throws an exception or returns Y_BAUDRATE_INVALID.
      */
     public function get_baudRate()
-    {   $json_val = $this->_getAttr("baudRate");
-        return (is_null($json_val) ? Y_BAUDRATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BAUDRATE_INVALID;
+            }
+        }
+        return $this->_baudRate;
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a Yocto-hub port for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the Yocto-hub port is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YHubPort.isOnline() to test if the Yocto-hub port is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a Yocto-hub port by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the Yocto-hub port
+     * 
+     * @return a YHubPort object allowing you to drive the Yocto-hub port.
+     */
+    public static function FindHubPort($func)
+    {
+        // $obj                    is a YHubPort;
+        $obj = YFunction::_FindFromCache('HubPort', $func);
+        if ($obj == null) {
+            $obj = new YHubPort($func);
+            YFunction::_AddToCache('HubPort', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function enabled()
     { return get_enabled(); }
@@ -211,35 +240,6 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Retrieves a Yocto-hub port for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the Yocto-hub port is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YHubPort.isOnline() to test if the Yocto-hub port is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a Yocto-hub port by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the Yocto-hub port
-     * 
-     * @return a YHubPort object allowing you to drive the Yocto-hub port.
-     */
-    public static function FindHubPort($str_func)
-    {   $obj_func = YAPI::getFunction('HubPort', $str_func);
-        if($obj_func) return $obj_func;
-        return new YHubPort($str_func);
-    }
-
-    /**
      * Starts the enumeration of Yocto-hub ports currently accessible.
      * Use the method YHubPort.nextHubPort() to iterate on
      * next Yocto-hub ports.
@@ -256,12 +256,6 @@ class YHubPort extends YFunction
 
     //--- (end of YHubPort implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YHubPort constructor)
-        parent::__construct('HubPort', $str_func);
-        //--- (end of YHubPort constructor)
-    }
 };
 
 //--- (HubPort functions)
@@ -289,9 +283,9 @@ class YHubPort extends YFunction
  * 
  * @return a YHubPort object allowing you to drive the Yocto-hub port.
  */
-function yFindHubPort($str_func)
+function yFindHubPort($func)
 {
-    return YHubPort::FindHubPort($str_func);
+    return YHubPort::FindHubPort($func);
 }
 
 /**

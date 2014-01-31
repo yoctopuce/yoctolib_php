@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_dualpower.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_dualpower.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindDualPower(), the high-level API for DualPower functions
+ * Implements YDualPower, the high-level API for DualPower functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,24 +38,22 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YDualPower return codes)
+//--- (end of YDualPower return codes)
 //--- (YDualPower definitions)
-if(!defined('Y_POWERSTATE_OFF')) define('Y_POWERSTATE_OFF', 0);
-if(!defined('Y_POWERSTATE_FROM_USB')) define('Y_POWERSTATE_FROM_USB', 1);
-if(!defined('Y_POWERSTATE_FROM_EXT')) define('Y_POWERSTATE_FROM_EXT', 2);
-if(!defined('Y_POWERSTATE_INVALID')) define('Y_POWERSTATE_INVALID', -1);
-if(!defined('Y_POWERCONTROL_AUTO')) define('Y_POWERCONTROL_AUTO', 0);
-if(!defined('Y_POWERCONTROL_FROM_USB')) define('Y_POWERCONTROL_FROM_USB', 1);
-if(!defined('Y_POWERCONTROL_FROM_EXT')) define('Y_POWERCONTROL_FROM_EXT', 2);
-if(!defined('Y_POWERCONTROL_OFF')) define('Y_POWERCONTROL_OFF', 3);
-if(!defined('Y_POWERCONTROL_INVALID')) define('Y_POWERCONTROL_INVALID', -1);
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_EXTVOLTAGE_INVALID')) define('Y_EXTVOLTAGE_INVALID', Y_INVALID_UNSIGNED);
+if(!defined('Y_POWERSTATE_OFF'))             define('Y_POWERSTATE_OFF',            0);
+if(!defined('Y_POWERSTATE_FROM_USB'))        define('Y_POWERSTATE_FROM_USB',       1);
+if(!defined('Y_POWERSTATE_FROM_EXT'))        define('Y_POWERSTATE_FROM_EXT',       2);
+if(!defined('Y_POWERSTATE_INVALID'))         define('Y_POWERSTATE_INVALID',        -1);
+if(!defined('Y_POWERCONTROL_AUTO'))          define('Y_POWERCONTROL_AUTO',         0);
+if(!defined('Y_POWERCONTROL_FROM_USB'))      define('Y_POWERCONTROL_FROM_USB',     1);
+if(!defined('Y_POWERCONTROL_FROM_EXT'))      define('Y_POWERCONTROL_FROM_EXT',     2);
+if(!defined('Y_POWERCONTROL_OFF'))           define('Y_POWERCONTROL_OFF',          3);
+if(!defined('Y_POWERCONTROL_INVALID'))       define('Y_POWERCONTROL_INVALID',      -1);
+if(!defined('Y_EXTVOLTAGE_INVALID'))         define('Y_EXTVOLTAGE_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YDualPower definitions)
 
+//--- (YDualPower declaration)
 /**
  * YDualPower Class: External power supply control interface
  * 
@@ -67,60 +65,49 @@ if(!defined('Y_EXTVOLTAGE_INVALID')) define('Y_EXTVOLTAGE_INVALID', Y_INVALID_UN
  */
 class YDualPower extends YFunction
 {
-    //--- (YDualPower implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const POWERSTATE_OFF = 0;
-    const POWERSTATE_FROM_USB = 1;
-    const POWERSTATE_FROM_EXT = 2;
-    const POWERSTATE_INVALID = -1;
-    const POWERCONTROL_AUTO = 0;
-    const POWERCONTROL_FROM_USB = 1;
-    const POWERCONTROL_FROM_EXT = 2;
-    const POWERCONTROL_OFF = 3;
-    const POWERCONTROL_INVALID = -1;
-    const EXTVOLTAGE_INVALID = Y_INVALID_UNSIGNED;
+    const POWERSTATE_OFF                 = 0;
+    const POWERSTATE_FROM_USB            = 1;
+    const POWERSTATE_FROM_EXT            = 2;
+    const POWERSTATE_INVALID             = -1;
+    const POWERCONTROL_AUTO              = 0;
+    const POWERCONTROL_FROM_USB          = 1;
+    const POWERCONTROL_FROM_EXT          = 2;
+    const POWERCONTROL_OFF               = 3;
+    const POWERCONTROL_INVALID           = -1;
+    const EXTVOLTAGE_INVALID             = YAPI_INVALID_UINT;
+    //--- (end of YDualPower declaration)
 
-    /**
-     * Returns the logical name of the power control.
-     * 
-     * @return a string corresponding to the logical name of the power control
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YDualPower attributes)
+    protected $_powerState               = Y_POWERSTATE_INVALID;         // DualPwrState
+    protected $_powerControl             = Y_POWERCONTROL_INVALID;       // DualPwrControl
+    protected $_extVoltage               = Y_EXTVOLTAGE_INVALID;         // UInt31
+    //--- (end of YDualPower attributes)
 
-    /**
-     * Changes the logical name of the power control. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the power control
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YDualPower constructor)
+        parent::__construct($str_func);
+        $this->_className = 'DualPower';
+
+        //--- (end of YDualPower constructor)
     }
 
-    /**
-     * Returns the current value of the power control (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the power control (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YDualPower implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'powerState':
+            $this->_powerState = intval($val);
+            return 1;
+        case 'powerControl':
+            $this->_powerControl = intval($val);
+            return 1;
+        case 'extVoltage':
+            $this->_extVoltage = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -132,8 +119,13 @@ class YDualPower extends YFunction
      * On failure, throws an exception or returns Y_POWERSTATE_INVALID.
      */
     public function get_powerState()
-    {   $json_val = $this->_getAttr("powerState");
-        return (is_null($json_val) ? Y_POWERSTATE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POWERSTATE_INVALID;
+            }
+        }
+        return $this->_powerState;
     }
 
     /**
@@ -145,8 +137,13 @@ class YDualPower extends YFunction
      * On failure, throws an exception or returns Y_POWERCONTROL_INVALID.
      */
     public function get_powerControl()
-    {   $json_val = $this->_getAttr("powerControl");
-        return (is_null($json_val) ? Y_POWERCONTROL_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POWERCONTROL_INVALID;
+            }
+        }
+        return $this->_powerControl;
     }
 
     /**
@@ -174,18 +171,48 @@ class YDualPower extends YFunction
      * On failure, throws an exception or returns Y_EXTVOLTAGE_INVALID.
      */
     public function get_extVoltage()
-    {   $json_val = $this->_getAttr("extVoltage");
-        return (is_null($json_val) ? Y_EXTVOLTAGE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_EXTVOLTAGE_INVALID;
+            }
+        }
+        return $this->_extVoltage;
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a dual power control for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the power control is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YDualPower.isOnline() to test if the power control is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a dual power control by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the power control
+     * 
+     * @return a YDualPower object allowing you to drive the power control.
+     */
+    public static function FindDualPower($func)
+    {
+        // $obj                    is a YDualPower;
+        $obj = YFunction::_FindFromCache('DualPower', $func);
+        if ($obj == null) {
+            $obj = new YDualPower($func);
+            YFunction::_AddToCache('DualPower', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function powerState()
     { return get_powerState(); }
@@ -213,35 +240,6 @@ class YDualPower extends YFunction
     }
 
     /**
-     * Retrieves a dual power control for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the power control is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YDualPower.isOnline() to test if the power control is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a dual power control by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the power control
-     * 
-     * @return a YDualPower object allowing you to drive the power control.
-     */
-    public static function FindDualPower($str_func)
-    {   $obj_func = YAPI::getFunction('DualPower', $str_func);
-        if($obj_func) return $obj_func;
-        return new YDualPower($str_func);
-    }
-
-    /**
      * Starts the enumeration of dual power controls currently accessible.
      * Use the method YDualPower.nextDualPower() to iterate on
      * next dual power controls.
@@ -258,12 +256,6 @@ class YDualPower extends YFunction
 
     //--- (end of YDualPower implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YDualPower constructor)
-        parent::__construct('DualPower', $str_func);
-        //--- (end of YDualPower constructor)
-    }
 };
 
 //--- (DualPower functions)
@@ -291,9 +283,9 @@ class YDualPower extends YFunction
  * 
  * @return a YDualPower object allowing you to drive the power control.
  */
-function yFindDualPower($str_func)
+function yFindDualPower($func)
 {
-    return YDualPower::FindDualPower($str_func);
+    return YDualPower::FindDualPower($func);
 }
 
 /**

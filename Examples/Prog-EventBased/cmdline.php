@@ -1,14 +1,18 @@
 <?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 include("../../Sources/yocto_api.php");
 include("../../Sources/yocto_anbutton.php");
-include("../../Sources/yocto_temperature.php");
-include("../../Sources/yocto_lightsensor.php");
 
 function valueChangeCallBack($obj_fct, $str_value)
 {
-    // the field to update is stored in the function userData
-    $fundescr = $obj_fct->get_functionDescriptor();
-    Print("$fundescr: $str_value\n");
+    $info = $obj_fct->get_userData();
+    Print("{$info['name']}: $str_value {$info['unit']} (new value)\n");
+}
+
+function timedReportCallBack($obj_fct, $obj_measure)
+{
+    $info = $obj_fct->get_userData();
+    Print("{$info['name']}: {$obj_measure->get_averageValue()} {$info['unit']} (timed report)\n");
 }
 
 function deviceArrival($module)
@@ -16,33 +20,31 @@ function deviceArrival($module)
     $serial = $module->get_serialNumber();
     Print("New device: $serial\n");
 
+    // First solution: look for a specific type of function (eg. anButton)
     $fctcount = $module->functionCount();
     for ($i = 0; $i < $fctcount; $i++) {
-        $fctName = $module->functionId($i);
-        $fctFullName = "{$serial}.{$fctName}";
-
-         // register call back for anbuttons
-        if (strpos($fctName, "anButton") !== false) { 
-            $bt = YAnButton::FindAnButton($fctFullName);
-            Print("- {$fctName}: {$fctFullName}\n");
-            $bt->registerValueCallback('valueChangeCallBack');
-         }
-         
-         // register call back for temperature sensors
-        if (strpos($fctName, "temperature") !== false) { 
-            $t = YTemperature::FindTemperature($fctFullName);
-            Print("- {$fctName}: {$fctFullName}\n");
-            $t->registerValueCallback('valueChangeCallBack');
-        }
-        
-        // register call back for light sensors
-        if (strpos($fctName, "lightSensor") !== false) { 
-            $l = YLightSensor::FindLightSensor($fctFullName);
-            Print("- {$fctName}: {$fctFullName}\n");
-            $l->registerValueCallback('valueChangeCallBack');
+        $hardwareId = "{$serial}.{$module->functionId($i)}";
+        if (strpos($hardwareId, ".anButton") !== false) { 
+            Print("- {$hardwareId}\n");
+            $button = YAnButton::FindAnButton($hardwareId);
+            $button->set_userData(Array('name'=>$hardwareId, 'unit'=>''));
+            $button->registerValueCallback('valueChangeCallBack');
         }
     }
- }
+
+    // Alternate solution: register any kind of sensor on the device
+    $sensor = YSensor::FirstSensor();
+    while($sensor) {
+        if($sensor->get_module()->get_serialNumber() == $serial) {
+            $hardwareId = $sensor->get_hardwareId();
+            Print("- {$hardwareId}\n");
+            $sensor->set_userData(Array('name'=>$hardwareId, 'unit'=>$sensor->get_unit()));
+            $sensor->registerValueCallback('valueChangeCallBack');
+            $sensor->registerTimedReportCallback('timedReportCallBack');
+        }
+        $sensor = $sensor->nextSensor();
+    }    
+}
 
 function deviceRemoval($module)
 {

@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 12324 2013-08-13 15:10:31Z mvuilleu $
+ * $Id: yocto_servo.php 14275 2014-01-09 14:20:38Z seb $
  *
- * Implements yFindServo(), the high-level API for Servo functions
+ * Implements YServo, the high-level API for Servo functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,27 +38,16 @@
  *
  *********************************************************************/
 
-
-//--- (return codes)
-//--- (end of return codes)
+//--- (YServo return codes)
+//--- (end of YServo return codes)
 //--- (YServo definitions)
-if(!defined('Y_LOGICALNAME_INVALID')) define('Y_LOGICALNAME_INVALID', Y_INVALID_STRING);
-if(!defined('Y_ADVERTISEDVALUE_INVALID')) define('Y_ADVERTISEDVALUE_INVALID', Y_INVALID_STRING);
-if(!defined('Y_POSITION_INVALID')) define('Y_POSITION_INVALID', Y_INVALID_SIGNED);
-if(!defined('Y_RANGE_INVALID')) define('Y_RANGE_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_NEUTRAL_INVALID')) define('Y_NEUTRAL_INVALID', Y_INVALID_UNSIGNED);
-if(!defined('Y_MOVE_INVALID')) define('Y_MOVE_INVALID', null);
-
-if(!defined('CLASS_YMOVE')) {
-    define('CLASS_YMOVE',true);
-    class YMove extends YAggregate {
-        public $target = 0;
-        public $ms = 0;
-        public $moving = 0;
-    };
-}
+if(!defined('Y_POSITION_INVALID'))           define('Y_POSITION_INVALID',          YAPI_INVALID_INT);
+if(!defined('Y_RANGE_INVALID'))              define('Y_RANGE_INVALID',             YAPI_INVALID_UINT);
+if(!defined('Y_NEUTRAL_INVALID'))            define('Y_NEUTRAL_INVALID',           YAPI_INVALID_UINT);
+if(!defined('Y_MOVE_INVALID'))               define('Y_MOVE_INVALID',              null);
 //--- (end of YServo definitions)
 
+//--- (YServo declaration)
 /**
  * YServo Class: Servo function interface
  * 
@@ -69,53 +58,47 @@ if(!defined('CLASS_YMOVE')) {
  */
 class YServo extends YFunction
 {
-    //--- (YServo implementation)
-    const LOGICALNAME_INVALID = Y_INVALID_STRING;
-    const ADVERTISEDVALUE_INVALID = Y_INVALID_STRING;
-    const POSITION_INVALID = Y_INVALID_SIGNED;
-    const RANGE_INVALID = Y_INVALID_UNSIGNED;
-    const NEUTRAL_INVALID = Y_INVALID_UNSIGNED;
+    const POSITION_INVALID               = YAPI_INVALID_INT;
+    const RANGE_INVALID                  = YAPI_INVALID_UINT;
+    const NEUTRAL_INVALID                = YAPI_INVALID_UINT;
+    const MOVE_INVALID                   = null;
+    //--- (end of YServo declaration)
 
-    /**
-     * Returns the logical name of the servo.
-     * 
-     * @return a string corresponding to the logical name of the servo
-     * 
-     * On failure, throws an exception or returns Y_LOGICALNAME_INVALID.
-     */
-    public function get_logicalName()
-    {   $json_val = $this->_getAttr("logicalName");
-        return (is_null($json_val) ? Y_LOGICALNAME_INVALID : $json_val);
-    }
+    //--- (YServo attributes)
+    protected $_position                 = Y_POSITION_INVALID;           // Int
+    protected $_range                    = Y_RANGE_INVALID;              // Percent
+    protected $_neutral                  = Y_NEUTRAL_INVALID;            // MicroSeconds
+    protected $_move                     = Y_MOVE_INVALID;               // Move
+    //--- (end of YServo attributes)
 
-    /**
-     * Changes the logical name of the servo. You can use yCheckLogicalName()
-     * prior to this call to make sure that your parameter is valid.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
-     * 
-     * @param newval : a string corresponding to the logical name of the servo
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_logicalName($newval)
+    function __construct($str_func)
     {
-        $rest_val = $newval;
-        return $this->_setAttr("logicalName",$rest_val);
+        //--- (YServo constructor)
+        parent::__construct($str_func);
+        $this->_className = 'Servo';
+
+        //--- (end of YServo constructor)
     }
 
-    /**
-     * Returns the current value of the servo (no more than 6 characters).
-     * 
-     * @return a string corresponding to the current value of the servo (no more than 6 characters)
-     * 
-     * On failure, throws an exception or returns Y_ADVERTISEDVALUE_INVALID.
-     */
-    public function get_advertisedValue()
-    {   $json_val = $this->_getAttr("advertisedValue");
-        return (is_null($json_val) ? Y_ADVERTISEDVALUE_INVALID : $json_val);
+    //--- (YServo implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'position':
+            $this->_position = intval($val);
+            return 1;
+        case 'range':
+            $this->_range = intval($val);
+            return 1;
+        case 'neutral':
+            $this->_neutral = intval($val);
+            return 1;
+        case 'move':
+            $this->_move = $val;
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
     }
 
     /**
@@ -126,8 +109,13 @@ class YServo extends YFunction
      * On failure, throws an exception or returns Y_POSITION_INVALID.
      */
     public function get_position()
-    {   $json_val = $this->_getAttr("position");
-        return (is_null($json_val) ? Y_POSITION_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POSITION_INVALID;
+            }
+        }
+        return $this->_position;
     }
 
     /**
@@ -153,8 +141,13 @@ class YServo extends YFunction
      * On failure, throws an exception or returns Y_RANGE_INVALID.
      */
     public function get_range()
-    {   $json_val = $this->_getAttr("range");
-        return (is_null($json_val) ? Y_RANGE_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RANGE_INVALID;
+            }
+        }
+        return $this->_range;
     }
 
     /**
@@ -185,8 +178,13 @@ class YServo extends YFunction
      * On failure, throws an exception or returns Y_NEUTRAL_INVALID.
      */
     public function get_neutral()
-    {   $json_val = $this->_getAttr("neutral");
-        return (is_null($json_val) ? Y_NEUTRAL_INVALID : intval($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_NEUTRAL_INVALID;
+            }
+        }
+        return $this->_neutral;
     }
 
     /**
@@ -210,8 +208,13 @@ class YServo extends YFunction
     }
 
     public function get_move()
-    {   $json_val = $this->_getAttr("move");
-        return (is_null($json_val) ? Y_MOVE_INVALID : new YMove($json_val));
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MOVE_INVALID;
+            }
+        }
+        return $this->_move;
     }
 
     public function set_move($newval)
@@ -230,20 +233,45 @@ class YServo extends YFunction
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function move($int_target,$int_ms_duration)
+    public function move($target,$ms_duration)
     {
-        $rest_val = strval($int_target).":".strval($int_ms_duration);
+        $rest_val = strval($target).":".strval($ms_duration);
         return $this->_setAttr("move",$rest_val);
     }
 
-    public function logicalName()
-    { return get_logicalName(); }
-
-    public function setLogicalName($newval)
-    { return set_logicalName($newval); }
-
-    public function advertisedValue()
-    { return get_advertisedValue(); }
+    /**
+     * Retrieves a servo for a given identifier.
+     * The identifier can be specified using several formats:
+     * <ul>
+     * <li>FunctionLogicalName</li>
+     * <li>ModuleSerialNumber.FunctionIdentifier</li>
+     * <li>ModuleSerialNumber.FunctionLogicalName</li>
+     * <li>ModuleLogicalName.FunctionIdentifier</li>
+     * <li>ModuleLogicalName.FunctionLogicalName</li>
+     * </ul>
+     * 
+     * This function does not require that the servo is online at the time
+     * it is invoked. The returned object is nevertheless valid.
+     * Use the method YServo.isOnline() to test if the servo is
+     * indeed online at a given time. In case of ambiguity when looking for
+     * a servo by logical name, no error is notified: the first instance
+     * found is returned. The search is performed first by hardware name,
+     * then by logical name.
+     * 
+     * @param func : a string that uniquely characterizes the servo
+     * 
+     * @return a YServo object allowing you to drive the servo.
+     */
+    public static function FindServo($func)
+    {
+        // $obj                    is a YServo;
+        $obj = YFunction::_FindFromCache('Servo', $func);
+        if ($obj == null) {
+            $obj = new YServo($func);
+            YFunction::_AddToCache('Servo', $func, $obj);
+        }
+        return $obj;
+    }
 
     public function position()
     { return get_position(); }
@@ -280,35 +308,6 @@ class YServo extends YFunction
     }
 
     /**
-     * Retrieves a servo for a given identifier.
-     * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
-     * 
-     * This function does not require that the servo is online at the time
-     * it is invoked. The returned object is nevertheless valid.
-     * Use the method YServo.isOnline() to test if the servo is
-     * indeed online at a given time. In case of ambiguity when looking for
-     * a servo by logical name, no error is notified: the first instance
-     * found is returned. The search is performed first by hardware name,
-     * then by logical name.
-     * 
-     * @param func : a string that uniquely characterizes the servo
-     * 
-     * @return a YServo object allowing you to drive the servo.
-     */
-    public static function FindServo($str_func)
-    {   $obj_func = YAPI::getFunction('Servo', $str_func);
-        if($obj_func) return $obj_func;
-        return new YServo($str_func);
-    }
-
-    /**
      * Starts the enumeration of servos currently accessible.
      * Use the method YServo.nextServo() to iterate on
      * next servos.
@@ -325,12 +324,6 @@ class YServo extends YFunction
 
     //--- (end of YServo implementation)
 
-    function __construct($str_func)
-    {
-        //--- (YServo constructor)
-        parent::__construct('Servo', $str_func);
-        //--- (end of YServo constructor)
-    }
 };
 
 //--- (Servo functions)
@@ -358,9 +351,9 @@ class YServo extends YFunction
  * 
  * @return a YServo object allowing you to drive the servo.
  */
-function yFindServo($str_func)
+function yFindServo($func)
 {
-    return YServo::FindServo($str_func);
+    return YServo::FindServo($func);
 }
 
 /**
