@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 14615 2014-01-19 00:16:40Z mvuilleu $
+ * $Id: yocto_files.php 15402 2014-03-12 16:23:14Z mvuilleu $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -333,7 +333,9 @@ class YFiles extends YFunction
      *         if there are no more filesystems to enumerate.
      */
     public function nextFiles()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindFiles($next_hwid);
     }

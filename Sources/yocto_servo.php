@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 14275 2014-01-09 14:20:38Z seb $
+ * $Id: yocto_servo.php 15402 2014-03-12 16:23:14Z mvuilleu $
  *
  * Implements YServo, the high-level API for Servo functions
  *
@@ -11,24 +11,24 @@
  *
  *  Yoctopuce Sarl (hereafter Licensor) grants to you a perpetual
  *  non-exclusive license to use, modify, copy and integrate this
- *  file into your software for the sole purpose of interfacing 
- *  with Yoctopuce products. 
+ *  file into your software for the sole purpose of interfacing
+ *  with Yoctopuce products.
  *
- *  You may reproduce and distribute copies of this file in 
+ *  You may reproduce and distribute copies of this file in
  *  source or object form, as long as the sole purpose of this
- *  code is to interface with Yoctopuce products. You must retain 
+ *  code is to interface with Yoctopuce products. You must retain
  *  this notice in the distributed source file.
  *
  *  You should refer to Yoctopuce General Terms and Conditions
- *  for additional information regarding your rights and 
+ *  for additional information regarding your rights and
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
  *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
- *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
+ *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
- *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
+ *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
  *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
  *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
@@ -41,10 +41,17 @@
 //--- (YServo return codes)
 //--- (end of YServo return codes)
 //--- (YServo definitions)
+if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
+if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
+if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
+if(!defined('Y_ENABLEDATPOWERON_FALSE'))     define('Y_ENABLEDATPOWERON_FALSE',    0);
+if(!defined('Y_ENABLEDATPOWERON_TRUE'))      define('Y_ENABLEDATPOWERON_TRUE',     1);
+if(!defined('Y_ENABLEDATPOWERON_INVALID'))   define('Y_ENABLEDATPOWERON_INVALID',  -1);
 if(!defined('Y_POSITION_INVALID'))           define('Y_POSITION_INVALID',          YAPI_INVALID_INT);
 if(!defined('Y_RANGE_INVALID'))              define('Y_RANGE_INVALID',             YAPI_INVALID_UINT);
 if(!defined('Y_NEUTRAL_INVALID'))            define('Y_NEUTRAL_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_MOVE_INVALID'))               define('Y_MOVE_INVALID',              null);
+if(!defined('Y_POSITIONATPOWERON_INVALID'))  define('Y_POSITIONATPOWERON_INVALID', YAPI_INVALID_INT);
 //--- (end of YServo definitions)
 
 //--- (YServo declaration)
@@ -59,16 +66,26 @@ if(!defined('Y_MOVE_INVALID'))               define('Y_MOVE_INVALID',           
 class YServo extends YFunction
 {
     const POSITION_INVALID               = YAPI_INVALID_INT;
+    const ENABLED_FALSE                  = 0;
+    const ENABLED_TRUE                   = 1;
+    const ENABLED_INVALID                = -1;
     const RANGE_INVALID                  = YAPI_INVALID_UINT;
     const NEUTRAL_INVALID                = YAPI_INVALID_UINT;
     const MOVE_INVALID                   = null;
+    const POSITIONATPOWERON_INVALID      = YAPI_INVALID_INT;
+    const ENABLEDATPOWERON_FALSE         = 0;
+    const ENABLEDATPOWERON_TRUE          = 1;
+    const ENABLEDATPOWERON_INVALID       = -1;
     //--- (end of YServo declaration)
 
     //--- (YServo attributes)
     protected $_position                 = Y_POSITION_INVALID;           // Int
+    protected $_enabled                  = Y_ENABLED_INVALID;            // Bool
     protected $_range                    = Y_RANGE_INVALID;              // Percent
     protected $_neutral                  = Y_NEUTRAL_INVALID;            // MicroSeconds
     protected $_move                     = Y_MOVE_INVALID;               // Move
+    protected $_positionAtPowerOn        = Y_POSITIONATPOWERON_INVALID;  // Int
+    protected $_enabledAtPowerOn         = Y_ENABLEDATPOWERON_INVALID;   // Bool
     //--- (end of YServo attributes)
 
     function __construct($str_func)
@@ -88,6 +105,9 @@ class YServo extends YFunction
         case 'position':
             $this->_position = intval($val);
             return 1;
+        case 'enabled':
+            $this->_enabled = intval($val);
+            return 1;
         case 'range':
             $this->_range = intval($val);
             return 1;
@@ -96,6 +116,12 @@ class YServo extends YFunction
             return 1;
         case 'move':
             $this->_move = $val;
+            return 1;
+        case 'positionAtPowerOn':
+            $this->_positionAtPowerOn = intval($val);
+            return 1;
+        case 'enabledAtPowerOn':
+            $this->_enabledAtPowerOn = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -131,6 +157,38 @@ class YServo extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("position",$rest_val);
+    }
+
+    /**
+     * Returns the state of the servos.
+     * 
+     * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the servos
+     * 
+     * On failure, throws an exception or returns Y_ENABLED_INVALID.
+     */
+    public function get_enabled()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ENABLED_INVALID;
+            }
+        }
+        return $this->_enabled;
+    }
+
+    /**
+     * Stops or starts the servo.
+     * 
+     * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_enabled($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("enabled",$rest_val);
     }
 
     /**
@@ -240,6 +298,73 @@ class YServo extends YFunction
     }
 
     /**
+     * Returns the servo position at device power up.
+     * 
+     * @return an integer corresponding to the servo position at device power up
+     * 
+     * On failure, throws an exception or returns Y_POSITIONATPOWERON_INVALID.
+     */
+    public function get_positionAtPowerOn()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_POSITIONATPOWERON_INVALID;
+            }
+        }
+        return $this->_positionAtPowerOn;
+    }
+
+    /**
+     * Configure the servo position at device power up. Remember to call the matching
+     * module saveToFlash() method, otherwise this call will have no effect.
+     * 
+     * @param newval : an integer
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_positionAtPowerOn($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("positionAtPowerOn",$rest_val);
+    }
+
+    /**
+     * Returns the servo signal generator state at power up.
+     * 
+     * @return either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the servo signal
+     * generator state at power up
+     * 
+     * On failure, throws an exception or returns Y_ENABLEDATPOWERON_INVALID.
+     */
+    public function get_enabledAtPowerOn()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ENABLEDATPOWERON_INVALID;
+            }
+        }
+        return $this->_enabledAtPowerOn;
+    }
+
+    /**
+     * Configure the servo signal generator state at power up. Remember to call the matching module saveToFlash()
+     * method, otherwise this call will have no effect.
+     * 
+     * @param newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_enabledAtPowerOn($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("enabledAtPowerOn",$rest_val);
+    }
+
+    /**
      * Retrieves a servo for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -279,6 +404,12 @@ class YServo extends YFunction
     public function setPosition($newval)
     { return set_position($newval); }
 
+    public function enabled()
+    { return get_enabled(); }
+
+    public function setEnabled($newval)
+    { return set_enabled($newval); }
+
     public function range()
     { return get_range(); }
 
@@ -294,6 +425,18 @@ class YServo extends YFunction
     public function setMove($newval)
     { return set_move($newval); }
 
+    public function positionAtPowerOn()
+    { return get_positionAtPowerOn(); }
+
+    public function setPositionAtPowerOn($newval)
+    { return set_positionAtPowerOn($newval); }
+
+    public function enabledAtPowerOn()
+    { return get_enabledAtPowerOn(); }
+
+    public function setEnabledAtPowerOn($newval)
+    { return set_enabledAtPowerOn($newval); }
+
     /**
      * Continues the enumeration of servos started using yFirstServo().
      * 
@@ -302,7 +445,9 @@ class YServo extends YFunction
      *         if there are no more servos to enumerate.
      */
     public function nextServo()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindServo($next_hwid);
     }

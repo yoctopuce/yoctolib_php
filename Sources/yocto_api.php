@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 14709 2014-01-24 14:32:57Z seb $
+ * $Id: yocto_api.php 15402 2014-03-12 16:23:14Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -694,7 +694,6 @@ class YFunctionType
                                  $str_func);
         }
         if($dotpos>0){
-
             // either the device id is a logical name, or the function is unknown
             $devid = substr($str_func, 0, $dotpos);
             $funcid = substr($str_func, $dotpos+1);
@@ -728,7 +727,7 @@ class YFunctionType
                     }
                 }
             }
-        }else{
+        } else {
             $serial = '';
             $funcid = substr($str_func, 1);
             // only functionId  (ie ".temperature")
@@ -780,7 +779,6 @@ class YFunctionType
                                  $friend_mod.'.'.$friend_func);
         }
     }
-
 
     // Retrieve a function object by hardware id, updating the indexes on the fly if needed
     public function setFunction($str_func, $obj_func)
@@ -2151,7 +2149,7 @@ class YAPI
             $yreq = $dev->requestAPI();
             if(!is_null($yreq)) {
                 $yreq->hwid = "{$devid}.{$funcid}";
-                $yreq->deviceoid  = $devid;
+                $yreq->deviceid  = $devid;
                 $yreq->functionid = $funcid;
                 if($yreq->errorType != YAPI_SUCCESS) return $yreq;
                 $loadval = json_decode($yreq->result, true);
@@ -2217,7 +2215,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.14801";
+        return "1.10.15466";
     }
 
     /**
@@ -3635,7 +3633,7 @@ class YDataSet
                 }
             }
         }
-        if(sizeof($this->_streams) > 0) {
+        if((sizeof($this->_streams) > 0) && (summaryTotalTime>0)) {
             // update time boundaries with actual data
             $stream = $this->_streams[sizeof($this->_streams)-1];
             $endtime = $stream->get_startTimeUTC() + $stream->get_duration();
@@ -3874,7 +3872,9 @@ class YFunction
      * comment from .yc definition
      */
     public function nextFunction()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindFunction($next_hwid);
     }
@@ -3945,7 +3945,8 @@ class YFunction
     }
 
     /**
-     * Returns a short text that describes the function in the form TYPE(NAME)=SERIAL&#46;FUNCTIONID.
+     * Returns a short text that describes unambiguously the instance of the function in the form
+     * TYPE(NAME)=SERIAL&#46;FUNCTIONID.
      * More precisely,
      * TYPE       is the type of the function,
      * NAME       it the name used for the first access to the function,
@@ -4292,6 +4293,9 @@ class YFunction
     public function get_module()
     {
         // try to resolve the function name to a device id without query
+        if($this->_serial != '') {
+            return yFindModule($this->_serial.'.module');            
+        }
         $hwid = $this->_func;
         if(strpos($hwid, '.') === FALSE) {
             $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -4300,7 +4304,7 @@ class YFunction
         $dotidx = strpos($hwid, '.');
         if($dotidx !== FALSE) {
             // resolution worked
-            return yFindModule(substr($hwid, 0, $dotidx));
+            return yFindModule(substr($hwid, 0, $dotidx).'.module');
         }
 
         // device not resolved for now, force a communication for a last chance resolution
@@ -4311,7 +4315,7 @@ class YFunction
         $dotidx = strpos($hwid, '.');
         if($dotidx !== FALSE) {
             // resolution worked
-            return yFindModule(substr($hwid, 0, $dotidx));
+            return yFindModule(substr($hwid, 0, $dotidx).'.module');
         }
         // return a true yFindModule object even if it is not a module valid for communicating
         return yFindModule('module_of_'.$this->_className.'_'.$this->_func);
@@ -4476,9 +4480,9 @@ class YSensor extends YFunction
     }
 
     /**
-     * Returns the measuring unit for the measured value.
+     * Returns the measuring unit for the measure.
      * 
-     * @return a string corresponding to the measuring unit for the measured value
+     * @return a string corresponding to the measuring unit for the measure
      * 
      * On failure, throws an exception or returns Y_UNIT_INVALID.
      */
@@ -4493,9 +4497,9 @@ class YSensor extends YFunction
     }
 
     /**
-     * Returns the current measured value.
+     * Returns the current value of the measure.
      * 
-     * @return a floating point number corresponding to the current measured value
+     * @return a floating point number corresponding to the current value of the measure
      * 
      * On failure, throws an exception or returns Y_CURRENTVALUE_INVALID.
      */
@@ -4531,9 +4535,10 @@ class YSensor extends YFunction
     }
 
     /**
-     * Returns the minimal value observed.
+     * Returns the minimal value observed for the measure since the device was started.
      * 
-     * @return a floating point number corresponding to the minimal value observed
+     * @return a floating point number corresponding to the minimal value observed for the measure since
+     * the device was started
      * 
      * On failure, throws an exception or returns Y_LOWESTVALUE_INVALID.
      */
@@ -4565,9 +4570,10 @@ class YSensor extends YFunction
     }
 
     /**
-     * Returns the maximal value observed.
+     * Returns the maximal value observed for the measure since the device was started.
      * 
-     * @return a floating point number corresponding to the maximal value observed
+     * @return a floating point number corresponding to the maximal value observed for the measure since
+     * the device was started
      * 
      * On failure, throws an exception or returns Y_HIGHESTVALUE_INVALID.
      */
@@ -4952,6 +4958,10 @@ class YSensor extends YFunction
      *         values returned by the sensor for the correction points.
      * @param refValues : array of floating point numbers, corresponding to the corrected
      *         values for the correction points.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
      */
     public function calibrateFromPoints($rawValues,$refValues)
     {
@@ -5209,7 +5219,9 @@ class YSensor extends YFunction
      *         if there are no more sensors to enumerate.
      */
     public function nextSensor()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindSensor($next_hwid);
     }
@@ -5276,6 +5288,7 @@ class YModule extends YFunction
     protected $_usbCurrent               = Y_USBCURRENT_INVALID;         // UsedCurrent
     protected $_rebootCountdown          = Y_REBOOTCOUNTDOWN_INVALID;    // Int
     protected $_usbBandwidth             = Y_USBBANDWIDTH_INVALID;       // UsbBandwidth
+    protected $_logCallback              = null;                         // YModuleLogCallback
     //--- (end of generated code: YModule attributes)
 
     function __construct($str_func)
@@ -5881,7 +5894,9 @@ class YModule extends YFunction
      *         if there are no more modules to enumerate.
      */
     public function nextModule()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindModule($next_hwid);
     }

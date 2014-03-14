@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 13966 2013-12-11 15:13:34Z mvuilleu $
+ * $Id: yocto_lightsensor.php 15402 2014-03-12 16:23:14Z mvuilleu $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -11,24 +11,24 @@
  *
  *  Yoctopuce Sarl (hereafter Licensor) grants to you a perpetual
  *  non-exclusive license to use, modify, copy and integrate this
- *  file into your software for the sole purpose of interfacing 
- *  with Yoctopuce products. 
+ *  file into your software for the sole purpose of interfacing
+ *  with Yoctopuce products.
  *
- *  You may reproduce and distribute copies of this file in 
+ *  You may reproduce and distribute copies of this file in
  *  source or object form, as long as the sole purpose of this
- *  code is to interface with Yoctopuce products. You must retain 
+ *  code is to interface with Yoctopuce products. You must retain
  *  this notice in the distributed source file.
  *
  *  You should refer to Yoctopuce General Terms and Conditions
- *  for additional information regarding your rights and 
+ *  for additional information regarding your rights and
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
  *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
- *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
+ *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
- *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
+ *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
  *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
  *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
@@ -138,7 +138,9 @@ class YLightSensor extends YSensor
      *         if there are no more light sensors to enumerate.
      */
     public function nextLightSensor()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindLightSensor($next_hwid);
     }

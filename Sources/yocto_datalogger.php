@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 14615 2014-01-19 00:16:40Z mvuilleu $
+ * $Id: yocto_datalogger.php 15402 2014-03-12 16:23:14Z mvuilleu $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -680,7 +680,9 @@ class YDataLogger extends YFunction
      *         if there are no more data loggers to enumerate.
      */
     public function nextDataLogger()
-    {   $next_hwid = YAPI::getNextHardwareId($this->_className, $this->_func);
+    {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) return null;
+        $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
         return yFindDataLogger($next_hwid);
     }
