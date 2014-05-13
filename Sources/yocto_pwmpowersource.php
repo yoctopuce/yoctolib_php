@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 15411 2014-03-13 12:08:37Z mvuilleu $
+ * $Id: yocto_pwmpowersource.php 15529 2014-03-20 17:54:15Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *

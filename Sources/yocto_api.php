@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_api.php 16091 2014-05-08 12:10:31Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -194,6 +194,7 @@ class YTcpHub
     public $writeProtected;             // true if an adminPassword is set
     public $user;                       // user for authentication
     public $callbackCache;              // pre-parsed cache for callback-based API
+    public $reuseskt;                   // keep-alive socket to be reused
     protected $realm;                   // hub authentication realm
     protected $pwd;                     // password for authentication
     protected $nonce;                   // lasPrint(t received nonce
@@ -488,20 +489,29 @@ class YTcpReq
                 stream_set_blocking($skt, 0);
                 $this->skt = $skt;
             } else {
-                $skt = $this->newsocket($errno, $errstr, YAPI_BLOCKING_REQUEST_TIMEOUT / 1000);
-                if ($skt === false) {
-                    $this->errorType = YAPI_IO_ERROR;
-                    $this->errorMsg = "failed to open socket ($errno): $errstr";
-                    $this->retryCount++;
-                    return YAPI_SUCCESS; // will retry later
+                if(!is_null($this->hub->reuseskt)) {
+                    $skt = $this->hub->reuseskt;
+                    $this->hub->reuseskt = null;
+                } else {
+                    $skt = $this->newsocket($errno, $errstr, YAPI_BLOCKING_REQUEST_TIMEOUT / 1000);
+                    if ($skt === false) {
+                        $this->errorType = YAPI_IO_ERROR;
+                        $this->errorMsg = "failed to open socket ($errno): $errstr";
+                        $this->retryCount++;
+                        return YAPI_SUCCESS; // will retry later
+                    }                    
                 }
                 stream_set_blocking($skt, 0);
                 $request = $this->request . " \r\n" . // no HTTP/1.1 suffix for light queries
                    $this->hub->getAuthorization($this->request);
                 if($this->boundary != '') {
                     $request .= "Content-Type: multipart/form-data; boundary={$this->boundary}\r\n";
-                }            
-                $request .= "Connection: close\r\n\r\n";
+                }
+                if(substr($this->request,-2) == "&.") {
+                    $request .= "\r\n";
+                } else {
+                    $request .= "Connection: close\r\n\r\n";
+                }
                 $reqlen = strlen($request);
                 if (fwrite($skt, $request, $reqlen) != $reqlen) {
                     fclose($skt);
@@ -559,6 +569,13 @@ class YTcpReq
             }
             if(feof($this->skt)) {
                 fclose($this->skt);
+                $this->skt = null;
+            } else if($this->meta == "0K\r\n\r\n" && $this->reply == "\r\n") {
+                if(is_null($this->hub->reuseskt)) {
+                    $this->hub->reuseskt = $this->skt;
+                } else {
+                    fclose($this->skt);
+                }
                 $this->skt = null;
             }
         }
@@ -2086,6 +2103,11 @@ class YAPI
                                      'no error', 
                                      $tcpreq->reply);
             }
+            if(strpos($tcpreq->meta, "0K\r\n") === 0) {
+                return new YAPI_YReq("", YAPI_SUCCESS, 
+                                     'no error', 
+                                     $tcpreq->reply);
+            }
             $matches = null;
             if(!preg_match('/^HTTP[^ ]* (?P<status>\d+) (?P<statusmsg>.)+$/', $tcpreq->meta, $matches)) {
                 return new YAPI_YReq("", YAPI_IO_ERROR, 
@@ -2215,7 +2237,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.15466";
+        return "1.10.16182";
     }
 
     /**
@@ -2723,7 +2745,7 @@ class YMeasure
 
     /**
      * Returns the end time of the measure, relative to the Jan 1, 1970 UTC
-     * (Unix timestamp). When the recording rate is higher then 1 sample
+     * (Unix timestamp). When the recording rate is higher than 1 sample
      * per second, the timestamp may have a fractional part.
      * 
      * @return an floating point number corresponding to the number of seconds
@@ -3972,7 +3994,7 @@ class YFunction
     /**
      * Returns the unique hardware identifier of the function in the form SERIAL.FUNCTIONID.
      * The unique hardware identifier is composed of the device serial
-     * number and of the hardware identifier of the function. (for example RELAYLO1-123456.relay1)
+     * number and of the hardware identifier of the function (for example RELAYLO1-123456.relay1).
      * 
      * @return a string that uniquely identifies the function (ex: RELAYLO1-123456.relay1)
      * 
@@ -4092,7 +4114,7 @@ class YFunction
         $safecodes = array('%21','%23','%24','%27','%28','%29','%2A','%2C','%2F','%3A','%3B','%40','%3F','%5B','%5D');
         $safechars = array('!',  "#",  "$",  "'",  "(",  ")",  '*',  ",",  "/",  ":",  ";",  "@",  "?",  "[",  "]");
         $attrname = str_replace($safecodes, $safechars, urlencode($str_attr));
-        $extra = "/$attrname?$attrname=".str_replace($safecodes, $safechars, urlencode($str_newval));
+        $extra = "/$attrname?$attrname=".str_replace($safecodes, $safechars, urlencode($str_newval)."&.");
         $yreq = YAPI::funcRequest($this->_className, $this->_func, $extra);
         if($this->_cache['_expiration'] != 0){
             $this->_cache['_expiration'] = YAPI::GetTickCount();
@@ -5042,8 +5064,8 @@ class YSensor extends YFunction
             $res = sprintf('%d', $npt);
             $idx = 0;
             while ($idx < $npt) {
-                $iRaw = round($rawValues[$idx] * $this->_scale - $this->_offset);
-                $iRef = round($refValues[$idx] * $this->_scale - $this->_offset);
+                $iRaw = round($rawValues[$idx] * $this->_scale + $this->_offset);
+                $iRef = round($refValues[$idx] * $this->_scale + $this->_offset);
                 $res = sprintf('%s,%d,%d', $res, $iRaw, $iRef);
                 $idx = $idx + 1;
             }
@@ -5697,23 +5719,6 @@ class YModule extends YFunction
     }
 
     /**
-     * Changes the number of USB interfaces used by the module. You must reboot the module
-     * after changing this setting.
-     * 
-     * @param newval : either Y_USBBANDWIDTH_SIMPLE or Y_USBBANDWIDTH_DOUBLE, according to the number of
-     * USB interfaces used by the module
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_usbBandwidth($newval)
-    {
-        $rest_val = strval($newval);
-        return $this->_setAttr("usbBandwidth",$rest_val);
-    }
-
-    /**
      * Allows you to find a module from its serial number or from its logical name.
      * 
      * This function does not require that the module is online at the time
@@ -5882,9 +5887,6 @@ class YModule extends YFunction
 
     public function usbBandwidth()
     { return get_usbBandwidth(); }
-
-    public function setUsbBandwidth($newval)
-    { return set_usbBandwidth($newval); }
 
     /**
      * Continues the module enumeration started using yFirstModule().

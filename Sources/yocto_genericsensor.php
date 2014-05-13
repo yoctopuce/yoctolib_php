@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_genericsensor.php 15796 2014-04-15 13:36:07Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -63,7 +63,7 @@ class YGenericSensor extends YSensor
     //--- (end of YGenericSensor declaration)
 
     //--- (YGenericSensor attributes)
-    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // Millesimal
+    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // Precimal
     protected $_signalUnit               = Y_SIGNALUNIT_INVALID;         // Text
     protected $_signalRange              = Y_SIGNALRANGE_INVALID;        // ValueRange
     protected $_valueRange               = Y_VALUERANGE_INVALID;         // ValueRange

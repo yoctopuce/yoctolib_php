@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 15411 2014-03-13 12:08:37Z mvuilleu $
+ * $Id: yocto_pwmoutput.php 15529 2014-03-20 17:54:15Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -163,9 +163,9 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the PWMs duty cyle.
+     * Changes the PWM duty cycle, in per cents.
      * 
-     * @param newval : a floating point number
+     * @param newval : a floating point number corresponding to the PWM duty cycle, in per cents
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -178,9 +178,9 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the PWMs dutty cyle as a floating point number between 0 an 1.
+     * Returns the PWM duty cycle, in per cents.
      * 
-     * @return a floating point number corresponding to the PWMs dutty cyle as a floating point number between 0 an 1
+     * @return a floating point number corresponding to the PWM duty cycle, in per cents
      * 
      * On failure, throws an exception or returns Y_DUTYCYCLE_INVALID.
      */
@@ -195,9 +195,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the PWM pluses length. A pulse length cannot be longer than period, otherwise it is truncated.
+     * Changes the PWM pulse length, in milliseconds. A pulse length cannot be longer than period,
+     * otherwise it is truncated.
      * 
-     * @param newval : a floating point number
+     * @param newval : a floating point number corresponding to the PWM pulse length, in milliseconds
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -244,10 +245,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the PWM frequency. The duty cycle is kept unchanged thanks to an
+     * Changes the PWM frequency. The duty cycle is kept unchanged thanks to an
      * automatic pulse width change.
      * 
-     * @param newval : an integer
+     * @param newval : an integer corresponding to the PWM frequency
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -260,9 +261,9 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the PWM period.
+     * Changes the PWM period.
      * 
-     * @param newval : a floating point number
+     * @param newval : a floating point number corresponding to the PWM period
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -275,9 +276,9 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the PWM period in nonaseconde.
+     * Returns the PWM period in milliseconds.
      * 
-     * @return a floating point number corresponding to the PWM period in nonaseconde
+     * @return a floating point number corresponding to the PWM period in milliseconds
      * 
      * On failure, throws an exception or returns Y_PERIOD_INVALID.
      */
@@ -308,10 +309,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the state of the PWMs at device power on.
+     * Returns the state of the PWM at device power on.
      * 
      * @return either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the state of the
-     * PWMs at device power on
+     * PWM at device power on
      * 
      * On failure, throws an exception or returns Y_ENABLEDATPOWERON_INVALID.
      */
@@ -326,10 +327,11 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the state of PWM at device power on. Remember to call the matching module saveToFlash()
+     * Changes the state of the PWM at device power on. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      * 
-     * @param newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE
+     * @param newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the state
+     * of the PWM at device power on
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -342,10 +344,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Configures the PWMs duty cycle at device power on. Remember to call the matching
+     * Changes the PWM duty cycle at device power on. Remember to call the matching
      * module saveToFlash() method, otherwise this call will have no effect.
      * 
-     * @param newval : a floating point number
+     * @param newval : a floating point number corresponding to the PWM duty cycle at device power on
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -358,10 +360,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the PWMs duty cycle at device power on as a floating point number between 0.0 and 100.0%
+     * Returns the PWMs duty cycle at device power on as a floating point number between 0 and 100
      * 
      * @return a floating point number corresponding to the PWMs duty cycle at device power on as a
-     * floating point number between 0.0 and 100
+     * floating point number between 0 and 100
      * 
      * On failure, throws an exception or returns Y_DUTYCYCLEATPOWERON_INVALID.
      */
@@ -410,7 +412,8 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Performs a smooth change of the pulse duration toward a given value.
+     * Performs a smooth transistion of the pulse duration toward a given value. Any period,
+     * frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      * 
      * @param ms_target   : new pulse duration at the end of the transition
      *         (floating-point number, representing the pulse duration in milliseconds)
