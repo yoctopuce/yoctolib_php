@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 15796 2014-04-15 13:36:07Z seb $
+ * $Id: yocto_genericsensor.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -250,25 +250,25 @@ class YGenericSensor extends YSensor
     }
 
     public function setUnit($newval)
-    { return set_unit($newval); }
+    { return $this->set_unit($newval); }
 
     public function signalValue()
-    { return get_signalValue(); }
+    { return $this->get_signalValue(); }
 
     public function signalUnit()
-    { return get_signalUnit(); }
+    { return $this->get_signalUnit(); }
 
     public function signalRange()
-    { return get_signalRange(); }
+    { return $this->get_signalRange(); }
 
     public function setSignalRange($newval)
-    { return set_signalRange($newval); }
+    { return $this->set_signalRange($newval); }
 
     public function valueRange()
-    { return get_valueRange(); }
+    { return $this->get_valueRange(); }
 
     public function setValueRange($newval)
-    { return set_valueRange($newval); }
+    { return $this->set_valueRange($newval); }
 
     /**
      * Continues the enumeration of generic sensors started using yFirstGenericSensor().

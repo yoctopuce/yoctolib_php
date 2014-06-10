@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_lightsensor.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -128,7 +128,7 @@ class YLightSensor extends YSensor
     }
 
     public function setCurrentValue($newval)
-    { return set_currentValue($newval); }
+    { return $this->set_currentValue($newval); }
 
     /**
      * Continues the enumeration of light sensors started using yFirstLightSensor().

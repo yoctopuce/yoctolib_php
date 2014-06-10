@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_relay.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YRelay, the high-level API for Relay functions
  *
@@ -443,49 +443,49 @@ class YRelay extends YFunction
     }
 
     public function state()
-    { return get_state(); }
+    { return $this->get_state(); }
 
     public function setState($newval)
-    { return set_state($newval); }
+    { return $this->set_state($newval); }
 
     public function stateAtPowerOn()
-    { return get_stateAtPowerOn(); }
+    { return $this->get_stateAtPowerOn(); }
 
     public function setStateAtPowerOn($newval)
-    { return set_stateAtPowerOn($newval); }
+    { return $this->set_stateAtPowerOn($newval); }
 
     public function maxTimeOnStateA()
-    { return get_maxTimeOnStateA(); }
+    { return $this->get_maxTimeOnStateA(); }
 
     public function setMaxTimeOnStateA($newval)
-    { return set_maxTimeOnStateA($newval); }
+    { return $this->set_maxTimeOnStateA($newval); }
 
     public function maxTimeOnStateB()
-    { return get_maxTimeOnStateB(); }
+    { return $this->get_maxTimeOnStateB(); }
 
     public function setMaxTimeOnStateB($newval)
-    { return set_maxTimeOnStateB($newval); }
+    { return $this->set_maxTimeOnStateB($newval); }
 
     public function output()
-    { return get_output(); }
+    { return $this->get_output(); }
 
     public function setOutput($newval)
-    { return set_output($newval); }
+    { return $this->set_output($newval); }
 
     public function pulseTimer()
-    { return get_pulseTimer(); }
+    { return $this->get_pulseTimer(); }
 
     public function setPulseTimer($newval)
-    { return set_pulseTimer($newval); }
+    { return $this->set_pulseTimer($newval); }
 
     public function delayedPulseTimer()
-    { return get_delayedPulseTimer(); }
+    { return $this->get_delayedPulseTimer(); }
 
     public function setDelayedPulseTimer($newval)
-    { return set_delayedPulseTimer($newval); }
+    { return $this->set_delayedPulseTimer($newval); }
 
     public function countdown()
-    { return get_countdown(); }
+    { return $this->get_countdown(); }
 
     /**
      * Continues the enumeration of relays started using yFirstRelay().

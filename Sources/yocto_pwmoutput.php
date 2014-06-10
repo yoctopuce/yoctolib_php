@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 15529 2014-03-20 17:54:15Z seb $
+ * $Id: yocto_pwmoutput.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -458,52 +458,52 @@ class YPwmOutput extends YFunction
     }
 
     public function enabled()
-    { return get_enabled(); }
+    { return $this->get_enabled(); }
 
     public function setEnabled($newval)
-    { return set_enabled($newval); }
+    { return $this->set_enabled($newval); }
 
     public function setDutyCycle($newval)
-    { return set_dutyCycle($newval); }
+    { return $this->set_dutyCycle($newval); }
 
     public function dutyCycle()
-    { return get_dutyCycle(); }
+    { return $this->get_dutyCycle(); }
 
     public function setPulseDuration($newval)
-    { return set_pulseDuration($newval); }
+    { return $this->set_pulseDuration($newval); }
 
     public function pulseDuration()
-    { return get_pulseDuration(); }
+    { return $this->get_pulseDuration(); }
 
     public function frequency()
-    { return get_frequency(); }
+    { return $this->get_frequency(); }
 
     public function setFrequency($newval)
-    { return set_frequency($newval); }
+    { return $this->set_frequency($newval); }
 
     public function setPeriod($newval)
-    { return set_period($newval); }
+    { return $this->set_period($newval); }
 
     public function period()
-    { return get_period(); }
+    { return $this->get_period(); }
 
     public function pwmTransition()
-    { return get_pwmTransition(); }
+    { return $this->get_pwmTransition(); }
 
     public function setPwmTransition($newval)
-    { return set_pwmTransition($newval); }
+    { return $this->set_pwmTransition($newval); }
 
     public function enabledAtPowerOn()
-    { return get_enabledAtPowerOn(); }
+    { return $this->get_enabledAtPowerOn(); }
 
     public function setEnabledAtPowerOn($newval)
-    { return set_enabledAtPowerOn($newval); }
+    { return $this->set_enabledAtPowerOn($newval); }
 
     public function setDutyCycleAtPowerOn($newval)
-    { return set_dutyCycleAtPowerOn($newval); }
+    { return $this->set_dutyCycleAtPowerOn($newval); }
 
     public function dutyCycleAtPowerOn()
-    { return get_dutyCycleAtPowerOn(); }
+    { return $this->get_dutyCycleAtPowerOn(); }
 
     /**
      * Continues the enumeration of PWMs started using yFirstPwmOutput().

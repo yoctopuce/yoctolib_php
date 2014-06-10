@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 15635 2014-03-28 21:04:00Z mvuilleu $
+ * $Id: yocto_altitude.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -57,7 +57,7 @@ class YAltitude extends YSensor
     //--- (end of YAltitude declaration)
 
     //--- (YAltitude attributes)
-    protected $_qnh                      = Y_QNH_INVALID;                // RawFloat
+    protected $_qnh                      = Y_QNH_INVALID;                // CentFloatingPoint
     //--- (end of YAltitude attributes)
 
     function __construct($str_func)
@@ -170,13 +170,13 @@ class YAltitude extends YSensor
     }
 
     public function setCurrentValue($newval)
-    { return set_currentValue($newval); }
+    { return $this->set_currentValue($newval); }
 
     public function setQnh($newval)
-    { return set_qnh($newval); }
+    { return $this->set_qnh($newval); }
 
     public function qnh()
-    { return get_qnh(); }
+    { return $this->get_qnh(); }
 
     /**
      * Continues the enumeration of altimeters started using yFirstAltitude().

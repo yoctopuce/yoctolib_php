@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_gyro.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -648,13 +648,13 @@ class YGyro extends YSensor
     }
 
     public function xValue()
-    { return get_xValue(); }
+    { return $this->get_xValue(); }
 
     public function yValue()
-    { return get_yValue(); }
+    { return $this->get_yValue(); }
 
     public function zValue()
-    { return get_zValue(); }
+    { return $this->get_zValue(); }
 
     /**
      * Continues the enumeration of gyroscopes started using yFirstGyro().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_wireless.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -379,25 +379,25 @@ class YWireless extends YFunction
     }
 
     public function linkQuality()
-    { return get_linkQuality(); }
+    { return $this->get_linkQuality(); }
 
     public function ssid()
-    { return get_ssid(); }
+    { return $this->get_ssid(); }
 
     public function channel()
-    { return get_channel(); }
+    { return $this->get_channel(); }
 
     public function security()
-    { return get_security(); }
+    { return $this->get_security(); }
 
     public function message()
-    { return get_message(); }
+    { return $this->get_message(); }
 
     public function wlanConfig()
-    { return get_wlanConfig(); }
+    { return $this->get_wlanConfig(); }
 
     public function setWlanConfig($newval)
-    { return set_wlanConfig($newval); }
+    { return $this->set_wlanConfig($newval); }
 
     /**
      * Continues the enumeration of wireless lan interfaces started using yFirstWireless().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_compass.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -155,10 +155,10 @@ class YCompass extends YSensor
     }
 
     public function axis()
-    { return get_axis(); }
+    { return $this->get_axis(); }
 
     public function magneticHeading()
-    { return get_magneticHeading(); }
+    { return $this->get_magneticHeading(); }
 
     /**
      * Continues the enumeration of compasses started using yFirstCompass().

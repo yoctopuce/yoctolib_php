@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 15635 2014-03-28 21:04:00Z mvuilleu $
+ * $Id: yocto_motor.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -553,58 +553,58 @@ class YMotor extends YFunction
     }
 
     public function motorStatus()
-    { return get_motorStatus(); }
+    { return $this->get_motorStatus(); }
 
     public function setMotorStatus($newval)
-    { return set_motorStatus($newval); }
+    { return $this->set_motorStatus($newval); }
 
     public function setDrivingForce($newval)
-    { return set_drivingForce($newval); }
+    { return $this->set_drivingForce($newval); }
 
     public function drivingForce()
-    { return get_drivingForce(); }
+    { return $this->get_drivingForce(); }
 
     public function setBreakingForce($newval)
-    { return set_breakingForce($newval); }
+    { return $this->set_breakingForce($newval); }
 
     public function breakingForce()
-    { return get_breakingForce(); }
+    { return $this->get_breakingForce(); }
 
     public function setCutOffVoltage($newval)
-    { return set_cutOffVoltage($newval); }
+    { return $this->set_cutOffVoltage($newval); }
 
     public function cutOffVoltage()
-    { return get_cutOffVoltage(); }
+    { return $this->get_cutOffVoltage(); }
 
     public function overCurrentLimit()
-    { return get_overCurrentLimit(); }
+    { return $this->get_overCurrentLimit(); }
 
     public function setOverCurrentLimit($newval)
-    { return set_overCurrentLimit($newval); }
+    { return $this->set_overCurrentLimit($newval); }
 
     public function frequency()
-    { return get_frequency(); }
+    { return $this->get_frequency(); }
 
     public function setFrequency($newval)
-    { return set_frequency($newval); }
+    { return $this->set_frequency($newval); }
 
     public function starterTime()
-    { return get_starterTime(); }
+    { return $this->get_starterTime(); }
 
     public function setStarterTime($newval)
-    { return set_starterTime($newval); }
+    { return $this->set_starterTime($newval); }
 
     public function failSafeTimeout()
-    { return get_failSafeTimeout(); }
+    { return $this->get_failSafeTimeout(); }
 
     public function setFailSafeTimeout($newval)
-    { return set_failSafeTimeout($newval); }
+    { return $this->set_failSafeTimeout($newval); }
 
     public function command()
-    { return get_command(); }
+    { return $this->get_command(); }
 
     public function setCommand($newval)
-    { return set_command($newval); }
+    { return $this->set_command($newval); }
 
     /**
      * Continues the enumeration of motors started using yFirstMotor().

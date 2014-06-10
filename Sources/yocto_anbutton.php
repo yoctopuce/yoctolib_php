@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_anbutton.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -478,52 +478,52 @@ class YAnButton extends YFunction
     }
 
     public function calibratedValue()
-    { return get_calibratedValue(); }
+    { return $this->get_calibratedValue(); }
 
     public function rawValue()
-    { return get_rawValue(); }
+    { return $this->get_rawValue(); }
 
     public function analogCalibration()
-    { return get_analogCalibration(); }
+    { return $this->get_analogCalibration(); }
 
     public function setAnalogCalibration($newval)
-    { return set_analogCalibration($newval); }
+    { return $this->set_analogCalibration($newval); }
 
     public function calibrationMax()
-    { return get_calibrationMax(); }
+    { return $this->get_calibrationMax(); }
 
     public function setCalibrationMax($newval)
-    { return set_calibrationMax($newval); }
+    { return $this->set_calibrationMax($newval); }
 
     public function calibrationMin()
-    { return get_calibrationMin(); }
+    { return $this->get_calibrationMin(); }
 
     public function setCalibrationMin($newval)
-    { return set_calibrationMin($newval); }
+    { return $this->set_calibrationMin($newval); }
 
     public function sensitivity()
-    { return get_sensitivity(); }
+    { return $this->get_sensitivity(); }
 
     public function setSensitivity($newval)
-    { return set_sensitivity($newval); }
+    { return $this->set_sensitivity($newval); }
 
     public function isPressed()
-    { return get_isPressed(); }
+    { return $this->get_isPressed(); }
 
     public function lastTimePressed()
-    { return get_lastTimePressed(); }
+    { return $this->get_lastTimePressed(); }
 
     public function lastTimeReleased()
-    { return get_lastTimeReleased(); }
+    { return $this->get_lastTimeReleased(); }
 
     public function pulseCounter()
-    { return get_pulseCounter(); }
+    { return $this->get_pulseCounter(); }
 
     public function setPulseCounter($newval)
-    { return set_pulseCounter($newval); }
+    { return $this->set_pulseCounter($newval); }
 
     public function pulseTimer()
-    { return get_pulseTimer(); }
+    { return $this->get_pulseTimer(); }
 
     /**
      * Continues the enumeration of analog inputs started using yFirstAnButton().

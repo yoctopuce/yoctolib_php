@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 15998 2014-05-01 08:25:18Z seb $
+ * $Id: yocto_refframe.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -771,22 +771,22 @@ class YRefFrame extends YFunction
     }
 
     public function mountPos()
-    { return get_mountPos(); }
+    { return $this->get_mountPos(); }
 
     public function setMountPos($newval)
-    { return set_mountPos($newval); }
+    { return $this->set_mountPos($newval); }
 
     public function setBearing($newval)
-    { return set_bearing($newval); }
+    { return $this->set_bearing($newval); }
 
     public function bearing()
-    { return get_bearing(); }
+    { return $this->get_bearing(); }
 
     public function calibrationParam()
-    { return get_calibrationParam(); }
+    { return $this->get_calibrationParam(); }
 
     public function setCalibrationParam($newval)
-    { return set_calibrationParam($newval); }
+    { return $this->set_calibrationParam($newval); }
 
     /**
      * Continues the enumeration of reference frames started using yFirstRefFrame().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_datalogger.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -646,31 +646,31 @@ class YDataLogger extends YFunction
     }
 
     public function currentRunIndex()
-    { return get_currentRunIndex(); }
+    { return $this->get_currentRunIndex(); }
 
     public function timeUTC()
-    { return get_timeUTC(); }
+    { return $this->get_timeUTC(); }
 
     public function setTimeUTC($newval)
-    { return set_timeUTC($newval); }
+    { return $this->set_timeUTC($newval); }
 
     public function recording()
-    { return get_recording(); }
+    { return $this->get_recording(); }
 
     public function setRecording($newval)
-    { return set_recording($newval); }
+    { return $this->set_recording($newval); }
 
     public function autoStart()
-    { return get_autoStart(); }
+    { return $this->get_autoStart(); }
 
     public function setAutoStart($newval)
-    { return set_autoStart($newval); }
+    { return $this->set_autoStart($newval); }
 
     public function clearHistory()
-    { return get_clearHistory(); }
+    { return $this->get_clearHistory(); }
 
     public function setClearHistory($newval)
-    { return set_clearHistory($newval); }
+    { return $this->set_clearHistory($newval); }
 
     /**
      * Continues the enumeration of data loggers started using yFirstDataLogger().

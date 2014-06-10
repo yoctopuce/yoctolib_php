@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_network.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -900,100 +900,100 @@ class YNetwork extends YFunction
     }
 
     public function readiness()
-    { return get_readiness(); }
+    { return $this->get_readiness(); }
 
     public function macAddress()
-    { return get_macAddress(); }
+    { return $this->get_macAddress(); }
 
     public function ipAddress()
-    { return get_ipAddress(); }
+    { return $this->get_ipAddress(); }
 
     public function subnetMask()
-    { return get_subnetMask(); }
+    { return $this->get_subnetMask(); }
 
     public function router()
-    { return get_router(); }
+    { return $this->get_router(); }
 
     public function ipConfig()
-    { return get_ipConfig(); }
+    { return $this->get_ipConfig(); }
 
     public function setIpConfig($newval)
-    { return set_ipConfig($newval); }
+    { return $this->set_ipConfig($newval); }
 
     public function primaryDNS()
-    { return get_primaryDNS(); }
+    { return $this->get_primaryDNS(); }
 
     public function setPrimaryDNS($newval)
-    { return set_primaryDNS($newval); }
+    { return $this->set_primaryDNS($newval); }
 
     public function secondaryDNS()
-    { return get_secondaryDNS(); }
+    { return $this->get_secondaryDNS(); }
 
     public function setSecondaryDNS($newval)
-    { return set_secondaryDNS($newval); }
+    { return $this->set_secondaryDNS($newval); }
 
     public function userPassword()
-    { return get_userPassword(); }
+    { return $this->get_userPassword(); }
 
     public function setUserPassword($newval)
-    { return set_userPassword($newval); }
+    { return $this->set_userPassword($newval); }
 
     public function adminPassword()
-    { return get_adminPassword(); }
+    { return $this->get_adminPassword(); }
 
     public function setAdminPassword($newval)
-    { return set_adminPassword($newval); }
+    { return $this->set_adminPassword($newval); }
 
     public function discoverable()
-    { return get_discoverable(); }
+    { return $this->get_discoverable(); }
 
     public function setDiscoverable($newval)
-    { return set_discoverable($newval); }
+    { return $this->set_discoverable($newval); }
 
     public function wwwWatchdogDelay()
-    { return get_wwwWatchdogDelay(); }
+    { return $this->get_wwwWatchdogDelay(); }
 
     public function setWwwWatchdogDelay($newval)
-    { return set_wwwWatchdogDelay($newval); }
+    { return $this->set_wwwWatchdogDelay($newval); }
 
     public function callbackUrl()
-    { return get_callbackUrl(); }
+    { return $this->get_callbackUrl(); }
 
     public function setCallbackUrl($newval)
-    { return set_callbackUrl($newval); }
+    { return $this->set_callbackUrl($newval); }
 
     public function callbackMethod()
-    { return get_callbackMethod(); }
+    { return $this->get_callbackMethod(); }
 
     public function setCallbackMethod($newval)
-    { return set_callbackMethod($newval); }
+    { return $this->set_callbackMethod($newval); }
 
     public function callbackEncoding()
-    { return get_callbackEncoding(); }
+    { return $this->get_callbackEncoding(); }
 
     public function setCallbackEncoding($newval)
-    { return set_callbackEncoding($newval); }
+    { return $this->set_callbackEncoding($newval); }
 
     public function callbackCredentials()
-    { return get_callbackCredentials(); }
+    { return $this->get_callbackCredentials(); }
 
     public function setCallbackCredentials($newval)
-    { return set_callbackCredentials($newval); }
+    { return $this->set_callbackCredentials($newval); }
 
     public function callbackMinDelay()
-    { return get_callbackMinDelay(); }
+    { return $this->get_callbackMinDelay(); }
 
     public function setCallbackMinDelay($newval)
-    { return set_callbackMinDelay($newval); }
+    { return $this->set_callbackMinDelay($newval); }
 
     public function callbackMaxDelay()
-    { return get_callbackMaxDelay(); }
+    { return $this->get_callbackMaxDelay(); }
 
     public function setCallbackMaxDelay($newval)
-    { return set_callbackMaxDelay($newval); }
+    { return $this->set_callbackMaxDelay($newval); }
 
     public function poeCurrent()
-    { return get_poeCurrent(); }
+    { return $this->get_poeCurrent(); }
 
     /**
      * Continues the enumeration of network interfaces started using yFirstNetwork().

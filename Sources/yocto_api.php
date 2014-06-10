@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 16091 2014-05-08 12:10:31Z seb $
+ * $Id: yocto_api.php 16246 2014-05-16 12:09:39Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2237,7 +2237,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.16182";
+        return "1.10.16490";
     }
 
     /**
@@ -3782,6 +3782,8 @@ class YFunction
      */
     public function set_logicalName($newval)
     {
+        if (!YAPI::CheckLogicalName($newval))
+            return $this->_throw(YAPI_INVALID_ARGUMENT,'Invalid name :'.$newval);
         $rest_val = $newval;
         return $this->_setAttr("logicalName",$rest_val);
     }
@@ -3882,13 +3884,13 @@ class YFunction
     }
 
     public function logicalName()
-    { return get_logicalName(); }
+    { return $this->get_logicalName(); }
 
     public function setLogicalName($newval)
-    { return set_logicalName($newval); }
+    { return $this->set_logicalName($newval); }
 
     public function advertisedValue()
-    { return get_advertisedValue(); }
+    { return $this->get_advertisedValue(); }
 
     /**
      * comment from .yc definition
@@ -5189,49 +5191,49 @@ class YSensor extends YFunction
     }
 
     public function unit()
-    { return get_unit(); }
+    { return $this->get_unit(); }
 
     public function currentValue()
-    { return get_currentValue(); }
+    { return $this->get_currentValue(); }
 
     public function setLowestValue($newval)
-    { return set_lowestValue($newval); }
+    { return $this->set_lowestValue($newval); }
 
     public function lowestValue()
-    { return get_lowestValue(); }
+    { return $this->get_lowestValue(); }
 
     public function setHighestValue($newval)
-    { return set_highestValue($newval); }
+    { return $this->set_highestValue($newval); }
 
     public function highestValue()
-    { return get_highestValue(); }
+    { return $this->get_highestValue(); }
 
     public function currentRawValue()
-    { return get_currentRawValue(); }
+    { return $this->get_currentRawValue(); }
 
     public function logFrequency()
-    { return get_logFrequency(); }
+    { return $this->get_logFrequency(); }
 
     public function setLogFrequency($newval)
-    { return set_logFrequency($newval); }
+    { return $this->set_logFrequency($newval); }
 
     public function reportFrequency()
-    { return get_reportFrequency(); }
+    { return $this->get_reportFrequency(); }
 
     public function setReportFrequency($newval)
-    { return set_reportFrequency($newval); }
+    { return $this->set_reportFrequency($newval); }
 
     public function calibrationParam()
-    { return get_calibrationParam(); }
+    { return $this->get_calibrationParam(); }
 
     public function setCalibrationParam($newval)
-    { return set_calibrationParam($newval); }
+    { return $this->set_calibrationParam($newval); }
 
     public function setResolution($newval)
-    { return set_resolution($newval); }
+    { return $this->set_resolution($newval); }
 
     public function resolution()
-    { return get_resolution(); }
+    { return $this->get_resolution(); }
 
     /**
      * Continues the enumeration of sensors started using yFirstSensor().
@@ -5841,52 +5843,52 @@ class YModule extends YFunction
     }
 
     public function productName()
-    { return get_productName(); }
+    { return $this->get_productName(); }
 
     public function serialNumber()
-    { return get_serialNumber(); }
+    { return $this->get_serialNumber(); }
 
     public function productId()
-    { return get_productId(); }
+    { return $this->get_productId(); }
 
     public function productRelease()
-    { return get_productRelease(); }
+    { return $this->get_productRelease(); }
 
     public function firmwareRelease()
-    { return get_firmwareRelease(); }
+    { return $this->get_firmwareRelease(); }
 
     public function persistentSettings()
-    { return get_persistentSettings(); }
+    { return $this->get_persistentSettings(); }
 
     public function setPersistentSettings($newval)
-    { return set_persistentSettings($newval); }
+    { return $this->set_persistentSettings($newval); }
 
     public function luminosity()
-    { return get_luminosity(); }
+    { return $this->get_luminosity(); }
 
     public function setLuminosity($newval)
-    { return set_luminosity($newval); }
+    { return $this->set_luminosity($newval); }
 
     public function beacon()
-    { return get_beacon(); }
+    { return $this->get_beacon(); }
 
     public function setBeacon($newval)
-    { return set_beacon($newval); }
+    { return $this->set_beacon($newval); }
 
     public function upTime()
-    { return get_upTime(); }
+    { return $this->get_upTime(); }
 
     public function usbCurrent()
-    { return get_usbCurrent(); }
+    { return $this->get_usbCurrent(); }
 
     public function rebootCountdown()
-    { return get_rebootCountdown(); }
+    { return $this->get_rebootCountdown(); }
 
     public function setRebootCountdown($newval)
-    { return set_rebootCountdown($newval); }
+    { return $this->set_rebootCountdown($newval); }
 
     public function usbBandwidth()
-    { return get_usbBandwidth(); }
+    { return $this->get_usbBandwidth(); }
 
     /**
      * Continues the module enumeration started using yFirstModule().

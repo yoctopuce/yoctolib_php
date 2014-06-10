@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 15434 2014-03-14 06:37:47Z mvuilleu $
+ * $Id: yocto_watchdog.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -621,73 +621,73 @@ class YWatchdog extends YFunction
     }
 
     public function state()
-    { return get_state(); }
+    { return $this->get_state(); }
 
     public function setState($newval)
-    { return set_state($newval); }
+    { return $this->set_state($newval); }
 
     public function stateAtPowerOn()
-    { return get_stateAtPowerOn(); }
+    { return $this->get_stateAtPowerOn(); }
 
     public function setStateAtPowerOn($newval)
-    { return set_stateAtPowerOn($newval); }
+    { return $this->set_stateAtPowerOn($newval); }
 
     public function maxTimeOnStateA()
-    { return get_maxTimeOnStateA(); }
+    { return $this->get_maxTimeOnStateA(); }
 
     public function setMaxTimeOnStateA($newval)
-    { return set_maxTimeOnStateA($newval); }
+    { return $this->set_maxTimeOnStateA($newval); }
 
     public function maxTimeOnStateB()
-    { return get_maxTimeOnStateB(); }
+    { return $this->get_maxTimeOnStateB(); }
 
     public function setMaxTimeOnStateB($newval)
-    { return set_maxTimeOnStateB($newval); }
+    { return $this->set_maxTimeOnStateB($newval); }
 
     public function output()
-    { return get_output(); }
+    { return $this->get_output(); }
 
     public function setOutput($newval)
-    { return set_output($newval); }
+    { return $this->set_output($newval); }
 
     public function pulseTimer()
-    { return get_pulseTimer(); }
+    { return $this->get_pulseTimer(); }
 
     public function setPulseTimer($newval)
-    { return set_pulseTimer($newval); }
+    { return $this->set_pulseTimer($newval); }
 
     public function delayedPulseTimer()
-    { return get_delayedPulseTimer(); }
+    { return $this->get_delayedPulseTimer(); }
 
     public function setDelayedPulseTimer($newval)
-    { return set_delayedPulseTimer($newval); }
+    { return $this->set_delayedPulseTimer($newval); }
 
     public function countdown()
-    { return get_countdown(); }
+    { return $this->get_countdown(); }
 
     public function autoStart()
-    { return get_autoStart(); }
+    { return $this->get_autoStart(); }
 
     public function setAutoStart($newval)
-    { return set_autoStart($newval); }
+    { return $this->set_autoStart($newval); }
 
     public function running()
-    { return get_running(); }
+    { return $this->get_running(); }
 
     public function setRunning($newval)
-    { return set_running($newval); }
+    { return $this->set_running($newval); }
 
     public function triggerDelay()
-    { return get_triggerDelay(); }
+    { return $this->get_triggerDelay(); }
 
     public function setTriggerDelay($newval)
-    { return set_triggerDelay($newval); }
+    { return $this->set_triggerDelay($newval); }
 
     public function triggerDuration()
-    { return get_triggerDuration(); }
+    { return $this->get_triggerDuration(); }
 
     public function setTriggerDuration($newval)
-    { return set_triggerDuration($newval); }
+    { return $this->set_triggerDuration($newval); }
 
     /**
      * Continues the enumeration of watchdog started using yFirstWatchdog().

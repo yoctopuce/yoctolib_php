@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_colorled.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -308,28 +308,28 @@ class YColorLed extends YFunction
     }
 
     public function rgbColor()
-    { return get_rgbColor(); }
+    { return $this->get_rgbColor(); }
 
     public function setRgbColor($newval)
-    { return set_rgbColor($newval); }
+    { return $this->set_rgbColor($newval); }
 
     public function hslColor()
-    { return get_hslColor(); }
+    { return $this->get_hslColor(); }
 
     public function setHslColor($newval)
-    { return set_hslColor($newval); }
+    { return $this->set_hslColor($newval); }
 
     public function setRgbMove($newval)
-    { return set_rgbMove($newval); }
+    { return $this->set_rgbMove($newval); }
 
     public function setHslMove($newval)
-    { return set_hslMove($newval); }
+    { return $this->set_hslMove($newval); }
 
     public function rgbColorAtPowerOn()
-    { return get_rgbColorAtPowerOn(); }
+    { return $this->get_rgbColorAtPowerOn(); }
 
     public function setRgbColorAtPowerOn($newval)
-    { return set_rgbColorAtPowerOn($newval); }
+    { return $this->set_rgbColorAtPowerOn($newval); }
 
     /**
      * Continues the enumeration of RGB leds started using yFirstColorLed().

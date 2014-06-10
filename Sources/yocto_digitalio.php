@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_digitalio.php 15998 2014-05-01 08:25:18Z seb $
+ * $Id: yocto_digitalio.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -556,43 +556,43 @@ class YDigitalIO extends YFunction
     }
 
     public function portState()
-    { return get_portState(); }
+    { return $this->get_portState(); }
 
     public function setPortState($newval)
-    { return set_portState($newval); }
+    { return $this->set_portState($newval); }
 
     public function portDirection()
-    { return get_portDirection(); }
+    { return $this->get_portDirection(); }
 
     public function setPortDirection($newval)
-    { return set_portDirection($newval); }
+    { return $this->set_portDirection($newval); }
 
     public function portOpenDrain()
-    { return get_portOpenDrain(); }
+    { return $this->get_portOpenDrain(); }
 
     public function setPortOpenDrain($newval)
-    { return set_portOpenDrain($newval); }
+    { return $this->set_portOpenDrain($newval); }
 
     public function portPolarity()
-    { return get_portPolarity(); }
+    { return $this->get_portPolarity(); }
 
     public function setPortPolarity($newval)
-    { return set_portPolarity($newval); }
+    { return $this->set_portPolarity($newval); }
 
     public function portSize()
-    { return get_portSize(); }
+    { return $this->get_portSize(); }
 
     public function outputVoltage()
-    { return get_outputVoltage(); }
+    { return $this->get_outputVoltage(); }
 
     public function setOutputVoltage($newval)
-    { return set_outputVoltage($newval); }
+    { return $this->set_outputVoltage($newval); }
 
     public function command()
-    { return get_command(); }
+    { return $this->get_command(); }
 
     public function setCommand($newval)
-    { return set_command($newval); }
+    { return $this->set_command($newval); }
 
     /**
      * Continues the enumeration of digital IO ports started using yFirstDigitalIO().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_servo.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YServo, the high-level API for Servo functions
  *
@@ -399,43 +399,43 @@ class YServo extends YFunction
     }
 
     public function position()
-    { return get_position(); }
+    { return $this->get_position(); }
 
     public function setPosition($newval)
-    { return set_position($newval); }
+    { return $this->set_position($newval); }
 
     public function enabled()
-    { return get_enabled(); }
+    { return $this->get_enabled(); }
 
     public function setEnabled($newval)
-    { return set_enabled($newval); }
+    { return $this->set_enabled($newval); }
 
     public function range()
-    { return get_range(); }
+    { return $this->get_range(); }
 
     public function setRange($newval)
-    { return set_range($newval); }
+    { return $this->set_range($newval); }
 
     public function neutral()
-    { return get_neutral(); }
+    { return $this->get_neutral(); }
 
     public function setNeutral($newval)
-    { return set_neutral($newval); }
+    { return $this->set_neutral($newval); }
 
     public function setMove($newval)
-    { return set_move($newval); }
+    { return $this->set_move($newval); }
 
     public function positionAtPowerOn()
-    { return get_positionAtPowerOn(); }
+    { return $this->get_positionAtPowerOn(); }
 
     public function setPositionAtPowerOn($newval)
-    { return set_positionAtPowerOn($newval); }
+    { return $this->set_positionAtPowerOn($newval); }
 
     public function enabledAtPowerOn()
-    { return get_enabledAtPowerOn(); }
+    { return $this->get_enabledAtPowerOn(); }
 
     public function setEnabledAtPowerOn($newval)
-    { return set_enabledAtPowerOn($newval); }
+    { return $this->set_enabledAtPowerOn($newval); }
 
     /**
      * Continues the enumeration of servos started using yFirstServo().

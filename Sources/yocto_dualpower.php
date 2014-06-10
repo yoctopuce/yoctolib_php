@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_dualpower.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_dualpower.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YDualPower, the high-level API for DualPower functions
  *
@@ -215,16 +215,16 @@ class YDualPower extends YFunction
     }
 
     public function powerState()
-    { return get_powerState(); }
+    { return $this->get_powerState(); }
 
     public function powerControl()
-    { return get_powerControl(); }
+    { return $this->get_powerControl(); }
 
     public function setPowerControl($newval)
-    { return set_powerControl($newval); }
+    { return $this->set_powerControl($newval); }
 
     public function extVoltage()
-    { return get_extVoltage(); }
+    { return $this->get_extVoltage(); }
 
     /**
      * Continues the enumeration of dual power controls started using yFirstDualPower().

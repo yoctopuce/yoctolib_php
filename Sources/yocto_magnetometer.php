@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_magnetometer.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_magnetometer.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -182,13 +182,13 @@ class YMagnetometer extends YSensor
     }
 
     public function xValue()
-    { return get_xValue(); }
+    { return $this->get_xValue(); }
 
     public function yValue()
-    { return get_yValue(); }
+    { return $this->get_yValue(); }
 
     public function zValue()
-    { return get_zValue(); }
+    { return $this->get_zValue(); }
 
     /**
      * Continues the enumeration of magnetometers started using yFirstMagnetometer().

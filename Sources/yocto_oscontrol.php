@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_oscontrol.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_oscontrol.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YOsControl, the high-level API for OsControl functions
  *
@@ -156,10 +156,10 @@ class YOsControl extends YFunction
     }
 
     public function shutdownCountdown()
-    { return get_shutdownCountdown(); }
+    { return $this->get_shutdownCountdown(); }
 
     public function setShutdownCountdown($newval)
-    { return set_shutdownCountdown($newval); }
+    { return $this->set_shutdownCountdown($newval); }
 
     /**
      * Continues the enumeration of OS control started using yFirstOsControl().

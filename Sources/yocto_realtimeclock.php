@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_realtimeclock.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -244,22 +244,22 @@ class YRealTimeClock extends YFunction
     }
 
     public function unixTime()
-    { return get_unixTime(); }
+    { return $this->get_unixTime(); }
 
     public function setUnixTime($newval)
-    { return set_unixTime($newval); }
+    { return $this->set_unixTime($newval); }
 
     public function dateTime()
-    { return get_dateTime(); }
+    { return $this->get_dateTime(); }
 
     public function utcOffset()
-    { return get_utcOffset(); }
+    { return $this->get_utcOffset(); }
 
     public function setUtcOffset($newval)
-    { return set_utcOffset($newval); }
+    { return $this->set_utcOffset($newval); }
 
     public function timeSet()
-    { return get_timeSet(); }
+    { return $this->get_timeSet(); }
 
     /**
      * Continues the enumeration of clocks started using yFirstRealTimeClock().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_accelerometer.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -179,13 +179,13 @@ class YAccelerometer extends YSensor
     }
 
     public function xValue()
-    { return get_xValue(); }
+    { return $this->get_xValue(); }
 
     public function yValue()
-    { return get_yValue(); }
+    { return $this->get_yValue(); }
 
     public function zValue()
-    { return get_zValue(); }
+    { return $this->get_zValue(); }
 
     /**
      * Continues the enumeration of accelerometers started using yFirstAccelerometer().

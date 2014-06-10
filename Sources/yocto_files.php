@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_files.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -320,10 +320,10 @@ class YFiles extends YFunction
     }
 
     public function filesCount()
-    { return get_filesCount(); }
+    { return $this->get_filesCount(); }
 
     public function freeSpace()
-    { return get_freeSpace(); }
+    { return $this->get_freeSpace(); }
 
     /**
      * Continues the enumeration of filesystems started using yFirstFiles().

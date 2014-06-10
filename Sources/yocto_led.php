@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_led.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -243,22 +243,22 @@ class YLed extends YFunction
     }
 
     public function power()
-    { return get_power(); }
+    { return $this->get_power(); }
 
     public function setPower($newval)
-    { return set_power($newval); }
+    { return $this->set_power($newval); }
 
     public function luminosity()
-    { return get_luminosity(); }
+    { return $this->get_luminosity(); }
 
     public function setLuminosity($newval)
-    { return set_luminosity($newval); }
+    { return $this->set_luminosity($newval); }
 
     public function blinking()
-    { return get_blinking(); }
+    { return $this->get_blinking(); }
 
     public function setBlinking($newval)
-    { return set_blinking($newval); }
+    { return $this->set_blinking($newval); }
 
     /**
      * Continues the enumeration of leds started using yFirstLed().

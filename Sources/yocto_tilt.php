@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_tilt.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_tilt.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YTilt, the high-level API for Tilt functions
  *
@@ -132,7 +132,7 @@ class YTilt extends YSensor
     }
 
     public function axis()
-    { return get_axis(); }
+    { return $this->get_axis(); }
 
     /**
      * Continues the enumeration of tilt sensors started using yFirstTilt().

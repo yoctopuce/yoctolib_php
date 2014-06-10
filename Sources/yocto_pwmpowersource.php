@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmpowersource.php 15529 2014-03-20 17:54:15Z seb $
+ * $Id: yocto_pwmpowersource.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -164,10 +164,10 @@ class YPwmPowerSource extends YFunction
     }
 
     public function powerMode()
-    { return get_powerMode(); }
+    { return $this->get_powerMode(); }
 
     public function setPowerMode($newval)
-    { return set_powerMode($newval); }
+    { return $this->set_powerMode($newval); }
 
     /**
      * Continues the enumeration of Voltage sources started using yFirstPwmPowerSource().

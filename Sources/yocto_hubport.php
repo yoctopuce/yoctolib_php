@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_hubport.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YHubPort, the high-level API for HubPort functions
  *
@@ -215,16 +215,16 @@ class YHubPort extends YFunction
     }
 
     public function enabled()
-    { return get_enabled(); }
+    { return $this->get_enabled(); }
 
     public function setEnabled($newval)
-    { return set_enabled($newval); }
+    { return $this->set_enabled($newval); }
 
     public function portState()
-    { return get_portState(); }
+    { return $this->get_portState(); }
 
     public function baudRate()
-    { return get_baudRate(); }
+    { return $this->get_baudRate(); }
 
     /**
      * Continues the enumeration of Yocto-hub ports started using yFirstHubPort().

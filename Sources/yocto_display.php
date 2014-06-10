@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 15998 2014-05-01 08:25:18Z seb $
+ * $Id: yocto_display.php 16340 2014-05-30 10:41:54Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -1059,6 +1059,8 @@ class YDisplay extends YFunction
 
     /**
      * Clears the display screen and resets all display layers to their default state.
+     * Using this function in a sequence will kill the sequence play-back. Don't use that
+     * function to reset the display at sequence start-up.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -1235,52 +1237,52 @@ class YDisplay extends YFunction
     }
 
     public function enabled()
-    { return get_enabled(); }
+    { return $this->get_enabled(); }
 
     public function setEnabled($newval)
-    { return set_enabled($newval); }
+    { return $this->set_enabled($newval); }
 
     public function startupSeq()
-    { return get_startupSeq(); }
+    { return $this->get_startupSeq(); }
 
     public function setStartupSeq($newval)
-    { return set_startupSeq($newval); }
+    { return $this->set_startupSeq($newval); }
 
     public function brightness()
-    { return get_brightness(); }
+    { return $this->get_brightness(); }
 
     public function setBrightness($newval)
-    { return set_brightness($newval); }
+    { return $this->set_brightness($newval); }
 
     public function orientation()
-    { return get_orientation(); }
+    { return $this->get_orientation(); }
 
     public function setOrientation($newval)
-    { return set_orientation($newval); }
+    { return $this->set_orientation($newval); }
 
     public function displayWidth()
-    { return get_displayWidth(); }
+    { return $this->get_displayWidth(); }
 
     public function displayHeight()
-    { return get_displayHeight(); }
+    { return $this->get_displayHeight(); }
 
     public function displayType()
-    { return get_displayType(); }
+    { return $this->get_displayType(); }
 
     public function layerWidth()
-    { return get_layerWidth(); }
+    { return $this->get_layerWidth(); }
 
     public function layerHeight()
-    { return get_layerHeight(); }
+    { return $this->get_layerHeight(); }
 
     public function layerCount()
-    { return get_layerCount(); }
+    { return $this->get_layerCount(); }
 
     public function command()
-    { return get_command(); }
+    { return $this->get_command(); }
 
     public function setCommand($newval)
-    { return set_command($newval); }
+    { return $this->set_command($newval); }
 
     /**
      * Continues the enumeration of displays started using yFirstDisplay().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_wakeupmonitor.php 16424 2014-06-04 14:26:41Z seb $
  *
  * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -360,7 +360,7 @@ class YWakeUpMonitor extends YFunction
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
      * 
-     * @param secUntilWakeUp : sleep duration, in secondes
+     * @param secUntilWakeUp : number of seconds before next wake up
      * @param secBeforeSleep : number of seconds before going into sleep mode
      * 
      * @return YAPI_SUCCESS if the call succeeds.
@@ -413,34 +413,34 @@ class YWakeUpMonitor extends YFunction
     }
 
     public function powerDuration()
-    { return get_powerDuration(); }
+    { return $this->get_powerDuration(); }
 
     public function setPowerDuration($newval)
-    { return set_powerDuration($newval); }
+    { return $this->set_powerDuration($newval); }
 
     public function sleepCountdown()
-    { return get_sleepCountdown(); }
+    { return $this->get_sleepCountdown(); }
 
     public function setSleepCountdown($newval)
-    { return set_sleepCountdown($newval); }
+    { return $this->set_sleepCountdown($newval); }
 
     public function nextWakeUp()
-    { return get_nextWakeUp(); }
+    { return $this->get_nextWakeUp(); }
 
     public function setNextWakeUp($newval)
-    { return set_nextWakeUp($newval); }
+    { return $this->set_nextWakeUp($newval); }
 
     public function wakeUpReason()
-    { return get_wakeUpReason(); }
+    { return $this->get_wakeUpReason(); }
 
     public function wakeUpState()
-    { return get_wakeUpState(); }
+    { return $this->get_wakeUpState(); }
 
     public function setWakeUpState($newval)
-    { return set_wakeUpState($newval); }
+    { return $this->set_wakeUpState($newval); }
 
     public function rtcTime()
-    { return get_rtcTime(); }
+    { return $this->get_rtcTime(); }
 
     /**
      * Continues the enumeration of monitors started using yFirstWakeUpMonitor().

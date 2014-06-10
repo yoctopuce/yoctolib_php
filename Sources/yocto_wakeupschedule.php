@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupschedule.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_wakeupschedule.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -391,43 +391,43 @@ class YWakeUpSchedule extends YFunction
     }
 
     public function minutesA()
-    { return get_minutesA(); }
+    { return $this->get_minutesA(); }
 
     public function setMinutesA($newval)
-    { return set_minutesA($newval); }
+    { return $this->set_minutesA($newval); }
 
     public function minutesB()
-    { return get_minutesB(); }
+    { return $this->get_minutesB(); }
 
     public function setMinutesB($newval)
-    { return set_minutesB($newval); }
+    { return $this->set_minutesB($newval); }
 
     public function hours()
-    { return get_hours(); }
+    { return $this->get_hours(); }
 
     public function setHours($newval)
-    { return set_hours($newval); }
+    { return $this->set_hours($newval); }
 
     public function weekDays()
-    { return get_weekDays(); }
+    { return $this->get_weekDays(); }
 
     public function setWeekDays($newval)
-    { return set_weekDays($newval); }
+    { return $this->set_weekDays($newval); }
 
     public function monthDays()
-    { return get_monthDays(); }
+    { return $this->get_monthDays(); }
 
     public function setMonthDays($newval)
-    { return set_monthDays($newval); }
+    { return $this->set_monthDays($newval); }
 
     public function months()
-    { return get_months(); }
+    { return $this->get_months(); }
 
     public function setMonths($newval)
-    { return set_months($newval); }
+    { return $this->set_months($newval); }
 
     public function nextOccurence()
-    { return get_nextOccurence(); }
+    { return $this->get_nextOccurence(); }
 
     /**
      * Continues the enumeration of wake up schedules started using yFirstWakeUpSchedule().

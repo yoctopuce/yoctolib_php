@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_temperature.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -179,10 +179,10 @@ class YTemperature extends YSensor
     }
 
     public function sensorType()
-    { return get_sensorType(); }
+    { return $this->get_sensorType(); }
 
     public function setSensorType($newval)
-    { return set_sensorType($newval); }
+    { return $this->set_sensorType($newval); }
 
     /**
      * Continues the enumeration of temperature sensors started using yFirstTemperature().

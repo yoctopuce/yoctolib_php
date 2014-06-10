@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_power.php 16241 2014-05-15 15:09:32Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -62,7 +62,7 @@ class YPower extends YSensor
 
     //--- (YPower attributes)
     protected $_cosPhi                   = Y_COSPHI_INVALID;             // CentFloatingPoint
-    protected $_meter                    = Y_METER_INVALID;              // LargeFloat
+    protected $_meter                    = Y_METER_INVALID;              // MillFloatingPoint
     protected $_meterTimer               = Y_METERTIMER_INVALID;         // UInt31
     //--- (end of YPower attributes)
 
@@ -201,16 +201,16 @@ class YPower extends YSensor
     }
 
     public function cosPhi()
-    { return get_cosPhi(); }
+    { return $this->get_cosPhi(); }
 
     public function setMeter($newval)
-    { return set_meter($newval); }
+    { return $this->set_meter($newval); }
 
     public function meter()
-    { return get_meter(); }
+    { return $this->get_meter(); }
 
     public function meterTimer()
-    { return get_meterTimer(); }
+    { return $this->get_meterTimer(); }
 
     /**
      * Continues the enumeration of electrical power sensors started using yFirstPower().
