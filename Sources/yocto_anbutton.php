@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_anbutton.php 17676 2014-09-16 16:20:17Z seb $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -353,11 +353,11 @@ class YAnButton extends YFunction
 
     /**
      * Returns the number of elapsed milliseconds between the module power on and the last time
-     * the input button was pressed (the input contact transitionned from open to closed).
+     * the input button was pressed (the input contact transitioned from open to closed).
      * 
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
      * and the last time
-     *         the input button was pressed (the input contact transitionned from open to closed)
+     *         the input button was pressed (the input contact transitioned from open to closed)
      * 
      * On failure, throws an exception or returns Y_LASTTIMEPRESSED_INVALID.
      */
@@ -373,11 +373,11 @@ class YAnButton extends YFunction
 
     /**
      * Returns the number of elapsed milliseconds between the module power on and the last time
-     * the input button was released (the input contact transitionned from closed to open).
+     * the input button was released (the input contact transitioned from closed to open).
      * 
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
      * and the last time
-     *         the input button was released (the input contact transitionned from closed to open)
+     *         the input button was released (the input contact transitioned from closed to open)
      * 
      * On failure, throws an exception or returns Y_LASTTIMERELEASED_INVALID.
      */

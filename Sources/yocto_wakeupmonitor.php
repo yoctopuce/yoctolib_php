@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 16424 2014-06-04 14:26:41Z seb $
+ * $Id: yocto_wakeupmonitor.php 16962 2014-07-23 13:16:33Z mvuilleu $
  *
  * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -45,15 +45,8 @@ if(!defined('Y_WAKEUPREASON_USBPOWER'))      define('Y_WAKEUPREASON_USBPOWER',  
 if(!defined('Y_WAKEUPREASON_EXTPOWER'))      define('Y_WAKEUPREASON_EXTPOWER',     1);
 if(!defined('Y_WAKEUPREASON_ENDOFSLEEP'))    define('Y_WAKEUPREASON_ENDOFSLEEP',   2);
 if(!defined('Y_WAKEUPREASON_EXTSIG1'))       define('Y_WAKEUPREASON_EXTSIG1',      3);
-if(!defined('Y_WAKEUPREASON_EXTSIG2'))       define('Y_WAKEUPREASON_EXTSIG2',      4);
-if(!defined('Y_WAKEUPREASON_EXTSIG3'))       define('Y_WAKEUPREASON_EXTSIG3',      5);
-if(!defined('Y_WAKEUPREASON_EXTSIG4'))       define('Y_WAKEUPREASON_EXTSIG4',      6);
-if(!defined('Y_WAKEUPREASON_SCHEDULE1'))     define('Y_WAKEUPREASON_SCHEDULE1',    7);
-if(!defined('Y_WAKEUPREASON_SCHEDULE2'))     define('Y_WAKEUPREASON_SCHEDULE2',    8);
-if(!defined('Y_WAKEUPREASON_SCHEDULE3'))     define('Y_WAKEUPREASON_SCHEDULE3',    9);
-if(!defined('Y_WAKEUPREASON_SCHEDULE4'))     define('Y_WAKEUPREASON_SCHEDULE4',    10);
-if(!defined('Y_WAKEUPREASON_SCHEDULE5'))     define('Y_WAKEUPREASON_SCHEDULE5',    11);
-if(!defined('Y_WAKEUPREASON_SCHEDULE6'))     define('Y_WAKEUPREASON_SCHEDULE6',    12);
+if(!defined('Y_WAKEUPREASON_SCHEDULE1'))     define('Y_WAKEUPREASON_SCHEDULE1',    4);
+if(!defined('Y_WAKEUPREASON_SCHEDULE2'))     define('Y_WAKEUPREASON_SCHEDULE2',    5);
 if(!defined('Y_WAKEUPREASON_INVALID'))       define('Y_WAKEUPREASON_INVALID',      -1);
 if(!defined('Y_WAKEUPSTATE_SLEEPING'))       define('Y_WAKEUPSTATE_SLEEPING',      0);
 if(!defined('Y_WAKEUPSTATE_AWAKE'))          define('Y_WAKEUPSTATE_AWAKE',         1);
@@ -80,15 +73,8 @@ class YWakeUpMonitor extends YFunction
     const WAKEUPREASON_EXTPOWER          = 1;
     const WAKEUPREASON_ENDOFSLEEP        = 2;
     const WAKEUPREASON_EXTSIG1           = 3;
-    const WAKEUPREASON_EXTSIG2           = 4;
-    const WAKEUPREASON_EXTSIG3           = 5;
-    const WAKEUPREASON_EXTSIG4           = 6;
-    const WAKEUPREASON_SCHEDULE1         = 7;
-    const WAKEUPREASON_SCHEDULE2         = 8;
-    const WAKEUPREASON_SCHEDULE3         = 9;
-    const WAKEUPREASON_SCHEDULE4         = 10;
-    const WAKEUPREASON_SCHEDULE5         = 11;
-    const WAKEUPREASON_SCHEDULE6         = 12;
+    const WAKEUPREASON_SCHEDULE1         = 4;
+    const WAKEUPREASON_SCHEDULE2         = 5;
     const WAKEUPREASON_INVALID           = -1;
     const WAKEUPSTATE_SLEEPING           = 0;
     const WAKEUPSTATE_AWAKE              = 1;
@@ -243,10 +229,8 @@ class YWakeUpMonitor extends YFunction
      * Returns the latest wake up reason.
      * 
      * @return a value among Y_WAKEUPREASON_USBPOWER, Y_WAKEUPREASON_EXTPOWER, Y_WAKEUPREASON_ENDOFSLEEP,
-     * Y_WAKEUPREASON_EXTSIG1, Y_WAKEUPREASON_EXTSIG2, Y_WAKEUPREASON_EXTSIG3, Y_WAKEUPREASON_EXTSIG4,
-     * Y_WAKEUPREASON_SCHEDULE1, Y_WAKEUPREASON_SCHEDULE2, Y_WAKEUPREASON_SCHEDULE3,
-     * Y_WAKEUPREASON_SCHEDULE4, Y_WAKEUPREASON_SCHEDULE5 and Y_WAKEUPREASON_SCHEDULE6 corresponding to
-     * the latest wake up reason
+     * Y_WAKEUPREASON_EXTSIG1, Y_WAKEUPREASON_SCHEDULE1 and Y_WAKEUPREASON_SCHEDULE2 corresponding to the
+     * latest wake up reason
      * 
      * On failure, throws an exception or returns Y_WAKEUPREASON_INVALID.
      */

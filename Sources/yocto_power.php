@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_power.php 16895 2014-07-18 00:12:08Z mvuilleu $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -61,8 +61,8 @@ class YPower extends YSensor
     //--- (end of YPower declaration)
 
     //--- (YPower attributes)
-    protected $_cosPhi                   = Y_COSPHI_INVALID;             // CentFloatingPoint
-    protected $_meter                    = Y_METER_INVALID;              // MillFloatingPoint
+    protected $_cosPhi                   = Y_COSPHI_INVALID;             // MeasureVal
+    protected $_meter                    = Y_METER_INVALID;              // MeasureVal
     protected $_meterTimer               = Y_METERTIMER_INVALID;         // UInt31
     //--- (end of YPower attributes)
 
@@ -81,10 +81,10 @@ class YPower extends YSensor
     {
         switch($name) {
         case 'cosPhi':
-            $this->_cosPhi = $val/65536;
+            $this->_cosPhi = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'meter':
-            $this->_meter = $val/65536;
+            $this->_meter = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'meterTimer':
             $this->_meterTimer = intval($val);
@@ -114,7 +114,7 @@ class YPower extends YSensor
 
     public function set_meter($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("meter",$rest_val);
     }
 

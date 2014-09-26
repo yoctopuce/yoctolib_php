@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_gyro.php 16895 2014-07-18 00:12:08Z mvuilleu $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -214,9 +214,9 @@ class YGyro extends YSensor
     //--- (end of generated code: YGyro declaration)
 
     //--- (generated code: YGyro attributes)
-    protected $_xValue                   = Y_XVALUE_INVALID;             // Decimal
-    protected $_yValue                   = Y_YVALUE_INVALID;             // Decimal
-    protected $_zValue                   = Y_ZVALUE_INVALID;             // Decimal
+    protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
+    protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
+    protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
     protected $_qt_stamp                 = 0;                            // int
     protected $_qt_w                     = null;                         // YQt
     protected $_qt_x                     = null;                         // YQt
@@ -249,13 +249,13 @@ class YGyro extends YSensor
     {
         switch($name) {
         case 'xValue':
-            $this->_xValue = $val/65536;
+            $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'yValue':
-            $this->_yValue = $val/65536;
+            $this->_yValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'zValue':
-            $this->_zValue = $val/65536;
+            $this->_zValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);

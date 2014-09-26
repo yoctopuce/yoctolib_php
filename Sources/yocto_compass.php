@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_compass.php 16895 2014-07-18 00:12:08Z mvuilleu $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -66,7 +66,7 @@ class YCompass extends YSensor
 
     //--- (YCompass attributes)
     protected $_axis                     = Y_AXIS_INVALID;               // Axis
-    protected $_magneticHeading          = Y_MAGNETICHEADING_INVALID;    // Decimal
+    protected $_magneticHeading          = Y_MAGNETICHEADING_INVALID;    // MeasureVal
     //--- (end of YCompass attributes)
 
     function __construct($str_func)
@@ -87,7 +87,7 @@ class YCompass extends YSensor
             $this->_axis = intval($val);
             return 1;
         case 'magneticHeading':
-            $this->_magneticHeading = $val/65536;
+            $this->_magneticHeading = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);

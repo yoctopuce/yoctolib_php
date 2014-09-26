@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_network.php 17582 2014-09-10 17:12:40Z mvuilleu $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -333,45 +333,6 @@ class YNetwork extends YFunction
     public function set_ipConfig($newval)
     {
         $rest_val = $newval;
-        return $this->_setAttr("ipConfig",$rest_val);
-    }
-
-    /**
-     * Changes the configuration of the network interface to enable the use of an
-     * IP address received from a DHCP server. Until an address is received from a DHCP
-     * server, the module uses the IP parameters specified to this function.
-     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
-     * 
-     * @param fallbackIpAddr : fallback IP address, to be used when no DHCP reply is received
-     * @param fallbackSubnetMaskLen : fallback subnet mask length when no DHCP reply is received, as an
-     *         integer (eg. 24 means 255.255.255.0)
-     * @param fallbackRouter : fallback router IP address, to be used when no DHCP reply is received
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function useDHCP($fallbackIpAddr,$fallbackSubnetMaskLen,$fallbackRouter)
-    {
-        $rest_val = sprintf("DHCP:%s/%d/%s", $fallbackIpAddr, $fallbackSubnetMaskLen, $fallbackRouter);
-        return $this->_setAttr("ipConfig",$rest_val);
-    }
-
-    /**
-     * Changes the configuration of the network interface to use a static IP address.
-     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
-     * 
-     * @param ipAddress : device IP address
-     * @param subnetMaskLen : subnet mask length, as an integer (eg. 24 means 255.255.255.0)
-     * @param router : router IP address (default gateway)
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function useStaticIP($ipAddress,$subnetMaskLen,$router)
-    {
-        $rest_val = sprintf("STATIC:%s/%d/%s", $ipAddress, $subnetMaskLen, $router);
         return $this->_setAttr("ipConfig",$rest_val);
     }
 
@@ -880,6 +841,43 @@ class YNetwork extends YFunction
             YFunction::_AddToCache('Network', $func, $obj);
         }
         return $obj;
+    }
+
+    /**
+     * Changes the configuration of the network interface to enable the use of an
+     * IP address received from a DHCP server. Until an address is received from a DHCP
+     * server, the module uses the IP parameters specified to this function.
+     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
+     * 
+     * @param fallbackIpAddr : fallback IP address, to be used when no DHCP reply is received
+     * @param fallbackSubnetMaskLen : fallback subnet mask length when no DHCP reply is received, as an
+     *         integer (eg. 24 means 255.255.255.0)
+     * @param fallbackRouter : fallback router IP address, to be used when no DHCP reply is received
+     * 
+     * @return YAPI_SUCCESS when the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function useDHCP($fallbackIpAddr,$fallbackSubnetMaskLen,$fallbackRouter)
+    {
+        return $this->set_ipConfig(sprintf('DHCP:%s/%d/%s', $fallbackIpAddr, $fallbackSubnetMaskLen, $fallbackRouter));
+    }
+
+    /**
+     * Changes the configuration of the network interface to use a static IP address.
+     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
+     * 
+     * @param ipAddress : device IP address
+     * @param subnetMaskLen : subnet mask length, as an integer (eg. 24 means 255.255.255.0)
+     * @param router : router IP address (default gateway)
+     * 
+     * @return YAPI_SUCCESS when the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function useStaticIP($ipAddress,$subnetMaskLen,$router)
+    {
+        return $this->set_ipConfig(sprintf('STATIC:%s/%d/%s', $ipAddress, $subnetMaskLen, $router));
     }
 
     /**

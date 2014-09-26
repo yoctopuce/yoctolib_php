@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_pwmoutput.php 17481 2014-09-03 09:38:35Z mvuilleu $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -47,10 +47,10 @@ if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',        
 if(!defined('Y_ENABLEDATPOWERON_FALSE'))     define('Y_ENABLEDATPOWERON_FALSE',    0);
 if(!defined('Y_ENABLEDATPOWERON_TRUE'))      define('Y_ENABLEDATPOWERON_TRUE',     1);
 if(!defined('Y_ENABLEDATPOWERON_INVALID'))   define('Y_ENABLEDATPOWERON_INVALID',  -1);
+if(!defined('Y_FREQUENCY_INVALID'))          define('Y_FREQUENCY_INVALID',         YAPI_INVALID_DOUBLE);
+if(!defined('Y_PERIOD_INVALID'))             define('Y_PERIOD_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_DUTYCYCLE_INVALID'))          define('Y_DUTYCYCLE_INVALID',         YAPI_INVALID_DOUBLE);
 if(!defined('Y_PULSEDURATION_INVALID'))      define('Y_PULSEDURATION_INVALID',     YAPI_INVALID_DOUBLE);
-if(!defined('Y_FREQUENCY_INVALID'))          define('Y_FREQUENCY_INVALID',         YAPI_INVALID_UINT);
-if(!defined('Y_PERIOD_INVALID'))             define('Y_PERIOD_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_PWMTRANSITION_INVALID'))      define('Y_PWMTRANSITION_INVALID',     YAPI_INVALID_STRING);
 if(!defined('Y_DUTYCYCLEATPOWERON_INVALID')) define('Y_DUTYCYCLEATPOWERON_INVALID', YAPI_INVALID_DOUBLE);
 //--- (end of YPwmOutput definitions)
@@ -66,10 +66,10 @@ class YPwmOutput extends YFunction
     const ENABLED_FALSE                  = 0;
     const ENABLED_TRUE                   = 1;
     const ENABLED_INVALID                = -1;
+    const FREQUENCY_INVALID              = YAPI_INVALID_DOUBLE;
+    const PERIOD_INVALID                 = YAPI_INVALID_DOUBLE;
     const DUTYCYCLE_INVALID              = YAPI_INVALID_DOUBLE;
     const PULSEDURATION_INVALID          = YAPI_INVALID_DOUBLE;
-    const FREQUENCY_INVALID              = YAPI_INVALID_UINT;
-    const PERIOD_INVALID                 = YAPI_INVALID_DOUBLE;
     const PWMTRANSITION_INVALID          = YAPI_INVALID_STRING;
     const ENABLEDATPOWERON_FALSE         = 0;
     const ENABLEDATPOWERON_TRUE          = 1;
@@ -79,13 +79,13 @@ class YPwmOutput extends YFunction
 
     //--- (YPwmOutput attributes)
     protected $_enabled                  = Y_ENABLED_INVALID;            // Bool
-    protected $_dutyCycle                = Y_DUTYCYCLE_INVALID;          // Millesimal
-    protected $_pulseDuration            = Y_PULSEDURATION_INVALID;      // Precimal
-    protected $_frequency                = Y_FREQUENCY_INVALID;          // UInt31
-    protected $_period                   = Y_PERIOD_INVALID;             // Precimal
+    protected $_frequency                = Y_FREQUENCY_INVALID;          // MeasureVal
+    protected $_period                   = Y_PERIOD_INVALID;             // MeasureVal
+    protected $_dutyCycle                = Y_DUTYCYCLE_INVALID;          // MeasureVal
+    protected $_pulseDuration            = Y_PULSEDURATION_INVALID;      // MeasureVal
     protected $_pwmTransition            = Y_PWMTRANSITION_INVALID;      // PwmTransition
     protected $_enabledAtPowerOn         = Y_ENABLEDATPOWERON_INVALID;   // Bool
-    protected $_dutyCycleAtPowerOn       = Y_DUTYCYCLEATPOWERON_INVALID; // Millesimal
+    protected $_dutyCycleAtPowerOn       = Y_DUTYCYCLEATPOWERON_INVALID; // MeasureVal
     //--- (end of YPwmOutput attributes)
 
     function __construct($str_func)
@@ -105,17 +105,17 @@ class YPwmOutput extends YFunction
         case 'enabled':
             $this->_enabled = intval($val);
             return 1;
-        case 'dutyCycle':
-            $this->_dutyCycle = $val/65536;
-            return 1;
-        case 'pulseDuration':
-            $this->_pulseDuration = $val/65536;
-            return 1;
         case 'frequency':
-            $this->_frequency = intval($val);
+            $this->_frequency = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'period':
-            $this->_period = $val/65536;
+            $this->_period = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'dutyCycle':
+            $this->_dutyCycle = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'pulseDuration':
+            $this->_pulseDuration = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'pwmTransition':
             $this->_pwmTransition = $val;
@@ -124,7 +124,7 @@ class YPwmOutput extends YFunction
             $this->_enabledAtPowerOn = intval($val);
             return 1;
         case 'dutyCycleAtPowerOn':
-            $this->_dutyCycleAtPowerOn = $val/65536;
+            $this->_dutyCycleAtPowerOn = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -163,6 +163,71 @@ class YPwmOutput extends YFunction
     }
 
     /**
+     * Changes the PWM frequency. The duty cycle is kept unchanged thanks to an
+     * automatic pulse width change.
+     * 
+     * @param newval : a floating point number corresponding to the PWM frequency
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_frequency($newval)
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("frequency",$rest_val);
+    }
+
+    /**
+     * Returns the PWM frequency in Hz.
+     * 
+     * @return a floating point number corresponding to the PWM frequency in Hz
+     * 
+     * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
+     */
+    public function get_frequency()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_FREQUENCY_INVALID;
+            }
+        }
+        return $this->_frequency;
+    }
+
+    /**
+     * Changes the PWM period in milliseconds.
+     * 
+     * @param newval : a floating point number corresponding to the PWM period in milliseconds
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_period($newval)
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("period",$rest_val);
+    }
+
+    /**
+     * Returns the PWM period in milliseconds.
+     * 
+     * @return a floating point number corresponding to the PWM period in milliseconds
+     * 
+     * On failure, throws an exception or returns Y_PERIOD_INVALID.
+     */
+    public function get_period()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PERIOD_INVALID;
+            }
+        }
+        return $this->_period;
+    }
+
+    /**
      * Changes the PWM duty cycle, in per cents.
      * 
      * @param newval : a floating point number corresponding to the PWM duty cycle, in per cents
@@ -173,7 +238,7 @@ class YPwmOutput extends YFunction
      */
     public function set_dutyCycle($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("dutyCycle",$rest_val);
     }
 
@@ -206,14 +271,15 @@ class YPwmOutput extends YFunction
      */
     public function set_pulseDuration($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("pulseDuration",$rest_val);
     }
 
     /**
-     * Returns the PWM pulse length in milliseconds.
+     * Returns the PWM pulse length in milliseconds, as a floating point number.
      * 
-     * @return a floating point number corresponding to the PWM pulse length in milliseconds
+     * @return a floating point number corresponding to the PWM pulse length in milliseconds, as a
+     * floating point number
      * 
      * On failure, throws an exception or returns Y_PULSEDURATION_INVALID.
      */
@@ -225,71 +291,6 @@ class YPwmOutput extends YFunction
             }
         }
         return $this->_pulseDuration;
-    }
-
-    /**
-     * Returns the PWM frequency in Hz.
-     * 
-     * @return an integer corresponding to the PWM frequency in Hz
-     * 
-     * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
-     */
-    public function get_frequency()
-    {
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_FREQUENCY_INVALID;
-            }
-        }
-        return $this->_frequency;
-    }
-
-    /**
-     * Changes the PWM frequency. The duty cycle is kept unchanged thanks to an
-     * automatic pulse width change.
-     * 
-     * @param newval : an integer corresponding to the PWM frequency
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_frequency($newval)
-    {
-        $rest_val = strval($newval);
-        return $this->_setAttr("frequency",$rest_val);
-    }
-
-    /**
-     * Changes the PWM period.
-     * 
-     * @param newval : a floating point number corresponding to the PWM period
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_period($newval)
-    {
-        $rest_val = strval(round($newval*65536.0));
-        return $this->_setAttr("period",$rest_val);
-    }
-
-    /**
-     * Returns the PWM period in milliseconds.
-     * 
-     * @return a floating point number corresponding to the PWM period in milliseconds
-     * 
-     * On failure, throws an exception or returns Y_PERIOD_INVALID.
-     */
-    public function get_period()
-    {
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_PERIOD_INVALID;
-            }
-        }
-        return $this->_period;
     }
 
     public function get_pwmTransition()
@@ -355,7 +356,7 @@ class YPwmOutput extends YFunction
      */
     public function set_dutyCycleAtPowerOn($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("dutyCycleAtPowerOn",$rest_val);
     }
 
@@ -463,6 +464,18 @@ class YPwmOutput extends YFunction
     public function setEnabled($newval)
     { return $this->set_enabled($newval); }
 
+    public function setFrequency($newval)
+    { return $this->set_frequency($newval); }
+
+    public function frequency()
+    { return $this->get_frequency(); }
+
+    public function setPeriod($newval)
+    { return $this->set_period($newval); }
+
+    public function period()
+    { return $this->get_period(); }
+
     public function setDutyCycle($newval)
     { return $this->set_dutyCycle($newval); }
 
@@ -474,18 +487,6 @@ class YPwmOutput extends YFunction
 
     public function pulseDuration()
     { return $this->get_pulseDuration(); }
-
-    public function frequency()
-    { return $this->get_frequency(); }
-
-    public function setFrequency($newval)
-    { return $this->set_frequency($newval); }
-
-    public function setPeriod($newval)
-    { return $this->set_period($newval); }
-
-    public function period()
-    { return $this->get_period(); }
 
     public function pwmTransition()
     { return $this->get_pwmTransition(); }

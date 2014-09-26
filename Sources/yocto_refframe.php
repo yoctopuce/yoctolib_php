@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_refframe.php 17481 2014-09-03 09:38:35Z mvuilleu $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -85,8 +85,8 @@ class YRefFrame extends YFunction
 
     //--- (YRefFrame attributes)
     protected $_mountPos                 = Y_MOUNTPOS_INVALID;           // UInt31
-    protected $_bearing                  = Y_BEARING_INVALID;            // Decimal
-    protected $_calibrationParam         = Y_CALIBRATIONPARAM_INVALID;   // WordArray
+    protected $_bearing                  = Y_BEARING_INVALID;            // MeasureVal
+    protected $_calibrationParam         = Y_CALIBRATIONPARAM_INVALID;   // CalibParams
     protected $_calibStage               = 0;                            // int
     protected $_calibStageHint           = "";                           // str
     protected $_calibStageProgress       = 0;                            // int
@@ -127,7 +127,7 @@ class YRefFrame extends YFunction
             $this->_mountPos = intval($val);
             return 1;
         case 'bearing':
-            $this->_bearing = $val/65536;
+            $this->_bearing = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'calibrationParam':
             $this->_calibrationParam = $val;
@@ -176,7 +176,7 @@ class YRefFrame extends YFunction
      */
     public function set_bearing($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("bearing",$rest_val);
     }
 
@@ -264,9 +264,9 @@ class YRefFrame extends YFunction
      */
     public function get_mountPosition()
     {
-        // $pos                    is a int;
-        $pos = $this->get_mountPos();
-        return (($pos) >> (2));
+        // $position               is a int;
+        $position = $this->get_mountPos();
+        return (($position) >> (2));
     }
 
     /**
@@ -286,9 +286,9 @@ class YRefFrame extends YFunction
      */
     public function get_mountOrientation()
     {
-        // $pos                    is a int;
-        $pos = $this->get_mountPos();
-        return (($pos) & (3));
+        // $position               is a int;
+        $position = $this->get_mountPos();
+        return (($position) & (3));
     }
 
     /**
@@ -318,9 +318,9 @@ class YRefFrame extends YFunction
      */
     public function set_mountPosition($position,$orientation)
     {
-        // $pos                    is a int;
-        $pos = (($position) << (2)) + $orientation;
-        return $this->set_mountPos($pos);
+        // $mixedPos               is a int;
+        $mixedPos = (($position) << (2)) + $orientation;
+        return $this->set_mountPos($mixedPos);
     }
 
     public function _calibSort($start,$stopidx)
@@ -341,20 +341,20 @@ class YRefFrame extends YFunction
             while ($idx < $stopidx) {
                 $b = $this->_calibDataAcc[$idx];
                 if ($a > $b) {
-                    $this->_calibDataAcc[ $idx-1] = $b;
-                    $this->_calibDataAcc[ $idx] = $a;
+                    $this->_calibDataAcc[$idx-1] = $b;
+                    $this->_calibDataAcc[$idx] = $a;
                     $xa = $this->_calibDataAccX[$idx-1];
                     $xb = $this->_calibDataAccX[$idx];
-                    $this->_calibDataAccX[ $idx-1] = $xb;
-                    $this->_calibDataAccX[ $idx] = $xa;
+                    $this->_calibDataAccX[$idx-1] = $xb;
+                    $this->_calibDataAccX[$idx] = $xa;
                     $xa = $this->_calibDataAccY[$idx-1];
                     $xb = $this->_calibDataAccY[$idx];
-                    $this->_calibDataAccY[ $idx-1] = $xb;
-                    $this->_calibDataAccY[ $idx] = $xa;
+                    $this->_calibDataAccY[$idx-1] = $xb;
+                    $this->_calibDataAccY[$idx] = $xa;
                     $xa = $this->_calibDataAccZ[$idx-1];
                     $xb = $this->_calibDataAccZ[$idx];
-                    $this->_calibDataAccZ[ $idx-1] = $xb;
-                    $this->_calibDataAccZ[ $idx] = $xa;
+                    $this->_calibDataAccZ[$idx-1] = $xb;
+                    $this->_calibDataAccZ[$idx] = $xa;
                     $changed = $changed + 1;
                 } else {
                     $a = $b;
@@ -398,11 +398,11 @@ class YRefFrame extends YFunction
         $this->_calibProgress = 1;
         $this->_calibInternalPos = 0;
         $this->_calibPrevTick = ((YAPI::GetTickCount()) & (0x7FFFFFFF));
-        while(sizeof($this->_calibOrient) > 0) array_pop($this->_calibOrient);
-        while(sizeof($this->_calibDataAccX) > 0) array_pop($this->_calibDataAccX);
-        while(sizeof($this->_calibDataAccY) > 0) array_pop($this->_calibDataAccY);
-        while(sizeof($this->_calibDataAccZ) > 0) array_pop($this->_calibDataAccZ);
-        while(sizeof($this->_calibDataAcc) > 0) array_pop($this->_calibDataAcc);
+        while(sizeof($this->_calibOrient) > 0) { array_pop($this->_calibOrient); };
+        while(sizeof($this->_calibDataAccX) > 0) { array_pop($this->_calibDataAccX); };
+        while(sizeof($this->_calibDataAccY) > 0) { array_pop($this->_calibDataAccY); };
+        while(sizeof($this->_calibDataAccZ) > 0) { array_pop($this->_calibDataAccZ); };
+        while(sizeof($this->_calibDataAcc) > 0) { array_pop($this->_calibDataAcc); };
         return YAPI_SUCCESS;
     }
 
@@ -429,7 +429,7 @@ class YRefFrame extends YFunction
         // $norm                   is a float;
         // $orient                 is a int;
         // $idx                    is a int;
-        // $pos                    is a int;
+        // $intpos                 is a int;
         // $err                    is a int;
         // make sure calibration has been started
         if ($this->_calibStage == 0) {
@@ -480,6 +480,7 @@ class YRefFrame extends YFunction
         $this->_calibPrevTick = $currTick;
         
         // Determine the device orientation index
+        $orient = 0;
         if ($zSq > 0.5) {
             if ($zVal > 0) {
                 $orient = 0;
@@ -538,13 +539,13 @@ class YRefFrame extends YFunction
         }
         
         // Stage done, compute preliminary result
-        $pos = ($this->_calibStage - 1) * $this->_calibCount;
-        $this->_calibSort($pos, $pos + $this->_calibCount);
-        $pos = $pos + intVal(($this->_calibCount) / (2));
+        $intpos = ($this->_calibStage - 1) * $this->_calibCount;
+        $this->_calibSort($intpos, $intpos + $this->_calibCount);
+        $intpos = $intpos + intVal(($this->_calibCount) / (2));
         $this->_calibLogMsg = sprintf('Stage %d: median is %d,%d,%d', $this->_calibStage,
-                                      round(1000*$this->_calibDataAccX[$pos]),
-                                      round(1000*$this->_calibDataAccY[$pos]),
-                                      round(1000*$this->_calibDataAccZ[$pos]));
+                                      round(1000*$this->_calibDataAccX[$intpos]),
+                                      round(1000*$this->_calibDataAccY[$intpos]),
+                                      round(1000*$this->_calibDataAccZ[$intpos]));
         
         // move to next stage
         $this->_calibStage = $this->_calibStage + 1;
@@ -561,16 +562,16 @@ class YRefFrame extends YFunction
         $zVal = 0;
         $idx = 0;
         while ($idx < 6) {
-            $pos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
+            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
             $orient = $this->_calibOrient[$idx];
             if ($orient == 0 || $orient == 1) {
-                $zVal = $zVal + $this->_calibDataAccZ[$pos];
+                $zVal = $zVal + $this->_calibDataAccZ[$intpos];
             }
             if ($orient == 2 || $orient == 3) {
-                $xVal = $xVal + $this->_calibDataAccX[$pos];
+                $xVal = $xVal + $this->_calibDataAccX[$intpos];
             }
             if ($orient == 4 || $orient == 5) {
-                $yVal = $yVal + $this->_calibDataAccY[$pos];
+                $yVal = $yVal + $this->_calibDataAccY[$intpos];
             }
             $idx = $idx + 1;
         }
@@ -579,19 +580,19 @@ class YRefFrame extends YFunction
         $this->_calibAccZOfs = $zVal / 2.0;
         
         // Recompute all norms, taking into account the computed shift, and re-sort
-        $pos = 0;
-        while ($pos < sizeof($this->_calibDataAcc)) {
-            $xVal = $this->_calibDataAccX[$pos] - $this->_calibAccXOfs;
-            $yVal = $this->_calibDataAccY[$pos] - $this->_calibAccYOfs;
-            $zVal = $this->_calibDataAccZ[$pos] - $this->_calibAccZOfs;
+        $intpos = 0;
+        while ($intpos < sizeof($this->_calibDataAcc)) {
+            $xVal = $this->_calibDataAccX[$intpos] - $this->_calibAccXOfs;
+            $yVal = $this->_calibDataAccY[$intpos] - $this->_calibAccYOfs;
+            $zVal = $this->_calibDataAccZ[$intpos] - $this->_calibAccZOfs;
             $norm = sqrt($xVal * $xVal + $yVal * $yVal + $zVal * $zVal);
-            $this->_calibDataAcc[ $pos] = $norm;
-            $pos = $pos + 1;
+            $this->_calibDataAcc[$intpos] = $norm;
+            $intpos = $intpos + 1;
         }
         $idx = 0;
         while ($idx < 6) {
-            $pos = $idx * $this->_calibCount;
-            $this->_calibSort($pos, $pos + $this->_calibCount);
+            $intpos = $idx * $this->_calibCount;
+            $this->_calibSort($intpos, $intpos + $this->_calibCount);
             $idx = $idx + 1;
         }
         
@@ -601,16 +602,16 @@ class YRefFrame extends YFunction
         $zVal = 0;
         $idx = 0;
         while ($idx < 6) {
-            $pos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
+            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
             $orient = $this->_calibOrient[$idx];
             if ($orient == 0 || $orient == 1) {
-                $zVal = $zVal + $this->_calibDataAcc[$pos];
+                $zVal = $zVal + $this->_calibDataAcc[$intpos];
             }
             if ($orient == 2 || $orient == 3) {
-                $xVal = $xVal + $this->_calibDataAcc[$pos];
+                $xVal = $xVal + $this->_calibDataAcc[$intpos];
             }
             if ($orient == 4 || $orient == 5) {
-                $yVal = $yVal + $this->_calibDataAcc[$pos];
+                $yVal = $yVal + $this->_calibDataAcc[$intpos];
             }
             $idx = $idx + 1;
         }
@@ -723,8 +724,10 @@ class YRefFrame extends YFunction
         $scaleZ = round(2048.0 / $this->_calibAccZScale) - 2048;
         if ($scaleX < -2048 || $scaleX >= 2048 || $scaleY < -2048 || $scaleY >= 2048 || $scaleZ < -2048 || $scaleZ >= 2048) {
             $scaleExp = 3;
+        } else {
             if ($scaleX < -1024 || $scaleX >= 1024 || $scaleY < -1024 || $scaleY >= 1024 || $scaleZ < -1024 || $scaleZ >= 1024) {
                 $scaleExp = 2;
+            } else {
                 if ($scaleX < -512 || $scaleX >= 512 || $scaleY < -512 || $scaleY >= 512 || $scaleZ < -512 || $scaleZ >= 512) {
                     $scaleExp = 1;
                 } else {

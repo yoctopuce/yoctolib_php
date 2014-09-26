@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_altitude.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_altitude.php 16895 2014-07-18 00:12:08Z mvuilleu $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -57,7 +57,7 @@ class YAltitude extends YSensor
     //--- (end of YAltitude declaration)
 
     //--- (YAltitude attributes)
-    protected $_qnh                      = Y_QNH_INVALID;                // CentFloatingPoint
+    protected $_qnh                      = Y_QNH_INVALID;                // MeasureVal
     //--- (end of YAltitude attributes)
 
     function __construct($str_func)
@@ -75,7 +75,7 @@ class YAltitude extends YSensor
     {
         switch($name) {
         case 'qnh':
-            $this->_qnh = $val/65536;
+            $this->_qnh = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -93,7 +93,7 @@ class YAltitude extends YSensor
      */
     public function set_currentValue($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("currentValue",$rest_val);
     }
 
@@ -112,7 +112,7 @@ class YAltitude extends YSensor
      */
     public function set_qnh($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("qnh",$rest_val);
     }
 

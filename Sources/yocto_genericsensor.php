@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_genericsensor.php 16923 2014-07-18 14:47:20Z mvuilleu $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -45,6 +45,7 @@ if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',    
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_SIGNALRANGE_INVALID'))        define('Y_SIGNALRANGE_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_VALUERANGE_INVALID'))         define('Y_VALUERANGE_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_SIGNALBIAS_INVALID'))         define('Y_SIGNALBIAS_INVALID',        YAPI_INVALID_DOUBLE);
 //--- (end of YGenericSensor definitions)
 
 //--- (YGenericSensor declaration)
@@ -60,13 +61,15 @@ class YGenericSensor extends YSensor
     const SIGNALUNIT_INVALID             = YAPI_INVALID_STRING;
     const SIGNALRANGE_INVALID            = YAPI_INVALID_STRING;
     const VALUERANGE_INVALID             = YAPI_INVALID_STRING;
+    const SIGNALBIAS_INVALID             = YAPI_INVALID_DOUBLE;
     //--- (end of YGenericSensor declaration)
 
     //--- (YGenericSensor attributes)
-    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // Precimal
+    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // MeasureVal
     protected $_signalUnit               = Y_SIGNALUNIT_INVALID;         // Text
     protected $_signalRange              = Y_SIGNALRANGE_INVALID;        // ValueRange
     protected $_valueRange               = Y_VALUERANGE_INVALID;         // ValueRange
+    protected $_signalBias               = Y_SIGNALBIAS_INVALID;         // MeasureVal
     //--- (end of YGenericSensor attributes)
 
     function __construct($str_func)
@@ -84,7 +87,7 @@ class YGenericSensor extends YSensor
     {
         switch($name) {
         case 'signalValue':
-            $this->_signalValue = $val/65536;
+            $this->_signalValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'signalUnit':
             $this->_signalUnit = $val;
@@ -94,6 +97,9 @@ class YGenericSensor extends YSensor
             return 1;
         case 'valueRange':
             $this->_valueRange = $val;
+            return 1;
+        case 'signalBias':
+            $this->_signalBias = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -200,8 +206,8 @@ class YGenericSensor extends YSensor
     }
 
     /**
-     * Changes the physical value range measured by the sensor. The range change may have a side effect
-     * on the display resolution, as it may be adapted automatically.
+     * Changes the physical value range measured by the sensor. As a side effect, the range modification may
+     * automatically modify the display resolution.
      * 
      * @param newval : a string corresponding to the physical value range measured by the sensor
      * 
@@ -213,6 +219,42 @@ class YGenericSensor extends YSensor
     {
         $rest_val = $newval;
         return $this->_setAttr("valueRange",$rest_val);
+    }
+
+    /**
+     * Changes the electric signal bias for zero shift adjustment.
+     * If your electric signal reads positif when it should be zero, setup
+     * a positive signalBias of the same value to fix the zero shift.
+     * 
+     * @param newval : a floating point number corresponding to the electric signal bias for zero shift adjustment
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_signalBias($newval)
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("signalBias",$rest_val);
+    }
+
+    /**
+     * Returns the electric signal bias for zero shift adjustment.
+     * A positive bias means that the signal is over-reporting the measure,
+     * while a negative bias means that the signal is underreporting the measure.
+     * 
+     * @return a floating point number corresponding to the electric signal bias for zero shift adjustment
+     * 
+     * On failure, throws an exception or returns Y_SIGNALBIAS_INVALID.
+     */
+    public function get_signalBias()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SIGNALBIAS_INVALID;
+            }
+        }
+        return $this->_signalBias;
     }
 
     /**
@@ -249,6 +291,23 @@ class YGenericSensor extends YSensor
         return $obj;
     }
 
+    /**
+     * Adjusts the signal bias so that the current signal value is need
+     * precisely as zero.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function zeroAdjust()
+    {
+        // $currSignal             is a float;
+        // $currBias               is a float;
+        $currSignal = $this->get_signalValue();
+        $currBias = $this->get_signalBias();
+        return $this->set_signalBias($currSignal + $currBias);
+    }
+
     public function setUnit($newval)
     { return $this->set_unit($newval); }
 
@@ -269,6 +328,12 @@ class YGenericSensor extends YSensor
 
     public function setValueRange($newval)
     { return $this->set_valueRange($newval); }
+
+    public function setSignalBias($newval)
+    { return $this->set_signalBias($newval); }
+
+    public function signalBias()
+    { return $this->get_signalBias(); }
 
     /**
      * Continues the enumeration of generic sensors started using yFirstGenericSensor().

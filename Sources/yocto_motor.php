@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_motor.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_motor.php 17370 2014-08-29 16:48:56Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -42,7 +42,7 @@
 //--- (end of YMotor return codes)
 //--- (YMotor definitions)
 if(!defined('Y_MOTORSTATUS_IDLE'))           define('Y_MOTORSTATUS_IDLE',          0);
-if(!defined('Y_MOTORSTATUS_BREAK'))          define('Y_MOTORSTATUS_BREAK',         1);
+if(!defined('Y_MOTORSTATUS_BRAKE'))          define('Y_MOTORSTATUS_BRAKE',         1);
 if(!defined('Y_MOTORSTATUS_FORWD'))          define('Y_MOTORSTATUS_FORWD',         2);
 if(!defined('Y_MOTORSTATUS_BACKWD'))         define('Y_MOTORSTATUS_BACKWD',        3);
 if(!defined('Y_MOTORSTATUS_LOVOLT'))         define('Y_MOTORSTATUS_LOVOLT',        4);
@@ -51,10 +51,10 @@ if(!defined('Y_MOTORSTATUS_HIHEAT'))         define('Y_MOTORSTATUS_HIHEAT',     
 if(!defined('Y_MOTORSTATUS_FAILSF'))         define('Y_MOTORSTATUS_FAILSF',        7);
 if(!defined('Y_MOTORSTATUS_INVALID'))        define('Y_MOTORSTATUS_INVALID',       -1);
 if(!defined('Y_DRIVINGFORCE_INVALID'))       define('Y_DRIVINGFORCE_INVALID',      YAPI_INVALID_DOUBLE);
-if(!defined('Y_BREAKINGFORCE_INVALID'))      define('Y_BREAKINGFORCE_INVALID',     YAPI_INVALID_DOUBLE);
+if(!defined('Y_BRAKINGFORCE_INVALID'))       define('Y_BRAKINGFORCE_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_CUTOFFVOLTAGE_INVALID'))      define('Y_CUTOFFVOLTAGE_INVALID',     YAPI_INVALID_DOUBLE);
 if(!defined('Y_OVERCURRENTLIMIT_INVALID'))   define('Y_OVERCURRENTLIMIT_INVALID',  YAPI_INVALID_INT);
-if(!defined('Y_FREQUENCY_INVALID'))          define('Y_FREQUENCY_INVALID',         YAPI_INVALID_UINT);
+if(!defined('Y_FREQUENCY_INVALID'))          define('Y_FREQUENCY_INVALID',         YAPI_INVALID_DOUBLE);
 if(!defined('Y_STARTERTIME_INVALID'))        define('Y_STARTERTIME_INVALID',       YAPI_INVALID_INT);
 if(!defined('Y_FAILSAFETIMEOUT_INVALID'))    define('Y_FAILSAFETIMEOUT_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
@@ -65,15 +65,15 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
  * YMotor Class: Motor function interface
  * 
  * Yoctopuce application programming interface allows you to drive the
- * power sent to motor to make it turn both ways, but also to drive accelerations
+ * power sent to the motor to make it turn both ways, but also to drive accelerations
  * and decelerations. The motor will then accelerate automatically: you will not
  * have to monitor it. The API also allows to slow down the motor by shortening
- * its terminals: the motor will then act as an electromagnetic break.
+ * its terminals: the motor will then act as an electromagnetic brake.
  */
 class YMotor extends YFunction
 {
     const MOTORSTATUS_IDLE               = 0;
-    const MOTORSTATUS_BREAK              = 1;
+    const MOTORSTATUS_BRAKE              = 1;
     const MOTORSTATUS_FORWD              = 2;
     const MOTORSTATUS_BACKWD             = 3;
     const MOTORSTATUS_LOVOLT             = 4;
@@ -82,10 +82,10 @@ class YMotor extends YFunction
     const MOTORSTATUS_FAILSF             = 7;
     const MOTORSTATUS_INVALID            = -1;
     const DRIVINGFORCE_INVALID           = YAPI_INVALID_DOUBLE;
-    const BREAKINGFORCE_INVALID          = YAPI_INVALID_DOUBLE;
+    const BRAKINGFORCE_INVALID           = YAPI_INVALID_DOUBLE;
     const CUTOFFVOLTAGE_INVALID          = YAPI_INVALID_DOUBLE;
     const OVERCURRENTLIMIT_INVALID       = YAPI_INVALID_INT;
-    const FREQUENCY_INVALID              = YAPI_INVALID_UINT;
+    const FREQUENCY_INVALID              = YAPI_INVALID_DOUBLE;
     const STARTERTIME_INVALID            = YAPI_INVALID_INT;
     const FAILSAFETIMEOUT_INVALID        = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
@@ -93,11 +93,11 @@ class YMotor extends YFunction
 
     //--- (YMotor attributes)
     protected $_motorStatus              = Y_MOTORSTATUS_INVALID;        // MotorState
-    protected $_drivingForce             = Y_DRIVINGFORCE_INVALID;       // Decimal
-    protected $_breakingForce            = Y_BREAKINGFORCE_INVALID;      // Decimal
-    protected $_cutOffVoltage            = Y_CUTOFFVOLTAGE_INVALID;      // Decimal
+    protected $_drivingForce             = Y_DRIVINGFORCE_INVALID;       // MeasureVal
+    protected $_brakingForce             = Y_BRAKINGFORCE_INVALID;       // MeasureVal
+    protected $_cutOffVoltage            = Y_CUTOFFVOLTAGE_INVALID;      // MeasureVal
     protected $_overCurrentLimit         = Y_OVERCURRENTLIMIT_INVALID;   // Int
-    protected $_frequency                = Y_FREQUENCY_INVALID;          // UInt31
+    protected $_frequency                = Y_FREQUENCY_INVALID;          // MeasureVal
     protected $_starterTime              = Y_STARTERTIME_INVALID;        // Int
     protected $_failSafeTimeout          = Y_FAILSAFETIMEOUT_INVALID;    // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
@@ -121,19 +121,19 @@ class YMotor extends YFunction
             $this->_motorStatus = intval($val);
             return 1;
         case 'drivingForce':
-            $this->_drivingForce = $val/65536;
+            $this->_drivingForce = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
-        case 'breakingForce':
-            $this->_breakingForce = $val/65536;
+        case 'brakingForce':
+            $this->_brakingForce = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'cutOffVoltage':
-            $this->_cutOffVoltage = $val/65536;
+            $this->_cutOffVoltage = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'overCurrentLimit':
             $this->_overCurrentLimit = intval($val);
             return 1;
         case 'frequency':
-            $this->_frequency = intval($val);
+            $this->_frequency = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'starterTime':
             $this->_starterTime = intval($val);
@@ -153,16 +153,16 @@ class YMotor extends YFunction
      * IDLE   when the motor is stopped/in free wheel, ready to start;
      * FORWD  when the controller is driving the motor forward;
      * BACKWD when the controller is driving the motor backward;
-     * BREAK  when the controller is breaking;
+     * BRAKE  when the controller is braking;
      * LOVOLT when the controller has detected a low voltage condition;
      * HICURR when the controller has detected an overcurrent condition;
-     * HIHEAT when the controller detected an overheat condition;
+     * HIHEAT when the controller has detected an overheat condition;
      * FAILSF when the controller switched on the failsafe security.
      * 
      * When an error condition occurred (LOVOLT, HICURR, HIHEAT, FAILSF), the controller
      * status must be explicitly reset using the resetStatus function.
      * 
-     * @return a value among Y_MOTORSTATUS_IDLE, Y_MOTORSTATUS_BREAK, Y_MOTORSTATUS_FORWD,
+     * @return a value among Y_MOTORSTATUS_IDLE, Y_MOTORSTATUS_BRAKE, Y_MOTORSTATUS_FORWD,
      * Y_MOTORSTATUS_BACKWD, Y_MOTORSTATUS_LOVOLT, Y_MOTORSTATUS_HICURR, Y_MOTORSTATUS_HIHEAT and Y_MOTORSTATUS_FAILSF
      * 
      * On failure, throws an exception or returns Y_MOTORSTATUS_INVALID.
@@ -188,7 +188,7 @@ class YMotor extends YFunction
      * to 100%. If you want go easy on your mechanics and avoid excessive current consumption,
      * try to avoid brutal power changes. For example, immediate transition from forward full power
      * to reverse full power is a very bad idea. Each time the driving power is modified, the
-     * breaking power is set to zero.
+     * braking power is set to zero.
      * 
      * @param newval : a floating point number corresponding to immediately the power sent to the motor
      * 
@@ -198,7 +198,7 @@ class YMotor extends YFunction
      */
     public function set_drivingForce($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("drivingForce",$rest_val);
     }
 
@@ -221,51 +221,51 @@ class YMotor extends YFunction
     }
 
     /**
-     * Changes immediately the breaking force applied to the motor (in per cents).
-     * The value 0 corresponds to no breaking (free wheel). When the breaking force
+     * Changes immediately the braking force applied to the motor (in percents).
+     * The value 0 corresponds to no braking (free wheel). When the braking force
      * is changed, the driving power is set to zero. The value is a percentage.
      * 
-     * @param newval : a floating point number corresponding to immediately the breaking force applied to
-     * the motor (in per cents)
+     * @param newval : a floating point number corresponding to immediately the braking force applied to
+     * the motor (in percents)
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_breakingForce($newval)
+    public function set_brakingForce($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
-        return $this->_setAttr("breakingForce",$rest_val);
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("brakingForce",$rest_val);
     }
 
     /**
-     * Returns the breaking force applied to the motor, as a percentage.
-     * The value 0 corresponds to no breaking (free wheel).
+     * Returns the braking force applied to the motor, as a percentage.
+     * The value 0 corresponds to no braking (free wheel).
      * 
-     * @return a floating point number corresponding to the breaking force applied to the motor, as a percentage
+     * @return a floating point number corresponding to the braking force applied to the motor, as a percentage
      * 
-     * On failure, throws an exception or returns Y_BREAKINGFORCE_INVALID.
+     * On failure, throws an exception or returns Y_BRAKINGFORCE_INVALID.
      */
-    public function get_breakingForce()
+    public function get_brakingForce()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_BREAKINGFORCE_INVALID;
+                return Y_BRAKINGFORCE_INVALID;
             }
         }
-        return $this->_breakingForce;
+        return $this->_brakingForce;
     }
 
     /**
-     * Changes the threshold voltage under which the controller will automatically switch to error state
-     * and prevent further current draw. This setting prevent damage to a battery that can
+     * Changes the threshold voltage under which the controller automatically switches to error state
+     * and prevents further current draw. This setting prevent damage to a battery that can
      * occur when drawing current from an "empty" battery.
-     * Note that whatever the cutoff threshold, the controller will switch to undervoltage
+     * Note that whatever the cutoff threshold, the controller switches to undervoltage
      * error state if the power supply goes under 3V, even for a very brief time.
      * 
      * @param newval : a floating point number corresponding to the threshold voltage under which the
-     * controller will automatically switch to error state
-     *         and prevent further current draw
+     * controller automatically switches to error state
+     *         and prevents further current draw
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -273,18 +273,18 @@ class YMotor extends YFunction
      */
     public function set_cutOffVoltage($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("cutOffVoltage",$rest_val);
     }
 
     /**
-     * Returns the threshold voltage under which the controller will automatically switch to error state
-     * and prevent further current draw. This setting prevent damage to a battery that can
+     * Returns the threshold voltage under which the controller automatically switches to error state
+     * and prevents further current draw. This setting prevents damage to a battery that can
      * occur when drawing current from an "empty" battery.
      * 
      * @return a floating point number corresponding to the threshold voltage under which the controller
-     * will automatically switch to error state
-     *         and prevent further current draw
+     * automatically switches to error state
+     *         and prevents further current draw
      * 
      * On failure, throws an exception or returns Y_CUTOFFVOLTAGE_INVALID.
      */
@@ -299,11 +299,11 @@ class YMotor extends YFunction
     }
 
     /**
-     * Returns the current threshold (in mA) above which the controller will automatically
-     * switch to error state. A zero value means that there is no limit.
+     * Returns the current threshold (in mA) above which the controller automatically
+     * switches to error state. A zero value means that there is no limit.
      * 
-     * @return an integer corresponding to the current threshold (in mA) above which the controller will automatically
-     *         switch to error state
+     * @return an integer corresponding to the current threshold (in mA) above which the controller automatically
+     *         switches to error state
      * 
      * On failure, throws an exception or returns Y_OVERCURRENTLIMIT_INVALID.
      */
@@ -318,14 +318,14 @@ class YMotor extends YFunction
     }
 
     /**
-     * Changes tthe current threshold (in mA) above which the controller will automatically
-     * switch to error state. A zero value means that there is no limit. Note that whatever the
-     * current limit is, the controller will switch to OVERCURRENT status if the current
+     * Changes the current threshold (in mA) above which the controller automatically
+     * switches to error state. A zero value means that there is no limit. Note that whatever the
+     * current limit is, the controller switches to OVERCURRENT status if the current
      * goes above 32A, even for a very brief time.
      * 
-     * @param newval : an integer corresponding to tthe current threshold (in mA) above which the
-     * controller will automatically
-     *         switch to error state
+     * @param newval : an integer corresponding to the current threshold (in mA) above which the
+     * controller automatically
+     *         switches to error state
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -338,9 +338,27 @@ class YMotor extends YFunction
     }
 
     /**
+     * Changes the PWM frequency used to control the motor. Low frequency is usually
+     * more efficient and may help the motor to start, but an audible noise might be
+     * generated. A higher frequency reduces the noise, but more energy is converted
+     * into heat.
+     * 
+     * @param newval : a floating point number corresponding to the PWM frequency used to control the motor
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_frequency($newval)
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("frequency",$rest_val);
+    }
+
+    /**
      * Returns the PWM frequency used to control the motor.
      * 
-     * @return an integer corresponding to the PWM frequency used to control the motor
+     * @return a floating point number corresponding to the PWM frequency used to control the motor
      * 
      * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
      */
@@ -352,24 +370,6 @@ class YMotor extends YFunction
             }
         }
         return $this->_frequency;
-    }
-
-    /**
-     * Changes the PWM frequency used to control the motor. Low frequency is usually
-     * more efficient and may help the motor to start, but an audible noise might be
-     * generated. A higher frequency reduces the noise, but more energy is converted
-     * into heat.
-     * 
-     * @param newval : an integer corresponding to the PWM frequency used to control the motor
-     * 
-     * @return YAPI_SUCCESS if the call succeeds.
-     * 
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_frequency($newval)
-    {
-        $rest_val = strval($newval);
-        return $this->_setAttr("frequency",$rest_val);
     }
 
     /**
@@ -412,8 +412,8 @@ class YMotor extends YFunction
 
     /**
      * Returns the delay in milliseconds allowed for the controller to run autonomously without
-     * receiving any instruction from the control process. Once this delay is elapsed,
-     * the controller will automatically stop the motor and switch to FAILSAFE error.
+     * receiving any instruction from the control process. When this delay has elapsed,
+     * the controller automatically stops the motor and switches to FAILSAFE error.
      * Failsafe security is disabled when the value is zero.
      * 
      * @return an integer corresponding to the delay in milliseconds allowed for the controller to run
@@ -434,8 +434,8 @@ class YMotor extends YFunction
 
     /**
      * Changes the delay in milliseconds allowed for the controller to run autonomously without
-     * receiving any instruction from the control process. Once this delay is elapsed,
-     * the controller will automatically stop the motor and switch to FAILSAFE error.
+     * receiving any instruction from the control process. When this delay has elapsed,
+     * the controller automatically stops the motor and switches to FAILSAFE error.
      * Failsafe security is disabled when the value is zero.
      * 
      * @param newval : an integer corresponding to the delay in milliseconds allowed for the controller to
@@ -505,7 +505,7 @@ class YMotor extends YFunction
     /**
      * Rearms the controller failsafe timer. When the motor is running and the failsafe feature
      * is active, this function should be called periodically to prove that the control process
-     * is running properly. Otherwise, the motor will be automatically stopped after the specified
+     * is running properly. Otherwise, the motor is automatically stopped after the specified
      * timeout. Calling a motor <i>set</i> function implicitely rearms the failsafe timer.
      */
     public function keepALive()
@@ -525,7 +525,7 @@ class YMotor extends YFunction
     /**
      * Changes progressively the power sent to the moteur for a specific duration.
      * 
-     * @param targetPower : desired motor power, in per cents (between -100% and +100%)
+     * @param targetPower : desired motor power, in percents (between -100% and +100%)
      * @param delay : duration (in ms) of the transition
      * 
      * @return YAPI_SUCCESS if the call succeeds.
@@ -538,16 +538,16 @@ class YMotor extends YFunction
     }
 
     /**
-     * Changes progressively the breaking force applied to the motor for a specific duration.
+     * Changes progressively the braking force applied to the motor for a specific duration.
      * 
-     * @param targetPower : desired breaking force, in per cents
+     * @param targetPower : desired braking force, in percents
      * @param delay : duration (in ms) of the transition
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
      * On failure, throws an exception or returns a negative error code.
      */
-    public function breakingForceMove($targetPower,$delay)
+    public function brakingForceMove($targetPower,$delay)
     {
         return $this->set_command(sprintf('B%d,%d',round($targetPower*10),$delay));
     }
@@ -564,11 +564,11 @@ class YMotor extends YFunction
     public function drivingForce()
     { return $this->get_drivingForce(); }
 
-    public function setBreakingForce($newval)
-    { return $this->set_breakingForce($newval); }
+    public function setBrakingForce($newval)
+    { return $this->set_brakingForce($newval); }
 
-    public function breakingForce()
-    { return $this->get_breakingForce(); }
+    public function brakingForce()
+    { return $this->get_brakingForce(); }
 
     public function setCutOffVoltage($newval)
     { return $this->set_cutOffVoltage($newval); }
@@ -582,11 +582,11 @@ class YMotor extends YFunction
     public function setOverCurrentLimit($newval)
     { return $this->set_overCurrentLimit($newval); }
 
-    public function frequency()
-    { return $this->get_frequency(); }
-
     public function setFrequency($newval)
     { return $this->set_frequency($newval); }
+
+    public function frequency()
+    { return $this->get_frequency(); }
 
     public function starterTime()
     { return $this->get_starterTime(); }

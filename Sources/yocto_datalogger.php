@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_datalogger.php 17676 2014-09-16 16:20:17Z seb $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -45,6 +45,9 @@ if(!defined('Y_RECORDING_INVALID'))          define('Y_RECORDING_INVALID',      
 if(!defined('Y_AUTOSTART_OFF'))              define('Y_AUTOSTART_OFF',             0);
 if(!defined('Y_AUTOSTART_ON'))               define('Y_AUTOSTART_ON',              1);
 if(!defined('Y_AUTOSTART_INVALID'))          define('Y_AUTOSTART_INVALID',         -1);
+if(!defined('Y_BEACONDRIVEN_OFF'))           define('Y_BEACONDRIVEN_OFF',          0);
+if(!defined('Y_BEACONDRIVEN_ON'))            define('Y_BEACONDRIVEN_ON',           1);
+if(!defined('Y_BEACONDRIVEN_INVALID'))       define('Y_BEACONDRIVEN_INVALID',      -1);
 if(!defined('Y_CLEARHISTORY_FALSE'))         define('Y_CLEARHISTORY_FALSE',        0);
 if(!defined('Y_CLEARHISTORY_TRUE'))          define('Y_CLEARHISTORY_TRUE',         1);
 if(!defined('Y_CLEARHISTORY_INVALID'))       define('Y_CLEARHISTORY_INVALID',      -1);
@@ -304,6 +307,9 @@ class YDataLogger extends YFunction
     const AUTOSTART_OFF                  = 0;
     const AUTOSTART_ON                   = 1;
     const AUTOSTART_INVALID              = -1;
+    const BEACONDRIVEN_OFF               = 0;
+    const BEACONDRIVEN_ON                = 1;
+    const BEACONDRIVEN_INVALID           = -1;
     const CLEARHISTORY_FALSE             = 0;
     const CLEARHISTORY_TRUE              = 1;
     const CLEARHISTORY_INVALID           = -1;
@@ -314,6 +320,7 @@ class YDataLogger extends YFunction
     protected $_timeUTC                  = Y_TIMEUTC_INVALID;            // UTCTime
     protected $_recording                = Y_RECORDING_INVALID;          // OnOff
     protected $_autoStart                = Y_AUTOSTART_INVALID;          // OnOff
+    protected $_beaconDriven             = Y_BEACONDRIVEN_INVALID;       // OnOff
     protected $_clearHistory             = Y_CLEARHISTORY_INVALID;       // Bool
     //--- (end of generated code: YDataLogger attributes)
     protected $dataLoggerURL = null;
@@ -426,6 +433,9 @@ class YDataLogger extends YFunction
             return 1;
         case 'autoStart':
             $this->_autoStart = intval($val);
+            return 1;
+        case 'beaconDriven':
+            $this->_beaconDriven = intval($val);
             return 1;
         case 'clearHistory':
             $this->_clearHistory = intval($val);
@@ -554,6 +564,41 @@ class YDataLogger extends YFunction
         return $this->_setAttr("autoStart",$rest_val);
     }
 
+    /**
+     * Return true if the data logger is synchronised with the localization beacon.
+     * 
+     * @return either Y_BEACONDRIVEN_OFF or Y_BEACONDRIVEN_ON
+     * 
+     * On failure, throws an exception or returns Y_BEACONDRIVEN_INVALID.
+     */
+    public function get_beaconDriven()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BEACONDRIVEN_INVALID;
+            }
+        }
+        return $this->_beaconDriven;
+    }
+
+    /**
+     * Changes the type of synchronisation of the data logger.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     * 
+     * @param newval : either Y_BEACONDRIVEN_OFF or Y_BEACONDRIVEN_ON, according to the type of
+     * synchronisation of the data logger
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_beaconDriven($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("beaconDriven",$rest_val);
+    }
+
     public function get_clearHistory()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -640,7 +685,7 @@ class YDataLogger extends YFunction
         $res = Array();         // YDataSetArr;
         // may throw an exception
         $dslist = $this->_json_get_array($json);
-        while(sizeof($res) > 0) array_pop($res);
+        while(sizeof($res) > 0) { array_pop($res); };
         foreach($dslist as $each) { $res[] = new YDataSet($this, $each);}
         return $res;
     }
@@ -665,6 +710,12 @@ class YDataLogger extends YFunction
 
     public function setAutoStart($newval)
     { return $this->set_autoStart($newval); }
+
+    public function beaconDriven()
+    { return $this->get_beaconDriven(); }
+
+    public function setBeaconDriven($newval)
+    { return $this->set_beaconDriven($newval); }
 
     public function clearHistory()
     { return $this->get_clearHistory(); }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_accelerometer.php 17245 2014-08-20 16:16:37Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -41,6 +41,9 @@
 //--- (YAccelerometer return codes)
 //--- (end of YAccelerometer return codes)
 //--- (YAccelerometer definitions)
+if(!defined('Y_GRAVITYCANCELLATION_OFF'))    define('Y_GRAVITYCANCELLATION_OFF',   0);
+if(!defined('Y_GRAVITYCANCELLATION_ON'))     define('Y_GRAVITYCANCELLATION_ON',    1);
+if(!defined('Y_GRAVITYCANCELLATION_INVALID')) define('Y_GRAVITYCANCELLATION_INVALID', -1);
 if(!defined('Y_XVALUE_INVALID'))             define('Y_XVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_YVALUE_INVALID'))             define('Y_YVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',            YAPI_INVALID_DOUBLE);
@@ -58,12 +61,16 @@ class YAccelerometer extends YSensor
     const XVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const YVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const ZVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
+    const GRAVITYCANCELLATION_OFF        = 0;
+    const GRAVITYCANCELLATION_ON         = 1;
+    const GRAVITYCANCELLATION_INVALID    = -1;
     //--- (end of YAccelerometer declaration)
 
     //--- (YAccelerometer attributes)
-    protected $_xValue                   = Y_XVALUE_INVALID;             // Centesimal
-    protected $_yValue                   = Y_YVALUE_INVALID;             // Centesimal
-    protected $_zValue                   = Y_ZVALUE_INVALID;             // Centesimal
+    protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
+    protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
+    protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
+    protected $_gravityCancellation      = Y_GRAVITYCANCELLATION_INVALID; // OnOff
     //--- (end of YAccelerometer attributes)
 
     function __construct($str_func)
@@ -81,13 +88,16 @@ class YAccelerometer extends YSensor
     {
         switch($name) {
         case 'xValue':
-            $this->_xValue = $val/65536;
+            $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'yValue':
-            $this->_yValue = $val/65536;
+            $this->_yValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'zValue':
-            $this->_zValue = $val/65536;
+            $this->_zValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'gravityCancellation':
+            $this->_gravityCancellation = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -144,6 +154,22 @@ class YAccelerometer extends YSensor
         return $this->_zValue;
     }
 
+    public function get_gravityCancellation()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_GRAVITYCANCELLATION_INVALID;
+            }
+        }
+        return $this->_gravityCancellation;
+    }
+
+    public function set_gravityCancellation($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("gravityCancellation",$rest_val);
+    }
+
     /**
      * Retrieves an accelerometer for a given identifier.
      * The identifier can be specified using several formats:
@@ -186,6 +212,12 @@ class YAccelerometer extends YSensor
 
     public function zValue()
     { return $this->get_zValue(); }
+
+    public function gravityCancellation()
+    { return $this->get_gravityCancellation(); }
+
+    public function setGravityCancellation($newval)
+    { return $this->set_gravityCancellation($newval); }
 
     /**
      * Continues the enumeration of accelerometers started using yFirstAccelerometer().

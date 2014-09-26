@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_magnetometer.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_magnetometer.php 16895 2014-07-18 00:12:08Z mvuilleu $
  *
  * Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -61,9 +61,9 @@ class YMagnetometer extends YSensor
     //--- (end of YMagnetometer declaration)
 
     //--- (YMagnetometer attributes)
-    protected $_xValue                   = Y_XVALUE_INVALID;             // Centesimal
-    protected $_yValue                   = Y_YVALUE_INVALID;             // Centesimal
-    protected $_zValue                   = Y_ZVALUE_INVALID;             // Centesimal
+    protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
+    protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
+    protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
     //--- (end of YMagnetometer attributes)
 
     function __construct($str_func)
@@ -81,13 +81,13 @@ class YMagnetometer extends YSensor
     {
         switch($name) {
         case 'xValue':
-            $this->_xValue = $val/65536;
+            $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'yValue':
-            $this->_yValue = $val/65536;
+            $this->_yValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'zValue':
-            $this->_zValue = $val/65536;
+            $this->_zValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);

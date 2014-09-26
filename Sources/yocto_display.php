@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 16340 2014-05-30 10:41:54Z seb $
+ * $Id: yocto_display.php 17498 2014-09-03 19:21:24Z mvuilleu $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -236,9 +236,9 @@ class YDisplayLayer
 
     /**
      * Selects an eraser instead of a pen for all subsequent drawing functions,
-     * except for text drawing and bitmap copy functions. Any point drawn
-     * using the eraser becomes transparent (as when the layer is empty),
-     * showing the other layers beneath it.
+     * except for bitmap copy functions. Any point drawn using the eraser
+     * becomes transparent (as when the layer is empty), showing the other
+     * layers beneath it.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 

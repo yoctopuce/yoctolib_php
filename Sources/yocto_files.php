@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_files.php 17676 2014-09-16 16:20:17Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -223,7 +223,7 @@ class YFiles extends YFunction
     }
 
     /**
-     * Reinitializes the filesystem to its clean, unfragmented, empty state.
+     * Reinitialize the filesystem to its clean, unfragmented, empty state.
      * All files previously uploaded are permanently lost.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
@@ -260,7 +260,7 @@ class YFiles extends YFunction
         $res = Array();         // YFileRecordArr;
         $json = $this->sendCommand(sprintf('dir&f=%s',$pattern));
         $filelist = $this->_json_get_array($json);
-        while(sizeof($res) > 0) array_pop($res);
+        while(sizeof($res) > 0) { array_pop($res); };
         foreach($filelist as $each) { $res[] = new YFileRecord($each);}
         return $res;
     }

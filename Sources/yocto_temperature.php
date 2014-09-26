@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_temperature.php 16543 2014-06-13 12:15:09Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *

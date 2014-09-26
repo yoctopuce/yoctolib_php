@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_lightsensor.php 17655 2014-09-16 12:24:27Z mvuilleu $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -41,6 +41,12 @@
 //--- (YLightSensor return codes)
 //--- (end of YLightSensor return codes)
 //--- (YLightSensor definitions)
+if(!defined('Y_MEASURETYPE_HUMAN_EYE'))      define('Y_MEASURETYPE_HUMAN_EYE',     0);
+if(!defined('Y_MEASURETYPE_WIDE_SPECTRUM'))  define('Y_MEASURETYPE_WIDE_SPECTRUM', 1);
+if(!defined('Y_MEASURETYPE_INFRARED'))       define('Y_MEASURETYPE_INFRARED',      2);
+if(!defined('Y_MEASURETYPE_HIGH_RATE'))      define('Y_MEASURETYPE_HIGH_RATE',     3);
+if(!defined('Y_MEASURETYPE_HIGH_ENERGY'))    define('Y_MEASURETYPE_HIGH_ENERGY',   4);
+if(!defined('Y_MEASURETYPE_INVALID'))        define('Y_MEASURETYPE_INVALID',       -1);
 //--- (end of YLightSensor definitions)
 
 //--- (YLightSensor declaration)
@@ -52,9 +58,16 @@
  */
 class YLightSensor extends YSensor
 {
+    const MEASURETYPE_HUMAN_EYE          = 0;
+    const MEASURETYPE_WIDE_SPECTRUM      = 1;
+    const MEASURETYPE_INFRARED           = 2;
+    const MEASURETYPE_HIGH_RATE          = 3;
+    const MEASURETYPE_HIGH_ENERGY        = 4;
+    const MEASURETYPE_INVALID            = -1;
     //--- (end of YLightSensor declaration)
 
     //--- (YLightSensor attributes)
+    protected $_measureType              = Y_MEASURETYPE_INVALID;        // LightSensorType
     //--- (end of YLightSensor attributes)
 
     function __construct($str_func)
@@ -68,9 +81,19 @@ class YLightSensor extends YSensor
 
     //--- (YLightSensor implementation)
 
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'measureType':
+            $this->_measureType = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
+    }
+
     public function set_currentValue($newval)
     {
-        $rest_val = strval(round($newval*65536.0));
+        $rest_val = strval(round($newval * 65536.0));
         return $this->_setAttr("currentValue",$rest_val);
     }
 
@@ -89,8 +112,46 @@ class YLightSensor extends YSensor
      */
     public function calibrate($calibratedVal)
     {
-        $rest_val = strval(round($calibratedVal*65536.0));
+        $rest_val = strval(round($calibratedVal * 65536.0));
         return $this->_setAttr("currentValue",$rest_val);
+    }
+
+    /**
+     * Returns the type of light measure.
+     * 
+     * @return a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM, Y_MEASURETYPE_INFRARED,
+     * Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the type of light measure
+     * 
+     * On failure, throws an exception or returns Y_MEASURETYPE_INVALID.
+     */
+    public function get_measureType()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_MEASURETYPE_INVALID;
+            }
+        }
+        return $this->_measureType;
+    }
+
+    /**
+     * Modify the light sensor type used in the device. The measure can either
+     * approximate the response of the human eye, focus on a specific light
+     * spectrum, depending on the capabilities of the light-sensitive cell.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     * 
+     * @param newval : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
+     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_measureType($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("measureType",$rest_val);
     }
 
     /**
@@ -129,6 +190,12 @@ class YLightSensor extends YSensor
 
     public function setCurrentValue($newval)
     { return $this->set_currentValue($newval); }
+
+    public function measureType()
+    { return $this->get_measureType(); }
+
+    public function setMeasureType($newval)
+    { return $this->set_measureType($newval); }
 
     /**
      * Continues the enumeration of light sensors started using yFirstLightSensor().
