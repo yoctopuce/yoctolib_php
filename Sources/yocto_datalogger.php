@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 17676 2014-09-16 16:20:17Z seb $
+ * $Id: yocto_datalogger.php 18014 2014-10-13 09:25:58Z seb $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -686,7 +686,9 @@ class YDataLogger extends YFunction
         // may throw an exception
         $dslist = $this->_json_get_array($json);
         while(sizeof($res) > 0) { array_pop($res); };
-        foreach($dslist as $each) { $res[] = new YDataSet($this, $each);}
+        foreach($dslist as $each) {
+            $res[] = new YDataSet($this, $each);
+        }
         return $res;
     }
 

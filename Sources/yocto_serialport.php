@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 17610 2014-09-13 11:30:24Z mvuilleu $
+ * $Id: yocto_serialport.php 18262 2014-11-05 14:22:14Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -46,8 +46,10 @@ if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',       
 if(!defined('Y_RXCOUNT_INVALID'))            define('Y_RXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_TXCOUNT_INVALID'))            define('Y_TXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_ERRCOUNT_INVALID'))           define('Y_ERRCOUNT_INVALID',          YAPI_INVALID_UINT);
-if(!defined('Y_MSGCOUNT_INVALID'))           define('Y_MSGCOUNT_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_RXMSGCOUNT_INVALID'))         define('Y_RXMSGCOUNT_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_TXMSGCOUNT_INVALID'))         define('Y_TXMSGCOUNT_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_LASTMSG_INVALID'))            define('Y_LASTMSG_INVALID',           YAPI_INVALID_STRING);
+if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YSerialPort definitions)
 
@@ -68,8 +70,10 @@ class YSerialPort extends YFunction
     const RXCOUNT_INVALID                = YAPI_INVALID_UINT;
     const TXCOUNT_INVALID                = YAPI_INVALID_UINT;
     const ERRCOUNT_INVALID               = YAPI_INVALID_UINT;
-    const MSGCOUNT_INVALID               = YAPI_INVALID_UINT;
+    const RXMSGCOUNT_INVALID             = YAPI_INVALID_UINT;
+    const TXMSGCOUNT_INVALID             = YAPI_INVALID_UINT;
     const LASTMSG_INVALID                = YAPI_INVALID_STRING;
+    const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YSerialPort declaration)
 
@@ -79,8 +83,10 @@ class YSerialPort extends YFunction
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
-    protected $_msgCount                 = Y_MSGCOUNT_INVALID;           // UInt31
+    protected $_rxMsgCount               = Y_RXMSGCOUNT_INVALID;         // UInt31
+    protected $_txMsgCount               = Y_TXMSGCOUNT_INVALID;         // UInt31
     protected $_lastMsg                  = Y_LASTMSG_INVALID;            // Text
+    protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_rxptr                    = 0;                            // int
     //--- (end of YSerialPort attributes)
@@ -114,11 +120,17 @@ class YSerialPort extends YFunction
         case 'errCount':
             $this->_errCount = intval($val);
             return 1;
-        case 'msgCount':
-            $this->_msgCount = intval($val);
+        case 'rxMsgCount':
+            $this->_rxMsgCount = intval($val);
+            return 1;
+        case 'txMsgCount':
+            $this->_txMsgCount = intval($val);
             return 1;
         case 'lastMsg':
             $this->_lastMsg = $val;
+            return 1;
+        case 'startupJob':
+            $this->_startupJob = $val;
             return 1;
         case 'command':
             $this->_command = $val;
@@ -271,16 +283,33 @@ class YSerialPort extends YFunction
      * 
      * @return an integer corresponding to the total number of messages received since last reset
      * 
-     * On failure, throws an exception or returns Y_MSGCOUNT_INVALID.
+     * On failure, throws an exception or returns Y_RXMSGCOUNT_INVALID.
      */
-    public function get_msgCount()
+    public function get_rxMsgCount()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_MSGCOUNT_INVALID;
+                return Y_RXMSGCOUNT_INVALID;
             }
         }
-        return $this->_msgCount;
+        return $this->_rxMsgCount;
+    }
+
+    /**
+     * Returns the total number of messages send since last reset.
+     * 
+     * @return an integer corresponding to the total number of messages send since last reset
+     * 
+     * On failure, throws an exception or returns Y_TXMSGCOUNT_INVALID.
+     */
+    public function get_txMsgCount()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_TXMSGCOUNT_INVALID;
+            }
+        }
+        return $this->_txMsgCount;
     }
 
     /**
@@ -298,6 +327,40 @@ class YSerialPort extends YFunction
             }
         }
         return $this->_lastMsg;
+    }
+
+    /**
+     * Returns the job file to use when the device is powered on.
+     * 
+     * @return a string corresponding to the job file to use when the device is powered on
+     * 
+     * On failure, throws an exception or returns Y_STARTUPJOB_INVALID.
+     */
+    public function get_startupJob()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_STARTUPJOB_INVALID;
+            }
+        }
+        return $this->_startupJob;
+    }
+
+    /**
+     * Changes the job to use when the device is powered on.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     * 
+     * @param newval : a string corresponding to the job to use when the device is powered on
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_startupJob($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("startupJob",$rest_val);
     }
 
     public function get_command()
@@ -396,7 +459,6 @@ class YSerialPort extends YFunction
     {
         // $buff                   is a bin;
         // $res                    is a int;
-        
         // may throw an exception
         $buff = $this->_download('cts.txt');
         if (!(strlen($buff) == 1)) return $this->_throw( YAPI_IO_ERROR, 'invalid CTS reply',YAPI_IO_ERROR);
@@ -419,7 +481,6 @@ class YSerialPort extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        
         $buff = $text;
         $bufflen = strlen($buff);
         if ($bufflen < 100) {
@@ -532,7 +593,6 @@ class YSerialPort extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        
         $buff = sprintf('%s\r\n', $text);
         $bufflen = strlen($buff)-2;
         if ($bufflen < 100) {
@@ -616,7 +676,7 @@ class YSerialPort extends YFunction
         if ($nChars > $bufflen) {
             $nChars = $bufflen;
         }
-        $this->_rxptr = $this->_rxptr + $nChars;
+        $this->_rxptr = $endpos - ($bufflen - $nChars);
         $res = substr($buff,  0, $nChars);
         return $res;
     }
@@ -668,7 +728,7 @@ class YSerialPort extends YFunction
         if ($nBytes > $bufflen) {
             $nBytes = $bufflen;
         }
-        $this->_rxptr = $this->_rxptr + $nBytes;
+        $this->_rxptr = $endpos - ($bufflen - $nBytes);
         $res = '';
         $ofs = 0;
         while ($ofs+3 < $nBytes) {
@@ -684,8 +744,8 @@ class YSerialPort extends YFunction
 
     /**
      * Reads a single line (or message) from the receive buffer, starting at current stream position.
-     * This function can only be used when the serial port is configured for a message protocol,
-     * such as 'Line' mode or MODBUS protocols. It does not  work in plain stream modes, eg. 'Char' or 'Byte').
+     * This function is intended to be used when the serial port is configured for a message protocol,
+     * such as 'Line' mode or MODBUS protocols.
      * 
      * If data at current stream position is not available anymore in the receive buffer,
      * the function returns the oldest available line and moves the stream position just after.
@@ -722,9 +782,8 @@ class YSerialPort extends YFunction
 
     /**
      * Searches for incoming messages in the serial port receive buffer matching a given pattern,
-     * starting at current position. This function can only be used when the serial port is
-     * configured for a message protocol, such as 'Line' mode or MODBUS protocols.
-     * It does not work in plain stream modes, eg. 'Char' or 'Byte', for which there is no "start" of message.
+     * starting at current position. This function will only compare and return printable characters
+     * in the message strings. Binary protocols are handled as hexadecimal strings.
      * 
      * The search returns all messages matching the expression provided as argument in the buffer.
      * If no matching message is found, the search waits for one up to the specified maximum timeout
@@ -774,19 +833,29 @@ class YSerialPort extends YFunction
      * does not affect the device, it only changes the value stored in the YSerialPort object
      * for the next read operations.
      * 
-     * @param rxCountVal : the absolute position index (value of rxCount) for next read operations.
+     * @param absPos : the absolute position index for next read operations.
      * 
      * @return nothing.
      */
-    public function read_seek($rxCountVal)
+    public function read_seek($absPos)
     {
-        $this->_rxptr = $rxCountVal;
+        $this->_rxptr = $absPos;
         return YAPI_SUCCESS;
     }
 
     /**
+     * Returns the current absolute stream position pointer of the YSerialPort object.
+     * 
+     * @return the absolute position index for next read operations.
+     */
+    public function read_tell()
+    {
+        return $this->_rxptr;
+    }
+
+    /**
      * Sends a text line query to the serial port, and reads the reply, if any.
-     * This function can only be used when the serial port is configured for 'Line' protocol.
+     * This function is intended to be used when the serial port is configured for 'Line' protocol.
      * 
      * @param query : the line query to send (without CR/LF)
      * @param maxWait : the maximum number of milliseconds to wait for a reply.
@@ -1339,6 +1408,39 @@ class YSerialPort extends YFunction
         return $res;
     }
 
+    /**
+     * Saves the job definition string (JSON data) into a job file.
+     * The job file can be later enabled using selectJob().
+     * 
+     * @param jobfile : name of the job file to save on the device filesystem
+     * @param jsonDef : a string containing a JSON definition of the job
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function uploadJob($jobfile,$jsonDef)
+    {
+        $this->_upload($jobfile, $jsonDef);
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Load and start processing the specified job file. The file must have
+     * been previously created using the user interface or uploaded on the
+     * device filesystem using the uploadJob() function.
+     * 
+     * @param jobfile : name of the job file (on the device filesystem)
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function selectJob($jobfile)
+    {
+        return $this->sendCommand(sprintf('J%s',$jobfile));
+    }
+
     public function serialMode()
     { return $this->get_serialMode(); }
 
@@ -1360,11 +1462,20 @@ class YSerialPort extends YFunction
     public function errCount()
     { return $this->get_errCount(); }
 
-    public function msgCount()
-    { return $this->get_msgCount(); }
+    public function rxMsgCount()
+    { return $this->get_rxMsgCount(); }
+
+    public function txMsgCount()
+    { return $this->get_txMsgCount(); }
 
     public function lastMsg()
     { return $this->get_lastMsg(); }
+
+    public function startupJob()
+    { return $this->get_startupJob(); }
+
+    public function setStartupJob($newval)
+    { return $this->set_startupJob($newval); }
 
     public function command()
     { return $this->get_command(); }

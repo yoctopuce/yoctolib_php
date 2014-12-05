@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 17594 2014-09-10 21:15:55Z mvuilleu $
+ * $Id: yocto_wireless.php 18013 2014-10-13 09:24:51Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -401,7 +401,9 @@ class YWireless extends YFunction
         $json = $this->_download('wlan.json?by=name');
         $wlanlist = $this->_json_get_array($json);
         while(sizeof($res) > 0) { array_pop($res); };
-        foreach($wlanlist as $each) { $res[] = new YWlanRecord($each);}
+        foreach($wlanlist as $each) {
+            $res[] = new YWlanRecord($each);
+        }
         return $res;
     }
 

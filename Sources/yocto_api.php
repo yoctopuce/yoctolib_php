@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 17816 2014-09-24 14:47:30Z seb $
+ * $Id: yocto_api.php 18617 2014-12-02 17:06:23Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -479,7 +479,7 @@ class YTcpReq
         }
         if(!is_null($this->skt) && !is_resource($this->skt)) {
             // connection died, need to reopen
-            $this->skt = null;                
+            $this->skt = null;
         }
         if(is_null($this->skt)) {
             // need to reopen connection
@@ -596,7 +596,7 @@ class YTcpReq
             }
             if(!is_resource($this->skt)) {
                 // socket dropped dead
-                $this->skt = null;                
+                $this->skt = null;
             } else if(feof($this->skt)) {
                 fclose($this->skt);
                 $this->skt = null;
@@ -2365,7 +2365,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.17849";
+        return "1.10.18640";
     }
 
     /**
@@ -2950,7 +2950,9 @@ class YFirmwareUpdate
     protected $_settings                 = "";                           // bin
     protected $_firmwarepath             = "";                           // str
     protected $_progress_msg             = "";                           // str
+    protected $_progress_c               = 0;                            // int
     protected $_progress                 = 0;                            // int
+    protected $_restore_step             = 0;                            // int
     //--- (end of generated code: YFirmwareUpdate attributes)
 
     public function __construct($serial, $path, $settings)
@@ -2969,22 +2971,76 @@ class YFirmwareUpdate
         $this->_progress_msg = "Not supported in PHP";
     }
 
+
+    /**
+     * Test if the byn file is valid for this module. It's possible to pass an directory instead of a file.
+     * In this case this method return the path of the most recent appropriate byn file. This method will
+     * ignore firmware that are older than mintrelase.
+     * 
+     * @param serial  : the serial number of the module to update
+     * @param path    : the path of a byn file or a directory that contain byn files
+     * @param minrelease : an positif integer
+     * 
+     * @return : the path of the byn file to use or a empty string if no byn files match the requirement
+     * 
+     * On failure, returns a string that start with "error:".
+     */
+    public static function CheckFirmware($serial,$path,$minrelease)
+    {
+        if ($path == "http://www.yoctopuce.com" || $path == "www.yoctopuce.com") {
+            $yoctopuce_infos = file_get_contents('http://www.yoctopuce.com/FR/common/getLastFirmwareLink.php?serial=' . $serial);
+            if ($yoctopuce_infos === false) {
+                return 'error: Unable to get last firmware info from www.yoctopuce.com';
+            }
+            $jsonData = json_decode($yoctopuce_infos,true);
+            if (!array_key_exists('link',$jsonData) || !array_key_exists('version',$jsonData)) {
+                return 'error: Invalid JSON response from www.yoctopuce.com';
+            }
+            $link = $jsonData['link'];
+            $version = $jsonData['version'];
+            if($minrelease != "") {
+                if($version >$minrelease) {
+                    return $link;
+                }
+            } else {
+                return $link;
+            }
+            return '';
+        }else {
+            return 'error: Not yet supported in PHP';
+        }
+    }
+
+    public static function GetAllBootLoaders()
+    {
+        return array();
+    }
+
+
     //--- (generated code: YFirmwareUpdate implementation)
 
     //cannot be generated for PHP:
     //public function _processMore($newupdate)
 
+    //cannot be generated for PHP:
+    //public static function GetAllBootLoaders()
+
+    //cannot be generated for PHP:
+    //public static function CheckFirmware($serial,$path,$minrelease)
+
+    /**
+     * Returns the progress of the firmware update, on a scale from 0 to 100. When the object is
+     * instantiated the progress is zero. The value is updated During the firmware update process, until
+     * the value of 100 is reached. The value of 100 mean that the firmware update is terminated with
+     * success. If an error occur during the firmware update a negative value is returned, and the
+     * error message can be retrieved with get_progressMessage.
+     * 
+     * @return an integer in the range 0 to 100 (percentage of completion) or
+     *         or a negative error code in case of failure.
+     */
     public function get_progress()
     {
-        // $m                      is a YModule;
         $this->_processMore(0);
-        if (($this->_progress == 100) && (strlen($this->_settings) != 0)) {
-            $m = YModule::FindModule($this->_serial);
-            if ($m->isOnline()) {
-                $m->set_allSettings($this->_settings);
-                $this->_settings = str_repeat(' ',0);
-            }
-        }
         return $this->_progress;
     }
 
@@ -3011,6 +3067,8 @@ class YFirmwareUpdate
      */
     public function startUpdate()
     {
+        $this->_progress = 0;
+        $this->_progress_c = 0;
         $this->_processMore(1);
         return $this->_progress;
     }
@@ -3671,10 +3729,12 @@ class YDataSet
             $maxCol = 0;
         }
         
-        foreach($dataRows as $each) { if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
-            $this->_measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+        foreach($dataRows as $each) {
+            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
+                $this->_measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            }
+            $tim = $tim + $itv;
         }
-        $tim = $tim + $itv;}
         
         return $this->get_progress();
     }
@@ -4392,6 +4452,15 @@ class YFunction
         return $this->_cache[$str_attr];
     }
 
+    protected function _escapeAttr($str_newval)
+    {
+        // urlencode according to RFC 3986 instead of php default RFC 1738
+        $safecodes = array('%21','%23','%24','%27','%28','%29','%2A','%2C','%2F','%3A','%3B','%40','%3F','%5B','%5D');
+        $safechars = array('!',  "#",  "$",  "'",  "(",  ")",  '*',  ",",  "/",  ":",  ";",  "@",  "?",  "[",  "]");
+        return str_replace($safecodes, $safechars, urlencode($str_newval));
+    }
+
+
     // Change the value of an attribute on a device, and update cache on the fly
     // Note: the function cache is a typed (parsed) cache, contrarily to the agnostic device cache
     protected function _setAttr($str_attr, $str_newval)
@@ -4403,7 +4472,7 @@ class YFunction
         $safecodes = array('%21','%23','%24','%27','%28','%29','%2A','%2C','%2F','%3A','%3B','%40','%3F','%5B','%5D');
         $safechars = array('!',  "#",  "$",  "'",  "(",  ")",  '*',  ",",  "/",  ":",  ";",  "@",  "?",  "[",  "]");
         $attrname = str_replace($safecodes, $safechars, urlencode($str_attr));
-        $extra = "/$attrname?$attrname=".str_replace($safecodes, $safechars, urlencode($str_newval)."&.");
+        $extra = "/$attrname?$attrname=" . $this->_escapeAttr($str_newval) . "&.";
         $yreq = YAPI::funcRequest($this->_className, $this->_func, $extra);
         if($this->_cache['_expiration'] != 0){
             $this->_cache['_expiration'] = YAPI::GetTickCount();
@@ -5221,6 +5290,36 @@ class YSensor extends YFunction
     }
 
     /**
+     * Starts the data logger on the device. Note that the data logger
+     * will only save the measures on this sensor if the logFrequency
+     * is not set to "OFF".
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     */
+    public function startDataLogger()
+    {
+        // $res                    is a bin;
+        // may throw an exception
+        $res = $this->_download('api/dataLogger/recording?recording=1');
+        if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to start datalogger',YAPI_IO_ERROR);
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Stops the datalogger on the device.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     */
+    public function stopDataLogger()
+    {
+        // $res                    is a bin;
+        // may throw an exception
+        $res = $this->_download('api/dataLogger/recording?recording=0');
+        if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to stop datalogger',YAPI_IO_ERROR);
+        return YAPI_SUCCESS;
+    }
+
+    /**
      * Retrieves a DataSet object holding historical data for this
      * sensor, for a specified time interval. The measures will be
      * retrieved from the data logger, which must have been turned
@@ -5345,8 +5444,12 @@ class YSensor extends YFunction
         }
         while(sizeof($rawValues) > 0) { array_pop($rawValues); };
         while(sizeof($refValues) > 0) { array_pop($refValues); };
-        foreach($this->_calraw as $each) { $rawValues[] = $each;}
-        foreach($this->_calref as $each) { $refValues[] = $each;}
+        foreach($this->_calraw as $each) {
+            $rawValues[] = $each;
+        }
+        foreach($this->_calref as $each) {
+            $refValues[] = $each;
+        }
         return YAPI_SUCCESS;
     }
 
@@ -5490,7 +5593,7 @@ class YSensor extends YFunction
                 $difRaw = 0;
                 while (($sublen > 0) && ($i < sizeof($report))) {
                     $byteVal = $report[$i];
-                    $difRaw = $avgRaw + $poww * $byteVal;
+                    $difRaw = $difRaw + $poww * $byteVal;
                     $poww = $poww * 0x100;
                     $i = $i + 1;
                     $sublen = $sublen - 1;
@@ -5501,7 +5604,7 @@ class YSensor extends YFunction
                 $difRaw = 0;
                 while (($sublen > 0) && ($i < sizeof($report))) {
                     $byteVal = $report[$i];
-                    $difRaw = $avgRaw + $poww * $byteVal;
+                    $difRaw = $difRaw + $poww * $byteVal;
                     $poww = $poww * 0x100;
                     $i = $i + 1;
                     $sublen = $sublen - 1;
@@ -5800,6 +5903,29 @@ class YModule extends YFunction
     {
         $dev = $this->_getDev();
         return $dev->functionValue($functionIndex);
+    }
+
+    protected function _flattenJsonStruct($jsoncomplex)
+    {
+        $decoded = json_decode($jsoncomplex);
+        if ($decoded == null) {
+            $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid json structure');
+            return "";
+        }
+        $attrs = array();
+        foreach ($decoded as $function_name => $fuction_attrs) {
+            if ($function_name == "services")
+                continue;
+            foreach ($fuction_attrs as $attr_name => $attr_value) {
+                if(is_object($attr_value)) {
+                    // skip complext attributes (move and pulse)
+                    continue;
+                }
+                $flat = $function_name . '/' . $attr_name . '=' . $attr_value;
+                $attrs[] = $flat;
+            }
+        }
+        return json_encode($attrs);
     }
 
     //--- (generated code: YModule implementation)
@@ -6219,8 +6345,34 @@ class YModule extends YFunction
         return $this->set_rebootCountdown(-$secBeforeReboot);
     }
 
-    //cannot be generated for PHP:
-    //public function checkFirmware($path,$onlynew)
+    /**
+     * Test if the byn file is valid for this module. This method is useful to test if the module need to be updated.
+     * It's possible to pass an directory instead of a file. In this case this method return the path of
+     * the most recent
+     * appropriate byn file. If the parameter onlynew is true the function will discard firmware that are
+     * older or equal to
+     * the installed firmware.
+     * 
+     * @param path    : the path of a byn file or a directory that contain byn files
+     * @param onlynew : return only files that are strictly newer
+     * 
+     * @return : the path of the byn file to use or a empty string if no byn files match the requirement
+     * 
+     * On failure, throws an exception or returns a string that start with "error:".
+     */
+    public function checkFirmware($path,$onlynew)
+    {
+        // $serial                 is a str;
+        // $release                is a int;
+        if ($onlynew) {
+            $release = intVal($this->get_firmwareRelease());
+        } else {
+            $release = 0;
+        }
+        //may throw an exception
+        $serial = $this->get_serialNumber();
+        return YFirmwareUpdate::CheckFirmware($serial,$path, $release);
+    }
 
     /**
      * Prepare a firmware upgrade of the module. This method return a object YFirmwareUpdate which
@@ -6376,7 +6528,9 @@ class YModule extends YFunction
             } else {
                 if ($paramVer == 1) {
                     $words_str = explode(',', $param);
-                    foreach($words_str as $each) { $words[] = intVal($each);}
+                    foreach($words_str as $each) {
+                        $words[] = intVal($each);
+                    }
                     if ($param == '' || ($words[0] > 10)) {
                         $paramScale = 0;
                     }
@@ -6481,12 +6635,12 @@ class YModule extends YFunction
         $old_dslist = Array();  // strArr;
         $old_jpath = Array();   // strArr;
         $old_jpath_len = Array(); // intArr;
-        $old_val = Array();     // strArr;
+        $old_val_arr = Array(); // strArr;
         // $actualSettings         is a bin;
         $new_dslist = Array();  // strArr;
         $new_jpath = Array();   // strArr;
         $new_jpath_len = Array(); // intArr;
-        $new_val = Array();     // strArr;
+        $new_val_arr = Array(); // strArr;
         // $cpos                   is a int;
         // $eqpos                  is a int;
         // $leng                   is a int;
@@ -6503,43 +6657,48 @@ class YModule extends YFunction
         // $sensorType             is a str;
         // $unit_name              is a str;
         // $newval                 is a str;
+        // $oldval                 is a str;
         // $old_calib              is a str;
         // $do_update              is a bool;
         // $found                  is a bool;
+        $oldval = '';
+        $newval = '';
         $old_json_flat = $this->_flattenJsonStruct($settings);
         $old_dslist = $this->_json_get_array($old_json_flat);
-        foreach($old_dslist as $each) { $leng = strlen($each);
-        $each = substr($each,  1, $leng - 2);
-        $leng = strlen($each);
-        $eqpos = Ystrpos($each,'=');
-        if (($eqpos < 0) || ($leng == 0)) {
-            $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid settings');
-            return YAPI_INVALID_ARGUMENT;
+        foreach($old_dslist as $each) {
+            $each = $this->_json_get_string($each);
+            $leng = strlen($each);
+            $eqpos = Ystrpos($each,'=');
+            if (($eqpos < 0) || ($leng == 0)) {
+                $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid settings');
+                return YAPI_INVALID_ARGUMENT;
+            }
+            $jpath = substr($each,  0, $eqpos);
+            $eqpos = $eqpos + 1;
+            $value = substr($each,  $eqpos, $leng - $eqpos);
+            $old_jpath[] = $jpath;
+            $old_jpath_len[] = strlen($jpath);
+            $old_val_arr[] = $value;
         }
-        $jpath = substr($each,  0, $eqpos);
-        $eqpos = $eqpos + 1;
-        $value = substr($each,  $eqpos, $leng - $eqpos);
-        $old_jpath[] = $jpath;
-        $old_jpath_len[] = strlen($jpath);
-        $old_val[] = $value;;}
         // may throw an exception
         $actualSettings = $this->_download('api.json');
         $actualSettings = $this->_flattenJsonStruct($actualSettings);
         $new_dslist = $this->_json_get_array($actualSettings);
-        foreach($new_dslist as $each) { $leng = strlen($each);
-        $each = substr($each,  1, $leng - 2);
-        $leng = strlen($each);
-        $eqpos = Ystrpos($each,'=');
-        if (($eqpos < 0) || ($leng == 0)) {
-            $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid settings');
-            return YAPI_INVALID_ARGUMENT;
+        foreach($new_dslist as $each) {
+            $each = $this->_json_get_string($each);
+            $leng = strlen($each);
+            $eqpos = Ystrpos($each,'=');
+            if (($eqpos < 0) || ($leng == 0)) {
+                $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid settings');
+                return YAPI_INVALID_ARGUMENT;
+            }
+            $jpath = substr($each,  0, $eqpos);
+            $eqpos = $eqpos + 1;
+            $value = substr($each,  $eqpos, $leng - $eqpos);
+            $new_jpath[] = $jpath;
+            $new_jpath_len[] = strlen($jpath);
+            $new_val_arr[] = $value;
         }
-        $jpath = substr($each,  0, $eqpos);
-        $eqpos = $eqpos + 1;
-        $value = substr($each,  $eqpos, $leng - $eqpos);
-        $new_jpath[] = $jpath;
-        $new_jpath_len[] = strlen($jpath);
-        $new_val[] = $value;;}
         $i = 0;
         while ($i < sizeof($new_jpath)) {
             $njpath = $new_jpath[$i];
@@ -6664,17 +6823,33 @@ class YModule extends YFunction
                 $do_update = false;
             }
             if ($do_update) {
+                $do_update = false;
+                $newval = $new_val_arr[$i];
+                $j = 0;
+                $found = false;
+                while (($j < sizeof($old_jpath)) && !($found)) {
+                    if (($new_jpath_len[$i] == $old_jpath_len[$j]) && ($new_jpath[$i] == $old_jpath[$j])) {
+                        $found = true;
+                        $oldval = $old_val_arr[$j];
+                        if (!($newval == $oldval)) {
+                            $do_update = true;
+                        }
+                    }
+                    $j = $j + 1;
+                }
+            }
+            if ($do_update) {
                 if ($attr == 'calibrationParam') {
                     $old_calib = '';
                     $unit_name = '';
                     $sensorType = '';
-                    $new_calib = $new_val[$i];
+                    $new_calib = $newval;
                     $j = 0;
                     $found = false;
                     while (($j < sizeof($old_jpath)) && !($found)) {
                         if (($new_jpath_len[$i] == $old_jpath_len[$j]) && ($new_jpath[$i] == $old_jpath[$j])) {
                             $found = true;
-                            $old_calib = $old_val[$j];
+                            $old_calib = $old_val_arr[$j];
                         }
                         $j = $j + 1;
                     }
@@ -6698,29 +6873,23 @@ class YModule extends YFunction
                         }
                         $j = $j + 1;
                     }
-                    $newval = $this->calibConvert($new_val[$i], $old_calib, $unit_name, $sensorType);
-                    $url = 'api/' . $fun . '.json?' . $attr . '=' . $newval;
+                    $newval = $this->calibConvert($new_val_arr[$i], $old_calib, $unit_name, $sensorType);
+                    $url = 'api/' . $fun . '.json?' . $attr . '=' . $this->_escapeAttr($newval);
                     $this->_download($url);
                 } else {
-                    $j = 0;
-                    $found = false;
-                    while (($j < sizeof($old_jpath_len)) && !($found)) {
-                        if (($new_jpath_len[$i] == $old_jpath_len[$j]) && ($new_jpath[$i] == $old_jpath[$j])) {
-                            $found = true;
-                            $url = 'api/' . $fun . '.json?' . $attr . '=' . $old_val[$j];
-                            if ($attr == 'resolution') {
-                                $restoreLast[] = $url;
-                            } else {
-                                $this->_download($url);
-                            }
-                        }
-                        $j = $j + 1;
+                    $url = 'api/' . $fun . '.json?' . $attr . '=' . $this->_escapeAttr($oldval);
+                    if ($attr == 'resolution') {
+                        $restoreLast[] = $url;
+                    } else {
+                        $this->_download($url);
                     }
                 }
             }
             $i = $i + 1;
         }
-        foreach($restoreLast as $each) { $this->_download($each);;}
+        foreach($restoreLast as $each) {
+            $this->_download($each);
+        }
         return YAPI_SUCCESS;
     }
 

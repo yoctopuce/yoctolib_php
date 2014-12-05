@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 17676 2014-09-16 16:20:17Z seb $
+ * $Id: yocto_anbutton.php 18361 2014-11-13 08:06:41Z mvuilleu $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -466,7 +466,7 @@ class YAnButton extends YFunction
     }
 
     /**
-     * Returns the pulse counter value as well as his timer
+     * Returns the pulse counter value as well as its timer.
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 

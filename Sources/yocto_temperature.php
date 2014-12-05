@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 16543 2014-06-13 12:15:09Z mvuilleu $
+ * $Id: yocto_temperature.php 18298 2014-11-07 12:49:15Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -52,7 +52,11 @@ if(!defined('Y_SENSORTYPE_TYPE_T'))          define('Y_SENSORTYPE_TYPE_T',      
 if(!defined('Y_SENSORTYPE_PT100_4WIRES'))    define('Y_SENSORTYPE_PT100_4WIRES',   8);
 if(!defined('Y_SENSORTYPE_PT100_3WIRES'))    define('Y_SENSORTYPE_PT100_3WIRES',   9);
 if(!defined('Y_SENSORTYPE_PT100_2WIRES'))    define('Y_SENSORTYPE_PT100_2WIRES',   10);
+if(!defined('Y_SENSORTYPE_RES_OHM'))         define('Y_SENSORTYPE_RES_OHM',        11);
+if(!defined('Y_SENSORTYPE_RES_NTC'))         define('Y_SENSORTYPE_RES_NTC',        12);
+if(!defined('Y_SENSORTYPE_RES_LINEAR'))      define('Y_SENSORTYPE_RES_LINEAR',     13);
 if(!defined('Y_SENSORTYPE_INVALID'))         define('Y_SENSORTYPE_INVALID',        -1);
+if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YTemperature definitions)
 
 //--- (YTemperature declaration)
@@ -75,11 +79,16 @@ class YTemperature extends YSensor
     const SENSORTYPE_PT100_4WIRES        = 8;
     const SENSORTYPE_PT100_3WIRES        = 9;
     const SENSORTYPE_PT100_2WIRES        = 10;
+    const SENSORTYPE_RES_OHM             = 11;
+    const SENSORTYPE_RES_NTC             = 12;
+    const SENSORTYPE_RES_LINEAR          = 13;
     const SENSORTYPE_INVALID             = -1;
+    const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YTemperature declaration)
 
     //--- (YTemperature attributes)
     protected $_sensorType               = Y_SENSORTYPE_INVALID;         // TempSensorType
+    protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YTemperature attributes)
 
     function __construct($str_func)
@@ -99,6 +108,9 @@ class YTemperature extends YSensor
         case 'sensorType':
             $this->_sensorType = intval($val);
             return 1;
+        case 'command':
+            $this->_command = $val;
+            return 1;
         }
         return parent::_parseAttr($name, $val);
     }
@@ -108,8 +120,9 @@ class YTemperature extends YSensor
      * 
      * @return a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
-     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES and
-     * Y_SENSORTYPE_PT100_2WIRES corresponding to the temperature sensor type
+     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
+     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC and Y_SENSORTYPE_RES_LINEAR
+     * corresponding to the temperature sensor type
      * 
      * On failure, throws an exception or returns Y_SENSORTYPE_INVALID.
      */
@@ -132,7 +145,8 @@ class YTemperature extends YSensor
      * 
      * @param newval : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
-     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES and Y_SENSORTYPE_PT100_2WIRES
+     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
+     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC and Y_SENSORTYPE_RES_LINEAR
      * 
      * @return YAPI_SUCCESS if the call succeeds.
      * 
@@ -142,6 +156,22 @@ class YTemperature extends YSensor
     {
         $rest_val = strval($newval);
         return $this->_setAttr("sensorType",$rest_val);
+    }
+
+    public function get_command()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_COMMAND_INVALID;
+            }
+        }
+        return $this->_command;
+    }
+
+    public function set_command($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("command",$rest_val);
     }
 
     /**
@@ -178,11 +208,153 @@ class YTemperature extends YSensor
         return $obj;
     }
 
+    /**
+     * Record a thermistor response table, for interpolating the temperature from
+     * the measured resistance. This function can only be used with temperature
+     * sensor based on thermistors.
+     * 
+     * @param tempValues : array of floating point numbers, corresponding to all
+     *         temperatures (in degrees Celcius) for which the resistance of the
+     *         thermistor is specified.
+     * @param resValues : array of floating point numbers, corresponding to the resistance
+     *         values (in Ohms) for each of the temperature included in the first
+     *         argument, index by index.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_thermistorResponseTable($tempValues,$resValues)
+    {
+        // $siz                    is a int;
+        // $res                    is a int;
+        // $idx                    is a int;
+        // $found                  is a int;
+        // $prev                   is a float;
+        // $curr                   is a float;
+        // $currTemp               is a float;
+        // $idxres                 is a float;
+        $siz = sizeof($tempValues);
+        if (!($siz >= 2)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'thermistor response table must have at least two points',YAPI_INVALID_ARGUMENT);
+        if (!($siz == sizeof($resValues))) return $this->_throw( YAPI_INVALID_ARGUMENT, 'table sizes mismatch',YAPI_INVALID_ARGUMENT);
+        
+        // may throw an exception
+        $res = $this->set_command('Z');
+        if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to reset thermistor parameters',YAPI_IO_ERROR);
+        
+        // add records in growing resistance value
+        $found = 1;
+        $prev = 0.0;
+        while ($found > 0) {
+            $found = 0;
+            $curr = 99999999.0;
+            $currTemp = -999999.0;
+            $idx = 0;
+            while ($idx < $siz) {
+                $idxres = $resValues[$idx];
+                if (($idxres > $prev) && ($idxres < $curr)) {
+                    $curr = $idxres;
+                    $currTemp = $tempValues[$idx];
+                    $found = 1;
+                }
+                $idx = $idx + 1;
+            }
+            if ($found > 0) {
+                $res = $this->set_command(sprintf('m%d:%d', round(1000*$curr), round(1000*$currTemp)));
+                if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to reset thermistor parameters',YAPI_IO_ERROR);
+                $prev = $curr;
+            }
+        }
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Retrieves the thermistor response table previously configured using function
+     * set_thermistorResponseTable. This function can only be used with
+     * temperature sensor based on thermistors.
+     * 
+     * @param tempValues : array of floating point numbers, that will be filled by the function
+     *         with all temperatures (in degrees Celcius) for which the resistance
+     *         of the thermistor is specified.
+     * @param resValues : array of floating point numbers, that will be filled by the function
+     *         with the value (in Ohms) for each of the temperature included in the
+     *         first argument, index by index.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function loadThermistorResponseTable(&$tempValues,&$resValues)
+    {
+        // $id                     is a str;
+        // $bin_json               is a bin;
+        $paramlist = Array();   // strArr;
+        $templist = Array();    // floatArr;
+        // $siz                    is a int;
+        // $idx                    is a int;
+        // $temp                   is a float;
+        // $found                  is a int;
+        // $prev                   is a float;
+        // $curr                   is a float;
+        // $currRes                is a float;
+        
+        while(sizeof($tempValues) > 0) { array_pop($tempValues); };
+        while(sizeof($resValues) > 0) { array_pop($resValues); };
+        
+        // may throw an exception
+        $id = $this->get_functionId();
+        $id = substr($id,  11, strlen($id)-1);
+        $bin_json = $this->_download(sprintf('extra.json?page=%s', $id));
+        $paramlist = $this->_json_get_array($bin_json);
+        // first convert all temperatures to float
+        $siz = ((sizeof($paramlist)) >> (1));
+        while(sizeof($templist) > 0) { array_pop($templist); };
+        $idx = 0;
+        while ($idx < $siz) {
+            $temp = floatval($paramlist[2*$idx+1])/1000.0;
+            $templist[] = $temp;
+            $idx = $idx + 1;
+        }
+        // then add records in growing temperature value
+        while(sizeof($tempValues) > 0) { array_pop($tempValues); };
+        while(sizeof($resValues) > 0) { array_pop($resValues); };
+        $found = 1;
+        $prev = -999999.0;
+        while ($found > 0) {
+            $found = 0;
+            $curr = 999999.0;
+            $currRes = -999999.0;
+            $idx = 0;
+            while ($idx < $siz) {
+                $temp = $templist[$idx];
+                if (($temp > $prev) && ($temp < $curr)) {
+                    $curr = $temp;
+                    $currRes = floatval($paramlist[2*$idx])/1000.0;
+                    $found = 1;
+                }
+                $idx = $idx + 1;
+            }
+            if ($found > 0) {
+                $tempValues[] = $curr;
+                $resValues[] = $currRes;
+                $prev = $curr;
+            }
+        }
+        
+        return YAPI_SUCCESS;
+    }
+
     public function sensorType()
     { return $this->get_sensorType(); }
 
     public function setSensorType($newval)
     { return $this->set_sensorType($newval); }
+
+    public function command()
+    { return $this->get_command(); }
+
+    public function setCommand($newval)
+    { return $this->set_command($newval); }
 
     /**
      * Continues the enumeration of temperature sensors started using yFirstTemperature().

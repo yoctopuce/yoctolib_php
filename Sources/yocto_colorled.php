@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_colorled.php 18524 2014-11-25 17:09:56Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -46,13 +46,17 @@ if(!defined('Y_HSLCOLOR_INVALID'))           define('Y_HSLCOLOR_INVALID',       
 if(!defined('Y_RGBMOVE_INVALID'))            define('Y_RGBMOVE_INVALID',           null);
 if(!defined('Y_HSLMOVE_INVALID'))            define('Y_HSLMOVE_INVALID',           null);
 if(!defined('Y_RGBCOLORATPOWERON_INVALID'))  define('Y_RGBCOLORATPOWERON_INVALID', YAPI_INVALID_UINT);
+if(!defined('Y_BLINKSEQSIZE_INVALID'))       define('Y_BLINKSEQSIZE_INVALID',      YAPI_INVALID_UINT);
+if(!defined('Y_BLINKSEQMAXSIZE_INVALID'))    define('Y_BLINKSEQMAXSIZE_INVALID',   YAPI_INVALID_UINT);
+if(!defined('Y_BLINKSEQSIGNATURE_INVALID'))  define('Y_BLINKSEQSIGNATURE_INVALID', YAPI_INVALID_UINT);
+if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YColorLed definitions)
 
 //--- (YColorLed declaration)
 /**
  * YColorLed Class: ColorLed function interface
  * 
- * Yoctopuce application programming interface
+ * The Yoctopuce application programming interface
  * allows you to drive a color led using RGB coordinates as well as HSL coordinates.
  * The module performs all conversions form RGB to HSL automatically. It is then
  * self-evident to turn on a led with a given hue and to progressively vary its
@@ -66,6 +70,10 @@ class YColorLed extends YFunction
     const RGBMOVE_INVALID                = null;
     const HSLMOVE_INVALID                = null;
     const RGBCOLORATPOWERON_INVALID      = YAPI_INVALID_UINT;
+    const BLINKSEQSIZE_INVALID           = YAPI_INVALID_UINT;
+    const BLINKSEQMAXSIZE_INVALID        = YAPI_INVALID_UINT;
+    const BLINKSEQSIGNATURE_INVALID      = YAPI_INVALID_UINT;
+    const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YColorLed declaration)
 
     //--- (YColorLed attributes)
@@ -74,6 +82,10 @@ class YColorLed extends YFunction
     protected $_rgbMove                  = Y_RGBMOVE_INVALID;            // Move
     protected $_hslMove                  = Y_HSLMOVE_INVALID;            // Move
     protected $_rgbColorAtPowerOn        = Y_RGBCOLORATPOWERON_INVALID;  // U24Color
+    protected $_blinkSeqSize             = Y_BLINKSEQSIZE_INVALID;       // UInt31
+    protected $_blinkSeqMaxSize          = Y_BLINKSEQMAXSIZE_INVALID;    // UInt31
+    protected $_blinkSeqSignature        = Y_BLINKSEQSIGNATURE_INVALID;  // UInt31
+    protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YColorLed attributes)
 
     function __construct($str_func)
@@ -104,6 +116,18 @@ class YColorLed extends YFunction
             return 1;
         case 'rgbColorAtPowerOn':
             $this->_rgbColorAtPowerOn = intval($val);
+            return 1;
+        case 'blinkSeqSize':
+            $this->_blinkSeqSize = intval($val);
+            return 1;
+        case 'blinkSeqMaxSize':
+            $this->_blinkSeqMaxSize = intval($val);
+            return 1;
+        case 'blinkSeqSignature':
+            $this->_blinkSeqSignature = intval($val);
+            return 1;
+        case 'command':
+            $this->_command = $val;
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -256,9 +280,6 @@ class YColorLed extends YFunction
 
     /**
      * Changes the color that the led will display by default when the module is turned on.
-     * This color will be displayed as soon as the module is powered on.
-     * Remember to call the saveToFlash() method of the module if the
-     * change should be kept.
      * 
      * @param newval : an integer corresponding to the color that the led will display by default when the
      * module is turned on
@@ -271,6 +292,76 @@ class YColorLed extends YFunction
     {
         $rest_val = sprintf("0x%06x", $newval);
         return $this->_setAttr("rgbColorAtPowerOn",$rest_val);
+    }
+
+    /**
+     * Returns the current length of the blinking sequence
+     * 
+     * @return an integer corresponding to the current length of the blinking sequence
+     * 
+     * On failure, throws an exception or returns Y_BLINKSEQSIZE_INVALID.
+     */
+    public function get_blinkSeqSize()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BLINKSEQSIZE_INVALID;
+            }
+        }
+        return $this->_blinkSeqSize;
+    }
+
+    /**
+     * Returns the maximum length of the blinking sequence
+     * 
+     * @return an integer corresponding to the maximum length of the blinking sequence
+     * 
+     * On failure, throws an exception or returns Y_BLINKSEQMAXSIZE_INVALID.
+     */
+    public function get_blinkSeqMaxSize()
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BLINKSEQMAXSIZE_INVALID;
+            }
+        }
+        return $this->_blinkSeqMaxSize;
+    }
+
+    /**
+     * Return the blinking sequence signature. Since blinking
+     * sequences cannot be read from the device, this can be used
+     * to detect if a specific blinking sequence is already
+     * programmed.
+     * 
+     * @return an integer
+     * 
+     * On failure, throws an exception or returns Y_BLINKSEQSIGNATURE_INVALID.
+     */
+    public function get_blinkSeqSignature()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BLINKSEQSIGNATURE_INVALID;
+            }
+        }
+        return $this->_blinkSeqSignature;
+    }
+
+    public function get_command()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_COMMAND_INVALID;
+            }
+        }
+        return $this->_command;
+    }
+
+    public function set_command($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("command",$rest_val);
     }
 
     /**
@@ -307,6 +398,76 @@ class YColorLed extends YFunction
         return $obj;
     }
 
+    public function sendCommand($command)
+    {
+        return $this->set_command($command);
+    }
+
+    /**
+     * Add a new transition to the blinking sequence, the move will
+     * be performed in the HSL space.
+     * 
+     * @param HSLcolor : desired HSL color when the traisntion is completed
+     * @param msDelay : duration of the color transition, in milliseconds.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function addHslMoveToBlinkSeq($HSLcolor,$msDelay)
+    {
+        return $this->sendCommand(sprintf('H%d,%d',$HSLcolor,$msDelay));
+    }
+
+    /**
+     * Add a new transition to the blinking sequence, the move will
+     * be performed in the RGB space.
+     * 
+     * @param RGBcolor : desired RGB color when the transition is completed
+     * @param msDelay : duration of the color transition, in milliseconds.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function addRgbMoveToBlinkSeq($RGBcolor,$msDelay)
+    {
+        return $this->sendCommand(sprintf('R%d,%d',$RGBcolor,$msDelay));
+    }
+
+    /**
+     * Starts the preprogrammed blinking sequence. The sequence will
+     * run in loop until it is stopped by stopBlinkSeq or an explicit
+     * change.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function startBlinkSeq()
+    {
+        return $this->sendCommand('S');
+    }
+
+    /**
+     * Stops the preprogrammed blinking sequence.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function stopBlinkSeq()
+    {
+        return $this->sendCommand('X');
+    }
+
+    /**
+     * Resets the preprogrammed blinking sequence.
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function resetBlinkSeq()
+    {
+        return $this->sendCommand('Z');
+    }
+
     public function rgbColor()
     { return $this->get_rgbColor(); }
 
@@ -330,6 +491,21 @@ class YColorLed extends YFunction
 
     public function setRgbColorAtPowerOn($newval)
     { return $this->set_rgbColorAtPowerOn($newval); }
+
+    public function blinkSeqSize()
+    { return $this->get_blinkSeqSize(); }
+
+    public function blinkSeqMaxSize()
+    { return $this->get_blinkSeqMaxSize(); }
+
+    public function blinkSeqSignature()
+    { return $this->get_blinkSeqSignature(); }
+
+    public function command()
+    { return $this->get_command(); }
+
+    public function setCommand($newval)
+    { return $this->set_command($newval); }
 
     /**
      * Continues the enumeration of RGB leds started using yFirstColorLed().

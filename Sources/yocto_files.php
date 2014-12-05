@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 17676 2014-09-16 16:20:17Z seb $
+ * $Id: yocto_files.php 18014 2014-10-13 09:25:58Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -261,7 +261,9 @@ class YFiles extends YFunction
         $json = $this->sendCommand(sprintf('dir&f=%s',$pattern));
         $filelist = $this->_json_get_array($json);
         while(sizeof($res) > 0) { array_pop($res); };
-        foreach($filelist as $each) { $res[] = new YFileRecord($each);}
+        foreach($filelist as $each) {
+            $res[] = new YFileRecord($each);
+        }
         return $res;
     }
 

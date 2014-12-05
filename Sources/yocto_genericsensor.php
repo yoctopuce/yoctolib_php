@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 16923 2014-07-18 14:47:20Z mvuilleu $
+ * $Id: yocto_genericsensor.php 18262 2014-11-05 14:22:14Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -41,6 +41,11 @@
 //--- (YGenericSensor return codes)
 //--- (end of YGenericSensor return codes)
 //--- (YGenericSensor definitions)
+if(!defined('Y_SIGNALSAMPLING_HIGH_RATE'))   define('Y_SIGNALSAMPLING_HIGH_RATE',  0);
+if(!defined('Y_SIGNALSAMPLING_HIGH_RATE_FILTERED')) define('Y_SIGNALSAMPLING_HIGH_RATE_FILTERED', 1);
+if(!defined('Y_SIGNALSAMPLING_LOW_NOISE'))   define('Y_SIGNALSAMPLING_LOW_NOISE',  2);
+if(!defined('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED')) define('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED', 3);
+if(!defined('Y_SIGNALSAMPLING_INVALID'))     define('Y_SIGNALSAMPLING_INVALID',    -1);
 if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_SIGNALRANGE_INVALID'))        define('Y_SIGNALRANGE_INVALID',       YAPI_INVALID_STRING);
@@ -62,6 +67,11 @@ class YGenericSensor extends YSensor
     const SIGNALRANGE_INVALID            = YAPI_INVALID_STRING;
     const VALUERANGE_INVALID             = YAPI_INVALID_STRING;
     const SIGNALBIAS_INVALID             = YAPI_INVALID_DOUBLE;
+    const SIGNALSAMPLING_HIGH_RATE       = 0;
+    const SIGNALSAMPLING_HIGH_RATE_FILTERED = 1;
+    const SIGNALSAMPLING_LOW_NOISE       = 2;
+    const SIGNALSAMPLING_LOW_NOISE_FILTERED = 3;
+    const SIGNALSAMPLING_INVALID         = -1;
     //--- (end of YGenericSensor declaration)
 
     //--- (YGenericSensor attributes)
@@ -70,6 +80,7 @@ class YGenericSensor extends YSensor
     protected $_signalRange              = Y_SIGNALRANGE_INVALID;        // ValueRange
     protected $_valueRange               = Y_VALUERANGE_INVALID;         // ValueRange
     protected $_signalBias               = Y_SIGNALBIAS_INVALID;         // MeasureVal
+    protected $_signalSampling           = Y_SIGNALSAMPLING_INVALID;     // SignalSampling
     //--- (end of YGenericSensor attributes)
 
     function __construct($str_func)
@@ -100,6 +111,9 @@ class YGenericSensor extends YSensor
             return 1;
         case 'signalBias':
             $this->_signalBias = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'signalSampling':
+            $this->_signalSampling = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -258,6 +272,52 @@ class YGenericSensor extends YSensor
     }
 
     /**
+     * Returns the electric signal sampling method to use.
+     * The HIGH_RATE method uses the highest sampling frequency, without any filtering.
+     * The HIGH_RATE_FILTERED method adds a windowed 7-sample median filter.
+     * The LOW_NOISE method uses a reduced acquisition frequency to reduce noise.
+     * The LOW_NOISE_FILTERED method combines a reduced frequency with the median filter
+     * to get measures as stable as possible when working on a noisy signal.
+     * 
+     * @return a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
+     * Y_SIGNALSAMPLING_LOW_NOISE and Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric
+     * signal sampling method to use
+     * 
+     * On failure, throws an exception or returns Y_SIGNALSAMPLING_INVALID.
+     */
+    public function get_signalSampling()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SIGNALSAMPLING_INVALID;
+            }
+        }
+        return $this->_signalSampling;
+    }
+
+    /**
+     * Changes the electric signal sampling method to use.
+     * The HIGH_RATE method uses the highest sampling frequency, without any filtering.
+     * The HIGH_RATE_FILTERED method adds a windowed 7-sample median filter.
+     * The LOW_NOISE method uses a reduced acquisition frequency to reduce noise.
+     * The LOW_NOISE_FILTERED method combines a reduced frequency with the median filter
+     * to get measures as stable as possible when working on a noisy signal.
+     * 
+     * @param newval : a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
+     * Y_SIGNALSAMPLING_LOW_NOISE and Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric
+     * signal sampling method to use
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_signalSampling($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("signalSampling",$rest_val);
+    }
+
+    /**
      * Retrieves a generic sensor for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -334,6 +394,12 @@ class YGenericSensor extends YSensor
 
     public function signalBias()
     { return $this->get_signalBias(); }
+
+    public function signalSampling()
+    { return $this->get_signalSampling(); }
+
+    public function setSignalSampling($newval)
+    { return $this->set_signalSampling($newval); }
 
     /**
      * Continues the enumeration of generic sensors started using yFirstGenericSensor().
