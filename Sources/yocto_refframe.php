@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 17481 2014-09-03 09:38:35Z mvuilleu $
+ * $Id: yocto_refframe.php 19211 2015-02-02 13:18:41Z mvuilleu $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -44,8 +44,8 @@
 if(!defined('Y_MOUNTPOSITION_BOTTOM'))       define('Y_MOUNTPOSITION_BOTTOM',      0);
 if(!defined('Y_MOUNTPOSITION_TOP'))          define('Y_MOUNTPOSITION_TOP',         1);
 if(!defined('Y_MOUNTPOSITION_FRONT'))        define('Y_MOUNTPOSITION_FRONT',       2);
-if(!defined('Y_MOUNTPOSITION_RIGHT'))        define('Y_MOUNTPOSITION_RIGHT',       3);
-if(!defined('Y_MOUNTPOSITION_REAR'))         define('Y_MOUNTPOSITION_REAR',        4);
+if(!defined('Y_MOUNTPOSITION_REAR'))         define('Y_MOUNTPOSITION_REAR',        3);
+if(!defined('Y_MOUNTPOSITION_RIGHT'))        define('Y_MOUNTPOSITION_RIGHT',       4);
 if(!defined('Y_MOUNTPOSITION_LEFT'))         define('Y_MOUNTPOSITION_LEFT',        5);
 if(!defined('Y_MOUNTORIENTATION_TWELVE'))    define('Y_MOUNTORIENTATION_TWELVE',   0);
 if(!defined('Y_MOUNTORIENTATION_THREE'))     define('Y_MOUNTORIENTATION_THREE',    1);
@@ -74,8 +74,8 @@ class YRefFrame extends YFunction
     const MOUNTPOSITION_BOTTOM           = 0;
     const MOUNTPOSITION_TOP              = 1;
     const MOUNTPOSITION_FRONT            = 2;
-    const MOUNTPOSITION_RIGHT            = 3;
-    const MOUNTPOSITION_REAR             = 4;
+    const MOUNTPOSITION_REAR             = 3;
+    const MOUNTPOSITION_RIGHT            = 4;
     const MOUNTPOSITION_LEFT             = 5;
     const MOUNTORIENTATION_TWELVE        = 0;
     const MOUNTORIENTATION_THREE         = 1;

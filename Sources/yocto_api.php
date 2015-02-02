@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 18617 2014-12-02 17:06:23Z seb $
+ * $Id: yocto_api.php 18942 2015-01-15 09:23:01Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -241,14 +241,14 @@ class YTcpHub
                 $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
                 Print("\n!YoctoAPI:$errmsg\n");
                 $this->callbackCache = Array();
-                return -1;
+                return YAPI_IO_ERROR;
             } else {
                 $this->callbackCache = json_decode($data,true);
                 if(is_null($this->callbackCache)) {
                     $errmsg = "invalid data:[\n$data\n]";
                     Print("\n!YoctoAPI:$errmsg\n");
                     $this->callbackCache = Array();
-                    return -1;
+                    return YAPI_IO_ERROR;
                 }
                 if($this->pwd != '') {
                     // callback data signed, verify signature
@@ -256,7 +256,7 @@ class YTcpHub
                         $errmsg = "missing signature from incoming YoctoHub (callback password required)";
                         Print("\n!YoctoAPI:$errmsg\n");
                         $this->callbackCache = Array();
-                        return -1;
+                        return YAPI_UNAUTHORIZED;
                     }
                     $sign = $this->callbackCache['sign'];
                     $salt = $this->pwd;
@@ -269,7 +269,7 @@ class YTcpHub
                         $errmsg = "invalid signature from incoming YoctoHub (invalid callback password)";
                         Print("\n!YoctoAPI:$errmsg\n");
                         $this->callbackCache = Array();
-                        return -1;
+                        return YAPI_UNAUTHORIZED;
                     }
                 }
             }
@@ -1744,8 +1744,8 @@ class YAPI
     public static function _decimalToDouble($val)
     {
         $negate = false;
-
-        if($val == 0) return 0.0;
+        $mantis = $val & 2047;
+        if($mantis == 0) return 0.0;
         if($val > 32767) {
             $negate = true;
             $val = 65536-$val;
@@ -1755,9 +1755,9 @@ class YAPI
         }
         $decexp = self::$_decExp[$val >> 11];
         if($decexp >= 1.0) {
-            $res = ($val & 2047) * $decexp;
+            $res = ($mantis) * $decexp;
         } else {
-            $res = ($val & 2047) / round(1.0/$decexp);
+            $res = ($mantis) / round(1.0/$decexp);
         }
 
         return ($negate ? -$res : $res);
@@ -2365,7 +2365,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.18640";
+        return "1.10.19218";
     }
 
     /**
@@ -2516,7 +2516,8 @@ class YAPI
 
         // Test hub
         $tcphub = new YTcpHub($rooturl, $auth);
-        if($tcphub->verfiyStreamAddr($errmsg)<0){
+        $res = $tcphub->verfiyStreamAddr($errmsg);
+        if($res < 0) {
             return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
         }
         $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false);
@@ -2537,7 +2538,7 @@ class YAPI
             $errmsg = 'Access denied, authorization required';
             return self::_throw(YAPI_UNAUTHORIZED, $errmsg, YAPI_UNAUTHORIZED);
         } else if ($tcpreq->errorType != YAPI_SUCCESS) {
-            $errmsg = 'Network error while testing hub';
+            $errmsg = 'Network error while testing hub :'. $tcpreq->errorMsg;
             return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
         }
 
@@ -3030,12 +3031,12 @@ class YFirmwareUpdate
 
     /**
      * Returns the progress of the firmware update, on a scale from 0 to 100. When the object is
-     * instantiated the progress is zero. The value is updated During the firmware update process, until
-     * the value of 100 is reached. The value of 100 mean that the firmware update is terminated with
-     * success. If an error occur during the firmware update a negative value is returned, and the
+     * instantiated, the progress is zero. The value is updated during the firmware update process until
+     * the value of 100 is reached. The 100 value means that the firmware update was completed
+     * successfully. If an error occurs during the firmware update, a negative value is returned, and the
      * error message can be retrieved with get_progressMessage.
      * 
-     * @return an integer in the range 0 to 100 (percentage of completion) or
+     * @return an integer in the range 0 to 100 (percentage of completion)
      *         or a negative error code in case of failure.
      */
     public function get_progress()
@@ -3045,10 +3046,10 @@ class YFirmwareUpdate
     }
 
     /**
-     * Returns the last progress message of the firmware update process. If an error occur during the
-     * firmware update process the error message is returned
+     * Returns the last progress message of the firmware update process. If an error occurs during the
+     * firmware update process, the error message is returned
      * 
-     * @return an string  with the last progress message, or the error message.
+     * @return a string  with the latest progress message, or the error message.
      */
     public function get_progressMessage()
     {
@@ -3056,9 +3057,9 @@ class YFirmwareUpdate
     }
 
     /**
-     * Start the firmware update process. This method start the firmware update process in background. This method
-     * return immediately. The progress of the firmware update can be monitored with methods get_progress()
-     * and get_progressMessage().
+     * Starts the firmware update process. This method starts the firmware update process in background. This method
+     * returns immediately. You can monitor the progress of the firmware update with the get_progress()
+     * and get_progressMessage() methods.
      * 
      * @return an integer in the range 0 to 100 (percentage of completion),
      *         or a negative error code in case of failure.
@@ -6346,17 +6347,18 @@ class YModule extends YFunction
     }
 
     /**
-     * Test if the byn file is valid for this module. This method is useful to test if the module need to be updated.
-     * It's possible to pass an directory instead of a file. In this case this method return the path of
-     * the most recent
-     * appropriate byn file. If the parameter onlynew is true the function will discard firmware that are
+     * Tests whether the byn file is valid for this module. This method is useful to test if the module
+     * needs to be updated.
+     * It is possible to pass a directory as argument instead of a file. In this case, this method returns
+     * the path of the most recent
+     * appropriate byn file. If the parameter onlynew is true, the function discards firmware that are
      * older or equal to
      * the installed firmware.
      * 
-     * @param path    : the path of a byn file or a directory that contain byn files
-     * @param onlynew : return only files that are strictly newer
+     * @param path    : the path of a byn file or a directory that contains byn files
+     * @param onlynew : returns only files that are strictly newer
      * 
-     * @return : the path of the byn file to use or a empty string if no byn files match the requirement
+     * @return : the path of the byn file to use or a empty string if no byn files matches the requirement
      * 
      * On failure, throws an exception or returns a string that start with "error:".
      */
@@ -6364,6 +6366,7 @@ class YModule extends YFunction
     {
         // $serial                 is a str;
         // $release                is a int;
+        // $tmp_res                is a str;
         if ($onlynew) {
             $release = intVal($this->get_firmwareRelease());
         } else {
@@ -6371,16 +6374,20 @@ class YModule extends YFunction
         }
         //may throw an exception
         $serial = $this->get_serialNumber();
-        return YFirmwareUpdate::CheckFirmware($serial,$path, $release);
+        $tmp_res = YFirmwareUpdate::CheckFirmware($serial,$path, $release);
+        if (Ystrpos($tmp_res,'error:') == 0) {
+            $this->_throw(YAPI_INVALID_ARGUMENT, $tmp_res);
+        }
+        return $tmp_res;
     }
 
     /**
-     * Prepare a firmware upgrade of the module. This method return a object YFirmwareUpdate which
-     * will handle the firmware upgrade process.
+     * Prepares a firmware update of the module. This method returns a YFirmwareUpdate object which
+     * handles the firmware update process.
      * 
      * @param path : the path of the byn file to use.
      * 
-     * @return : A object YFirmwareUpdate.
+     * @return : A YFirmwareUpdate object.
      */
     public function updateFirmware($path)
     {
@@ -6393,10 +6400,10 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns all the setting of the module. Useful to backup all the logical name and calibrations parameters
+     * Returns all the settings of the module. Useful to backup all the logical names and calibrations parameters
      * of a connected module.
      * 
-     * @return a binary buffer with all settings.
+     * @return a binary buffer with all the settings.
      * 
      * On failure, throws an exception or returns  YAPI_INVALID_STRING.
      */
@@ -6619,10 +6626,10 @@ class YModule extends YFunction
     }
 
     /**
-     * Restore all the setting of the module. Useful to restore all the logical name and calibrations parameters
+     * Restores all the settings of the module. Useful to restore all the logical names and calibrations parameters
      * of a module from a backup.
      * 
-     * @param settings : a binary buffer with all settings.
+     * @param settings : a binary buffer with all the settings.
      * 
      * @return YAPI_SUCCESS when the call succeeds.
      * 

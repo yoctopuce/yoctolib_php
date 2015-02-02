@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 18262 2014-11-05 14:22:14Z seb $
+ * $Id: yocto_serialport.php 19192 2015-01-30 16:30:16Z mvuilleu $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -41,6 +41,14 @@
 //--- (YSerialPort return codes)
 //--- (end of YSerialPort return codes)
 //--- (YSerialPort definitions)
+if(!defined('Y_VOLTAGELEVEL_OFF'))           define('Y_VOLTAGELEVEL_OFF',          0);
+if(!defined('Y_VOLTAGELEVEL_TTL3V'))         define('Y_VOLTAGELEVEL_TTL3V',        1);
+if(!defined('Y_VOLTAGELEVEL_TTL3VR'))        define('Y_VOLTAGELEVEL_TTL3VR',       2);
+if(!defined('Y_VOLTAGELEVEL_TTL5V'))         define('Y_VOLTAGELEVEL_TTL5V',        3);
+if(!defined('Y_VOLTAGELEVEL_TTL5VR'))        define('Y_VOLTAGELEVEL_TTL5VR',       4);
+if(!defined('Y_VOLTAGELEVEL_RS232'))         define('Y_VOLTAGELEVEL_RS232',        5);
+if(!defined('Y_VOLTAGELEVEL_RS485'))         define('Y_VOLTAGELEVEL_RS485',        6);
+if(!defined('Y_VOLTAGELEVEL_INVALID'))       define('Y_VOLTAGELEVEL_INVALID',      -1);
 if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_RXCOUNT_INVALID'))            define('Y_RXCOUNT_INVALID',           YAPI_INVALID_UINT);
@@ -49,6 +57,7 @@ if(!defined('Y_ERRCOUNT_INVALID'))           define('Y_ERRCOUNT_INVALID',       
 if(!defined('Y_RXMSGCOUNT_INVALID'))         define('Y_RXMSGCOUNT_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_TXMSGCOUNT_INVALID'))         define('Y_TXMSGCOUNT_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_LASTMSG_INVALID'))            define('Y_LASTMSG_INVALID',           YAPI_INVALID_STRING);
+if(!defined('Y_CURRENTJOB_INVALID'))         define('Y_CURRENTJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YSerialPort definitions)
@@ -67,12 +76,21 @@ class YSerialPort extends YFunction
 {
     const SERIALMODE_INVALID             = YAPI_INVALID_STRING;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
+    const VOLTAGELEVEL_OFF               = 0;
+    const VOLTAGELEVEL_TTL3V             = 1;
+    const VOLTAGELEVEL_TTL3VR            = 2;
+    const VOLTAGELEVEL_TTL5V             = 3;
+    const VOLTAGELEVEL_TTL5VR            = 4;
+    const VOLTAGELEVEL_RS232             = 5;
+    const VOLTAGELEVEL_RS485             = 6;
+    const VOLTAGELEVEL_INVALID           = -1;
     const RXCOUNT_INVALID                = YAPI_INVALID_UINT;
     const TXCOUNT_INVALID                = YAPI_INVALID_UINT;
     const ERRCOUNT_INVALID               = YAPI_INVALID_UINT;
     const RXMSGCOUNT_INVALID             = YAPI_INVALID_UINT;
     const TXMSGCOUNT_INVALID             = YAPI_INVALID_UINT;
     const LASTMSG_INVALID                = YAPI_INVALID_STRING;
+    const CURRENTJOB_INVALID             = YAPI_INVALID_STRING;
     const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YSerialPort declaration)
@@ -80,12 +98,14 @@ class YSerialPort extends YFunction
     //--- (YSerialPort attributes)
     protected $_serialMode               = Y_SERIALMODE_INVALID;         // SerialMode
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
+    protected $_voltageLevel             = Y_VOLTAGELEVEL_INVALID;       // SerialVoltageLevel
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
     protected $_rxMsgCount               = Y_RXMSGCOUNT_INVALID;         // UInt31
     protected $_txMsgCount               = Y_TXMSGCOUNT_INVALID;         // UInt31
     protected $_lastMsg                  = Y_LASTMSG_INVALID;            // Text
+    protected $_currentJob               = Y_CURRENTJOB_INVALID;         // Text
     protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_rxptr                    = 0;                            // int
@@ -111,6 +131,9 @@ class YSerialPort extends YFunction
         case 'protocol':
             $this->_protocol = $val;
             return 1;
+        case 'voltageLevel':
+            $this->_voltageLevel = intval($val);
+            return 1;
         case 'rxCount':
             $this->_rxCount = intval($val);
             return 1;
@@ -128,6 +151,9 @@ class YSerialPort extends YFunction
             return 1;
         case 'lastMsg':
             $this->_lastMsg = $val;
+            return 1;
+        case 'currentJob':
+            $this->_currentJob = $val;
             return 1;
         case 'startupJob':
             $this->_startupJob = $val;
@@ -225,6 +251,46 @@ class YSerialPort extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("protocol",$rest_val);
+    }
+
+    /**
+     * Returns the voltage level used on the serial line.
+     * 
+     * @return a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V, Y_VOLTAGELEVEL_TTL3VR,
+     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232 and Y_VOLTAGELEVEL_RS485
+     * corresponding to the voltage level used on the serial line
+     * 
+     * On failure, throws an exception or returns Y_VOLTAGELEVEL_INVALID.
+     */
+    public function get_voltageLevel()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_VOLTAGELEVEL_INVALID;
+            }
+        }
+        return $this->_voltageLevel;
+    }
+
+    /**
+     * Changes the voltage type used on the serial line. Valid
+     * values  will depend on the Yoctopuce device model featuring
+     * the serial port feature.  Check your device documentation
+     * to find out which values are valid for that specific model.
+     * Trying to set an invalid value will have no effect.
+     * 
+     * @param newval : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V, Y_VOLTAGELEVEL_TTL3VR,
+     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232 and Y_VOLTAGELEVEL_RS485
+     * corresponding to the voltage type used on the serial line
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_voltageLevel($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("voltageLevel",$rest_val);
     }
 
     /**
@@ -327,6 +393,40 @@ class YSerialPort extends YFunction
             }
         }
         return $this->_lastMsg;
+    }
+
+    /**
+     * Returns the name of the job file currently in use.
+     * 
+     * @return a string corresponding to the name of the job file currently in use
+     * 
+     * On failure, throws an exception or returns Y_CURRENTJOB_INVALID.
+     */
+    public function get_currentJob()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CURRENTJOB_INVALID;
+            }
+        }
+        return $this->_currentJob;
+    }
+
+    /**
+     * Changes the job to use when the device is powered on.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     * 
+     * @param newval : a string corresponding to the job to use when the device is powered on
+     * 
+     * @return YAPI_SUCCESS if the call succeeds.
+     * 
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_currentJob($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("currentJob",$rest_val);
     }
 
     /**
@@ -448,7 +548,7 @@ class YSerialPort extends YFunction
     }
 
     /**
-     * Read the level of the CTS line. The CTS line is usually driven by
+     * Reads the level of the CTS line. The CTS line is usually driven by
      * the RTS signal of the connected serial device.
      * 
      * @return 1 if the CTS line is high, 0 if the CTS line is low.
@@ -593,7 +693,7 @@ class YSerialPort extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        $buff = sprintf('%s\r\n', $text);
+        $buff = sprintf('%s'."\r".''."\n".'', $text);
         $bufflen = strlen($buff)-2;
         if ($bufflen < 100) {
             $ch = 0x20;
@@ -1438,7 +1538,7 @@ class YSerialPort extends YFunction
      */
     public function selectJob($jobfile)
     {
-        return $this->sendCommand(sprintf('J%s',$jobfile));
+        return $this->set_currentJob($jobfile);
     }
 
     public function serialMode()
@@ -1452,6 +1552,12 @@ class YSerialPort extends YFunction
 
     public function setProtocol($newval)
     { return $this->set_protocol($newval); }
+
+    public function voltageLevel()
+    { return $this->get_voltageLevel(); }
+
+    public function setVoltageLevel($newval)
+    { return $this->set_voltageLevel($newval); }
 
     public function rxCount()
     { return $this->get_rxCount(); }
@@ -1470,6 +1576,12 @@ class YSerialPort extends YFunction
 
     public function lastMsg()
     { return $this->get_lastMsg(); }
+
+    public function currentJob()
+    { return $this->get_currentJob(); }
+
+    public function setCurrentJob($newval)
+    { return $this->set_currentJob($newval); }
 
     public function startupJob()
     { return $this->get_startupJob(); }
