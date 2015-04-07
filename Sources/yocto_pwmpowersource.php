@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmpowersource.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_pwmpowersource.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -51,7 +51,7 @@ if(!defined('Y_POWERMODE_INVALID'))          define('Y_POWERMODE_INVALID',      
 //--- (YPwmPowerSource declaration)
 /**
  * YPwmPowerSource Class: PwmPowerSource function interface
- * 
+ *
  * The Yoctopuce application programming interface allows you to configure
  * the voltage source used by all PWM on the same device.
  */
@@ -91,10 +91,10 @@ class YPwmPowerSource extends YFunction
 
     /**
      * Returns the selected power source for the PWM on the same device
-     * 
+     *
      * @return a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V and
      * Y_POWERMODE_OPNDRN corresponding to the selected power source for the PWM on the same device
-     * 
+     *
      * On failure, throws an exception or returns Y_POWERMODE_INVALID.
      */
     public function get_powerMode()
@@ -115,12 +115,12 @@ class YPwmPowerSource extends YFunction
      * all PWM located on the same device are  affected.
      * If you want the change to be kept after a device reboot, make sure  to call the matching
      * module saveToFlash().
-     * 
+     *
      * @param newval : a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V and
      * Y_POWERMODE_OPNDRN corresponding to  the PWM power source
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_powerMode($newval)
@@ -139,7 +139,7 @@ class YPwmPowerSource extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the voltage source is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YPwmPowerSource.isOnline() to test if the voltage source is
@@ -147,9 +147,9 @@ class YPwmPowerSource extends YFunction
      * a voltage source by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the voltage source
-     * 
+     *
      * @return a YPwmPowerSource object allowing you to drive the voltage source.
      */
     public static function FindPwmPowerSource($func)
@@ -171,7 +171,7 @@ class YPwmPowerSource extends YFunction
 
     /**
      * Continues the enumeration of Voltage sources started using yFirstPwmPowerSource().
-     * 
+     *
      * @return a pointer to a YPwmPowerSource object, corresponding to
      *         a voltage source currently online, or a null pointer
      *         if there are no more Voltage sources to enumerate.
@@ -188,7 +188,7 @@ class YPwmPowerSource extends YFunction
      * Starts the enumeration of Voltage sources currently accessible.
      * Use the method YPwmPowerSource.nextPwmPowerSource() to iterate on
      * next Voltage sources.
-     * 
+     *
      * @return a pointer to a YPwmPowerSource object, corresponding to
      *         the first source currently online, or a null pointer
      *         if there are none.
@@ -215,7 +215,7 @@ class YPwmPowerSource extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the voltage source is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YPwmPowerSource.isOnline() to test if the voltage source is
@@ -223,9 +223,9 @@ class YPwmPowerSource extends YFunction
  * a voltage source by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the voltage source
- * 
+ *
  * @return a YPwmPowerSource object allowing you to drive the voltage source.
  */
 function yFindPwmPowerSource($func)
@@ -237,7 +237,7 @@ function yFindPwmPowerSource($func)
  * Starts the enumeration of Voltage sources currently accessible.
  * Use the method YPwmPowerSource.nextPwmPowerSource() to iterate on
  * next Voltage sources.
- * 
+ *
  * @return a pointer to a YPwmPowerSource object, corresponding to
  *         the first source currently online, or a null pointer
  *         if there are none.

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_motor.php 17370 2014-08-29 16:48:56Z seb $
+ * $Id: yocto_motor.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -63,7 +63,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 //--- (YMotor declaration)
 /**
  * YMotor Class: Motor function interface
- * 
+ *
  * Yoctopuce application programming interface allows you to drive the
  * power sent to the motor to make it turn both ways, but also to drive accelerations
  * and decelerations. The motor will then accelerate automatically: you will not
@@ -158,13 +158,13 @@ class YMotor extends YFunction
      * HICURR when the controller has detected an overcurrent condition;
      * HIHEAT when the controller has detected an overheat condition;
      * FAILSF when the controller switched on the failsafe security.
-     * 
+     *
      * When an error condition occurred (LOVOLT, HICURR, HIHEAT, FAILSF), the controller
      * status must be explicitly reset using the resetStatus function.
-     * 
+     *
      * @return a value among Y_MOTORSTATUS_IDLE, Y_MOTORSTATUS_BRAKE, Y_MOTORSTATUS_FORWD,
      * Y_MOTORSTATUS_BACKWD, Y_MOTORSTATUS_LOVOLT, Y_MOTORSTATUS_HICURR, Y_MOTORSTATUS_HIHEAT and Y_MOTORSTATUS_FAILSF
-     * 
+     *
      * On failure, throws an exception or returns Y_MOTORSTATUS_INVALID.
      */
     public function get_motorStatus()
@@ -189,11 +189,11 @@ class YMotor extends YFunction
      * try to avoid brutal power changes. For example, immediate transition from forward full power
      * to reverse full power is a very bad idea. Each time the driving power is modified, the
      * braking power is set to zero.
-     * 
+     *
      * @param newval : a floating point number corresponding to immediately the power sent to the motor
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_drivingForce($newval)
@@ -204,10 +204,10 @@ class YMotor extends YFunction
 
     /**
      * Returns the power sent to the motor, as a percentage between -100% and +100%.
-     * 
+     *
      * @return a floating point number corresponding to the power sent to the motor, as a percentage
      * between -100% and +100%
-     * 
+     *
      * On failure, throws an exception or returns Y_DRIVINGFORCE_INVALID.
      */
     public function get_drivingForce()
@@ -224,12 +224,12 @@ class YMotor extends YFunction
      * Changes immediately the braking force applied to the motor (in percents).
      * The value 0 corresponds to no braking (free wheel). When the braking force
      * is changed, the driving power is set to zero. The value is a percentage.
-     * 
+     *
      * @param newval : a floating point number corresponding to immediately the braking force applied to
      * the motor (in percents)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_brakingForce($newval)
@@ -241,9 +241,9 @@ class YMotor extends YFunction
     /**
      * Returns the braking force applied to the motor, as a percentage.
      * The value 0 corresponds to no braking (free wheel).
-     * 
+     *
      * @return a floating point number corresponding to the braking force applied to the motor, as a percentage
-     * 
+     *
      * On failure, throws an exception or returns Y_BRAKINGFORCE_INVALID.
      */
     public function get_brakingForce()
@@ -262,13 +262,13 @@ class YMotor extends YFunction
      * occur when drawing current from an "empty" battery.
      * Note that whatever the cutoff threshold, the controller switches to undervoltage
      * error state if the power supply goes under 3V, even for a very brief time.
-     * 
+     *
      * @param newval : a floating point number corresponding to the threshold voltage under which the
      * controller automatically switches to error state
      *         and prevents further current draw
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_cutOffVoltage($newval)
@@ -281,11 +281,11 @@ class YMotor extends YFunction
      * Returns the threshold voltage under which the controller automatically switches to error state
      * and prevents further current draw. This setting prevents damage to a battery that can
      * occur when drawing current from an "empty" battery.
-     * 
+     *
      * @return a floating point number corresponding to the threshold voltage under which the controller
      * automatically switches to error state
      *         and prevents further current draw
-     * 
+     *
      * On failure, throws an exception or returns Y_CUTOFFVOLTAGE_INVALID.
      */
     public function get_cutOffVoltage()
@@ -301,10 +301,10 @@ class YMotor extends YFunction
     /**
      * Returns the current threshold (in mA) above which the controller automatically
      * switches to error state. A zero value means that there is no limit.
-     * 
+     *
      * @return an integer corresponding to the current threshold (in mA) above which the controller automatically
      *         switches to error state
-     * 
+     *
      * On failure, throws an exception or returns Y_OVERCURRENTLIMIT_INVALID.
      */
     public function get_overCurrentLimit()
@@ -322,13 +322,13 @@ class YMotor extends YFunction
      * switches to error state. A zero value means that there is no limit. Note that whatever the
      * current limit is, the controller switches to OVERCURRENT status if the current
      * goes above 32A, even for a very brief time.
-     * 
+     *
      * @param newval : an integer corresponding to the current threshold (in mA) above which the
      * controller automatically
      *         switches to error state
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_overCurrentLimit($newval)
@@ -342,11 +342,11 @@ class YMotor extends YFunction
      * more efficient and may help the motor to start, but an audible noise might be
      * generated. A higher frequency reduces the noise, but more energy is converted
      * into heat.
-     * 
+     *
      * @param newval : a floating point number corresponding to the PWM frequency used to control the motor
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_frequency($newval)
@@ -357,9 +357,9 @@ class YMotor extends YFunction
 
     /**
      * Returns the PWM frequency used to control the motor.
-     * 
+     *
      * @return a floating point number corresponding to the PWM frequency used to control the motor
-     * 
+     *
      * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
      */
     public function get_frequency()
@@ -375,11 +375,11 @@ class YMotor extends YFunction
     /**
      * Returns the duration (in ms) during which the motor is driven at low frequency to help
      * it start up.
-     * 
+     *
      * @return an integer corresponding to the duration (in ms) during which the motor is driven at low
      * frequency to help
      *         it start up
-     * 
+     *
      * On failure, throws an exception or returns Y_STARTERTIME_INVALID.
      */
     public function get_starterTime()
@@ -395,13 +395,13 @@ class YMotor extends YFunction
     /**
      * Changes the duration (in ms) during which the motor is driven at low frequency to help
      * it start up.
-     * 
+     *
      * @param newval : an integer corresponding to the duration (in ms) during which the motor is driven
      * at low frequency to help
      *         it start up
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_starterTime($newval)
@@ -415,11 +415,11 @@ class YMotor extends YFunction
      * receiving any instruction from the control process. When this delay has elapsed,
      * the controller automatically stops the motor and switches to FAILSAFE error.
      * Failsafe security is disabled when the value is zero.
-     * 
+     *
      * @return an integer corresponding to the delay in milliseconds allowed for the controller to run
      * autonomously without
      *         receiving any instruction from the control process
-     * 
+     *
      * On failure, throws an exception or returns Y_FAILSAFETIMEOUT_INVALID.
      */
     public function get_failSafeTimeout()
@@ -437,13 +437,13 @@ class YMotor extends YFunction
      * receiving any instruction from the control process. When this delay has elapsed,
      * the controller automatically stops the motor and switches to FAILSAFE error.
      * Failsafe security is disabled when the value is zero.
-     * 
+     *
      * @param newval : an integer corresponding to the delay in milliseconds allowed for the controller to
      * run autonomously without
      *         receiving any instruction from the control process
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_failSafeTimeout($newval)
@@ -478,7 +478,7 @@ class YMotor extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the motor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YMotor.isOnline() to test if the motor is
@@ -486,9 +486,9 @@ class YMotor extends YFunction
      * a motor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the motor
-     * 
+     *
      * @return a YMotor object allowing you to drive the motor.
      */
     public static function FindMotor($func)
@@ -524,12 +524,12 @@ class YMotor extends YFunction
 
     /**
      * Changes progressively the power sent to the moteur for a specific duration.
-     * 
+     *
      * @param targetPower : desired motor power, in percents (between -100% and +100%)
      * @param delay : duration (in ms) of the transition
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drivingForceMove($targetPower,$delay)
@@ -539,12 +539,12 @@ class YMotor extends YFunction
 
     /**
      * Changes progressively the braking force applied to the motor for a specific duration.
-     * 
+     *
      * @param targetPower : desired braking force, in percents
      * @param delay : duration (in ms) of the transition
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function brakingForceMove($targetPower,$delay)
@@ -608,7 +608,7 @@ class YMotor extends YFunction
 
     /**
      * Continues the enumeration of motors started using yFirstMotor().
-     * 
+     *
      * @return a pointer to a YMotor object, corresponding to
      *         a motor currently online, or a null pointer
      *         if there are no more motors to enumerate.
@@ -625,7 +625,7 @@ class YMotor extends YFunction
      * Starts the enumeration of motors currently accessible.
      * Use the method YMotor.nextMotor() to iterate on
      * next motors.
-     * 
+     *
      * @return a pointer to a YMotor object, corresponding to
      *         the first motor currently online, or a null pointer
      *         if there are none.
@@ -652,7 +652,7 @@ class YMotor extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the motor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YMotor.isOnline() to test if the motor is
@@ -660,9 +660,9 @@ class YMotor extends YFunction
  * a motor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the motor
- * 
+ *
  * @return a YMotor object allowing you to drive the motor.
  */
 function yFindMotor($func)
@@ -674,7 +674,7 @@ function yFindMotor($func)
  * Starts the enumeration of motors currently accessible.
  * Use the method YMotor.nextMotor() to iterate on
  * next motors.
- * 
+ *
  * @return a pointer to a YMotor object, corresponding to
  *         the first motor currently online, or a null pointer
  *         if there are none.

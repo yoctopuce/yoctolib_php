@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 16895 2014-07-18 00:12:08Z mvuilleu $
+ * $Id: yocto_power.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -49,9 +49,11 @@ if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',     
 //--- (YPower declaration)
 /**
  * YPower Class: Power function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YPower allows you to read and configure Yoctopuce power
+ * sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
+ * This class adds the ability to access the energy counter and the power factor.
  */
 class YPower extends YSensor
 {
@@ -96,10 +98,10 @@ class YPower extends YSensor
     /**
      * Returns the power factor (the ratio between the real power consumed,
      * measured in W, and the apparent power provided, measured in VA).
-     * 
+     *
      * @return a floating point number corresponding to the power factor (the ratio between the real power consumed,
      *         measured in W, and the apparent power provided, measured in VA)
-     * 
+     *
      * On failure, throws an exception or returns Y_COSPHI_INVALID.
      */
     public function get_cosPhi()
@@ -121,10 +123,10 @@ class YPower extends YSensor
     /**
      * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time.
      * Note that this counter is reset at each start of the device.
-     * 
+     *
      * @return a floating point number corresponding to the energy counter, maintained by the wattmeter by
      * integrating the power consumption over time
-     * 
+     *
      * On failure, throws an exception or returns Y_METER_INVALID.
      */
     public function get_meter()
@@ -139,9 +141,9 @@ class YPower extends YSensor
 
     /**
      * Returns the elapsed time since last energy counter reset, in seconds.
-     * 
+     *
      * @return an integer corresponding to the elapsed time since last energy counter reset, in seconds
-     * 
+     *
      * On failure, throws an exception or returns Y_METERTIMER_INVALID.
      */
     public function get_meterTimer()
@@ -164,7 +166,7 @@ class YPower extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the electrical power sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YPower.isOnline() to test if the electrical power sensor is
@@ -172,9 +174,9 @@ class YPower extends YSensor
      * a electrical power sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the electrical power sensor
-     * 
+     *
      * @return a YPower object allowing you to drive the electrical power sensor.
      */
     public static function FindPower($func)
@@ -190,9 +192,9 @@ class YPower extends YSensor
 
     /**
      * Resets the energy counter.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function reset()
@@ -214,7 +216,7 @@ class YPower extends YSensor
 
     /**
      * Continues the enumeration of electrical power sensors started using yFirstPower().
-     * 
+     *
      * @return a pointer to a YPower object, corresponding to
      *         a electrical power sensor currently online, or a null pointer
      *         if there are no more electrical power sensors to enumerate.
@@ -231,7 +233,7 @@ class YPower extends YSensor
      * Starts the enumeration of electrical power sensors currently accessible.
      * Use the method YPower.nextPower() to iterate on
      * next electrical power sensors.
-     * 
+     *
      * @return a pointer to a YPower object, corresponding to
      *         the first electrical power sensor currently online, or a null pointer
      *         if there are none.
@@ -258,7 +260,7 @@ class YPower extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the electrical power sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YPower.isOnline() to test if the electrical power sensor is
@@ -266,9 +268,9 @@ class YPower extends YSensor
  * a electrical power sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the electrical power sensor
- * 
+ *
  * @return a YPower object allowing you to drive the electrical power sensor.
  */
 function yFindPower($func)
@@ -280,7 +282,7 @@ function yFindPower($func)
  * Starts the enumeration of electrical power sensors currently accessible.
  * Use the method YPower.nextPower() to iterate on
  * next electrical power sensors.
- * 
+ *
  * @return a pointer to a YPower object, corresponding to
  *         the first electrical power sensor currently online, or a null pointer
  *         if there are none.

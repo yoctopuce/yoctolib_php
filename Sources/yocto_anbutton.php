@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 18361 2014-11-13 08:06:41Z mvuilleu $
+ * $Id: yocto_anbutton.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -61,7 +61,7 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
 //--- (YAnButton declaration)
 /**
  * YAnButton Class: AnButton function interface
- * 
+ *
  * Yoctopuce application programming interface allows you to measure the state
  * of a simple button as well as to read an analog potentiometer (variable resistance).
  * This can be use for instance with a continuous rotating knob, a throttle grip
@@ -155,9 +155,9 @@ class YAnButton extends YFunction
 
     /**
      * Returns the current calibrated input value (between 0 and 1000, included).
-     * 
+     *
      * @return an integer corresponding to the current calibrated input value (between 0 and 1000, included)
-     * 
+     *
      * On failure, throws an exception or returns Y_CALIBRATEDVALUE_INVALID.
      */
     public function get_calibratedValue()
@@ -172,9 +172,9 @@ class YAnButton extends YFunction
 
     /**
      * Returns the current measured input value as-is (between 0 and 4095, included).
-     * 
+     *
      * @return an integer corresponding to the current measured input value as-is (between 0 and 4095, included)
-     * 
+     *
      * On failure, throws an exception or returns Y_RAWVALUE_INVALID.
      */
     public function get_rawValue()
@@ -189,9 +189,9 @@ class YAnButton extends YFunction
 
     /**
      * Tells if a calibration process is currently ongoing.
-     * 
+     *
      * @return either Y_ANALOGCALIBRATION_OFF or Y_ANALOGCALIBRATION_ON
-     * 
+     *
      * On failure, throws an exception or returns Y_ANALOGCALIBRATION_INVALID.
      */
     public function get_analogCalibration()
@@ -207,11 +207,11 @@ class YAnButton extends YFunction
     /**
      * Starts or stops the calibration process. Remember to call the saveToFlash()
      * method of the module at the end of the calibration if the modification must be kept.
-     * 
+     *
      * @param newval : either Y_ANALOGCALIBRATION_OFF or Y_ANALOGCALIBRATION_ON
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_analogCalibration($newval)
@@ -222,10 +222,10 @@ class YAnButton extends YFunction
 
     /**
      * Returns the maximal value measured during the calibration (between 0 and 4095, included).
-     * 
+     *
      * @return an integer corresponding to the maximal value measured during the calibration (between 0
      * and 4095, included)
-     * 
+     *
      * On failure, throws an exception or returns Y_CALIBRATIONMAX_INVALID.
      */
     public function get_calibrationMax()
@@ -242,13 +242,13 @@ class YAnButton extends YFunction
      * Changes the maximal calibration value for the input (between 0 and 4095, included), without actually
      * starting the automated calibration.  Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
-     * 
+     *
      * @param newval : an integer corresponding to the maximal calibration value for the input (between 0
      * and 4095, included), without actually
      *         starting the automated calibration
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_calibrationMax($newval)
@@ -259,10 +259,10 @@ class YAnButton extends YFunction
 
     /**
      * Returns the minimal value measured during the calibration (between 0 and 4095, included).
-     * 
+     *
      * @return an integer corresponding to the minimal value measured during the calibration (between 0
      * and 4095, included)
-     * 
+     *
      * On failure, throws an exception or returns Y_CALIBRATIONMIN_INVALID.
      */
     public function get_calibrationMin()
@@ -279,13 +279,13 @@ class YAnButton extends YFunction
      * Changes the minimal calibration value for the input (between 0 and 4095, included), without actually
      * starting the automated calibration.  Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
-     * 
+     *
      * @param newval : an integer corresponding to the minimal calibration value for the input (between 0
      * and 4095, included), without actually
      *         starting the automated calibration
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_calibrationMin($newval)
@@ -296,10 +296,10 @@ class YAnButton extends YFunction
 
     /**
      * Returns the sensibility for the input (between 1 and 1000) for triggering user callbacks.
-     * 
+     *
      * @return an integer corresponding to the sensibility for the input (between 1 and 1000) for
      * triggering user callbacks
-     * 
+     *
      * On failure, throws an exception or returns Y_SENSITIVITY_INVALID.
      */
     public function get_sensitivity()
@@ -319,12 +319,12 @@ class YAnButton extends YFunction
      * Special case: when the value 1000 is used, the callback will only be thrown when the logical state
      * of the input switches from pressed to released and back.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
-     * 
+     *
      * @param newval : an integer corresponding to the sensibility for the input (between 1 and 1000) for
      * triggering user callbacks
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_sensitivity($newval)
@@ -335,10 +335,10 @@ class YAnButton extends YFunction
 
     /**
      * Returns true if the input (considered as binary) is active (closed contact), and false otherwise.
-     * 
+     *
      * @return either Y_ISPRESSED_FALSE or Y_ISPRESSED_TRUE, according to true if the input (considered as
      * binary) is active (closed contact), and false otherwise
-     * 
+     *
      * On failure, throws an exception or returns Y_ISPRESSED_INVALID.
      */
     public function get_isPressed()
@@ -354,11 +354,11 @@ class YAnButton extends YFunction
     /**
      * Returns the number of elapsed milliseconds between the module power on and the last time
      * the input button was pressed (the input contact transitioned from open to closed).
-     * 
+     *
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
      * and the last time
      *         the input button was pressed (the input contact transitioned from open to closed)
-     * 
+     *
      * On failure, throws an exception or returns Y_LASTTIMEPRESSED_INVALID.
      */
     public function get_lastTimePressed()
@@ -374,11 +374,11 @@ class YAnButton extends YFunction
     /**
      * Returns the number of elapsed milliseconds between the module power on and the last time
      * the input button was released (the input contact transitioned from closed to open).
-     * 
+     *
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
      * and the last time
      *         the input button was released (the input contact transitioned from closed to open)
-     * 
+     *
      * On failure, throws an exception or returns Y_LASTTIMERELEASED_INVALID.
      */
     public function get_lastTimeReleased()
@@ -393,9 +393,9 @@ class YAnButton extends YFunction
 
     /**
      * Returns the pulse counter value
-     * 
+     *
      * @return an integer corresponding to the pulse counter value
-     * 
+     *
      * On failure, throws an exception or returns Y_PULSECOUNTER_INVALID.
      */
     public function get_pulseCounter()
@@ -416,9 +416,9 @@ class YAnButton extends YFunction
 
     /**
      * Returns the timer of the pulses counter (ms)
-     * 
+     *
      * @return an integer corresponding to the timer of the pulses counter (ms)
-     * 
+     *
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
@@ -441,7 +441,7 @@ class YAnButton extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the analog input is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YAnButton.isOnline() to test if the analog input is
@@ -449,9 +449,9 @@ class YAnButton extends YFunction
      * an analog input by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the analog input
-     * 
+     *
      * @return a YAnButton object allowing you to drive the analog input.
      */
     public static function FindAnButton($func)
@@ -467,9 +467,9 @@ class YAnButton extends YFunction
 
     /**
      * Returns the pulse counter value as well as its timer.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function resetCounter()
@@ -527,7 +527,7 @@ class YAnButton extends YFunction
 
     /**
      * Continues the enumeration of analog inputs started using yFirstAnButton().
-     * 
+     *
      * @return a pointer to a YAnButton object, corresponding to
      *         an analog input currently online, or a null pointer
      *         if there are no more analog inputs to enumerate.
@@ -544,7 +544,7 @@ class YAnButton extends YFunction
      * Starts the enumeration of analog inputs currently accessible.
      * Use the method YAnButton.nextAnButton() to iterate on
      * next analog inputs.
-     * 
+     *
      * @return a pointer to a YAnButton object, corresponding to
      *         the first analog input currently online, or a null pointer
      *         if there are none.
@@ -571,7 +571,7 @@ class YAnButton extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the analog input is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YAnButton.isOnline() to test if the analog input is
@@ -579,9 +579,9 @@ class YAnButton extends YFunction
  * an analog input by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the analog input
- * 
+ *
  * @return a YAnButton object allowing you to drive the analog input.
  */
 function yFindAnButton($func)
@@ -593,7 +593,7 @@ function yFindAnButton($func)
  * Starts the enumeration of analog inputs currently accessible.
  * Use the method YAnButton.nextAnButton() to iterate on
  * next analog inputs.
- * 
+ *
  * @return a pointer to a YAnButton object, corresponding to
  *         the first analog input currently online, or a null pointer
  *         if there are none.

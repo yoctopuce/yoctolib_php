@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 16895 2014-07-18 00:12:08Z mvuilleu $
+ * $Id: yocto_compass.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -51,9 +51,16 @@ if(!defined('Y_MAGNETICHEADING_INVALID'))    define('Y_MAGNETICHEADING_INVALID',
 //--- (YCompass declaration)
 /**
  * YCompass Class: Compass function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The YSensor class is the parent class for all Yoctopuce sensors. It can be
+ * used to read the current value and unit of any sensor, read the min/max
+ * value, configure autonomous recording frequency and access recorded data.
+ * It also provide a function to register a callback invoked each time the
+ * observed value changes, or at a predefined interval. Using this class rather
+ * than a specific subclass makes it possible to create generic applications
+ * that work with any Yoctopuce sensor, even those that do not yet exist.
+ * Note: The YAnButton class is the only analog input which does not inherit
+ * from YSensor.
  */
 class YCompass extends YSensor
 {
@@ -105,9 +112,9 @@ class YCompass extends YSensor
 
     /**
      * Returns the magnetic heading, regardless of the configured bearing.
-     * 
+     *
      * @return a floating point number corresponding to the magnetic heading, regardless of the configured bearing
-     * 
+     *
      * On failure, throws an exception or returns Y_MAGNETICHEADING_INVALID.
      */
     public function get_magneticHeading()
@@ -130,7 +137,7 @@ class YCompass extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the compass is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YCompass.isOnline() to test if the compass is
@@ -138,9 +145,9 @@ class YCompass extends YSensor
      * a compass by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the compass
-     * 
+     *
      * @return a YCompass object allowing you to drive the compass.
      */
     public static function FindCompass($func)
@@ -162,7 +169,7 @@ class YCompass extends YSensor
 
     /**
      * Continues the enumeration of compasses started using yFirstCompass().
-     * 
+     *
      * @return a pointer to a YCompass object, corresponding to
      *         a compass currently online, or a null pointer
      *         if there are no more compasses to enumerate.
@@ -179,7 +186,7 @@ class YCompass extends YSensor
      * Starts the enumeration of compasses currently accessible.
      * Use the method YCompass.nextCompass() to iterate on
      * next compasses.
-     * 
+     *
      * @return a pointer to a YCompass object, corresponding to
      *         the first compass currently online, or a null pointer
      *         if there are none.
@@ -206,7 +213,7 @@ class YCompass extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the compass is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YCompass.isOnline() to test if the compass is
@@ -214,9 +221,9 @@ class YCompass extends YSensor
  * a compass by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the compass
- * 
+ *
  * @return a YCompass object allowing you to drive the compass.
  */
 function yFindCompass($func)
@@ -228,7 +235,7 @@ function yFindCompass($func)
  * Starts the enumeration of compasses currently accessible.
  * Use the method YCompass.nextCompass() to iterate on
  * next compasses.
- * 
+ *
  * @return a pointer to a YCompass object, corresponding to
  *         the first compass currently online, or a null pointer
  *         if there are none.

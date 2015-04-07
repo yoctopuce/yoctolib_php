@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 17498 2014-09-03 19:21:24Z mvuilleu $
+ * $Id: yocto_display.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -84,7 +84,7 @@ if(!defined('Y_ALIGN_BOTTOM_RIGHT'))         define('Y_ALIGN_BOTTOM_RIGHT',     
 //--- (generated code: YDisplayLayer declaration)
 /**
  * YDisplayLayer Class: DisplayLayer object interface
- * 
+ *
  * A DisplayLayer is an image layer containing objects to display
  * (bitmaps, text, etc.). The content is displayed only when
  * the layer is active on the screen (and not masked by other
@@ -172,9 +172,9 @@ class YDisplayLayer
      * Reinitializes the drawing pointer to the upper left position,
      * and selects the most visible pen color. If you only want to erase the layer
      * content, use the method clear() instead.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function reset()
@@ -188,9 +188,9 @@ class YDisplayLayer
      * This method does not change any other attribute of the layer.
      * To reinitialize the layer attributes to defaults settings, use the method
      * reset() instead.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function clear()
@@ -203,11 +203,11 @@ class YDisplayLayer
      * including text drawing. The pen color is provided as an RGB value.
      * For grayscale or monochrome displays, the value is
      * automatically converted to the proper range.
-     * 
+     *
      * @param color : the desired pen color, as a 24-bit RGB value
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function selectColorPen($color)
@@ -222,11 +222,11 @@ class YDisplayLayer
      * For monochrome displays (without gray levels), any value
      * lower than 128 is rendered as black, and any value equal
      * or above to 128 is non-black.
-     * 
+     *
      * @param graylevel : the desired gray level, from 0 to 255
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function selectGrayPen($graylevel)
@@ -239,9 +239,9 @@ class YDisplayLayer
      * except for bitmap copy functions. Any point drawn using the eraser
      * becomes transparent (as when the layer is empty), showing the other
      * layers beneath it.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function selectEraser()
@@ -257,12 +257,12 @@ class YDisplayLayer
      * Anti-aliasing is enabled by default on grayscale and color displays,
      * but you can disable it if you prefer. This setting has no effect
      * on monochrome displays.
-     * 
+     *
      * @param mode : <t>true</t> to enable antialiasing, <t>false</t> to
      *         disable it.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function setAntialiasingMode($mode)
@@ -272,12 +272,12 @@ class YDisplayLayer
 
     /**
      * Draws a single pixel at the specified position.
-     * 
+     *
      * @param x : the distance from left of layer, in pixels
      * @param y : the distance from top of layer, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawPixel($x,$y)
@@ -287,14 +287,14 @@ class YDisplayLayer
 
     /**
      * Draws an empty rectangle at a specified position.
-     * 
+     *
      * @param x1 : the distance from left of layer to the left border of the rectangle, in pixels
      * @param y1 : the distance from top of layer to the top border of the rectangle, in pixels
      * @param x2 : the distance from left of layer to the right border of the rectangle, in pixels
      * @param y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawRect($x1,$y1,$x2,$y2)
@@ -304,14 +304,14 @@ class YDisplayLayer
 
     /**
      * Draws a filled rectangular bar at a specified position.
-     * 
+     *
      * @param x1 : the distance from left of layer to the left border of the rectangle, in pixels
      * @param y1 : the distance from top of layer to the top border of the rectangle, in pixels
      * @param x2 : the distance from left of layer to the right border of the rectangle, in pixels
      * @param y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawBar($x1,$y1,$x2,$y2)
@@ -321,13 +321,13 @@ class YDisplayLayer
 
     /**
      * Draws an empty circle at a specified position.
-     * 
+     *
      * @param x : the distance from left of layer to the center of the circle, in pixels
      * @param y : the distance from top of layer to the center of the circle, in pixels
      * @param r : the radius of the circle, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawCircle($x,$y,$r)
@@ -337,13 +337,13 @@ class YDisplayLayer
 
     /**
      * Draws a filled disc at a given position.
-     * 
+     *
      * @param x : the distance from left of layer to the center of the disc, in pixels
      * @param y : the distance from top of layer to the center of the disc, in pixels
      * @param r : the radius of the disc, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawDisc($x,$y,$r)
@@ -357,11 +357,11 @@ class YDisplayLayer
      * uploaded to the device built-in memory. If you experience problems selecting a font
      * file, check the device logs for any error message such as missing font file or bad font
      * file format.
-     * 
+     *
      * @param fontname : the font file name
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function selectFont($fontname)
@@ -373,7 +373,7 @@ class YDisplayLayer
      * Draws a text string at the specified position. The point of the text that is aligned
      * to the specified pixel position is called the anchor point, and can be chosen among
      * several options. Text is rendered from left to right, without implicit wrapping.
-     * 
+     *
      * @param x : the distance from left of layer to the text anchor point, in pixels
      * @param y : the distance from top of layer to the text anchor point, in pixels
      * @param anchor : the text anchor point, chosen among the Y_ALIGN enumeration:
@@ -382,9 +382,9 @@ class YDisplayLayer
      *         Y_ALIGN_TOP_DECIMAL, Y_ALIGN_CENTER_DECIMAL, Y_ALIGN_BASELINE_DECIMAL, Y_ALIGN_BOTTOM_DECIMAL,
      *         Y_ALIGN_TOP_RIGHT,   Y_ALIGN_CENTER_RIGHT,   Y_ALIGN_BASELINE_RIGHT,   Y_ALIGN_BOTTOM_RIGHT.
      * @param text : the text string to draw
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawText($x,$y,$anchor,$text)
@@ -397,13 +397,13 @@ class YDisplayLayer
      * uploaded to the device built-in memory. If you experience problems using an image
      * file, check the device logs for any error message such as missing image file or bad
      * image file format.
-     * 
+     *
      * @param x : the distance from left of layer to the left of the image, in pixels
      * @param y : the distance from top of layer to the top of the image, in pixels
      * @param imagename : the GIF file name
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawImage($x,$y,$imagename)
@@ -419,16 +419,16 @@ class YDisplayLayer
      * layer selected pen color. Bits set to 0 are drawn using the specified background
      * gray level, unless -1 is specified, in which case they are not drawn at all
      * (as if transparent).
-     * 
+     *
      * @param x : the distance from left of layer to the left of the bitmap, in pixels
      * @param y : the distance from top of layer to the top of the bitmap, in pixels
      * @param w : the width of the bitmap, in pixels
      * @param bitmap : a binary object
      * @param bgcol : the background gray level to use for zero bits (0 = black,
      *         255 = white), or -1 to leave the pixels unchanged
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function drawBitmap($x,$y,$w,$bitmap,$bgcol)
@@ -440,12 +440,12 @@ class YDisplayLayer
 
     /**
      * Moves the drawing pointer of this layer to the specified position.
-     * 
+     *
      * @param x : the distance from left of layer, in pixels
      * @param y : the distance from top of layer, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function moveTo($x,$y)
@@ -457,12 +457,12 @@ class YDisplayLayer
      * Draws a line from current drawing pointer position to the specified position.
      * The specified destination pixel is included in the line. The pointer position
      * is then moved to the end point of the line.
-     * 
+     *
      * @param x : the distance from left of layer to the end point of the line, in pixels
      * @param y : the distance from top of layer to the end point of the line, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function lineTo($x,$y)
@@ -476,11 +476,11 @@ class YDisplayLayer
      * of the next line when a newline character is met, or when the right margin
      * is hit. When the new text to display extends below the lower margin, the
      * console area is automatically scrolled up.
-     * 
+     *
      * @param text : the message to display
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function consoleOut($text)
@@ -490,14 +490,14 @@ class YDisplayLayer
 
     /**
      * Sets up display margins for the consoleOut function.
-     * 
+     *
      * @param x1 : the distance from left of layer to the left margin, in pixels
      * @param y1 : the distance from top of layer to the top margin, in pixels
      * @param x2 : the distance from left of layer to the right margin, in pixels
      * @param y2 : the distance from top of layer to the bottom margin, in pixels
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function setConsoleMargins($x1,$y1,$x2,$y2)
@@ -508,12 +508,12 @@ class YDisplayLayer
     /**
      * Sets up the background color used by the clearConsole function and by
      * the console scrolling feature.
-     * 
+     *
      * @param bgcol : the background gray level to use when scrolling (0 = black,
      *         255 = white), or -1 for transparent
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function setConsoleBackground($bgcol)
@@ -523,12 +523,12 @@ class YDisplayLayer
 
     /**
      * Sets up the wrapping behaviour used by the consoleOut function.
-     * 
+     *
      * @param wordwrap : true to wrap only between words,
      *         false to wrap on the last column anyway.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function setConsoleWordWrap($wordwrap)
@@ -539,9 +539,9 @@ class YDisplayLayer
     /**
      * Blanks the console area within console margins, and resets the console pointer
      * to the upper left corner of the console.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function clearConsole()
@@ -553,14 +553,14 @@ class YDisplayLayer
      * Sets the position of the layer relative to the display upper left corner.
      * When smooth scrolling is used, the display offset of the layer is
      * automatically updated during the next milliseconds to animate the move of the layer.
-     * 
+     *
      * @param x : the distance from left of display to the upper left corner of the layer
      * @param y : the distance from top of display to the upper left corner of the layer
      * @param scrollTime : number of milliseconds to use for smooth scrolling, or
      *         0 if the scrolling should be immediate.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function setLayerPosition($x,$y,$scrollTime)
@@ -573,9 +573,9 @@ class YDisplayLayer
      * on the screen until the next call to unhide(). Hiding the layer can positively
      * affect the drawing speed, since it postpones the rendering until all operations are
      * completed (double-buffering).
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function hide()
@@ -587,9 +587,9 @@ class YDisplayLayer
 
     /**
      * Shows the layer. Shows the layer again after a hide command.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function unhide()
@@ -600,7 +600,7 @@ class YDisplayLayer
 
     /**
      * Gets parent YDisplay. Returns the parent YDisplay object of the current YDisplayLayer.
-     * 
+     *
      * @return an YDisplay object
      */
     public function get_display()
@@ -610,9 +610,9 @@ class YDisplayLayer
 
     /**
      * Returns the display width, in pixels.
-     * 
+     *
      * @return an integer corresponding to the display width, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYWIDTH_INVALID.
      */
     public function get_displayWidth()
@@ -622,9 +622,9 @@ class YDisplayLayer
 
     /**
      * Returns the display height, in pixels.
-     * 
+     *
      * @return an integer corresponding to the display height, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYHEIGHT_INVALID.
      */
     public function get_displayHeight()
@@ -634,9 +634,9 @@ class YDisplayLayer
 
     /**
      * Returns the width of the layers to draw on, in pixels.
-     * 
+     *
      * @return an integer corresponding to the width of the layers to draw on, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_LAYERWIDTH_INVALID.
      */
     public function get_layerWidth()
@@ -646,9 +646,9 @@ class YDisplayLayer
 
     /**
      * Returns the height of the layers to draw on, in pixels.
-     * 
+     *
      * @return an integer corresponding to the height of the layers to draw on, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_LAYERHEIGHT_INVALID.
      */
     public function get_layerHeight()
@@ -668,7 +668,7 @@ class YDisplayLayer
 //--- (generated code: YDisplay declaration)
 /**
  * YDisplay Class: Display function interface
- * 
+ *
  * Yoctopuce display interface has been designed to easily
  * show information and images. The device provides built-in
  * multi-layer rendering. Layers can be drawn offline, individually,
@@ -771,9 +771,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns true if the screen is powered, false otherwise.
-     * 
+     *
      * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the screen is powered, false otherwise
-     * 
+     *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
     public function get_enabled()
@@ -788,11 +788,11 @@ class YDisplay extends YFunction
 
     /**
      * Changes the power state of the display.
-     * 
+     *
      * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the power state of the display
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_enabled($newval)
@@ -803,9 +803,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the name of the sequence to play when the displayed is powered on.
-     * 
+     *
      * @return a string corresponding to the name of the sequence to play when the displayed is powered on
-     * 
+     *
      * On failure, throws an exception or returns Y_STARTUPSEQ_INVALID.
      */
     public function get_startupSeq()
@@ -822,11 +822,11 @@ class YDisplay extends YFunction
      * Changes the name of the sequence to play when the displayed is powered on.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
-     * 
+     *
      * @param newval : a string corresponding to the name of the sequence to play when the displayed is powered on
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_startupSeq($newval)
@@ -837,9 +837,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the luminosity of the  module informative leds (from 0 to 100).
-     * 
+     *
      * @return an integer corresponding to the luminosity of the  module informative leds (from 0 to 100)
-     * 
+     *
      * On failure, throws an exception or returns Y_BRIGHTNESS_INVALID.
      */
     public function get_brightness()
@@ -856,11 +856,11 @@ class YDisplay extends YFunction
      * Changes the brightness of the display. The parameter is a value between 0 and
      * 100. Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
-     * 
+     *
      * @param newval : an integer corresponding to the brightness of the display
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_brightness($newval)
@@ -871,10 +871,10 @@ class YDisplay extends YFunction
 
     /**
      * Returns the currently selected display orientation.
-     * 
+     *
      * @return a value among Y_ORIENTATION_LEFT, Y_ORIENTATION_UP, Y_ORIENTATION_RIGHT and
      * Y_ORIENTATION_DOWN corresponding to the currently selected display orientation
-     * 
+     *
      * On failure, throws an exception or returns Y_ORIENTATION_INVALID.
      */
     public function get_orientation()
@@ -890,12 +890,12 @@ class YDisplay extends YFunction
     /**
      * Changes the display orientation. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
-     * 
+     *
      * @param newval : a value among Y_ORIENTATION_LEFT, Y_ORIENTATION_UP, Y_ORIENTATION_RIGHT and
      * Y_ORIENTATION_DOWN corresponding to the display orientation
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_orientation($newval)
@@ -906,9 +906,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the display width, in pixels.
-     * 
+     *
      * @return an integer corresponding to the display width, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYWIDTH_INVALID.
      */
     public function get_displayWidth()
@@ -923,9 +923,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the display height, in pixels.
-     * 
+     *
      * @return an integer corresponding to the display height, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYHEIGHT_INVALID.
      */
     public function get_displayHeight()
@@ -940,10 +940,10 @@ class YDisplay extends YFunction
 
     /**
      * Returns the display type: monochrome, gray levels or full color.
-     * 
+     *
      * @return a value among Y_DISPLAYTYPE_MONO, Y_DISPLAYTYPE_GRAY and Y_DISPLAYTYPE_RGB corresponding to
      * the display type: monochrome, gray levels or full color
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYTYPE_INVALID.
      */
     public function get_displayType()
@@ -958,9 +958,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the width of the layers to draw on, in pixels.
-     * 
+     *
      * @return an integer corresponding to the width of the layers to draw on, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_LAYERWIDTH_INVALID.
      */
     public function get_layerWidth()
@@ -975,9 +975,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the height of the layers to draw on, in pixels.
-     * 
+     *
      * @return an integer corresponding to the height of the layers to draw on, in pixels
-     * 
+     *
      * On failure, throws an exception or returns Y_LAYERHEIGHT_INVALID.
      */
     public function get_layerHeight()
@@ -992,9 +992,9 @@ class YDisplay extends YFunction
 
     /**
      * Returns the number of available layers to draw on.
-     * 
+     *
      * @return an integer corresponding to the number of available layers to draw on
-     * 
+     *
      * On failure, throws an exception or returns Y_LAYERCOUNT_INVALID.
      */
     public function get_layerCount()
@@ -1033,7 +1033,7 @@ class YDisplay extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the display is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YDisplay.isOnline() to test if the display is
@@ -1041,9 +1041,9 @@ class YDisplay extends YFunction
      * a display by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the display
-     * 
+     *
      * @return a YDisplay object allowing you to drive the display.
      */
     public static function FindDisplay($func)
@@ -1061,9 +1061,9 @@ class YDisplay extends YFunction
      * Clears the display screen and resets all display layers to their default state.
      * Using this function in a sequence will kill the sequence play-back. Don't use that
      * function to reset the display at sequence start-up.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function resetAll()
@@ -1076,12 +1076,12 @@ class YDisplay extends YFunction
     /**
      * Smoothly changes the brightness of the screen to produce a fade-in or fade-out
      * effect.
-     * 
+     *
      * @param brightness : the new screen brightness
      * @param duration : duration of the brightness transition, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function fade($brightness,$duration)
@@ -1094,9 +1094,9 @@ class YDisplay extends YFunction
      * Starts to record all display commands into a sequence, for later replay.
      * The name used to store the sequence is specified when calling
      * saveSequence(), once the recording is complete.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function newSequence()
@@ -1111,11 +1111,11 @@ class YDisplay extends YFunction
      * Stops recording display commands and saves the sequence into the specified
      * file on the display internal memory. The sequence can be later replayed
      * using playSequence().
-     * 
+     *
      * @param sequenceName : the name of the newly created sequence
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function saveSequence($sequenceName)
@@ -1131,11 +1131,11 @@ class YDisplay extends YFunction
     /**
      * Replays a display sequence previously recorded using
      * newSequence() and saveSequence().
-     * 
+     *
      * @param sequenceName : the name of the newly created sequence
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function playSequence($sequenceName)
@@ -1151,11 +1151,11 @@ class YDisplay extends YFunction
      * (without any immediate effect). It can also be used dynamically while
      * playing a pre-recorded sequence, to suspend or resume the execution of
      * the sequence. To cancel a delay, call the same method with a zero delay.
-     * 
+     *
      * @param delay_ms : the duration to wait, in milliseconds
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function pauseSequence($delay_ms)
@@ -1167,9 +1167,9 @@ class YDisplay extends YFunction
     /**
      * Stops immediately any ongoing sequence replay.
      * The display is left as is.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function stopSequence()
@@ -1182,12 +1182,12 @@ class YDisplay extends YFunction
      * Uploads an arbitrary file (for instance a GIF file) to the display, to the
      * specified full path name. If a file already exists with the same path name,
      * its content is overwritten.
-     * 
+     *
      * @param pathname : path and name of the new file to create
      * @param content : binary buffer with the content to set
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function upload($pathname,$content)
@@ -1201,12 +1201,12 @@ class YDisplay extends YFunction
      * This method only affects the displayed content, but does not change any
      * property of the layer object.
      * Note that layer 0 has no transparency support (it is always completely opaque).
-     * 
+     *
      * @param srcLayerId : the identifier of the source layer (a number in range 0..layerCount-1)
      * @param dstLayerId : the identifier of the destination layer (a number in range 0..layerCount-1)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function copyLayerContent($srcLayerId,$dstLayerId)
@@ -1222,12 +1222,12 @@ class YDisplay extends YFunction
      * layer stays unchanged. When used between onae hidden layer and a visible layer,
      * this method makes it possible to easily implement double-buffering.
      * Note that layer 0 has no transparency support (it is always completely opaque).
-     * 
+     *
      * @param layerIdA : the first layer (a number in range 0..layerCount-1)
      * @param layerIdB : the second layer (a number in range 0..layerCount-1)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function swapLayerContent($layerIdA,$layerIdB)
@@ -1286,7 +1286,7 @@ class YDisplay extends YFunction
 
     /**
      * Continues the enumeration of displays started using yFirstDisplay().
-     * 
+     *
      * @return a pointer to a YDisplay object, corresponding to
      *         a display currently online, or a null pointer
      *         if there are no more displays to enumerate.
@@ -1303,7 +1303,7 @@ class YDisplay extends YFunction
      * Starts the enumeration of displays currently accessible.
      * Use the method YDisplay.nextDisplay() to iterate on
      * next displays.
-     * 
+     *
      * @return a pointer to a YDisplay object, corresponding to
      *         the first display currently online, or a null pointer
      *         if there are none.
@@ -1320,11 +1320,11 @@ class YDisplay extends YFunction
      * Returns a YDisplayLayer object that can be used to draw on the specified
      * layer. The content is displayed only when the layer is active on the
      * screen (and not masked by other overlapping layers).
-     * 
+     *
      * @param layerId : the identifier of the layer (a number in range 0..layerCount-1)
-     * 
+     *
      * @return an YDisplayLayer object
-     * 
+     *
      * On failure, throws an exception or returns null.
      */
     public function get_displayLayer($layerId)
@@ -1383,7 +1383,7 @@ class YDisplay extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the display is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YDisplay.isOnline() to test if the display is
@@ -1391,9 +1391,9 @@ class YDisplay extends YFunction
  * a display by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the display
- * 
+ *
  * @return a YDisplay object allowing you to drive the display.
  */
 function yFindDisplay($func)
@@ -1405,7 +1405,7 @@ function yFindDisplay($func)
  * Starts the enumeration of displays currently accessible.
  * Use the method YDisplay.nextDisplay() to iterate on
  * next displays.
- * 
+ *
  * @return a pointer to a YDisplay object, corresponding to
  *         the first display currently online, or a null pointer
  *         if there are none.

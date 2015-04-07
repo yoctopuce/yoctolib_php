@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_segmenteddisplay.php 19156 2015-01-30 08:10:43Z seb $
+ * $Id: yocto_segmenteddisplay.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_DISPLAYEDTEXT_INVALID'))      define('Y_DISPLAYEDTEXT_INVALID',  
 //--- (YSegmentedDisplay declaration)
 /**
  * YSegmentedDisplay Class: SegmentedDisplay function interface
- * 
+ *
  * The SegmentedDisplay class allows you to drive segmented displays.
  */
 class YSegmentedDisplay extends YFunction
@@ -96,9 +96,9 @@ class YSegmentedDisplay extends YFunction
 
     /**
      * Returns the text currently displayed on the screen.
-     * 
+     *
      * @return a string corresponding to the text currently displayed on the screen
-     * 
+     *
      * On failure, throws an exception or returns Y_DISPLAYEDTEXT_INVALID.
      */
     public function get_displayedText()
@@ -113,11 +113,11 @@ class YSegmentedDisplay extends YFunction
 
     /**
      * Changes the text currently displayed on the screen.
-     * 
+     *
      * @param newval : a string corresponding to the text currently displayed on the screen
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_displayedText($newval)
@@ -152,7 +152,7 @@ class YSegmentedDisplay extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the segmented displays is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YSegmentedDisplay.isOnline() to test if the segmented displays is
@@ -160,9 +160,9 @@ class YSegmentedDisplay extends YFunction
      * a segmented display by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the segmented displays
-     * 
+     *
      * @return a YSegmentedDisplay object allowing you to drive the segmented displays.
      */
     public static function FindSegmentedDisplay($func)
@@ -190,7 +190,7 @@ class YSegmentedDisplay extends YFunction
 
     /**
      * Continues the enumeration of segmented displays started using yFirstSegmentedDisplay().
-     * 
+     *
      * @return a pointer to a YSegmentedDisplay object, corresponding to
      *         a segmented display currently online, or a null pointer
      *         if there are no more segmented displays to enumerate.
@@ -207,7 +207,7 @@ class YSegmentedDisplay extends YFunction
      * Starts the enumeration of segmented displays currently accessible.
      * Use the method YSegmentedDisplay.nextSegmentedDisplay() to iterate on
      * next segmented displays.
-     * 
+     *
      * @return a pointer to a YSegmentedDisplay object, corresponding to
      *         the first segmented displays currently online, or a null pointer
      *         if there are none.
@@ -234,7 +234,7 @@ class YSegmentedDisplay extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the segmented displays is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YSegmentedDisplay.isOnline() to test if the segmented displays is
@@ -242,9 +242,9 @@ class YSegmentedDisplay extends YFunction
  * a segmented display by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the segmented displays
- * 
+ *
  * @return a YSegmentedDisplay object allowing you to drive the segmented displays.
  */
 function yFindSegmentedDisplay($func)
@@ -256,7 +256,7 @@ function yFindSegmentedDisplay($func)
  * Starts the enumeration of segmented displays currently accessible.
  * Use the method YSegmentedDisplay.nextSegmentedDisplay() to iterate on
  * next segmented displays.
- * 
+ *
  * @return a pointer to a YSegmentedDisplay object, corresponding to
  *         the first segmented displays currently online, or a null pointer
  *         if there are none.

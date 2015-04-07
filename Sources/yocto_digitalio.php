@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_digitalio.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_digitalio.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -56,7 +56,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 //--- (YDigitalIO declaration)
 /**
  * YDigitalIO Class: Digital IO function interface
- * 
+ *
  * The Yoctopuce application programming interface allows you to switch the state of each
  * bit of the I/O port. You can switch all bits at once, or one by one. The library
  * can also automatically generate short pulses of a determined duration. Electrical behavior
@@ -127,9 +127,9 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the digital IO port state: bit 0 represents input 0, and so on.
-     * 
+     *
      * @return an integer corresponding to the digital IO port state: bit 0 represents input 0, and so on
-     * 
+     *
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
     public function get_portState()
@@ -145,11 +145,11 @@ class YDigitalIO extends YFunction
     /**
      * Changes the digital IO port state: bit 0 represents input 0, and so on. This function has no effect
      * on bits configured as input in portDirection.
-     * 
+     *
      * @param newval : an integer corresponding to the digital IO port state: bit 0 represents input 0, and so on
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_portState($newval)
@@ -160,10 +160,10 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the IO direction of all bits of the port: 0 makes a bit an input, 1 makes it an output.
-     * 
+     *
      * @return an integer corresponding to the IO direction of all bits of the port: 0 makes a bit an
      * input, 1 makes it an output
-     * 
+     *
      * On failure, throws an exception or returns Y_PORTDIRECTION_INVALID.
      */
     public function get_portDirection()
@@ -179,12 +179,12 @@ class YDigitalIO extends YFunction
     /**
      * Changes the IO direction of all bits of the port: 0 makes a bit an input, 1 makes it an output.
      * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
-     * 
+     *
      * @param newval : an integer corresponding to the IO direction of all bits of the port: 0 makes a bit
      * an input, 1 makes it an output
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_portDirection($newval)
@@ -197,9 +197,9 @@ class YDigitalIO extends YFunction
      * Returns the electrical interface for each bit of the port. For each bit set to 0  the matching I/O
      * works in the regular,
      * intuitive way, for each bit set to 1, the I/O works in reverse mode.
-     * 
+     *
      * @return an integer corresponding to the electrical interface for each bit of the port
-     * 
+     *
      * On failure, throws an exception or returns Y_PORTOPENDRAIN_INVALID.
      */
     public function get_portOpenDrain()
@@ -216,11 +216,11 @@ class YDigitalIO extends YFunction
      * Changes the electrical interface for each bit of the port. 0 makes a bit a regular input/output, 1 makes
      * it an open-drain (open-collector) input/output. Remember to call the
      * saveToFlash() method  to make sure the setting is kept after a reboot.
-     * 
+     *
      * @param newval : an integer corresponding to the electrical interface for each bit of the port
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_portOpenDrain($newval)
@@ -232,9 +232,9 @@ class YDigitalIO extends YFunction
     /**
      * Returns the polarity of all the bits of the port.  For each bit set to 0, the matching I/O works the regular,
      * intuitive way; for each bit set to 1, the I/O works in reverse mode.
-     * 
+     *
      * @return an integer corresponding to the polarity of all the bits of the port
-     * 
+     *
      * On failure, throws an exception or returns Y_PORTPOLARITY_INVALID.
      */
     public function get_portPolarity()
@@ -250,12 +250,12 @@ class YDigitalIO extends YFunction
     /**
      * Changes the polarity of all the bits of the port: 0 makes a bit an input, 1 makes it an output.
      * Remember to call the saveToFlash() method  to make sure the setting will be kept after a reboot.
-     * 
+     *
      * @param newval : an integer corresponding to the polarity of all the bits of the port: 0 makes a bit
      * an input, 1 makes it an output
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_portPolarity($newval)
@@ -266,9 +266,9 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the number of bits implemented in the I/O port.
-     * 
+     *
      * @return an integer corresponding to the number of bits implemented in the I/O port
-     * 
+     *
      * On failure, throws an exception or returns Y_PORTSIZE_INVALID.
      */
     public function get_portSize()
@@ -283,10 +283,10 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the voltage source used to drive output bits.
-     * 
+     *
      * @return a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V and Y_OUTPUTVOLTAGE_EXT_V
      * corresponding to the voltage source used to drive output bits
-     * 
+     *
      * On failure, throws an exception or returns Y_OUTPUTVOLTAGE_INVALID.
      */
     public function get_outputVoltage()
@@ -302,12 +302,12 @@ class YDigitalIO extends YFunction
     /**
      * Changes the voltage source used to drive output bits.
      * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
-     * 
+     *
      * @param newval : a value among Y_OUTPUTVOLTAGE_USB_5V, Y_OUTPUTVOLTAGE_USB_3V and
      * Y_OUTPUTVOLTAGE_EXT_V corresponding to the voltage source used to drive output bits
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_outputVoltage($newval)
@@ -342,7 +342,7 @@ class YDigitalIO extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the digital IO port is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YDigitalIO.isOnline() to test if the digital IO port is
@@ -350,9 +350,9 @@ class YDigitalIO extends YFunction
      * a digital IO port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the digital IO port
-     * 
+     *
      * @return a YDigitalIO object allowing you to drive the digital IO port.
      */
     public static function FindDigitalIO($func)
@@ -368,12 +368,12 @@ class YDigitalIO extends YFunction
 
     /**
      * Sets a single bit of the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
      * @param bitstate : the state of the bit (1 or 0)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_bitState($bitno,$bitstate)
@@ -385,11 +385,11 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the state of a single bit of the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
-     * 
+     *
      * @return the bit state (0 or 1)
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function get_bitState($bitno)
@@ -401,11 +401,11 @@ class YDigitalIO extends YFunction
 
     /**
      * Reverts a single bit of the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function toggle_bitState($bitno)
@@ -415,13 +415,13 @@ class YDigitalIO extends YFunction
 
     /**
      * Changes  the direction of a single bit from the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
      * @param bitdirection : direction to set, 0 makes the bit an input, 1 makes it an output.
      *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_bitDirection($bitno,$bitdirection)
@@ -433,11 +433,11 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the direction of a single bit from the I/O port (0 means the bit is an input, 1  an output).
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function get_bitDirection($bitno)
@@ -449,14 +449,14 @@ class YDigitalIO extends YFunction
 
     /**
      * Changes the polarity of a single bit from the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0.
      * @param bitpolarity : polarity to set, 0 makes the I/O work in regular mode, 1 makes the I/O  works
      * in reverse mode.
      *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_bitPolarity($bitno,$bitpolarity)
@@ -469,11 +469,11 @@ class YDigitalIO extends YFunction
     /**
      * Returns the polarity of a single bit from the I/O port (0 means the I/O works in regular mode, 1
      * means the I/O  works in reverse mode).
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function get_bitPolarity($bitno)
@@ -485,14 +485,14 @@ class YDigitalIO extends YFunction
 
     /**
      * Changes  the electrical interface of a single bit from the I/O port.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
      * @param opendrain : 0 makes a bit a regular input/output, 1 makes
      *         it an open-drain (open-collector) input/output. Remember to call the
      *         saveToFlash() method to make sure the setting is kept after a reboot.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_bitOpenDrain($bitno,$opendrain)
@@ -505,12 +505,12 @@ class YDigitalIO extends YFunction
     /**
      * Returns the type of electrical interface of a single bit from the I/O port. (0 means the bit is an
      * input, 1  an output).
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
-     * 
+     *
      * @return   0 means the a bit is a regular input/output, 1 means the bit is an open-drain
      *         (open-collector) input/output.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function get_bitOpenDrain($bitno)
@@ -523,13 +523,13 @@ class YDigitalIO extends YFunction
     /**
      * Triggers a pulse on a single bit for a specified duration. The specified bit
      * will be turned to 1, and then back to 0 after the given duration.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
      * @param ms_duration : desired pulse duration in milliseconds. Be aware that the device time
      *         resolution is not guaranteed up to the millisecond.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function pulse($bitno,$ms_duration)
@@ -540,14 +540,14 @@ class YDigitalIO extends YFunction
     /**
      * Schedules a pulse on a single bit for a specified duration. The specified bit
      * will be turned to 1, and then back to 0 after the given duration.
-     * 
+     *
      * @param bitno : the bit number; lowest bit has index 0
      * @param ms_delay : waiting time before the pulse, in milliseconds
      * @param ms_duration : desired pulse duration in milliseconds. Be aware that the device time
      *         resolution is not guaranteed up to the millisecond.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function delayedPulse($bitno,$ms_delay,$ms_duration)
@@ -596,7 +596,7 @@ class YDigitalIO extends YFunction
 
     /**
      * Continues the enumeration of digital IO ports started using yFirstDigitalIO().
-     * 
+     *
      * @return a pointer to a YDigitalIO object, corresponding to
      *         a digital IO port currently online, or a null pointer
      *         if there are no more digital IO ports to enumerate.
@@ -613,7 +613,7 @@ class YDigitalIO extends YFunction
      * Starts the enumeration of digital IO ports currently accessible.
      * Use the method YDigitalIO.nextDigitalIO() to iterate on
      * next digital IO ports.
-     * 
+     *
      * @return a pointer to a YDigitalIO object, corresponding to
      *         the first digital IO port currently online, or a null pointer
      *         if there are none.
@@ -640,7 +640,7 @@ class YDigitalIO extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the digital IO port is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YDigitalIO.isOnline() to test if the digital IO port is
@@ -648,9 +648,9 @@ class YDigitalIO extends YFunction
  * a digital IO port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the digital IO port
- * 
+ *
  * @return a YDigitalIO object allowing you to drive the digital IO port.
  */
 function yFindDigitalIO($func)
@@ -662,7 +662,7 @@ function yFindDigitalIO($func)
  * Starts the enumeration of digital IO ports currently accessible.
  * Use the method YDigitalIO.nextDigitalIO() to iterate on
  * next digital IO ports.
- * 
+ *
  * @return a pointer to a YDigitalIO object, corresponding to
  *         the first digital IO port currently online, or a null pointer
  *         if there are none.

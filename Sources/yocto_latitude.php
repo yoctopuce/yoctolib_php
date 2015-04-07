@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pressure.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_latitude.php 19746 2015-03-17 10:34:00Z seb $
  *
- * Implements YPressure, the high-level API for Pressure functions
+ * Implements YLatitude, the high-level API for Latitude functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,39 +38,40 @@
  *
  *********************************************************************/
 
-//--- (YPressure return codes)
-//--- (end of YPressure return codes)
-//--- (YPressure definitions)
-//--- (end of YPressure definitions)
+//--- (YLatitude return codes)
+//--- (end of YLatitude return codes)
+//--- (YLatitude definitions)
+//--- (end of YLatitude definitions)
 
-//--- (YPressure declaration)
+//--- (YLatitude declaration)
 /**
- * YPressure Class: Pressure function interface
+ * YLatitude Class: Latitude function interface
  *
- * The Yoctopuce class YPressure allows you to read and configure Yoctopuce pressure
- * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * The Yoctopuce class YLatitude allows you to read the latitude from Yoctopuce
+ * geolocalization sensors. It inherits from the YSensor class the core functions to
+ * read measurements, register callback functions, access the autonomous
+ * datalogger.
  */
-class YPressure extends YSensor
+class YLatitude extends YSensor
 {
-    //--- (end of YPressure declaration)
+    //--- (end of YLatitude declaration)
 
-    //--- (YPressure attributes)
-    //--- (end of YPressure attributes)
+    //--- (YLatitude attributes)
+    //--- (end of YLatitude attributes)
 
     function __construct($str_func)
     {
-        //--- (YPressure constructor)
+        //--- (YLatitude constructor)
         parent::__construct($str_func);
-        $this->_className = 'Pressure';
+        $this->_className = 'Latitude';
 
-        //--- (end of YPressure constructor)
+        //--- (end of YLatitude constructor)
     }
 
-    //--- (YPressure implementation)
+    //--- (YLatitude implementation)
 
     /**
-     * Retrieves a pressure sensor for a given identifier.
+     * Retrieves a latitude sensor for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -80,67 +81,67 @@ class YPressure extends YSensor
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the pressure sensor is online at the time
+     * This function does not require that the latitude sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPressure.isOnline() to test if the pressure sensor is
+     * Use the method YLatitude.isOnline() to test if the latitude sensor is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a pressure sensor by logical name, no error is notified: the first instance
+     * a latitude sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
-     * @param func : a string that uniquely characterizes the pressure sensor
+     * @param func : a string that uniquely characterizes the latitude sensor
      *
-     * @return a YPressure object allowing you to drive the pressure sensor.
+     * @return a YLatitude object allowing you to drive the latitude sensor.
      */
-    public static function FindPressure($func)
+    public static function FindLatitude($func)
     {
-        // $obj                    is a YPressure;
-        $obj = YFunction::_FindFromCache('Pressure', $func);
+        // $obj                    is a YLatitude;
+        $obj = YFunction::_FindFromCache('Latitude', $func);
         if ($obj == null) {
-            $obj = new YPressure($func);
-            YFunction::_AddToCache('Pressure', $func, $obj);
+            $obj = new YLatitude($func);
+            YFunction::_AddToCache('Latitude', $func, $obj);
         }
         return $obj;
     }
 
     /**
-     * Continues the enumeration of pressure sensors started using yFirstPressure().
+     * Continues the enumeration of latitude sensors started using yFirstLatitude().
      *
-     * @return a pointer to a YPressure object, corresponding to
-     *         a pressure sensor currently online, or a null pointer
-     *         if there are no more pressure sensors to enumerate.
+     * @return a pointer to a YLatitude object, corresponding to
+     *         a latitude sensor currently online, or a null pointer
+     *         if there are no more latitude sensors to enumerate.
      */
-    public function nextPressure()
+    public function nextLatitude()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindPressure($next_hwid);
+        return yFindLatitude($next_hwid);
     }
 
     /**
-     * Starts the enumeration of pressure sensors currently accessible.
-     * Use the method YPressure.nextPressure() to iterate on
-     * next pressure sensors.
+     * Starts the enumeration of latitude sensors currently accessible.
+     * Use the method YLatitude.nextLatitude() to iterate on
+     * next latitude sensors.
      *
-     * @return a pointer to a YPressure object, corresponding to
-     *         the first pressure sensor currently online, or a null pointer
+     * @return a pointer to a YLatitude object, corresponding to
+     *         the first latitude sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstPressure()
-    {   $next_hwid = YAPI::getFirstHardwareId('Pressure');
+    public static function FirstLatitude()
+    {   $next_hwid = YAPI::getFirstHardwareId('Latitude');
         if($next_hwid == null) return null;
-        return self::FindPressure($next_hwid);
+        return self::FindLatitude($next_hwid);
     }
 
-    //--- (end of YPressure implementation)
+    //--- (end of YLatitude implementation)
 
 };
 
-//--- (Pressure functions)
+//--- (Latitude functions)
 
 /**
- * Retrieves a pressure sensor for a given identifier.
+ * Retrieves a latitude sensor for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -150,36 +151,36 @@ class YPressure extends YSensor
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the pressure sensor is online at the time
+ * This function does not require that the latitude sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPressure.isOnline() to test if the pressure sensor is
+ * Use the method YLatitude.isOnline() to test if the latitude sensor is
  * indeed online at a given time. In case of ambiguity when looking for
- * a pressure sensor by logical name, no error is notified: the first instance
+ * a latitude sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
- * @param func : a string that uniquely characterizes the pressure sensor
+ * @param func : a string that uniquely characterizes the latitude sensor
  *
- * @return a YPressure object allowing you to drive the pressure sensor.
+ * @return a YLatitude object allowing you to drive the latitude sensor.
  */
-function yFindPressure($func)
+function yFindLatitude($func)
 {
-    return YPressure::FindPressure($func);
+    return YLatitude::FindLatitude($func);
 }
 
 /**
- * Starts the enumeration of pressure sensors currently accessible.
- * Use the method YPressure.nextPressure() to iterate on
- * next pressure sensors.
+ * Starts the enumeration of latitude sensors currently accessible.
+ * Use the method YLatitude.nextLatitude() to iterate on
+ * next latitude sensors.
  *
- * @return a pointer to a YPressure object, corresponding to
- *         the first pressure sensor currently online, or a null pointer
+ * @return a pointer to a YLatitude object, corresponding to
+ *         the first latitude sensor currently online, or a null pointer
  *         if there are none.
  */
-function yFirstPressure()
+function yFirstLatitude()
 {
-    return YPressure::FirstPressure();
+    return YLatitude::FirstLatitude();
 }
 
-//--- (end of Pressure functions)
+//--- (end of Latitude functions)
 ?>

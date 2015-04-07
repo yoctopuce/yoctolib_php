@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_magnetometer.php 16895 2014-07-18 00:12:08Z mvuilleu $
+ * $Id: yocto_magnetometer.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -49,9 +49,16 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
 //--- (YMagnetometer declaration)
 /**
  * YMagnetometer Class: Magnetometer function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The YSensor class is the parent class for all Yoctopuce sensors. It can be
+ * used to read the current value and unit of any sensor, read the min/max
+ * value, configure autonomous recording frequency and access recorded data.
+ * It also provide a function to register a callback invoked each time the
+ * observed value changes, or at a predefined interval. Using this class rather
+ * than a specific subclass makes it possible to create generic applications
+ * that work with any Yoctopuce sensor, even those that do not yet exist.
+ * Note: The YAnButton class is the only analog input which does not inherit
+ * from YSensor.
  */
 class YMagnetometer extends YSensor
 {
@@ -95,10 +102,10 @@ class YMagnetometer extends YSensor
 
     /**
      * Returns the X component of the magnetic field, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the X component of the magnetic field, as a
      * floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_XVALUE_INVALID.
      */
     public function get_xValue()
@@ -113,10 +120,10 @@ class YMagnetometer extends YSensor
 
     /**
      * Returns the Y component of the magnetic field, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the Y component of the magnetic field, as a
      * floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_YVALUE_INVALID.
      */
     public function get_yValue()
@@ -131,10 +138,10 @@ class YMagnetometer extends YSensor
 
     /**
      * Returns the Z component of the magnetic field, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the Z component of the magnetic field, as a
      * floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_ZVALUE_INVALID.
      */
     public function get_zValue()
@@ -157,7 +164,7 @@ class YMagnetometer extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the magnetometer is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YMagnetometer.isOnline() to test if the magnetometer is
@@ -165,9 +172,9 @@ class YMagnetometer extends YSensor
      * a magnetometer by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the magnetometer
-     * 
+     *
      * @return a YMagnetometer object allowing you to drive the magnetometer.
      */
     public static function FindMagnetometer($func)
@@ -192,7 +199,7 @@ class YMagnetometer extends YSensor
 
     /**
      * Continues the enumeration of magnetometers started using yFirstMagnetometer().
-     * 
+     *
      * @return a pointer to a YMagnetometer object, corresponding to
      *         a magnetometer currently online, or a null pointer
      *         if there are no more magnetometers to enumerate.
@@ -209,7 +216,7 @@ class YMagnetometer extends YSensor
      * Starts the enumeration of magnetometers currently accessible.
      * Use the method YMagnetometer.nextMagnetometer() to iterate on
      * next magnetometers.
-     * 
+     *
      * @return a pointer to a YMagnetometer object, corresponding to
      *         the first magnetometer currently online, or a null pointer
      *         if there are none.
@@ -236,7 +243,7 @@ class YMagnetometer extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the magnetometer is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YMagnetometer.isOnline() to test if the magnetometer is
@@ -244,9 +251,9 @@ class YMagnetometer extends YSensor
  * a magnetometer by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the magnetometer
- * 
+ *
  * @return a YMagnetometer object allowing you to drive the magnetometer.
  */
 function yFindMagnetometer($func)
@@ -258,7 +265,7 @@ function yFindMagnetometer($func)
  * Starts the enumeration of magnetometers currently accessible.
  * Use the method YMagnetometer.nextMagnetometer() to iterate on
  * next magnetometers.
- * 
+ *
  * @return a pointer to a YMagnetometer object, corresponding to
  *         the first magnetometer currently online, or a null pointer
  *         if there are none.

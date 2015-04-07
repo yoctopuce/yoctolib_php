@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_buzzer.php 19156 2015-01-30 08:10:43Z seb $
+ * $Id: yocto_buzzer.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 //--- (YBuzzer declaration)
 /**
  * YBuzzer Class: Buzzer function interface
- * 
+ *
  * The Yoctopuce application programming interface allows you to
  * choose the frequency and volume at which the buzzer must sound.
  * You can also pre-program a play sequence.
@@ -114,11 +114,11 @@ class YBuzzer extends YFunction
 
     /**
      * Changes the frequency of the signal sent to the buzzer. A zero value stops the buzzer.
-     * 
+     *
      * @param newval : a floating point number corresponding to the frequency of the signal sent to the buzzer
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_frequency($newval)
@@ -129,9 +129,9 @@ class YBuzzer extends YFunction
 
     /**
      * Returns the  frequency of the signal sent to the buzzer/speaker.
-     * 
+     *
      * @return a floating point number corresponding to the  frequency of the signal sent to the buzzer/speaker
-     * 
+     *
      * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
      */
     public function get_frequency()
@@ -146,9 +146,9 @@ class YBuzzer extends YFunction
 
     /**
      * Returns the volume of the signal sent to the buzzer/speaker.
-     * 
+     *
      * @return an integer corresponding to the volume of the signal sent to the buzzer/speaker
-     * 
+     *
      * On failure, throws an exception or returns Y_VOLUME_INVALID.
      */
     public function get_volume()
@@ -163,11 +163,11 @@ class YBuzzer extends YFunction
 
     /**
      * Changes the volume of the signal sent to the buzzer/speaker.
-     * 
+     *
      * @param newval : an integer corresponding to the volume of the signal sent to the buzzer/speaker
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_volume($newval)
@@ -178,9 +178,9 @@ class YBuzzer extends YFunction
 
     /**
      * Returns the current length of the playing sequence
-     * 
+     *
      * @return an integer corresponding to the current length of the playing sequence
-     * 
+     *
      * On failure, throws an exception or returns Y_PLAYSEQSIZE_INVALID.
      */
     public function get_playSeqSize()
@@ -195,9 +195,9 @@ class YBuzzer extends YFunction
 
     /**
      * Returns the maximum length of the playing sequence
-     * 
+     *
      * @return an integer corresponding to the maximum length of the playing sequence
-     * 
+     *
      * On failure, throws an exception or returns Y_PLAYSEQMAXSIZE_INVALID.
      */
     public function get_playSeqMaxSize()
@@ -215,9 +215,9 @@ class YBuzzer extends YFunction
      * sequences cannot be read from the device, this can be used
      * to detect if a specific playing sequence is already
      * programmed.
-     * 
+     *
      * @return an integer corresponding to the playing sequence signature
-     * 
+     *
      * On failure, throws an exception or returns Y_PLAYSEQSIGNATURE_INVALID.
      */
     public function get_playSeqSignature()
@@ -256,7 +256,7 @@ class YBuzzer extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the buzzer is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YBuzzer.isOnline() to test if the buzzer is
@@ -264,9 +264,9 @@ class YBuzzer extends YFunction
      * a buzzer by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the buzzer
-     * 
+     *
      * @return a YBuzzer object allowing you to drive the buzzer.
      */
     public static function FindBuzzer($func)
@@ -287,10 +287,10 @@ class YBuzzer extends YFunction
 
     /**
      * Adds a new frequency transition to the playing sequence.
-     * 
+     *
      * @param freq    : desired frequency when the transition is completed, in Hz
      * @param msDelay : duration of the frequency transition, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -301,10 +301,10 @@ class YBuzzer extends YFunction
 
     /**
      * Adds a pulse to the playing sequence.
-     * 
+     *
      * @param freq : pulse frequency, in Hz
      * @param msDuration : pulse duration, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -316,10 +316,10 @@ class YBuzzer extends YFunction
     /**
      * Adds a new volume transition to the playing sequence. Frequency stays untouched:
      * if frequency is at zero, the transition has no effect.
-     * 
+     *
      * @param volume    : desired volume when the transition is completed, as a percentage.
      * @param msDuration : duration of the volume transition, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -332,7 +332,7 @@ class YBuzzer extends YFunction
      * Starts the preprogrammed playing sequence. The sequence
      * runs in loop until it is stopped by stopPlaySeq or an explicit
      * change.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -343,7 +343,7 @@ class YBuzzer extends YFunction
 
     /**
      * Stops the preprogrammed playing sequence and sets the frequency to zero.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -354,7 +354,7 @@ class YBuzzer extends YFunction
 
     /**
      * Resets the preprogrammed playing sequence and sets the frequency to zero.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -365,12 +365,12 @@ class YBuzzer extends YFunction
 
     /**
      * Activates the buzzer for a short duration.
-     * 
+     *
      * @param frequency : pulse frequency, in hertz
      * @param duration : pulse duration in millseconds
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function pulse($frequency,$duration)
@@ -380,12 +380,12 @@ class YBuzzer extends YFunction
 
     /**
      * Makes the buzzer frequency change over a period of time.
-     * 
+     *
      * @param frequency : frequency to reach, in hertz. A frequency under 25Hz stops the buzzer.
      * @param duration :  pulse duration in millseconds
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function freqMove($frequency,$duration)
@@ -395,12 +395,12 @@ class YBuzzer extends YFunction
 
     /**
      * Makes the buzzer volume change over a period of time, frequency  stays untouched.
-     * 
+     *
      * @param volume : volume to reach in %
      * @param duration : change duration in millseconds
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function volumeMove($volume,$duration)
@@ -437,7 +437,7 @@ class YBuzzer extends YFunction
 
     /**
      * Continues the enumeration of buzzers started using yFirstBuzzer().
-     * 
+     *
      * @return a pointer to a YBuzzer object, corresponding to
      *         a buzzer currently online, or a null pointer
      *         if there are no more buzzers to enumerate.
@@ -454,7 +454,7 @@ class YBuzzer extends YFunction
      * Starts the enumeration of buzzers currently accessible.
      * Use the method YBuzzer.nextBuzzer() to iterate on
      * next buzzers.
-     * 
+     *
      * @return a pointer to a YBuzzer object, corresponding to
      *         the first buzzer currently online, or a null pointer
      *         if there are none.
@@ -481,7 +481,7 @@ class YBuzzer extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the buzzer is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YBuzzer.isOnline() to test if the buzzer is
@@ -489,9 +489,9 @@ class YBuzzer extends YFunction
  * a buzzer by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the buzzer
- * 
+ *
  * @return a YBuzzer object allowing you to drive the buzzer.
  */
 function yFindBuzzer($func)
@@ -503,7 +503,7 @@ function yFindBuzzer($func)
  * Starts the enumeration of buzzers currently accessible.
  * Use the method YBuzzer.nextBuzzer() to iterate on
  * next buzzers.
- * 
+ *
  * @return a pointer to a YBuzzer object, corresponding to
  *         the first buzzer currently online, or a null pointer
  *         if there are none.

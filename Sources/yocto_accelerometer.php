@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 17245 2014-08-20 16:16:37Z seb $
+ * $Id: yocto_accelerometer.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -52,9 +52,16 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
 //--- (YAccelerometer declaration)
 /**
  * YAccelerometer Class: Accelerometer function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The YSensor class is the parent class for all Yoctopuce sensors. It can be
+ * used to read the current value and unit of any sensor, read the min/max
+ * value, configure autonomous recording frequency and access recorded data.
+ * It also provide a function to register a callback invoked each time the
+ * observed value changes, or at a predefined interval. Using this class rather
+ * than a specific subclass makes it possible to create generic applications
+ * that work with any Yoctopuce sensor, even those that do not yet exist.
+ * Note: The YAnButton class is the only analog input which does not inherit
+ * from YSensor.
  */
 class YAccelerometer extends YSensor
 {
@@ -105,9 +112,9 @@ class YAccelerometer extends YSensor
 
     /**
      * Returns the X component of the acceleration, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the X component of the acceleration, as a floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_XVALUE_INVALID.
      */
     public function get_xValue()
@@ -122,9 +129,9 @@ class YAccelerometer extends YSensor
 
     /**
      * Returns the Y component of the acceleration, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the Y component of the acceleration, as a floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_YVALUE_INVALID.
      */
     public function get_yValue()
@@ -139,9 +146,9 @@ class YAccelerometer extends YSensor
 
     /**
      * Returns the Z component of the acceleration, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the Z component of the acceleration, as a floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_ZVALUE_INVALID.
      */
     public function get_zValue()
@@ -180,7 +187,7 @@ class YAccelerometer extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the accelerometer is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YAccelerometer.isOnline() to test if the accelerometer is
@@ -188,9 +195,9 @@ class YAccelerometer extends YSensor
      * an accelerometer by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the accelerometer
-     * 
+     *
      * @return a YAccelerometer object allowing you to drive the accelerometer.
      */
     public static function FindAccelerometer($func)
@@ -221,7 +228,7 @@ class YAccelerometer extends YSensor
 
     /**
      * Continues the enumeration of accelerometers started using yFirstAccelerometer().
-     * 
+     *
      * @return a pointer to a YAccelerometer object, corresponding to
      *         an accelerometer currently online, or a null pointer
      *         if there are no more accelerometers to enumerate.
@@ -238,7 +245,7 @@ class YAccelerometer extends YSensor
      * Starts the enumeration of accelerometers currently accessible.
      * Use the method YAccelerometer.nextAccelerometer() to iterate on
      * next accelerometers.
-     * 
+     *
      * @return a pointer to a YAccelerometer object, corresponding to
      *         the first accelerometer currently online, or a null pointer
      *         if there are none.
@@ -265,7 +272,7 @@ class YAccelerometer extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the accelerometer is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YAccelerometer.isOnline() to test if the accelerometer is
@@ -273,9 +280,9 @@ class YAccelerometer extends YSensor
  * an accelerometer by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the accelerometer
- * 
+ *
  * @return a YAccelerometer object allowing you to drive the accelerometer.
  */
 function yFindAccelerometer($func)
@@ -287,7 +294,7 @@ function yFindAccelerometer($func)
  * Starts the enumeration of accelerometers currently accessible.
  * Use the method YAccelerometer.nextAccelerometer() to iterate on
  * next accelerometers.
- * 
+ *
  * @return a pointer to a YAccelerometer object, corresponding to
  *         the first accelerometer currently online, or a null pointer
  *         if there are none.

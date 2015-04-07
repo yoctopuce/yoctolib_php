@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 18524 2014-11-25 17:09:56Z seb $
+ * $Id: yocto_colorled.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -55,7 +55,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 //--- (YColorLed declaration)
 /**
  * YColorLed Class: ColorLed function interface
- * 
+ *
  * The Yoctopuce application programming interface
  * allows you to drive a color led using RGB coordinates as well as HSL coordinates.
  * The module performs all conversions form RGB to HSL automatically. It is then
@@ -135,9 +135,9 @@ class YColorLed extends YFunction
 
     /**
      * Returns the current RGB color of the led.
-     * 
+     *
      * @return an integer corresponding to the current RGB color of the led
-     * 
+     *
      * On failure, throws an exception or returns Y_RGBCOLOR_INVALID.
      */
     public function get_rgbColor()
@@ -152,11 +152,11 @@ class YColorLed extends YFunction
 
     /**
      * Changes the current color of the led, using a RGB color. Encoding is done as follows: 0xRRGGBB.
-     * 
+     *
      * @param newval : an integer corresponding to the current color of the led, using a RGB color
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_rgbColor($newval)
@@ -167,9 +167,9 @@ class YColorLed extends YFunction
 
     /**
      * Returns the current HSL color of the led.
-     * 
+     *
      * @return an integer corresponding to the current HSL color of the led
-     * 
+     *
      * On failure, throws an exception or returns Y_HSLCOLOR_INVALID.
      */
     public function get_hslColor()
@@ -184,11 +184,11 @@ class YColorLed extends YFunction
 
     /**
      * Changes the current color of the led, using a color HSL. Encoding is done as follows: 0xHHSSLL.
-     * 
+     *
      * @param newval : an integer corresponding to the current color of the led, using a color HSL
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_hslColor($newval)
@@ -215,12 +215,12 @@ class YColorLed extends YFunction
 
     /**
      * Performs a smooth transition in the RGB color space between the current color and a target color.
-     * 
+     *
      * @param rgb_target  : desired RGB color at the end of the transition
      * @param ms_duration : duration of the transition, in millisecond
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function rgbMove($rgb_target,$ms_duration)
@@ -247,12 +247,12 @@ class YColorLed extends YFunction
 
     /**
      * Performs a smooth transition in the HSL color space between the current color and a target color.
-     * 
+     *
      * @param hsl_target  : desired HSL color at the end of the transition
      * @param ms_duration : duration of the transition, in millisecond
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function hslMove($hsl_target,$ms_duration)
@@ -263,9 +263,9 @@ class YColorLed extends YFunction
 
     /**
      * Returns the configured color to be displayed when the module is turned on.
-     * 
+     *
      * @return an integer corresponding to the configured color to be displayed when the module is turned on
-     * 
+     *
      * On failure, throws an exception or returns Y_RGBCOLORATPOWERON_INVALID.
      */
     public function get_rgbColorAtPowerOn()
@@ -280,12 +280,12 @@ class YColorLed extends YFunction
 
     /**
      * Changes the color that the led will display by default when the module is turned on.
-     * 
+     *
      * @param newval : an integer corresponding to the color that the led will display by default when the
      * module is turned on
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_rgbColorAtPowerOn($newval)
@@ -296,9 +296,9 @@ class YColorLed extends YFunction
 
     /**
      * Returns the current length of the blinking sequence
-     * 
+     *
      * @return an integer corresponding to the current length of the blinking sequence
-     * 
+     *
      * On failure, throws an exception or returns Y_BLINKSEQSIZE_INVALID.
      */
     public function get_blinkSeqSize()
@@ -313,9 +313,9 @@ class YColorLed extends YFunction
 
     /**
      * Returns the maximum length of the blinking sequence
-     * 
+     *
      * @return an integer corresponding to the maximum length of the blinking sequence
-     * 
+     *
      * On failure, throws an exception or returns Y_BLINKSEQMAXSIZE_INVALID.
      */
     public function get_blinkSeqMaxSize()
@@ -333,9 +333,9 @@ class YColorLed extends YFunction
      * sequences cannot be read from the device, this can be used
      * to detect if a specific blinking sequence is already
      * programmed.
-     * 
+     *
      * @return an integer
-     * 
+     *
      * On failure, throws an exception or returns Y_BLINKSEQSIGNATURE_INVALID.
      */
     public function get_blinkSeqSignature()
@@ -374,7 +374,7 @@ class YColorLed extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the RGB led is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YColorLed.isOnline() to test if the RGB led is
@@ -382,9 +382,9 @@ class YColorLed extends YFunction
      * an RGB led by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the RGB led
-     * 
+     *
      * @return a YColorLed object allowing you to drive the RGB led.
      */
     public static function FindColorLed($func)
@@ -406,10 +406,10 @@ class YColorLed extends YFunction
     /**
      * Add a new transition to the blinking sequence, the move will
      * be performed in the HSL space.
-     * 
+     *
      * @param HSLcolor : desired HSL color when the traisntion is completed
      * @param msDelay : duration of the color transition, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -421,10 +421,10 @@ class YColorLed extends YFunction
     /**
      * Add a new transition to the blinking sequence, the move will
      * be performed in the RGB space.
-     * 
+     *
      * @param RGBcolor : desired RGB color when the transition is completed
      * @param msDelay : duration of the color transition, in milliseconds.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -437,7 +437,7 @@ class YColorLed extends YFunction
      * Starts the preprogrammed blinking sequence. The sequence will
      * run in loop until it is stopped by stopBlinkSeq or an explicit
      * change.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -448,7 +448,7 @@ class YColorLed extends YFunction
 
     /**
      * Stops the preprogrammed blinking sequence.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -459,7 +459,7 @@ class YColorLed extends YFunction
 
     /**
      * Resets the preprogrammed blinking sequence.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -509,7 +509,7 @@ class YColorLed extends YFunction
 
     /**
      * Continues the enumeration of RGB leds started using yFirstColorLed().
-     * 
+     *
      * @return a pointer to a YColorLed object, corresponding to
      *         an RGB led currently online, or a null pointer
      *         if there are no more RGB leds to enumerate.
@@ -526,7 +526,7 @@ class YColorLed extends YFunction
      * Starts the enumeration of RGB leds currently accessible.
      * Use the method YColorLed.nextColorLed() to iterate on
      * next RGB leds.
-     * 
+     *
      * @return a pointer to a YColorLed object, corresponding to
      *         the first RGB led currently online, or a null pointer
      *         if there are none.
@@ -553,7 +553,7 @@ class YColorLed extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the RGB led is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YColorLed.isOnline() to test if the RGB led is
@@ -561,9 +561,9 @@ class YColorLed extends YFunction
  * an RGB led by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the RGB led
- * 
+ *
  * @return a YColorLed object allowing you to drive the RGB led.
  */
 function yFindColorLed($func)
@@ -575,7 +575,7 @@ function yFindColorLed($func)
  * Starts the enumeration of RGB leds currently accessible.
  * Use the method YColorLed.nextColorLed() to iterate on
  * next RGB leds.
- * 
+ *
  * @return a pointer to a YColorLed object, corresponding to
  *         the first RGB led currently online, or a null pointer
  *         if there are none.

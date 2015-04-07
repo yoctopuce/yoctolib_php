@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 16962 2014-07-23 13:16:33Z mvuilleu $
+ * $Id: yocto_wakeupmonitor.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -60,7 +60,7 @@ if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',        
 //--- (YWakeUpMonitor declaration)
 /**
  * YWakeUpMonitor Class: WakeUpMonitor function interface
- * 
+ *
  * The WakeUpMonitor function handles globally all wake-up sources, as well
  * as automated sleep mode.
  */
@@ -130,9 +130,9 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Returns the maximal wake up time (in seconds) before automatically going to sleep.
-     * 
+     *
      * @return an integer corresponding to the maximal wake up time (in seconds) before automatically going to sleep
-     * 
+     *
      * On failure, throws an exception or returns Y_POWERDURATION_INVALID.
      */
     public function get_powerDuration()
@@ -147,12 +147,12 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Changes the maximal wake up time (seconds) before automatically going to sleep.
-     * 
+     *
      * @param newval : an integer corresponding to the maximal wake up time (seconds) before automatically
      * going to sleep
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_powerDuration($newval)
@@ -163,9 +163,9 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Returns the delay before the  next sleep period.
-     * 
+     *
      * @return an integer corresponding to the delay before the  next sleep period
-     * 
+     *
      * On failure, throws an exception or returns Y_SLEEPCOUNTDOWN_INVALID.
      */
     public function get_sleepCountdown()
@@ -180,11 +180,11 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Changes the delay before the next sleep period.
-     * 
+     *
      * @param newval : an integer corresponding to the delay before the next sleep period
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_sleepCountdown($newval)
@@ -195,9 +195,9 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Returns the next scheduled wake up date/time (UNIX format)
-     * 
+     *
      * @return an integer corresponding to the next scheduled wake up date/time (UNIX format)
-     * 
+     *
      * On failure, throws an exception or returns Y_NEXTWAKEUP_INVALID.
      */
     public function get_nextWakeUp()
@@ -212,11 +212,11 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Changes the days of the week when a wake up must take place.
-     * 
+     *
      * @param newval : an integer corresponding to the days of the week when a wake up must take place
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_nextWakeUp($newval)
@@ -227,11 +227,11 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Returns the latest wake up reason.
-     * 
+     *
      * @return a value among Y_WAKEUPREASON_USBPOWER, Y_WAKEUPREASON_EXTPOWER, Y_WAKEUPREASON_ENDOFSLEEP,
      * Y_WAKEUPREASON_EXTSIG1, Y_WAKEUPREASON_SCHEDULE1 and Y_WAKEUPREASON_SCHEDULE2 corresponding to the
      * latest wake up reason
-     * 
+     *
      * On failure, throws an exception or returns Y_WAKEUPREASON_INVALID.
      */
     public function get_wakeUpReason()
@@ -246,9 +246,9 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Returns  the current state of the monitor
-     * 
+     *
      * @return either Y_WAKEUPSTATE_SLEEPING or Y_WAKEUPSTATE_AWAKE, according to  the current state of the monitor
-     * 
+     *
      * On failure, throws an exception or returns Y_WAKEUPSTATE_INVALID.
      */
     public function get_wakeUpState()
@@ -287,7 +287,7 @@ class YWakeUpMonitor extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the monitor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YWakeUpMonitor.isOnline() to test if the monitor is
@@ -295,9 +295,9 @@ class YWakeUpMonitor extends YFunction
      * a monitor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the monitor
-     * 
+     *
      * @return a YWakeUpMonitor object allowing you to drive the monitor.
      */
     public static function FindWakeUpMonitor($func)
@@ -322,11 +322,11 @@ class YWakeUpMonitor extends YFunction
     /**
      * Goes to sleep until the next wake up condition is met,  the
      * RTC time must have been set before calling this function.
-     * 
+     *
      * @param secBeforeSleep : number of seconds before going into sleep mode,
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function sleep($secBeforeSleep)
@@ -343,12 +343,12 @@ class YWakeUpMonitor extends YFunction
      * Goes to sleep for a specific duration or until the next wake up condition is met, the
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
-     * 
+     *
      * @param secUntilWakeUp : number of seconds before next wake up
      * @param secBeforeSleep : number of seconds before going into sleep mode
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function sleepFor($secUntilWakeUp,$secBeforeSleep)
@@ -365,12 +365,12 @@ class YWakeUpMonitor extends YFunction
      * Go to sleep until a specific date is reached or until the next wake up condition is met, the
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
-     * 
+     *
      * @param wakeUpTime : wake-up datetime (UNIX format)
      * @param secBeforeSleep : number of seconds before going into sleep mode
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function sleepUntil($wakeUpTime,$secBeforeSleep)
@@ -385,7 +385,7 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Resets the sleep countdown.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
@@ -428,7 +428,7 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Continues the enumeration of monitors started using yFirstWakeUpMonitor().
-     * 
+     *
      * @return a pointer to a YWakeUpMonitor object, corresponding to
      *         a monitor currently online, or a null pointer
      *         if there are no more monitors to enumerate.
@@ -445,7 +445,7 @@ class YWakeUpMonitor extends YFunction
      * Starts the enumeration of monitors currently accessible.
      * Use the method YWakeUpMonitor.nextWakeUpMonitor() to iterate on
      * next monitors.
-     * 
+     *
      * @return a pointer to a YWakeUpMonitor object, corresponding to
      *         the first monitor currently online, or a null pointer
      *         if there are none.
@@ -472,7 +472,7 @@ class YWakeUpMonitor extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the monitor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YWakeUpMonitor.isOnline() to test if the monitor is
@@ -480,9 +480,9 @@ class YWakeUpMonitor extends YFunction
  * a monitor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the monitor
- * 
+ *
  * @return a YWakeUpMonitor object allowing you to drive the monitor.
  */
 function yFindWakeUpMonitor($func)
@@ -494,7 +494,7 @@ function yFindWakeUpMonitor($func)
  * Starts the enumeration of monitors currently accessible.
  * Use the method YWakeUpMonitor.nextWakeUpMonitor() to iterate on
  * next monitors.
- * 
+ *
  * @return a pointer to a YWakeUpMonitor object, corresponding to
  *         the first monitor currently online, or a null pointer
  *         if there are none.

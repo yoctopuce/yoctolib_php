@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_altitude.php 16895 2014-07-18 00:12:08Z mvuilleu $
+ * $Id: yocto_altitude.php 19746 2015-03-17 10:34:00Z seb $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -42,22 +42,28 @@
 //--- (end of YAltitude return codes)
 //--- (YAltitude definitions)
 if(!defined('Y_QNH_INVALID'))                define('Y_QNH_INVALID',               YAPI_INVALID_DOUBLE);
+if(!defined('Y_TECHNOLOGY_INVALID'))         define('Y_TECHNOLOGY_INVALID',        YAPI_INVALID_STRING);
 //--- (end of YAltitude definitions)
 
 //--- (YAltitude declaration)
 /**
  * YAltitude Class: Altitude function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YAltitude allows you to read and configure Yoctopuce altitude
+ * sensors. It inherits from the YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
+ * This class adds the ability to configure the barometric pressure adjusted to
+ * sea level (QNH) for barometric sensors.
  */
 class YAltitude extends YSensor
 {
     const QNH_INVALID                    = YAPI_INVALID_DOUBLE;
+    const TECHNOLOGY_INVALID             = YAPI_INVALID_STRING;
     //--- (end of YAltitude declaration)
 
     //--- (YAltitude attributes)
     protected $_qnh                      = Y_QNH_INVALID;                // MeasureVal
+    protected $_technology               = Y_TECHNOLOGY_INVALID;         // Text
     //--- (end of YAltitude attributes)
 
     function __construct($str_func)
@@ -77,6 +83,9 @@ class YAltitude extends YSensor
         case 'qnh':
             $this->_qnh = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
+        case 'technology':
+            $this->_technology = $val;
+            return 1;
         }
         return parent::_parseAttr($name, $val);
     }
@@ -84,11 +93,11 @@ class YAltitude extends YSensor
     /**
      * Changes the current estimated altitude. This allows to compensate for
      * ambient pressure variations and to work in relative mode.
-     * 
+     *
      * @param newval : a floating point number corresponding to the current estimated altitude
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_currentValue($newval)
@@ -101,13 +110,13 @@ class YAltitude extends YSensor
      * Changes the barometric pressure adjusted to sea level used to compute
      * the altitude (QNH). This enables you to compensate for atmospheric pressure
      * changes due to weather conditions.
-     * 
+     *
      * @param newval : a floating point number corresponding to the barometric pressure adjusted to sea
      * level used to compute
      *         the altitude (QNH)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_qnh($newval)
@@ -119,10 +128,10 @@ class YAltitude extends YSensor
     /**
      * Returns the barometric pressure adjusted to sea level used to compute
      * the altitude (QNH).
-     * 
+     *
      * @return a floating point number corresponding to the barometric pressure adjusted to sea level used to compute
      *         the altitude (QNH)
-     * 
+     *
      * On failure, throws an exception or returns Y_QNH_INVALID.
      */
     public function get_qnh()
@@ -136,6 +145,25 @@ class YAltitude extends YSensor
     }
 
     /**
+     * Returns the technology used by the sesnor to compute
+     * altitude. Possibles values are  "barometric" and "gps"
+     *
+     * @return a string corresponding to the technology used by the sesnor to compute
+     *         altitude
+     *
+     * On failure, throws an exception or returns Y_TECHNOLOGY_INVALID.
+     */
+    public function get_technology()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_TECHNOLOGY_INVALID;
+            }
+        }
+        return $this->_technology;
+    }
+
+    /**
      * Retrieves an altimeter for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -145,7 +173,7 @@ class YAltitude extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the altimeter is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YAltitude.isOnline() to test if the altimeter is
@@ -153,9 +181,9 @@ class YAltitude extends YSensor
      * an altimeter by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the altimeter
-     * 
+     *
      * @return a YAltitude object allowing you to drive the altimeter.
      */
     public static function FindAltitude($func)
@@ -178,9 +206,12 @@ class YAltitude extends YSensor
     public function qnh()
     { return $this->get_qnh(); }
 
+    public function technology()
+    { return $this->get_technology(); }
+
     /**
      * Continues the enumeration of altimeters started using yFirstAltitude().
-     * 
+     *
      * @return a pointer to a YAltitude object, corresponding to
      *         an altimeter currently online, or a null pointer
      *         if there are no more altimeters to enumerate.
@@ -197,7 +228,7 @@ class YAltitude extends YSensor
      * Starts the enumeration of altimeters currently accessible.
      * Use the method YAltitude.nextAltitude() to iterate on
      * next altimeters.
-     * 
+     *
      * @return a pointer to a YAltitude object, corresponding to
      *         the first altimeter currently online, or a null pointer
      *         if there are none.
@@ -224,7 +255,7 @@ class YAltitude extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the altimeter is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YAltitude.isOnline() to test if the altimeter is
@@ -232,9 +263,9 @@ class YAltitude extends YSensor
  * an altimeter by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the altimeter
- * 
+ *
  * @return a YAltitude object allowing you to drive the altimeter.
  */
 function yFindAltitude($func)
@@ -246,7 +277,7 @@ function yFindAltitude($func)
  * Starts the enumeration of altimeters currently accessible.
  * Use the method YAltitude.nextAltitude() to iterate on
  * next altimeters.
- * 
+ *
  * @return a pointer to a YAltitude object, corresponding to
  *         the first altimeter currently online, or a null pointer
  *         if there are none.

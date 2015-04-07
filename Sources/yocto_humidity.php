@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_humidity.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_humidity.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YHumidity, the high-level API for Humidity functions
  *
@@ -46,9 +46,10 @@
 //--- (YHumidity declaration)
 /**
  * YHumidity Class: Humidity function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YHumidity allows you to read and configure Yoctopuce humidity
+ * sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
  */
 class YHumidity extends YSensor
 {
@@ -78,7 +79,7 @@ class YHumidity extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the humidity sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YHumidity.isOnline() to test if the humidity sensor is
@@ -86,9 +87,9 @@ class YHumidity extends YSensor
      * a humidity sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the humidity sensor
-     * 
+     *
      * @return a YHumidity object allowing you to drive the humidity sensor.
      */
     public static function FindHumidity($func)
@@ -104,7 +105,7 @@ class YHumidity extends YSensor
 
     /**
      * Continues the enumeration of humidity sensors started using yFirstHumidity().
-     * 
+     *
      * @return a pointer to a YHumidity object, corresponding to
      *         a humidity sensor currently online, or a null pointer
      *         if there are no more humidity sensors to enumerate.
@@ -121,7 +122,7 @@ class YHumidity extends YSensor
      * Starts the enumeration of humidity sensors currently accessible.
      * Use the method YHumidity.nextHumidity() to iterate on
      * next humidity sensors.
-     * 
+     *
      * @return a pointer to a YHumidity object, corresponding to
      *         the first humidity sensor currently online, or a null pointer
      *         if there are none.
@@ -148,7 +149,7 @@ class YHumidity extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the humidity sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YHumidity.isOnline() to test if the humidity sensor is
@@ -156,9 +157,9 @@ class YHumidity extends YSensor
  * a humidity sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the humidity sensor
- * 
+ *
  * @return a YHumidity object allowing you to drive the humidity sensor.
  */
 function yFindHumidity($func)
@@ -170,7 +171,7 @@ function yFindHumidity($func)
  * Starts the enumeration of humidity sensors currently accessible.
  * Use the method YHumidity.nextHumidity() to iterate on
  * next humidity sensors.
- * 
+ *
  * @return a pointer to a YHumidity object, corresponding to
  *         the first humidity sensor currently online, or a null pointer
  *         if there are none.

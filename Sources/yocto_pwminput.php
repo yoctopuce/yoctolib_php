@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 18361 2014-11-13 08:06:41Z mvuilleu $
+ * $Id: yocto_pwminput.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -57,9 +57,12 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
 //--- (YPwmInput declaration)
 /**
  * YPwmInput Class: PwmInput function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YPwmInput allows you to read and configure Yoctopuce PWM
+ * sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
+ * This class adds the ability to configure the signal parameter used to transmit
+ * information: the duty cacle, the frequency or the pulse width.
  */
 class YPwmInput extends YSensor
 {
@@ -127,9 +130,9 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the PWM duty cycle, in per cents.
-     * 
+     *
      * @return a floating point number corresponding to the PWM duty cycle, in per cents
-     * 
+     *
      * On failure, throws an exception or returns Y_DUTYCYCLE_INVALID.
      */
     public function get_dutyCycle()
@@ -144,10 +147,10 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the PWM pulse length in milliseconds, as a floating point number.
-     * 
+     *
      * @return a floating point number corresponding to the PWM pulse length in milliseconds, as a
      * floating point number
-     * 
+     *
      * On failure, throws an exception or returns Y_PULSEDURATION_INVALID.
      */
     public function get_pulseDuration()
@@ -162,9 +165,9 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the PWM frequency in Hz.
-     * 
+     *
      * @return a floating point number corresponding to the PWM frequency in Hz
-     * 
+     *
      * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
      */
     public function get_frequency()
@@ -179,9 +182,9 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the PWM period in milliseconds.
-     * 
+     *
      * @return a floating point number corresponding to the PWM period in milliseconds
-     * 
+     *
      * On failure, throws an exception or returns Y_PERIOD_INVALID.
      */
     public function get_period()
@@ -198,9 +201,9 @@ class YPwmInput extends YSensor
      * Returns the pulse counter value. Actually that
      * counter is incremented twice per period. That counter is
      * limited  to 1 billion
-     * 
+     *
      * @return an integer corresponding to the pulse counter value
-     * 
+     *
      * On failure, throws an exception or returns Y_PULSECOUNTER_INVALID.
      */
     public function get_pulseCounter()
@@ -221,9 +224,9 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the timer of the pulses counter (ms)
-     * 
+     *
      * @return an integer corresponding to the timer of the pulses counter (ms)
-     * 
+     *
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
@@ -239,11 +242,11 @@ class YPwmInput extends YSensor
     /**
      * Returns the parameter (frequency/duty cycle, pulse width, edges count) returned by the
      * get_currentValue function and callbacks. Attention
-     * 
+     *
      * @return a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE, Y_PWMREPORTMODE_PWM_FREQUENCY,
      * Y_PWMREPORTMODE_PWM_PULSEDURATION and Y_PWMREPORTMODE_PWM_EDGECOUNT corresponding to the parameter
      * (frequency/duty cycle, pulse width, edges count) returned by the get_currentValue function and callbacks
-     * 
+     *
      * On failure, throws an exception or returns Y_PWMREPORTMODE_INVALID.
      */
     public function get_pwmReportMode()
@@ -261,12 +264,12 @@ class YPwmInput extends YSensor
      * get_currentValue function and callbacks.
      * The edge count value is limited to the 6 lowest digits. For values greater than one million, use
      * get_pulseCounter().
-     * 
+     *
      * @param newval : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE, Y_PWMREPORTMODE_PWM_FREQUENCY,
      * Y_PWMREPORTMODE_PWM_PULSEDURATION and Y_PWMREPORTMODE_PWM_EDGECOUNT
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_pwmReportMode($newval)
@@ -285,7 +288,7 @@ class YPwmInput extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the PWM input is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YPwmInput.isOnline() to test if the PWM input is
@@ -293,9 +296,9 @@ class YPwmInput extends YSensor
      * a PWM input by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the PWM input
-     * 
+     *
      * @return a YPwmInput object allowing you to drive the PWM input.
      */
     public static function FindPwmInput($func)
@@ -311,9 +314,9 @@ class YPwmInput extends YSensor
 
     /**
      * Returns the pulse counter value as well as its timer.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function resetCounter()
@@ -350,7 +353,7 @@ class YPwmInput extends YSensor
 
     /**
      * Continues the enumeration of PWM inputs started using yFirstPwmInput().
-     * 
+     *
      * @return a pointer to a YPwmInput object, corresponding to
      *         a PWM input currently online, or a null pointer
      *         if there are no more PWM inputs to enumerate.
@@ -367,7 +370,7 @@ class YPwmInput extends YSensor
      * Starts the enumeration of PWM inputs currently accessible.
      * Use the method YPwmInput.nextPwmInput() to iterate on
      * next PWM inputs.
-     * 
+     *
      * @return a pointer to a YPwmInput object, corresponding to
      *         the first PWM input currently online, or a null pointer
      *         if there are none.
@@ -394,7 +397,7 @@ class YPwmInput extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the PWM input is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YPwmInput.isOnline() to test if the PWM input is
@@ -402,9 +405,9 @@ class YPwmInput extends YSensor
  * a PWM input by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the PWM input
- * 
+ *
  * @return a YPwmInput object allowing you to drive the PWM input.
  */
 function yFindPwmInput($func)
@@ -416,7 +419,7 @@ function yFindPwmInput($func)
  * Starts the enumeration of PWM inputs currently accessible.
  * Use the method YPwmInput.nextPwmInput() to iterate on
  * next PWM inputs.
- * 
+ *
  * @return a pointer to a YPwmInput object, corresponding to
  *         the first PWM input currently online, or a null pointer
  *         if there are none.

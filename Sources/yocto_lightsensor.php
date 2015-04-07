@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 17655 2014-09-16 12:24:27Z mvuilleu $
+ * $Id: yocto_lightsensor.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -52,9 +52,14 @@ if(!defined('Y_MEASURETYPE_INVALID'))        define('Y_MEASURETYPE_INVALID',    
 //--- (YLightSensor declaration)
 /**
  * YLightSensor Class: LightSensor function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YLightSensor allows you to read and configure Yoctopuce light
+ * sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
+ * This class adds the ability to easily perform a one-point linear calibration
+ * to compensate the effect of a glass or filter placed in front of the sensor.
+ * For some light sensors with several working modes, this class can select the
+ * desired working mode.
  */
 class YLightSensor extends YSensor
 {
@@ -100,14 +105,14 @@ class YLightSensor extends YSensor
     /**
      * Changes the sensor-specific calibration parameter so that the current value
      * matches a desired target (linear scaling).
-     * 
+     *
      * @param calibratedVal : the desired target value.
-     * 
+     *
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function calibrate($calibratedVal)
@@ -118,10 +123,10 @@ class YLightSensor extends YSensor
 
     /**
      * Returns the type of light measure.
-     * 
+     *
      * @return a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM, Y_MEASURETYPE_INFRARED,
      * Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the type of light measure
-     * 
+     *
      * On failure, throws an exception or returns Y_MEASURETYPE_INVALID.
      */
     public function get_measureType()
@@ -140,12 +145,12 @@ class YLightSensor extends YSensor
      * spectrum, depending on the capabilities of the light-sensitive cell.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
-     * 
+     *
      * @param newval : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
      * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_measureType($newval)
@@ -164,7 +169,7 @@ class YLightSensor extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the light sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YLightSensor.isOnline() to test if the light sensor is
@@ -172,9 +177,9 @@ class YLightSensor extends YSensor
      * a light sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the light sensor
-     * 
+     *
      * @return a YLightSensor object allowing you to drive the light sensor.
      */
     public static function FindLightSensor($func)
@@ -199,7 +204,7 @@ class YLightSensor extends YSensor
 
     /**
      * Continues the enumeration of light sensors started using yFirstLightSensor().
-     * 
+     *
      * @return a pointer to a YLightSensor object, corresponding to
      *         a light sensor currently online, or a null pointer
      *         if there are no more light sensors to enumerate.
@@ -216,7 +221,7 @@ class YLightSensor extends YSensor
      * Starts the enumeration of light sensors currently accessible.
      * Use the method YLightSensor.nextLightSensor() to iterate on
      * next light sensors.
-     * 
+     *
      * @return a pointer to a YLightSensor object, corresponding to
      *         the first light sensor currently online, or a null pointer
      *         if there are none.
@@ -243,7 +248,7 @@ class YLightSensor extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the light sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YLightSensor.isOnline() to test if the light sensor is
@@ -251,9 +256,9 @@ class YLightSensor extends YSensor
  * a light sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the light sensor
- * 
+ *
  * @return a YLightSensor object allowing you to drive the light sensor.
  */
 function yFindLightSensor($func)
@@ -265,7 +270,7 @@ function yFindLightSensor($func)
  * Starts the enumeration of light sensors currently accessible.
  * Use the method YLightSensor.nextLightSensor() to iterate on
  * next light sensors.
- * 
+ *
  * @return a pointer to a YLightSensor object, corresponding to
  *         the first light sensor currently online, or a null pointer
  *         if there are none.

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voc.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_voc.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YVoc, the high-level API for Voc functions
  *
@@ -46,9 +46,10 @@
 //--- (YVoc declaration)
 /**
  * YVoc Class: Voc function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YVoc allows you to read and configure Yoctopuce Volatile Organic
+ * Compound sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
  */
 class YVoc extends YSensor
 {
@@ -78,7 +79,7 @@ class YVoc extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the Volatile Organic Compound sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YVoc.isOnline() to test if the Volatile Organic Compound sensor is
@@ -86,9 +87,9 @@ class YVoc extends YSensor
      * a Volatile Organic Compound sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the Volatile Organic Compound sensor
-     * 
+     *
      * @return a YVoc object allowing you to drive the Volatile Organic Compound sensor.
      */
     public static function FindVoc($func)
@@ -104,7 +105,7 @@ class YVoc extends YSensor
 
     /**
      * Continues the enumeration of Volatile Organic Compound sensors started using yFirstVoc().
-     * 
+     *
      * @return a pointer to a YVoc object, corresponding to
      *         a Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are no more Volatile Organic Compound sensors to enumerate.
@@ -121,7 +122,7 @@ class YVoc extends YSensor
      * Starts the enumeration of Volatile Organic Compound sensors currently accessible.
      * Use the method YVoc.nextVoc() to iterate on
      * next Volatile Organic Compound sensors.
-     * 
+     *
      * @return a pointer to a YVoc object, corresponding to
      *         the first Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are none.
@@ -148,7 +149,7 @@ class YVoc extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the Volatile Organic Compound sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YVoc.isOnline() to test if the Volatile Organic Compound sensor is
@@ -156,9 +157,9 @@ class YVoc extends YSensor
  * a Volatile Organic Compound sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the Volatile Organic Compound sensor
- * 
+ *
  * @return a YVoc object allowing you to drive the Volatile Organic Compound sensor.
  */
 function yFindVoc($func)
@@ -170,7 +171,7 @@ function yFindVoc($func)
  * Starts the enumeration of Volatile Organic Compound sensors currently accessible.
  * Use the method YVoc.nextVoc() to iterate on
  * next Volatile Organic Compound sensors.
- * 
+ *
  * @return a pointer to a YVoc object, corresponding to
  *         the first Volatile Organic Compound sensor currently online, or a null pointer
  *         if there are none.

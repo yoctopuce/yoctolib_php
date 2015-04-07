@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 16241 2014-05-15 15:09:32Z seb $
+ * $Id: yocto_led.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -57,7 +57,7 @@ if(!defined('Y_LUMINOSITY_INVALID'))         define('Y_LUMINOSITY_INVALID',     
 //--- (YLed declaration)
 /**
  * YLed Class: Led function interface
- * 
+ *
  * Yoctopuce application programming interface
  * allows you not only to drive the intensity of the led, but also to
  * have it blink at various preset frequencies.
@@ -112,9 +112,9 @@ class YLed extends YFunction
 
     /**
      * Returns the current led state.
-     * 
+     *
      * @return either Y_POWER_OFF or Y_POWER_ON, according to the current led state
-     * 
+     *
      * On failure, throws an exception or returns Y_POWER_INVALID.
      */
     public function get_power()
@@ -129,11 +129,11 @@ class YLed extends YFunction
 
     /**
      * Changes the state of the led.
-     * 
+     *
      * @param newval : either Y_POWER_OFF or Y_POWER_ON, according to the state of the led
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_power($newval)
@@ -144,9 +144,9 @@ class YLed extends YFunction
 
     /**
      * Returns the current led intensity (in per cent).
-     * 
+     *
      * @return an integer corresponding to the current led intensity (in per cent)
-     * 
+     *
      * On failure, throws an exception or returns Y_LUMINOSITY_INVALID.
      */
     public function get_luminosity()
@@ -161,11 +161,11 @@ class YLed extends YFunction
 
     /**
      * Changes the current led intensity (in per cent).
-     * 
+     *
      * @param newval : an integer corresponding to the current led intensity (in per cent)
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_luminosity($newval)
@@ -176,10 +176,10 @@ class YLed extends YFunction
 
     /**
      * Returns the current led signaling mode.
-     * 
+     *
      * @return a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE, Y_BLINKING_RUN,
      * Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current led signaling mode
-     * 
+     *
      * On failure, throws an exception or returns Y_BLINKING_INVALID.
      */
     public function get_blinking()
@@ -194,12 +194,12 @@ class YLed extends YFunction
 
     /**
      * Changes the current led signaling mode.
-     * 
+     *
      * @param newval : a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE, Y_BLINKING_RUN,
      * Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current led signaling mode
-     * 
+     *
      * @return YAPI_SUCCESS if the call succeeds.
-     * 
+     *
      * On failure, throws an exception or returns a negative error code.
      */
     public function set_blinking($newval)
@@ -218,7 +218,7 @@ class YLed extends YFunction
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the led is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YLed.isOnline() to test if the led is
@@ -226,9 +226,9 @@ class YLed extends YFunction
      * a led by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the led
-     * 
+     *
      * @return a YLed object allowing you to drive the led.
      */
     public static function FindLed($func)
@@ -262,7 +262,7 @@ class YLed extends YFunction
 
     /**
      * Continues the enumeration of leds started using yFirstLed().
-     * 
+     *
      * @return a pointer to a YLed object, corresponding to
      *         a led currently online, or a null pointer
      *         if there are no more leds to enumerate.
@@ -279,7 +279,7 @@ class YLed extends YFunction
      * Starts the enumeration of leds currently accessible.
      * Use the method YLed.nextLed() to iterate on
      * next leds.
-     * 
+     *
      * @return a pointer to a YLed object, corresponding to
      *         the first led currently online, or a null pointer
      *         if there are none.
@@ -306,7 +306,7 @@ class YLed extends YFunction
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the led is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YLed.isOnline() to test if the led is
@@ -314,9 +314,9 @@ class YLed extends YFunction
  * a led by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the led
- * 
+ *
  * @return a YLed object allowing you to drive the led.
  */
 function yFindLed($func)
@@ -328,7 +328,7 @@ function yFindLed($func)
  * Starts the enumeration of leds currently accessible.
  * Use the method YLed.nextLed() to iterate on
  * next leds.
- * 
+ *
  * @return a pointer to a YLed object, corresponding to
  *         the first led currently online, or a null pointer
  *         if there are none.

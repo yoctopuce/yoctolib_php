@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 15402 2014-03-12 16:23:14Z mvuilleu $
+ * $Id: yocto_current.php 19611 2015-03-05 10:40:15Z seb $
  *
  * Implements YCurrent, the high-level API for Current functions
  *
@@ -46,9 +46,10 @@
 //--- (YCurrent declaration)
 /**
  * YCurrent Class: Current function interface
- * 
- * The Yoctopuce application programming interface allows you to read an instant
- * measure of the sensor, as well as the minimal and maximal values observed.
+ *
+ * The Yoctopuce class YCurrent allows you to read and configure Yoctopuce current
+ * sensors. It inherits from YSensor class the core functions to read measurements,
+ * register callback functions, access to the autonomous datalogger.
  */
 class YCurrent extends YSensor
 {
@@ -78,7 +79,7 @@ class YCurrent extends YSensor
      * <li>ModuleLogicalName.FunctionIdentifier</li>
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
-     * 
+     *
      * This function does not require that the current sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method YCurrent.isOnline() to test if the current sensor is
@@ -86,9 +87,9 @@ class YCurrent extends YSensor
      * a current sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
-     * 
+     *
      * @param func : a string that uniquely characterizes the current sensor
-     * 
+     *
      * @return a YCurrent object allowing you to drive the current sensor.
      */
     public static function FindCurrent($func)
@@ -104,7 +105,7 @@ class YCurrent extends YSensor
 
     /**
      * Continues the enumeration of current sensors started using yFirstCurrent().
-     * 
+     *
      * @return a pointer to a YCurrent object, corresponding to
      *         a current sensor currently online, or a null pointer
      *         if there are no more current sensors to enumerate.
@@ -121,7 +122,7 @@ class YCurrent extends YSensor
      * Starts the enumeration of current sensors currently accessible.
      * Use the method YCurrent.nextCurrent() to iterate on
      * next current sensors.
-     * 
+     *
      * @return a pointer to a YCurrent object, corresponding to
      *         the first current sensor currently online, or a null pointer
      *         if there are none.
@@ -148,7 +149,7 @@ class YCurrent extends YSensor
  * <li>ModuleLogicalName.FunctionIdentifier</li>
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
- * 
+ *
  * This function does not require that the current sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method YCurrent.isOnline() to test if the current sensor is
@@ -156,9 +157,9 @@ class YCurrent extends YSensor
  * a current sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
- * 
+ *
  * @param func : a string that uniquely characterizes the current sensor
- * 
+ *
  * @return a YCurrent object allowing you to drive the current sensor.
  */
 function yFindCurrent($func)
@@ -170,7 +171,7 @@ function yFindCurrent($func)
  * Starts the enumeration of current sensors currently accessible.
  * Use the method YCurrent.nextCurrent() to iterate on
  * next current sensors.
- * 
+ *
  * @return a pointer to a YCurrent object, corresponding to
  *         the first current sensor currently online, or a null pointer
  *         if there are none.
