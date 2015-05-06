@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 19727 2015-03-13 16:22:10Z mvuilleu $
+ * $Id: yocto_cellular.php 20167 2015-04-27 14:24:03Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -130,6 +130,7 @@ if(!defined('Y_ENABLEDATA_NEVER'))           define('Y_ENABLEDATA_NEVER',       
 if(!defined('Y_ENABLEDATA_INVALID'))         define('Y_ENABLEDATA_INVALID',        -1);
 if(!defined('Y_LINKQUALITY_INVALID'))        define('Y_LINKQUALITY_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_CELLOPERATOR_INVALID'))       define('Y_CELLOPERATOR_INVALID',      YAPI_INVALID_STRING);
+if(!defined('Y_IMSI_INVALID'))               define('Y_IMSI_INVALID',              YAPI_INVALID_STRING);
 if(!defined('Y_MESSAGE_INVALID'))            define('Y_MESSAGE_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PIN_INVALID'))                define('Y_PIN_INVALID',               YAPI_INVALID_STRING);
 if(!defined('Y_LOCKEDOPERATOR_INVALID'))     define('Y_LOCKEDOPERATOR_INVALID',    YAPI_INVALID_STRING);
@@ -149,6 +150,7 @@ class YCellular extends YFunction
 {
     const LINKQUALITY_INVALID            = YAPI_INVALID_UINT;
     const CELLOPERATOR_INVALID           = YAPI_INVALID_STRING;
+    const IMSI_INVALID                   = YAPI_INVALID_STRING;
     const MESSAGE_INVALID                = YAPI_INVALID_STRING;
     const PIN_INVALID                    = YAPI_INVALID_STRING;
     const LOCKEDOPERATOR_INVALID         = YAPI_INVALID_STRING;
@@ -164,6 +166,7 @@ class YCellular extends YFunction
     //--- (generated code: YCellular attributes)
     protected $_linkQuality              = Y_LINKQUALITY_INVALID;        // Percent
     protected $_cellOperator             = Y_CELLOPERATOR_INVALID;       // Text
+    protected $_imsi                     = Y_IMSI_INVALID;               // IMSI
     protected $_message                  = Y_MESSAGE_INVALID;            // Text
     protected $_pin                      = Y_PIN_INVALID;                // PinPassword
     protected $_lockedOperator           = Y_LOCKEDOPERATOR_INVALID;     // Text
@@ -192,6 +195,9 @@ class YCellular extends YFunction
             return 1;
         case 'cellOperator':
             $this->_cellOperator = $val;
+            return 1;
+        case 'imsi':
+            $this->_imsi = $val;
             return 1;
         case 'message':
             $this->_message = $val;
@@ -250,6 +256,27 @@ class YCellular extends YFunction
             }
         }
         return $this->_cellOperator;
+    }
+
+    /**
+     * Returns an opaque string if a PIN code has been configured in the device to access
+     * the SIM card, or an empty string if none has been configured or if the code provided
+     * was rejected by the SIM card.
+     *
+     * @return a string corresponding to an opaque string if a PIN code has been configured in the device to access
+     *         the SIM card, or an empty string if none has been configured or if the code provided
+     *         was rejected by the SIM card
+     *
+     * On failure, throws an exception or returns Y_IMSI_INVALID.
+     */
+    public function get_imsi()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_IMSI_INVALID;
+            }
+        }
+        return $this->_imsi;
     }
 
     /**
@@ -672,6 +699,9 @@ class YCellular extends YFunction
 
     public function cellOperator()
     { return $this->get_cellOperator(); }
+
+    public function imsi()
+    { return $this->get_imsi(); }
 
     public function message()
     { return $this->get_message(); }

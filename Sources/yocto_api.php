@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 19854 2015-03-26 10:17:46Z seb $
+ * $Id: yocto_api.php 20176 2015-04-28 13:03:58Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -271,43 +271,70 @@ class YTcpHub
     }
 
 
-    function verfiyStreamAddr(&$errmsg='')
+    function verfiyStreamAddr($fullTest=true, &$errmsg='')
     {
         if($this->streamaddr == 'tcp://CALLBACK/') {
-            $data = file_get_contents('php://input','rb');
-            if($data=="") {
-                $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
-                Print("\n!YoctoAPI:$errmsg\n");
+
+            if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST'){
+                $errmsg = "invalid request method";
                 $this->callbackCache = Array();
                 return YAPI_IO_ERROR;
-            } else {
-                $this->callbackCache = json_decode($data,true);
-                if(is_null($this->callbackCache)) {
-                    $errmsg = "invalid data:[\n$data\n]";
+            }
+
+            if (!isset($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] != 'application/json'){
+                $errmsg = "invalid content type";
+                $this->callbackCache = Array();
+                return YAPI_IO_ERROR;
+            }
+            if (!isset($_SERVER['HTTP_USER_AGENT'])){
+                $errmsg = "not agent provided";
+                $this->callbackCache = Array();
+                return YAPI_IO_ERROR;
+            }
+            $useragent = strtolower($_SERVER['HTTP_USER_AGENT']);
+            $patern = 'yoctohub';
+            if ($useragent != 'virtualhub' && substr($useragent, 0, strlen($patern)) != $patern) {
+                $errmsg = "no user agent provided";
+                $this->callbackCache = Array();
+                return YAPI_IO_ERROR;
+            }
+
+            if ($fullTest) {
+                $data = file_get_contents('php://input', 'rb');
+                if($data == "") {
+                    $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
                     Print("\n!YoctoAPI:$errmsg\n");
                     $this->callbackCache = Array();
                     return YAPI_IO_ERROR;
-                }
-                if($this->pwd != '') {
-                    // callback data signed, verify signature
-                    if(!isset($this->callbackCache['sign'])) {
-                        $errmsg = "missing signature from incoming YoctoHub (callback password required)";
+                } else {
+                    $this->callbackCache = json_decode($data, true);
+                    if(is_null($this->callbackCache)) {
+                        $errmsg = "invalid data:[\n$data\n]";
                         Print("\n!YoctoAPI:$errmsg\n");
                         $this->callbackCache = Array();
-                        return YAPI_UNAUTHORIZED;
+                        return YAPI_IO_ERROR;
                     }
-                    $sign = $this->callbackCache['sign'];
-                    $salt = $this->pwd;
-                    if(strlen($salt) != 32) $salt = md5($salt);
-                    $data = str_replace($sign, strtolower($salt), $data);
-                    $check = strtolower(md5($data));
-                    if($check != $sign) {
-                        //Print("Computed signature: $check\n");
-                        //Print("Received signature: $sign\n");
-                        $errmsg = "invalid signature from incoming YoctoHub (invalid callback password)";
-                        Print("\n!YoctoAPI:$errmsg\n");
-                        $this->callbackCache = Array();
-                        return YAPI_UNAUTHORIZED;
+                    if($this->pwd != '') {
+                        // callback data signed, verify signature
+                        if(!isset($this->callbackCache['sign'])) {
+                            $errmsg = "missing signature from incoming YoctoHub (callback password required)";
+                            Print("\n!YoctoAPI:$errmsg\n");
+                            $this->callbackCache = Array();
+                            return YAPI_UNAUTHORIZED;
+                        }
+                        $sign = $this->callbackCache['sign'];
+                        $salt = $this->pwd;
+                        if(strlen($salt) != 32) $salt = md5($salt);
+                        $data = str_replace($sign, strtolower($salt), $data);
+                        $check = strtolower(md5($data));
+                        if($check != $sign) {
+                            //Print("Computed signature: $check\n");
+                            //Print("Received signature: $sign\n");
+                            $errmsg = "invalid signature from incoming YoctoHub (invalid callback password)";
+                            Print("\n!YoctoAPI:$errmsg\n");
+                            $this->callbackCache = Array();
+                            return YAPI_UNAUTHORIZED;
+                        }
                     }
                 }
             }
@@ -455,7 +482,7 @@ class YTcpReq
 
     public static $totalTcpReqs = 0;
 
-    function __construct($hub, $request, $async, $reqbody='')
+    function __construct($hub, $request, $async, $reqbody='', $mstimeout = YAPI_BLOCKING_REQUEST_TIMEOUT)
     {
         $pos = strpos($request, "\r");
         if($pos !== false) {
@@ -464,7 +491,7 @@ class YTcpReq
         $boundary = '';
         if($reqbody != '') {
             do {
-                $boundary = sprintf("Zz%06xzZ", mt_rand(0,0xffffff));
+                $boundary = sprintf("Zz%06xzZ", mt_rand(0, 0xffffff));
             } while(strpos($reqbody, $boundary) !== false);
             $reqbody = "--{$boundary}\r\n{$reqbody}\r\n--{$boundary}--\r\n";
         }
@@ -476,6 +503,7 @@ class YTcpReq
         $this->meta = '';
         $this->reply = '';
         $this->retryCount = 0;
+        $this->mstimeout = $mstimeout;
         $this->errorType = YAPI_IO_ERROR;
         $this->errorMsg = 'could not open connection';
         $this->reqcnt = ++YTcpReq::$totalTcpReqs;
@@ -499,11 +527,11 @@ class YTcpReq
         return false;
     }
 
-    function newsocket(&$errno, &$errstr, $timeout)
+    function newsocket(&$errno, &$errstr, $mstimeout)
     {
         // for now, use client socket only since server sockets
         // for callbacks are not reliably available on a public server
-        return @stream_socket_client($this->hub->streamaddr, $errno, $errstr, $timeout);
+        return @stream_socket_client($this->hub->streamaddr, $errno, $errstr, $mstimeout / 1000);
     }
 
 
@@ -552,7 +580,7 @@ class YTcpReq
                 if(is_null($skt)) {
                     $errno = 0;
                     $errstr = '';
-                    $skt = $this->newsocket($errno, $errstr, YAPI_BLOCKING_REQUEST_TIMEOUT / 1000);
+                    $skt = $this->newsocket($errno, $errstr, $this->mstimeout);
                     if ($skt === false) {
                         $this->errorType = YAPI_IO_ERROR;
                         $this->errorMsg = "failed to open socket ($errno): $errstr";
@@ -2421,7 +2449,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.19938";
+        return "1.10.20255";
     }
 
     /**
@@ -2572,7 +2600,7 @@ class YAPI
 
         // Test hub
         $tcphub = new YTcpHub($rooturl, $auth);
-        $res = $tcphub->verfiyStreamAddr($errmsg);
+        $res = $tcphub->verfiyStreamAddr(true, $errmsg);
         if($res < 0) {
             return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
         }
@@ -2639,7 +2667,7 @@ class YAPI
         // Add hub to known list
         if(!isset(self::$_hubs[$rooturl])) {
             self::$_hubs[$rooturl] = new YTcpHub($rooturl, $auth);
-            if(self::$_hubs[$rooturl]->verfiyStreamAddr($errmsg)<0){
+            if(self::$_hubs[$rooturl]->verfiyStreamAddr(true, $errmsg)<0){
                 return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
             }
         }
@@ -2676,6 +2704,61 @@ class YAPI
             }
         }
         self::$_hubs = $new_hubs;
+    }
+
+
+    /**
+     * Test if the hub is reachable. This method do not register the hub, it only test if the
+     * hub is usable. The url parameter follow the same convention as the RegisterHub
+     * method. This method is useful to verify the authentication parameters for a hub. It
+     * is possible to force this method to return after mstimeout milliseconds.
+     *
+     * @param url : a string containing either "usb","callback" or the
+     *         root URL of the hub to monitor
+     * @param mstimeout : the number of millisecond available to test the connection.
+     * @param errmsg : a string passed by reference to receive any error message.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure returns a negative error code.
+     */
+    public static function TestHub($url, $mstimeout, &$errmsg='')
+    {
+        if(is_null(self::$_hubs)) self::_init();
+
+        $rooturl = $url;
+        $auth = '';
+        self::_parseRegisteredURL($url, $rooturl, $auth);
+
+        // Test hub
+        $tcphub = new YTcpHub($rooturl, $auth);
+        $res = $tcphub->verfiyStreamAddr(false, $errmsg);
+        if($res < 0) {
+            return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
+        }
+        if($tcphub->streamaddr == 'tcp://CALLBACK/') {
+            return YAPI_SUCCESS;
+        }
+        $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false, '', $mstimeout);
+        $timeout = YAPI::GetTickCount() + $mstimeout;
+        do {
+            if($tcpreq->process($errmsg) != YAPI_SUCCESS) {
+                return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+            }
+        } while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout);
+        if (!$tcpreq->eof()) {
+            $tcpreq->close();
+            $errmsg = 'Timeout waiting for device reply';
+            return self::_throw(YAPI_TIMEOUT,$errmsg , YAPI_TIMEOUT);
+        }
+        if ($tcpreq->errorType == YAPI_UNAUTHORIZED) {
+            $errmsg = 'Access denied, authorization required';
+            return self::_throw(YAPI_UNAUTHORIZED, $errmsg, YAPI_UNAUTHORIZED);
+        } else if ($tcpreq->errorType != YAPI_SUCCESS) {
+            $errmsg = 'Network error while testing hub :'. $tcpreq->errorMsg;
+            return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+        }
+        return YAPI_SUCCESS;
     }
 
 
@@ -2976,8 +3059,9 @@ class YAPI
                         }
                         if($endp > 0 && $buffer[$endp - 1] == '.') {
                             --$endp;
+                            $buffer = substr($buffer,0, $endp);
                         }
-                        return substr($buffer,0, $endp);
+                        return $buffer;
                     }
                 case PUBVAL_C_FLOAT:
                     // 32bit (short) float
@@ -2995,8 +3079,9 @@ class YAPI
                     }
                     if($endp > 0 && $buffer[$endp - 1] == '.') {
                         --$endp;
+                        $buffer = substr($buffer,0, $endp);
                     }
-                    return substr($buffer,0, $endp);
+                    return $buffer;
                 default:
                     return "?";
             }
@@ -7363,6 +7448,25 @@ function yUnregisterHub($url)
 }
 
 
+/**
+ * Test if the hub is reachable. This method do not register the hub, it only test if the
+ * hub is usable. The url parameter follow the same convention as the RegisterHub
+ * method. This method is useful to verify the authentication parameters for a hub. It
+ * is possible to force this method to return after mstimeout milliseconds.
+ *
+ * @param url : a string containing either "usb","callback" or the
+ *         root URL of the hub to monitor
+ * @param mstimeout : the number of millisecond available to test the connection.
+ * @param errmsg : a string passed by reference to receive any error message.
+ *
+ * @return YAPI_SUCCESS when the call succeeds.
+ *
+ * On failure returns a negative error code.
+ */
+function yTestHub($url, $mstimeout, &$errmsg="")
+{
+    YAPI::TestHub($url, $mstimeout, $errmsg);
+}
 
 
 /**
