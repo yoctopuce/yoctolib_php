@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_pwmoutput.php 20287 2015-05-08 13:40:21Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -57,7 +57,7 @@ if(!defined('Y_DUTYCYCLEATPOWERON_INVALID')) define('Y_DUTYCYCLEATPOWERON_INVALI
 
 //--- (YPwmOutput declaration)
 /**
- * YPwmOutput Class: Pwm function interface
+ * YPwmOutput Class: PwmOutput function interface
  *
  * The Yoctopuce application programming interface allows you to configure, start, and stop the PWM.
  */

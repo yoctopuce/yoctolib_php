@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_network.php 20599 2015-06-08 12:16:39Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -59,6 +59,8 @@ if(!defined('Y_CALLBACKENCODING_JSON'))      define('Y_CALLBACKENCODING_JSON',  
 if(!defined('Y_CALLBACKENCODING_JSON_ARRAY')) define('Y_CALLBACKENCODING_JSON_ARRAY', 2);
 if(!defined('Y_CALLBACKENCODING_CSV'))       define('Y_CALLBACKENCODING_CSV',      3);
 if(!defined('Y_CALLBACKENCODING_YOCTO_API')) define('Y_CALLBACKENCODING_YOCTO_API', 4);
+if(!defined('Y_CALLBACKENCODING_JSON_NUM'))  define('Y_CALLBACKENCODING_JSON_NUM', 5);
+if(!defined('Y_CALLBACKENCODING_EMONCMS'))   define('Y_CALLBACKENCODING_EMONCMS',  6);
 if(!defined('Y_CALLBACKENCODING_INVALID'))   define('Y_CALLBACKENCODING_INVALID',  -1);
 if(!defined('Y_MACADDRESS_INVALID'))         define('Y_MACADDRESS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_IPADDRESS_INVALID'))          define('Y_IPADDRESS_INVALID',         YAPI_INVALID_STRING);
@@ -67,8 +69,11 @@ if(!defined('Y_ROUTER_INVALID'))             define('Y_ROUTER_INVALID',         
 if(!defined('Y_IPCONFIG_INVALID'))           define('Y_IPCONFIG_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_PRIMARYDNS_INVALID'))         define('Y_PRIMARYDNS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_SECONDARYDNS_INVALID'))       define('Y_SECONDARYDNS_INVALID',      YAPI_INVALID_STRING);
+if(!defined('Y_NTPSERVER_INVALID'))          define('Y_NTPSERVER_INVALID',         YAPI_INVALID_STRING);
 if(!defined('Y_USERPASSWORD_INVALID'))       define('Y_USERPASSWORD_INVALID',      YAPI_INVALID_STRING);
 if(!defined('Y_ADMINPASSWORD_INVALID'))      define('Y_ADMINPASSWORD_INVALID',     YAPI_INVALID_STRING);
+if(!defined('Y_HTTPPORT_INVALID'))           define('Y_HTTPPORT_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_DEFAULTPAGE_INVALID'))        define('Y_DEFAULTPAGE_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_WWWWATCHDOGDELAY_INVALID'))   define('Y_WWWWATCHDOGDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_CALLBACKURL_INVALID'))        define('Y_CALLBACKURL_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_CALLBACKCREDENTIALS_INVALID')) define('Y_CALLBACKCREDENTIALS_INVALID', YAPI_INVALID_STRING);
@@ -99,8 +104,11 @@ class YNetwork extends YFunction
     const IPCONFIG_INVALID               = YAPI_INVALID_STRING;
     const PRIMARYDNS_INVALID             = YAPI_INVALID_STRING;
     const SECONDARYDNS_INVALID           = YAPI_INVALID_STRING;
+    const NTPSERVER_INVALID              = YAPI_INVALID_STRING;
     const USERPASSWORD_INVALID           = YAPI_INVALID_STRING;
     const ADMINPASSWORD_INVALID          = YAPI_INVALID_STRING;
+    const HTTPPORT_INVALID               = YAPI_INVALID_UINT;
+    const DEFAULTPAGE_INVALID            = YAPI_INVALID_STRING;
     const DISCOVERABLE_FALSE             = 0;
     const DISCOVERABLE_TRUE              = 1;
     const DISCOVERABLE_INVALID           = -1;
@@ -115,6 +123,8 @@ class YNetwork extends YFunction
     const CALLBACKENCODING_JSON_ARRAY    = 2;
     const CALLBACKENCODING_CSV           = 3;
     const CALLBACKENCODING_YOCTO_API     = 4;
+    const CALLBACKENCODING_JSON_NUM      = 5;
+    const CALLBACKENCODING_EMONCMS       = 6;
     const CALLBACKENCODING_INVALID       = -1;
     const CALLBACKCREDENTIALS_INVALID    = YAPI_INVALID_STRING;
     const CALLBACKMINDELAY_INVALID       = YAPI_INVALID_UINT;
@@ -131,8 +141,11 @@ class YNetwork extends YFunction
     protected $_ipConfig                 = Y_IPCONFIG_INVALID;           // IPConfig
     protected $_primaryDNS               = Y_PRIMARYDNS_INVALID;         // IPAddress
     protected $_secondaryDNS             = Y_SECONDARYDNS_INVALID;       // IPAddress
+    protected $_ntpServer                = Y_NTPSERVER_INVALID;          // IPAddress
     protected $_userPassword             = Y_USERPASSWORD_INVALID;       // UserPassword
     protected $_adminPassword            = Y_ADMINPASSWORD_INVALID;      // AdminPassword
+    protected $_httpPort                 = Y_HTTPPORT_INVALID;           // UInt31
+    protected $_defaultPage              = Y_DEFAULTPAGE_INVALID;        // Text
     protected $_discoverable             = Y_DISCOVERABLE_INVALID;       // Bool
     protected $_wwwWatchdogDelay         = Y_WWWWATCHDOGDELAY_INVALID;   // UInt31
     protected $_callbackUrl              = Y_CALLBACKURL_INVALID;        // Text
@@ -182,11 +195,20 @@ class YNetwork extends YFunction
         case 'secondaryDNS':
             $this->_secondaryDNS = $val;
             return 1;
+        case 'ntpServer':
+            $this->_ntpServer = $val;
+            return 1;
         case 'userPassword':
             $this->_userPassword = $val;
             return 1;
         case 'adminPassword':
             $this->_adminPassword = $val;
+            return 1;
+        case 'httpPort':
+            $this->_httpPort = intval($val);
+            return 1;
+        case 'defaultPage':
+            $this->_defaultPage = $val;
             return 1;
         case 'discoverable':
             $this->_discoverable = intval($val);
@@ -405,6 +427,39 @@ class YNetwork extends YFunction
     }
 
     /**
+     * Returns the IP address of the NTP server to be used by the device.
+     *
+     * @return a string corresponding to the IP address of the NTP server to be used by the device
+     *
+     * On failure, throws an exception or returns Y_NTPSERVER_INVALID.
+     */
+    public function get_ntpServer()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_NTPSERVER_INVALID;
+            }
+        }
+        return $this->_ntpServer;
+    }
+
+    /**
+     * Changes the IP address of the NTP server to be used by the module.
+     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
+     *
+     * @param newval : a string corresponding to the IP address of the NTP server to be used by the module
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_ntpServer($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("ntpServer",$rest_val);
+    }
+
+    /**
      * Returns a hash string if a password has been set for "user" user,
      * or an empty string otherwise.
      *
@@ -478,6 +533,74 @@ class YNetwork extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("adminPassword",$rest_val);
+    }
+
+    /**
+     * Returns the HTML page to serve for the URL "/"" of the hub.
+     *
+     * @return an integer corresponding to the HTML page to serve for the URL "/"" of the hub
+     *
+     * On failure, throws an exception or returns Y_HTTPPORT_INVALID.
+     */
+    public function get_httpPort()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_HTTPPORT_INVALID;
+            }
+        }
+        return $this->_httpPort;
+    }
+
+    /**
+     * Changes the default HTML page returned by the hub. If not value are set the hub return
+     * "index.html" which is the web interface of the hub. It is possible de change this page
+     * for file that has been uploaded on the hub.
+     *
+     * @param newval : an integer corresponding to the default HTML page returned by the hub
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_httpPort($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("httpPort",$rest_val);
+    }
+
+    /**
+     * Returns the HTML page to serve for the URL "/"" of the hub.
+     *
+     * @return a string corresponding to the HTML page to serve for the URL "/"" of the hub
+     *
+     * On failure, throws an exception or returns Y_DEFAULTPAGE_INVALID.
+     */
+    public function get_defaultPage()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DEFAULTPAGE_INVALID;
+            }
+        }
+        return $this->_defaultPage;
+    }
+
+    /**
+     * Changes the default HTML page returned by the hub. If not value are set the hub return
+     * "index.html" which is the web interface of the hub. It is possible de change this page
+     * for file that has been uploaded on the hub.
+     *
+     * @param newval : a string corresponding to the default HTML page returned by the hub
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_defaultPage($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("defaultPage",$rest_val);
     }
 
     /**
@@ -630,8 +753,9 @@ class YNetwork extends YFunction
      * Returns the encoding standard to use for representing notification values.
      *
      * @return a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
-     * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV and Y_CALLBACKENCODING_YOCTO_API
-     * corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
+     * Y_CALLBACKENCODING_JSON_NUM and Y_CALLBACKENCODING_EMONCMS corresponding to the encoding standard
+     * to use for representing notification values
      *
      * On failure, throws an exception or returns Y_CALLBACKENCODING_INVALID.
      */
@@ -649,8 +773,9 @@ class YNetwork extends YFunction
      * Changes the encoding standard to use for representing notification values.
      *
      * @param newval : a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
-     * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV and Y_CALLBACKENCODING_YOCTO_API
-     * corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
+     * Y_CALLBACKENCODING_JSON_NUM and Y_CALLBACKENCODING_EMONCMS corresponding to the encoding standard
+     * to use for representing notification values
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -930,6 +1055,12 @@ class YNetwork extends YFunction
     public function setSecondaryDNS($newval)
     { return $this->set_secondaryDNS($newval); }
 
+    public function ntpServer()
+    { return $this->get_ntpServer(); }
+
+    public function setNtpServer($newval)
+    { return $this->set_ntpServer($newval); }
+
     public function userPassword()
     { return $this->get_userPassword(); }
 
@@ -941,6 +1072,18 @@ class YNetwork extends YFunction
 
     public function setAdminPassword($newval)
     { return $this->set_adminPassword($newval); }
+
+    public function httpPort()
+    { return $this->get_httpPort(); }
+
+    public function setHttpPort($newval)
+    { return $this->set_httpPort($newval); }
+
+    public function defaultPage()
+    { return $this->get_defaultPage(); }
+
+    public function setDefaultPage($newval)
+    { return $this->set_defaultPage($newval); }
 
     public function discoverable()
     { return $this->get_discoverable(); }

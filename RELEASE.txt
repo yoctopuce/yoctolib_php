@@ -1,2 +1,6 @@
-- Replace Prog-HTTPCallback example with a more simple one
-- Fix invalid notification value for YGenericDevices
+- Add isSensorReady function on YSensor class
+(Misc)- Add workaround for lossy USB link
+- Add defaultPage attribute on YNetwork class
+- Add ntpServer attribute on YNetwork class
+- Add httpPort attribute on YNetwork class
+- Add JSON-Num and EMONCMS callback encoding in YNetwork class

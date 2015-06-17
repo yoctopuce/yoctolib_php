@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 20176 2015-04-28 13:03:58Z seb $
+ * $Id: yocto_api.php 20412 2015-05-22 08:52:39Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -95,6 +95,7 @@ if(!defined('Y_LOGFREQUENCY_INVALID'))       define('Y_LOGFREQUENCY_INVALID',   
 if(!defined('Y_REPORTFREQUENCY_INVALID'))    define('Y_REPORTFREQUENCY_INVALID',   YAPI_INVALID_STRING);
 if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID',  YAPI_INVALID_STRING);
 if(!defined('Y_RESOLUTION_INVALID'))         define('Y_RESOLUTION_INVALID',        YAPI_INVALID_DOUBLE);
+if(!defined('Y_SENSORSTATE_INVALID'))        define('Y_SENSORSTATE_INVALID',       YAPI_INVALID_INT);
 //--- (end of generated code: YSensor definitions)
 
 //--- (generated code: YModule definitions)
@@ -307,7 +308,7 @@ class YTcpHub
                     $this->callbackCache = Array();
                     return YAPI_IO_ERROR;
                 } else {
-                    $this->callbackCache = json_decode($data, true);
+                    $this->callbackCache = json_decode(utf8_encode($data), true);
                     if(is_null($this->callbackCache)) {
                         $errmsg = "invalid data:[\n$data\n]";
                         Print("\n!YoctoAPI:$errmsg\n");
@@ -2449,7 +2450,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.20255";
+        return "1.10.20652";
     }
 
     /**
@@ -2734,7 +2735,7 @@ class YAPI
         $tcphub = new YTcpHub($rooturl, $auth);
         $res = $tcphub->verfiyStreamAddr(false, $errmsg);
         if($res < 0) {
-            return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
+            return YAPI_IO_ERROR;
         }
         if($tcphub->streamaddr == 'tcp://CALLBACK/') {
             return YAPI_SUCCESS;
@@ -2743,20 +2744,20 @@ class YAPI
         $timeout = YAPI::GetTickCount() + $mstimeout;
         do {
             if($tcpreq->process($errmsg) != YAPI_SUCCESS) {
-                return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+                return $tcpreq->errorType;
             }
         } while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout);
         if (!$tcpreq->eof()) {
             $tcpreq->close();
             $errmsg = 'Timeout waiting for device reply';
-            return self::_throw(YAPI_TIMEOUT,$errmsg , YAPI_TIMEOUT);
+            return YAPI_TIMEOUT;
         }
         if ($tcpreq->errorType == YAPI_UNAUTHORIZED) {
             $errmsg = 'Access denied, authorization required';
-            return self::_throw(YAPI_UNAUTHORIZED, $errmsg, YAPI_UNAUTHORIZED);
+            return YAPI_UNAUTHORIZED;
         } else if ($tcpreq->errorType != YAPI_SUCCESS) {
             $errmsg = 'Network error while testing hub :'. $tcpreq->errorMsg;
-            return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+            return $tcpreq->errorType;
         }
         return YAPI_SUCCESS;
     }
@@ -5060,6 +5061,7 @@ class YSensor extends YFunction
     const REPORTFREQUENCY_INVALID        = YAPI_INVALID_STRING;
     const CALIBRATIONPARAM_INVALID       = YAPI_INVALID_STRING;
     const RESOLUTION_INVALID             = YAPI_INVALID_DOUBLE;
+    const SENSORSTATE_INVALID            = YAPI_INVALID_INT;
     //--- (end of generated code: YSensor declaration)
     const DATA_INVALID                   = YAPI_INVALID_DOUBLE;
 
@@ -5073,6 +5075,7 @@ class YSensor extends YFunction
     protected $_reportFrequency          = Y_REPORTFREQUENCY_INVALID;    // YFrequency
     protected $_calibrationParam         = Y_CALIBRATIONPARAM_INVALID;   // CalibParams
     protected $_resolution               = Y_RESOLUTION_INVALID;         // MeasureVal
+    protected $_sensorState              = Y_SENSORSTATE_INVALID;        // Int
     protected $_timedReportCallbackSensor = null;                         // YSensorTimedReportCallback
     protected $_prevTimedReport          = 0;                            // float
     protected $_iresol                   = 0;                            // float
@@ -5133,6 +5136,9 @@ class YSensor extends YFunction
             return 1;
         case 'resolution':
             $this->_resolution = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'sensorState':
+            $this->_sensorState = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -5395,6 +5401,26 @@ class YSensor extends YFunction
     }
 
     /**
+     * Returns the sensor health state code, which is zero when there is an up-to-date measure
+     * available or a positive code if the sensor is not able to provide a measure right now.
+     *
+     * @return an integer corresponding to the sensor health state code, which is zero when there is an
+     * up-to-date measure
+     *         available or a positive code if the sensor is not able to provide a measure right now
+     *
+     * On failure, throws an exception or returns Y_SENSORSTATE_INVALID.
+     */
+    public function get_sensorState()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SENSORSTATE_INVALID;
+            }
+        }
+        return $this->_sensorState;
+    }
+
+    /**
      * Retrieves a sensor for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -5559,6 +5585,25 @@ class YSensor extends YFunction
             }
         }
         return 0;
+    }
+
+    /**
+     * Checks if the sensor is currently able to provide an up-to-date measure.
+     * Returns false if the device is unreachable, or if the sensor does not have
+     * a current measure to transmit. No exception is raised if there is an error
+     * while trying to contact the device hosting $THEFUNCTION$.
+     *
+     * @return true if the sensor can provide an up-to-date measure, and false otherwise
+     */
+    public function isSensorReady()
+    {
+        if (!($this->isOnline())) {
+            return false;
+        }
+        if (!($this->_sensorState == 0)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -6011,6 +6056,9 @@ class YSensor extends YFunction
 
     public function resolution()
     { return $this->get_resolution(); }
+
+    public function sensorState()
+    { return $this->get_sensorState(); }
 
     /**
      * Continues the enumeration of sensors started using yFirstSensor().
@@ -7465,7 +7513,7 @@ function yUnregisterHub($url)
  */
 function yTestHub($url, $mstimeout, &$errmsg="")
 {
-    YAPI::TestHub($url, $mstimeout, $errmsg);
+    return YAPI::TestHub($url, $mstimeout, $errmsg);
 }
 
 

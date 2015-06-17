@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 19619 2015-03-05 18:11:23Z mvuilleu $
+ * $Id: yocto_temperature.php 20410 2015-05-22 08:30:27Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -235,6 +235,38 @@ class YTemperature extends YSensor
     }
 
     /**
+     * Configure NTC thermistor parameters in order to properly compute the temperature from
+     * the measured resistance. For increased precision, you can enter a complete mapping
+     * table using set_thermistorResponseTable. This function can only be used with a
+     * temperature sensor based on thermistors.
+     *
+     * @param res25 : thermistor resistance at 25 degrees Celsius
+     * @param beta : Beta value
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_ntcParameters($res25,$beta)
+    {
+        // $t0                     is a float;
+        // $t1                     is a float;
+        // $res100                 is a float;
+        $tempValues = Array();  // floatArr;
+        $resValues = Array();   // floatArr;
+        $t0 = 25.0+275.15;
+        $t1 = 100.0+275.15;
+        $res100 = $res25 * exp($beta*(1.0/$t1 - 1.0/$t0));
+        while(sizeof($tempValues) > 0) { array_pop($tempValues); };
+        while(sizeof($resValues) > 0) { array_pop($resValues); };
+        $tempValues[] = 25.0;
+        $resValues[] = $res25;
+        $tempValues[] = 100.0;
+        $resValues[] = $res100;
+        return $this->set_thermistorResponseTable($tempValues, $resValues);
+    }
+
+    /**
      * Records a thermistor response table, in order to interpolate the temperature from
      * the measured resistance. This function can only be used with a temperature
      * sensor based on thermistors.
@@ -263,11 +295,9 @@ class YTemperature extends YSensor
         $siz = sizeof($tempValues);
         if (!($siz >= 2)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'thermistor response table must have at least two points',YAPI_INVALID_ARGUMENT);
         if (!($siz == sizeof($resValues))) return $this->_throw( YAPI_INVALID_ARGUMENT, 'table sizes mismatch',YAPI_INVALID_ARGUMENT);
-        
         // may throw an exception
         $res = $this->set_command('Z');
         if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to reset thermistor parameters',YAPI_IO_ERROR);
-        
         // add records in growing resistance value
         $found = 1;
         $prev = 0.0;
@@ -323,10 +353,8 @@ class YTemperature extends YSensor
         // $prev                   is a float;
         // $curr                   is a float;
         // $currRes                is a float;
-        
         while(sizeof($tempValues) > 0) { array_pop($tempValues); };
         while(sizeof($resValues) > 0) { array_pop($resValues); };
-        
         // may throw an exception
         $id = $this->get_functionId();
         $id = substr($id,  11, strlen($id)-1);
@@ -366,7 +394,6 @@ class YTemperature extends YSensor
                 $prev = $curr;
             }
         }
-        
         return YAPI_SUCCESS;
     }
 
