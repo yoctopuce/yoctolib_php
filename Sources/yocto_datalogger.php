@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_datalogger.php 20704 2015-06-20 19:43:34Z mvuilleu $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -41,6 +41,7 @@
 //--- (generated code: YDataLogger definitions)
 if(!defined('Y_RECORDING_OFF'))              define('Y_RECORDING_OFF',             0);
 if(!defined('Y_RECORDING_ON'))               define('Y_RECORDING_ON',              1);
+if(!defined('Y_RECORDING_PENDING'))          define('Y_RECORDING_PENDING',         2);
 if(!defined('Y_RECORDING_INVALID'))          define('Y_RECORDING_INVALID',         -1);
 if(!defined('Y_AUTOSTART_OFF'))              define('Y_AUTOSTART_OFF',             0);
 if(!defined('Y_AUTOSTART_ON'))               define('Y_AUTOSTART_ON',              1);
@@ -303,6 +304,7 @@ class YDataLogger extends YFunction
     const TIMEUTC_INVALID                = YAPI_INVALID_LONG;
     const RECORDING_OFF                  = 0;
     const RECORDING_ON                   = 1;
+    const RECORDING_PENDING              = 2;
     const RECORDING_INVALID              = -1;
     const AUTOSTART_OFF                  = 0;
     const AUTOSTART_ON                   = 1;
@@ -318,7 +320,7 @@ class YDataLogger extends YFunction
     //--- (generated code: YDataLogger attributes)
     protected $_currentRunIndex          = Y_CURRENTRUNINDEX_INVALID;    // UInt31
     protected $_timeUTC                  = Y_TIMEUTC_INVALID;            // UTCTime
-    protected $_recording                = Y_RECORDING_INVALID;          // OnOff
+    protected $_recording                = Y_RECORDING_INVALID;          // OffOnPending
     protected $_autoStart                = Y_AUTOSTART_INVALID;          // OnOff
     protected $_beaconDriven             = Y_BEACONDRIVEN_INVALID;       // OnOff
     protected $_clearHistory             = Y_CLEARHISTORY_INVALID;       // Bool
@@ -498,7 +500,8 @@ class YDataLogger extends YFunction
     /**
      * Returns the current activation state of the data logger.
      *
-     * @return either Y_RECORDING_OFF or Y_RECORDING_ON, according to the current activation state of the data logger
+     * @return a value among Y_RECORDING_OFF, Y_RECORDING_ON and Y_RECORDING_PENDING corresponding to the
+     * current activation state of the data logger
      *
      * On failure, throws an exception or returns Y_RECORDING_INVALID.
      */
@@ -515,8 +518,8 @@ class YDataLogger extends YFunction
     /**
      * Changes the activation state of the data logger to start/stop recording data.
      *
-     * @param newval : either Y_RECORDING_OFF or Y_RECORDING_ON, according to the activation state of the
-     * data logger to start/stop recording data
+     * @param newval : a value among Y_RECORDING_OFF, Y_RECORDING_ON and Y_RECORDING_PENDING corresponding
+     * to the activation state of the data logger to start/stop recording data
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *

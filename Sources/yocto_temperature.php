@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 20410 2015-05-22 08:30:27Z seb $
+ * $Id: yocto_temperature.php 20704 2015-06-20 19:43:34Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -90,7 +90,7 @@ class YTemperature extends YSensor
     //--- (end of YTemperature declaration)
 
     //--- (YTemperature attributes)
-    protected $_sensorType               = Y_SENSORTYPE_INVALID;         // TempSensorType
+    protected $_sensorType               = Y_SENSORTYPE_INVALID;         // TempSensorTypeAll
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YTemperature attributes)
 

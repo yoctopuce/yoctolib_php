@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 20412 2015-05-22 08:52:39Z seb $
+ * $Id: yocto_api.php 20719 2015-06-23 16:24:47Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2450,7 +2450,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.20652";
+        return "1.10.20773";
     }
 
     /**
@@ -4215,6 +4215,8 @@ class YDataSet
         $summaryMaxVal    = -9e1000;
         $summaryTotalTime = 0;
         $summaryTotalAvg  = 0;
+        $startTime        = 0x7fffffff;
+        $endTime          = 0;
         $loadval = json_decode(iconv("ISO-8859-1","UTF-8", $str_json), true);
 
         $this->_functionId = $loadval['id'];
@@ -4232,14 +4234,22 @@ class YDataSet
         for($i = 0; $i < sizeof($loadval['streams']); $i++) {
             /** @var $stream YDataStream */
             $stream = $this->_parent->_findDataStream($this, $loadval['streams'][$i]);
-            if($this->_startTime > 0 && $stream->get_startTimeUTC() + $stream->get_duration() <= $this->_startTime) {
+            $streamEndTime = $stream->get_startTimeUTC() + $stream->get_duration();
+            $streamStartTime = $stream->get_startTimeUTC() - intVal($stream->get_dataSamplesIntervalMs()/1000);
+            if($this->_startTime > 0 && $streamEndTime <= $this->_startTime) {
                 // this stream is too early, drop it
             } else if($this->_endTime > 0 && $stream->get_startTimeUTC() > $this->_endTime) {
                 // this stream is too late, drop it
             } else {
                 $this->_streams[] = $stream;
+                if($startTime > $streamStartTime) {
+                    $startTime = $streamStartTime;
+                }
+                if($endTime < $streamEndTime) {
+                    $endTime = $streamEndTime;
+                }
                 if($stream->isClosed() && $stream->get_startTimeUTC() >= $this->_startTime &&
-                ($this->_endTime == 0 || $stream->get_startTimeUTC() + $stream->get_duration() <= $this->_endTime)) {
+                ($this->_endTime == 0 || $streamEndTime <= $this->_endTime)) {
                     if ($summaryMinVal > $stream->get_minValue())
                         $summaryMinVal = $stream->get_minValue();
                     if ($summaryMaxVal < $stream->get_maxValue())
@@ -4248,7 +4258,7 @@ class YDataSet
                     $summaryTotalTime += $stream->get_duration();
 
                     $rec = new YMeasure($stream->get_startTimeUTC(),
-                                        $stream->get_startTimeUTC() + $stream->get_duration(),
+                                        $streamEndTime,
                                         $stream->get_minValue(),
                                         $stream->get_averageValue(),
                                         $stream->get_maxValue());
@@ -4258,14 +4268,11 @@ class YDataSet
         }
         if((sizeof($this->_streams) > 0) && ($summaryTotalTime>0)) {
             // update time boundaries with actual data
-            $stream = $this->_streams[sizeof($this->_streams)-1];
-            $endtime = $stream->get_startTimeUTC() + $stream->get_duration();
-            $startTime = $this->_streams[0]->get_startTimeUTC() - $stream->get_dataSamplesIntervalMs()/1000;
             if($this->_startTime < $startTime) {
                 $this->_startTime = $startTime;
             }
-            if($this->_endTime == 0 || $this->_endTime > $endtime) {
-                $this->_endTime = $endtime;
+            if($this->_endTime == 0 || $this->_endTime > $endTime) {
+                $this->_endTime = $endTime;
             }
             $this->_summary = new YMeasure($this->_startTime,$this->_endTime,
                                            $summaryMinVal,$summaryTotalAvg/$summaryTotalTime,$summaryMaxVal);
