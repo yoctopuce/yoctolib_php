@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 20719 2015-06-23 16:24:47Z mvuilleu $
+ * $Id: yocto_api.php 20916 2015-07-23 08:54:20Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1294,6 +1294,21 @@ class YDevice
         return '';
     }
 
+    public function functionType($functionIndex)
+    {
+        if($functionIndex < sizeof($this->_functions)) {
+            $fid = $this->_functions[$functionIndex][0];
+            for ($i = 0; $i < strlen($fid); $i++) {
+                if ($fid[$i] >= '0' && $fid[$i] <= '9') {
+                    break;
+                }
+            }
+            return strtoupper($fid[0]) . substr($fid, 1, $i - 1);
+        }
+        return '';
+    }
+
+
     /**
      * Retrieves the logical name of the <i>n</i>th function on the module.
      *
@@ -1967,6 +1982,17 @@ class YAPI
         return $idata;
     }
 
+    public static function _bytesToHexStr($data)
+    {
+        return strtoupper(bin2hex($data));
+    }
+
+    public static function _hexStrToBin($data)
+    {
+        return hex2bin($data);
+    }
+
+
     /**
      * Return a Device object for a specified URL, serial number or logical device name
      * This function will not cause any network access
@@ -2450,7 +2476,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.20773";
+        return "1.10.20971";
     }
 
     /**
@@ -3531,6 +3557,10 @@ class YDataStream
         // $idx                    is a int;
         $udat = Array();        // intArr;
         $dat = Array();         // floatArr;
+        if (strlen($sdata) == 0) {
+            $this->_nRows = 0;
+            return YAPI_SUCCESS;
+        }
         // may throw an exception
         $udat = YAPI::_decodeWords($this->_parent->_json_get_string($sdata));
         while(sizeof($this->_values) > 0) { array_pop($this->_values); };
@@ -4174,6 +4204,73 @@ class YDataSet
     public function get_preview()
     {
         return $this->_preview;
+    }
+
+    /**
+     * Returns the detailed set of measures for the time interval corresponding
+     * to a given condensed measures previously returned by get_preview().
+     * The result is provided as a list of YMeasure objects.
+     *
+     * @param measure : condensed measure from the list previously returned by
+     *         get_preview().
+     *
+     * @return a table of records, where each record depicts the
+     *         measured values during a time interval
+     *
+     * On failure, throws an exception or returns an empty array.
+     */
+    public function get_measuresAt($measure)
+    {
+        // $startUtc               is a u32;
+        // $stream                 is a YDataStream;
+        $dataRows = Array();    // floatArrArr;
+        $measures = Array();    // YMeasureArr;
+        // $tim                    is a float;
+        // $itv                    is a float;
+        // $nCols                  is a int;
+        // $minCol                 is a int;
+        // $avgCol                 is a int;
+        // $maxCol                 is a int;
+        // may throw an exception
+        $startUtc = round($measure.get_startTimeUTC());
+        $stream = null;
+        foreach($this->_streams as $each) {
+            if ($each->get_startTimeUTC() == $startUtc) {
+                $stream = $each;
+            }
+        }
+        if ($stream == null) {
+            return $measures;
+        }
+        $dataRows = $stream->get_dataRows();
+        if (sizeof($dataRows) == 0) {
+            return $measures;
+        }
+        $tim = $stream->get_startTimeUTC();
+        $itv = $stream->get_dataSamplesInterval();
+        if ($tim < $itv) {
+            $tim = $itv;
+        }
+        $nCols = sizeof($dataRows[0]);
+        $minCol = 0;
+        if ($nCols > 2) {
+            $avgCol = 1;
+        } else {
+            $avgCol = 0;
+        }
+        if ($nCols > 2) {
+            $maxCol = 2;
+        } else {
+            $maxCol = 0;
+        }
+        
+        foreach($dataRows as $each) {
+            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
+                $measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            }
+            $tim = $tim + $itv;
+        }
+        return $measures;
     }
 
     /**
@@ -6197,6 +6294,23 @@ class YModule extends YFunction
     }
 
     /**
+     * Retrieves the type of the <i>n</i>th function on the module.
+     *
+     * @param functionIndex : the index of the function for which the information is desired, starting at
+     * 0 for the first function.
+     *
+     * @return a the type of the function
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function functionType($functionIndex)
+    {
+        $dev = $this->_getDev();
+        return $dev->functionType($functionIndex);
+    }
+
+
+    /**
      * Retrieves the logical name of the <i>n</i>th function on the module.
      *
      * @param functionIndex : the index of the function for which the information is desired, starting at
@@ -6736,6 +6850,43 @@ class YModule extends YFunction
     public function get_allSettings()
     {
         return $this->_download('api.json');
+    }
+
+    public function hasFunction($funcId)
+    {
+        // $count                  is a int;
+        // $i                      is a int;
+        // $fid                    is a str;
+        // may throw an exception
+        $count  = $this->functionCount();
+        $i = 0;
+        while ($i < $count) {
+            $fid  = $this->functionId($i);
+            if ($fid == $funcId) {
+                return true;
+            }
+            $i = $i + 1;
+        }
+        return false;
+    }
+
+    public function get_functionIds($funType)
+    {
+        // $count                  is a int;
+        // $i                      is a int;
+        // $ftype                  is a str;
+        $res = Array();         // strArr;
+        // may throw an exception
+        $count = $this->functionCount();
+        $i = 0;
+        while ($i < $count) {
+            $ftype  = $this->functionType($i);
+            if ($ftype == $funType) {
+                $res[] = $this->functionId($i);
+            }
+            $i = $i + 1;
+        }
+        return $res;
     }
 
     //cannot be generated for PHP:

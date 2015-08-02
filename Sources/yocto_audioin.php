@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioin.php 20746 2015-06-25 11:15:45Z seb $
+ * $Id: yocto_audioin.php 20797 2015-07-06 16:49:40Z mvuilleu $
  *
  * Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -45,6 +45,7 @@ if(!defined('Y_MUTE_FALSE'))                 define('Y_MUTE_FALSE',             
 if(!defined('Y_MUTE_TRUE'))                  define('Y_MUTE_TRUE',                 1);
 if(!defined('Y_MUTE_INVALID'))               define('Y_MUTE_INVALID',              -1);
 if(!defined('Y_VOLUME_INVALID'))             define('Y_VOLUME_INVALID',            YAPI_INVALID_UINT);
+if(!defined('Y_VOLUMERANGE_INVALID'))        define('Y_VOLUMERANGE_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_SIGNAL_INVALID'))             define('Y_SIGNAL_INVALID',            YAPI_INVALID_INT);
 if(!defined('Y_NOSIGNALFOR_INVALID'))        define('Y_NOSIGNALFOR_INVALID',       YAPI_INVALID_INT);
 //--- (end of YAudioIn definitions)
@@ -61,6 +62,7 @@ class YAudioIn extends YFunction
     const MUTE_FALSE                     = 0;
     const MUTE_TRUE                      = 1;
     const MUTE_INVALID                   = -1;
+    const VOLUMERANGE_INVALID            = YAPI_INVALID_STRING;
     const SIGNAL_INVALID                 = YAPI_INVALID_INT;
     const NOSIGNALFOR_INVALID            = YAPI_INVALID_INT;
     //--- (end of YAudioIn declaration)
@@ -68,6 +70,7 @@ class YAudioIn extends YFunction
     //--- (YAudioIn attributes)
     protected $_volume                   = Y_VOLUME_INVALID;             // Percent
     protected $_mute                     = Y_MUTE_INVALID;               // Bool
+    protected $_volumeRange              = Y_VOLUMERANGE_INVALID;        // ValueRange
     protected $_signal                   = Y_SIGNAL_INVALID;             // Int
     protected $_noSignalFor              = Y_NOSIGNALFOR_INVALID;        // Int
     //--- (end of YAudioIn attributes)
@@ -91,6 +94,9 @@ class YAudioIn extends YFunction
             return 1;
         case 'mute':
             $this->_mute = intval($val);
+            return 1;
+        case 'volumeRange':
+            $this->_volumeRange = $val;
             return 1;
         case 'signal':
             $this->_signal = intval($val);
@@ -165,6 +171,26 @@ class YAudioIn extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("mute",$rest_val);
+    }
+
+    /**
+     * Returns the supported volume range. The low value of the
+     * range corresponds to the minimal audible value. To
+     * completely mute the sound, use set_mute()
+     * instead of the set_volume().
+     *
+     * @return a string corresponding to the supported volume range
+     *
+     * On failure, throws an exception or returns Y_VOLUMERANGE_INVALID.
+     */
+    public function get_volumeRange()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_VOLUMERANGE_INVALID;
+            }
+        }
+        return $this->_volumeRange;
     }
 
     /**
@@ -246,6 +272,9 @@ class YAudioIn extends YFunction
 
     public function setMute($newval)
     { return $this->set_mute($newval); }
+
+    public function volumeRange()
+    { return $this->get_volumeRange(); }
 
     public function signal()
     { return $this->get_signal(); }
