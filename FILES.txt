@@ -33,7 +33,7 @@
 /Sources/yocto_lightsensor.php (modif:Mon Jul 27 19:10:09 2015 size:10848)
 /Sources/yocto_oscontrol.php (modif:Mon Jul 27 19:10:09 2015 size:8704)
 /Sources/yocto_servo.php (modif:Mon Jul 27 19:10:09 2015 size:18575)
-/Sources/yocto_api.php (modif:Sun Aug  2 16:41:55 2015 size:307811)
+/Sources/yocto_api.php (modif:Mon Aug  3 01:55:39 2015 size:307811)
 /Sources/yocto_magnetometer.php (modif:Mon Jul 27 19:10:09 2015 size:10567)
 /Sources/yocto_gyro.php (modif:Mon Jul 27 19:10:09 2015 size:29096)
 /Sources/yocto_audioout.php (modif:Mon Jul 27 19:10:09 2015 size:12955)
