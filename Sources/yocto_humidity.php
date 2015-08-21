@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_humidity.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_humidity.php 21211 2015-08-19 16:03:29Z seb $
  *
  * Implements YHumidity, the high-level API for Humidity functions
  *
@@ -41,6 +41,8 @@
 //--- (YHumidity return codes)
 //--- (end of YHumidity return codes)
 //--- (YHumidity definitions)
+if(!defined('Y_RELHUM_INVALID'))             define('Y_RELHUM_INVALID',            YAPI_INVALID_DOUBLE);
+if(!defined('Y_ABSHUM_INVALID'))             define('Y_ABSHUM_INVALID',            YAPI_INVALID_DOUBLE);
 //--- (end of YHumidity definitions)
 
 //--- (YHumidity declaration)
@@ -53,9 +55,13 @@
  */
 class YHumidity extends YSensor
 {
+    const RELHUM_INVALID                 = YAPI_INVALID_DOUBLE;
+    const ABSHUM_INVALID                 = YAPI_INVALID_DOUBLE;
     //--- (end of YHumidity declaration)
 
     //--- (YHumidity attributes)
+    protected $_relHum                   = Y_RELHUM_INVALID;             // MeasureVal
+    protected $_absHum                   = Y_ABSHUM_INVALID;             // MeasureVal
     //--- (end of YHumidity attributes)
 
     function __construct($str_func)
@@ -68,6 +74,74 @@ class YHumidity extends YSensor
     }
 
     //--- (YHumidity implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'relHum':
+            $this->_relHum = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'absHum':
+            $this->_absHum = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Changes the primary unit for measuring humidity. That unit is a string.
+     * If that strings starts with the letter 'g', the primary measured value is the absolute
+     * humidity, in g/m3. Otherwise, the primary measured value will be the relative humidity
+     * (RH), in per cents.
+     *
+     * Remember to call the saveToFlash() method of the module if the modification
+     * must be kept.
+     *
+     * @param newval : a string corresponding to the primary unit for measuring humidity
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_unit($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("unit",$rest_val);
+    }
+
+    /**
+     * Returns the current relative humidity, in per cents.
+     *
+     * @return a floating point number corresponding to the current relative humidity, in per cents
+     *
+     * On failure, throws an exception or returns Y_RELHUM_INVALID.
+     */
+    public function get_relHum()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_RELHUM_INVALID;
+            }
+        }
+        return $this->_relHum;
+    }
+
+    /**
+     * Returns the current absolute humidity, in grams per cubic meter of air.
+     *
+     * @return a floating point number corresponding to the current absolute humidity, in grams per cubic meter of air
+     *
+     * On failure, throws an exception or returns Y_ABSHUM_INVALID.
+     */
+    public function get_absHum()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ABSHUM_INVALID;
+            }
+        }
+        return $this->_absHum;
+    }
 
     /**
      * Retrieves a humidity sensor for a given identifier.
@@ -102,6 +176,15 @@ class YHumidity extends YSensor
         }
         return $obj;
     }
+
+    public function setUnit($newval)
+    { return $this->set_unit($newval); }
+
+    public function relHum()
+    { return $this->get_relHum(); }
+
+    public function absHum()
+    { return $this->get_absHum(); }
 
     /**
      * Continues the enumeration of humidity sensors started using yFirstHumidity().

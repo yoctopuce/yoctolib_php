@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 20916 2015-07-23 08:54:20Z seb $
+ * $Id: yocto_api.php 21230 2015-08-20 09:37:03Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1989,7 +1989,14 @@ class YAPI
 
     public static function _hexStrToBin($data)
     {
-        return hex2bin($data);
+        $pos = 0;
+        $result = '';
+        while ($pos < strlen($data)) {
+            $code = hexdec(substr($data, $pos, 2));
+            $pos = $pos + 2;
+            $result .= chr($code);
+        }
+        return $result;
     }
 
 
@@ -2476,7 +2483,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.20983";
+        return "1.10.21242";
     }
 
     /**
@@ -4925,6 +4932,22 @@ class YFunction
         return $res;
     }
 
+    public function _get_json_path($str_json, $path)
+    {
+        $json = json_decode($str_json, true);
+        $paths = explode('|', $path);
+        foreach($paths as $key){
+            $json = $json[$key];
+        }
+        return json_encode($json);
+    }
+
+    public function _decode_json_string($json)
+    {
+        $decoded = json_decode($json);
+        return $decoded;
+    }
+
     /**
      * Method used to cache DataStream objects (new DataLogger)
      * @param YDataSet $obj_dataset
@@ -4941,6 +4964,13 @@ class YFunction
         $this->_dataStreams[$key] = $newDataStream;
         return $newDataStream;
     }
+
+    // Method used to clear cache of DataStream object (undocumented)
+    public function _clearDataStreamCache()
+    {
+        $this->_dataStreams = array();
+    }
+
 
     public function _getValueCallback()
     {
@@ -6852,6 +6882,88 @@ class YModule extends YFunction
         return $this->_download('api.json');
     }
 
+    public function get_allSettings_dev()
+    {
+        // $settings               is a bin;
+        // $json                   is a bin;
+        // $res                    is a bin;
+        // $sep                    is a str;
+        // $name                   is a str;
+        // $file_data              is a str;
+        // $file_data_bin          is a bin;
+        // $all_file_data          is a str;
+        $filelist = Array();    // strArr;
+        // may throw an exception
+        $settings = $this->_download('api.json');
+        $all_file_data = ', "files":[';
+        if ($this->hasFunction('files')) {
+            $json = $this->_download('files.json?a=dir&f=');
+            $filelist = $this->_json_get_array($json);
+            $sep = '';
+            foreach( $filelist as $each) {
+                $name = $this->_json_get_key($each, 'name');
+                $file_data_bin = $this->_download($this->_escapeAttr($name));
+                $file_data = YAPI::_bytesToHexStr($file_data_bin);
+                $file_data = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
+                $sep = ',';
+                $all_file_data = $all_file_data . $file_data;
+            }
+        }
+        $all_file_data = $all_file_data . ']}';
+        $res = '{ "api":' + $settings + $all_file_data;
+        return $res;
+    }
+
+    /**
+     * Restores all the settings of the module. Useful to restore all the logical names and calibrations parameters
+     * of a module from a backup.Remember to call the saveToFlash() method of the module if the
+     * modifications must be kept.
+     *
+     * @param settings : a binary buffer with all the settings.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_allSettings_dev($settings)
+    {
+        // $down                   is a bin;
+        // $json                   is a str;
+        // $json_api               is a str;
+        // $json_files             is a str;
+        $json = $settings;
+        $json_api = $this->_get_json_path($json, 'api');
+        $this->set_allSettings($json_api);
+        if ($this->hasFunction('files')) {
+            $files = Array();       // strArr;
+            // $res                    is a str;
+            // $name                   is a str;
+            // $data                   is a str;
+            $down = $this->_download('files.json?a=format');
+            $res = $this->_get_json_path($down, 'res');
+            $res = $this->_decode_json_string($res);
+            if (!($res == 'ok')) return $this->_throw( YAPI_IO_ERROR, 'format failed',YAPI_IO_ERROR);
+            $json_files = $this->_get_json_path($json, 'files');
+            $files = $this->_json_get_array($json_files);
+            foreach( $files as $each) {
+                $name = $this->_get_json_path($each, 'name');
+                $name = $this->_decode_json_string($name);
+                $data = $this->_get_json_path($each, 'data');
+                $data = $this->_decode_json_string($data);
+                $this->_upload($name, YAPI::_hexStrToBin($data));
+            }
+        }
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Test if the device has a specific function. This method took an function identifier
+     * and return a boolean.
+     *
+     * @param funcId : the requested function identifier
+     *
+     * @return : true if the device has the function identifier
+     */
     public function hasFunction($funcId)
     {
         // $count                  is a int;
@@ -6870,6 +6982,13 @@ class YModule extends YFunction
         return false;
     }
 
+    /**
+     * Retrieve all hardware identifier that match the type passed in argument.
+     *
+     * @param funType : The type of function (Relay, LightSensor, Voltage,...)
+     *
+     * @return : A array of string.
+     */
     public function get_functionIds($funType)
     {
         // $count                  is a int;
