@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 21230 2015-08-20 09:37:03Z seb $
+ * $Id: yocto_api.php 21386 2015-09-02 13:01:11Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2483,7 +2483,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.21312";
+        return "1.10.21486";
     }
 
     /**
@@ -4937,7 +4937,11 @@ class YFunction
         $json = json_decode($str_json, true);
         $paths = explode('|', $path);
         foreach($paths as $key){
-            $json = $json[$key];
+            if (array_key_exists($key,$json)) {
+                $json = $json[$key];
+            }else{
+                return '';
+            }
         }
         return json_encode($json);
     }
@@ -6870,19 +6874,15 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns all the settings of the module. Useful to backup all the logical names and calibrations parameters
-     * of a connected module.
+     * Returns all the settings and uploaded files of the module. Useful to backup all the logical names,
+     * calibrations parameters,
+     * and uploaded files of a connected module.
      *
      * @return a binary buffer with all the settings.
      *
      * On failure, throws an exception or returns  YAPI_INVALID_STRING.
      */
     public function get_allSettings()
-    {
-        return $this->_download('api.json');
-    }
-
-    public function get_allSettings_dev()
     {
         // $settings               is a bin;
         // $json                   is a bin;
@@ -6910,13 +6910,14 @@ class YModule extends YFunction
             }
         }
         $all_file_data = $all_file_data . ']}';
-        $res = '{ "api":' + $settings + $all_file_data;
+        $res = '{ "api":' . $settings . $all_file_data;
         return $res;
     }
 
     /**
-     * Restores all the settings of the module. Useful to restore all the logical names and calibrations parameters
-     * of a module from a backup.Remember to call the saveToFlash() method of the module if the
+     * Restores all the settings and uploaded files of the module. Useful to restore all the logical names
+     * and calibrations parameters, uploaded
+     * files etc.. of a module from a backup.Remember to call the saveToFlash() method of the module if the
      * modifications must be kept.
      *
      * @param settings : a binary buffer with all the settings.
@@ -6925,7 +6926,7 @@ class YModule extends YFunction
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_allSettings_dev($settings)
+    public function set_allSettingsAndFiles($settings)
     {
         // $down                   is a bin;
         // $json                   is a str;
@@ -6933,6 +6934,9 @@ class YModule extends YFunction
         // $json_files             is a str;
         $json = $settings;
         $json_api = $this->_get_json_path($json, 'api');
+        if ($json_api == '') {
+            return $this->set_allSettings($settings);
+        }
         $this->set_allSettings($json_api);
         if ($this->hasFunction('files')) {
             $files = Array();       // strArr;
@@ -7266,6 +7270,11 @@ class YModule extends YFunction
         // $each_str               is a str;
         // $do_update              is a bool;
         // $found                  is a bool;
+        $tmp = $settings;
+        $tmp = $this->_get_json_path($tmp, 'api');
+        if (!($tmp == '')) {
+            $settings = $tmp;
+        }
         $oldval = '';
         $newval = '';
         $old_json_flat = $this->_flattenJsonStruct($settings);

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 20410 2015-05-22 08:30:27Z seb $
+ * $Id: yocto_cellular.php 21485 2015-09-11 14:10:22Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -130,6 +130,7 @@ if(!defined('Y_ENABLEDATA_NEVER'))           define('Y_ENABLEDATA_NEVER',       
 if(!defined('Y_ENABLEDATA_INVALID'))         define('Y_ENABLEDATA_INVALID',        -1);
 if(!defined('Y_LINKQUALITY_INVALID'))        define('Y_LINKQUALITY_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_CELLOPERATOR_INVALID'))       define('Y_CELLOPERATOR_INVALID',      YAPI_INVALID_STRING);
+if(!defined('Y_CELLIDENTIFIER_INVALID'))     define('Y_CELLIDENTIFIER_INVALID',    YAPI_INVALID_STRING);
 if(!defined('Y_IMSI_INVALID'))               define('Y_IMSI_INVALID',              YAPI_INVALID_STRING);
 if(!defined('Y_MESSAGE_INVALID'))            define('Y_MESSAGE_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PIN_INVALID'))                define('Y_PIN_INVALID',               YAPI_INVALID_STRING);
@@ -150,6 +151,7 @@ class YCellular extends YFunction
 {
     const LINKQUALITY_INVALID            = YAPI_INVALID_UINT;
     const CELLOPERATOR_INVALID           = YAPI_INVALID_STRING;
+    const CELLIDENTIFIER_INVALID         = YAPI_INVALID_STRING;
     const IMSI_INVALID                   = YAPI_INVALID_STRING;
     const MESSAGE_INVALID                = YAPI_INVALID_STRING;
     const PIN_INVALID                    = YAPI_INVALID_STRING;
@@ -166,6 +168,7 @@ class YCellular extends YFunction
     //--- (generated code: YCellular attributes)
     protected $_linkQuality              = Y_LINKQUALITY_INVALID;        // Percent
     protected $_cellOperator             = Y_CELLOPERATOR_INVALID;       // Text
+    protected $_cellIdentifier           = Y_CELLIDENTIFIER_INVALID;     // Text
     protected $_imsi                     = Y_IMSI_INVALID;               // IMSI
     protected $_message                  = Y_MESSAGE_INVALID;            // Text
     protected $_pin                      = Y_PIN_INVALID;                // PinPassword
@@ -195,6 +198,9 @@ class YCellular extends YFunction
             return 1;
         case 'cellOperator':
             $this->_cellOperator = $val;
+            return 1;
+        case 'cellIdentifier':
+            $this->_cellIdentifier = $val;
             return 1;
         case 'imsi':
             $this->_imsi = $val;
@@ -256,6 +262,24 @@ class YCellular extends YFunction
             }
         }
         return $this->_cellOperator;
+    }
+
+    /**
+     * Returns the unique identifier of the cellular antenna in use: MCC, MNC, LAC and Cell ID.
+     *
+     * @return a string corresponding to the unique identifier of the cellular antenna in use: MCC, MNC,
+     * LAC and Cell ID
+     *
+     * On failure, throws an exception or returns Y_CELLIDENTIFIER_INVALID.
+     */
+    public function get_cellIdentifier()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CELLIDENTIFIER_INVALID;
+            }
+        }
+        return $this->_cellIdentifier;
     }
 
     /**
@@ -697,6 +721,9 @@ class YCellular extends YFunction
 
     public function cellOperator()
     { return $this->get_cellOperator(); }
+
+    public function cellIdentifier()
+    { return $this->get_cellIdentifier(); }
 
     public function imsi()
     { return $this->get_imsi(); }
