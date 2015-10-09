@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_wireless.php 21680 2015-10-02 13:42:44Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -139,7 +139,7 @@ class YWireless extends YFunction
     protected $_ssid                     = Y_SSID_INVALID;               // Text
     protected $_channel                  = Y_CHANNEL_INVALID;            // UInt31
     protected $_security                 = Y_SECURITY_INVALID;           // WLANSec
-    protected $_message                  = Y_MESSAGE_INVALID;            // Text
+    protected $_message                  = Y_MESSAGE_INVALID;            // YFSText
     protected $_wlanConfig               = Y_WLANCONFIG_INVALID;         // WLANConfig
     //--- (end of generated code: YWireless attributes)
 

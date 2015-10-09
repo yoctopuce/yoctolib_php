@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 21211 2015-08-19 16:03:29Z seb $
+ * $Id: yocto_temperature.php 21576 2015-09-21 13:17:28Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -357,7 +357,7 @@ class YTemperature extends YSensor
         while(sizeof($resValues) > 0) { array_pop($resValues); };
         // may throw an exception
         $id = $this->get_functionId();
-        $id = substr($id,  11, strlen($id)-1);
+        $id = substr($id,  11, strlen($id) - 11);
         $bin_json = $this->_download(sprintf('extra.json?page=%s', $id));
         $paramlist = $this->_json_get_array($bin_json);
         // first convert all temperatures to float

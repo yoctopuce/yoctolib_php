@@ -8,7 +8,14 @@ include("../../Sources/yocto_anbutton.php");
 function valueChangeCallBack($obj_fct, $str_value)
 {
     $info = $obj_fct->get_userData();
-    Print("{$info['name']}: $str_value {$info['unit']} (new value)\n");
+
+    $apival = $obj_fct->get_calibratedValue();
+    $obj_fct->clearCache();
+    $value1 = $obj_fct->get_calibratedValue();
+    Print($obj_fct->get_hardwareId() . ": " . $str_value . "=" . $value1 . " (" . $apival . ")\n");
+
+
+    //Print("{$info['name']}: $str_value {$info['unit']} (new value)\n");
 }
 
 function timedReportCallBack($obj_fct, $obj_measure)
@@ -26,7 +33,7 @@ function deviceArrival($module)
     $fctcount = $module->functionCount();
     for ($i = 0; $i < $fctcount; $i++) {
         $hardwareId = "{$serial}.{$module->functionId($i)}";
-        if (strpos($hardwareId, ".anButton") !== false) { 
+        if (strpos($hardwareId, ".anButton") !== false) {
             Print("- {$hardwareId}\n");
             $button = YAnButton::FindAnButton($hardwareId);
             $button->set_userData(Array('name'=>$hardwareId, 'unit'=>''));
@@ -45,7 +52,7 @@ function deviceArrival($module)
             $sensor->registerTimedReportCallback('timedReportCallBack');
         }
         $sensor = $sensor->nextSensor();
-    }    
+    }
 }
 
 function deviceRemoval($module)
@@ -61,6 +68,9 @@ function handleHotPlug()
         yUpdateDeviceList();
     }
 }
+
+
+YAPI::$defaultCacheValidity = 5000;
 
 // Use explicit error handling rather than exceptions
 YAPI::DisableExceptions();

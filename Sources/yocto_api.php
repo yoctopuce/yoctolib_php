@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 21386 2015-09-02 13:01:11Z seb $
+ * $Id: yocto_api.php 21680 2015-10-02 13:42:44Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2483,7 +2483,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.21486";
+        return "1.10.21701";
     }
 
     /**
@@ -3339,7 +3339,9 @@ class YFirmwareUpdate
      */
     public function get_progress()
     {
-        $this->_processMore(0);
+        if ($this->_progress >= 0) {
+            $this->_processMore(0);
+        }
         return $this->_progress;
     }
 
@@ -3366,9 +3368,18 @@ class YFirmwareUpdate
      */
     public function startUpdate()
     {
-        $this->_progress = 0;
-        $this->_progress_c = 0;
-        $this->_processMore(1);
+        // $err                    is a str;
+        // $leng                   is a int;
+        $err = $this->_settings;
+        $leng = strlen($err);
+        if (( $leng >= 6) && ('error:' == substr($err, 0, 6))) {
+            $this->_progress = -1;
+            $this->_progress_msg = substr($err,  6, $leng - 6);
+        } else {
+            $this->_progress = 0;
+            $this->_progress_c = 0;
+            $this->_processMore(1);
+        }
         return $this->_progress;
     }
 
@@ -5071,6 +5082,32 @@ class YFunction
         $this->_parse($yreq, $msValidity);
 
         return YAPI_SUCCESS;
+    }
+
+    /**
+     * Invalidate the cache. Invalidate the cache of the function attributes. Force the
+     * next call to get_xxx() or loadxxx() to use value that come from the device..
+     *
+     * @noreturn
+     */
+    public function clearCache()
+    {
+        $resolve = YAPI::resolveFunction($this->_className, $this->_func);
+        if($resolve->errorType != YAPI_SUCCESS) {
+            return;
+        }
+        $str_func = $resolve->result;
+        $dotpos = strpos($str_func, '.');
+        $devid = substr($str_func,0,$dotpos);
+        $funcid = substr($str_func,$dotpos+1);
+        $dev = YAPI::getDevice($devid);
+        if(is_null($dev)) {
+            return;
+        }
+        $dev->dropCache();
+        if ($this->_cacheExpiration > 0) {
+            $this->_cacheExpiration = YAPI::GetTickCount();
+        }
     }
 
     /**
@@ -6861,7 +6898,7 @@ class YModule extends YFunction
      *
      * @param path : the path of the byn file to use.
      *
-     * @return : A YFirmwareUpdate object.
+     * @return : A YFirmwareUpdate object or NULL on error.
      */
     public function updateFirmware($path)
     {
@@ -6870,6 +6907,10 @@ class YModule extends YFunction
         // may throw an exception
         $serial = $this->get_serialNumber();
         $settings = $this->get_allSettings();
+        if (strlen($settings) == 0) {
+            $this->_throw(YAPI_IO_ERROR, 'Unable to get device settings');
+            $settings = 'error:Unable to get device settings';
+        }
         return new YFirmwareUpdate($serial, $path, $settings);
     }
 
@@ -6880,7 +6921,7 @@ class YModule extends YFunction
      *
      * @return a binary buffer with all the settings.
      *
-     * On failure, throws an exception or returns  YAPI_INVALID_STRING.
+     * On failure, throws an exception or returns an binary object of size 0.
      */
     public function get_allSettings()
     {
@@ -6889,29 +6930,105 @@ class YModule extends YFunction
         // $res                    is a bin;
         // $sep                    is a str;
         // $name                   is a str;
+        // $item                   is a str;
+        // $t_type                 is a str;
+        // $id                     is a str;
+        // $url                    is a str;
         // $file_data              is a str;
         // $file_data_bin          is a bin;
-        // $all_file_data          is a str;
+        // $temp_data_bin          is a bin;
+        // $ext_settings           is a str;
         $filelist = Array();    // strArr;
+        $templist = Array();    // strArr;
         // may throw an exception
         $settings = $this->_download('api.json');
-        $all_file_data = ', "files":[';
+        if (strlen($settings) == 0) {
+            return $settings;
+        }
+        $ext_settings = ', "extras":[';
+        $templist = $this->get_functionIds('Temperature');
+        $sep = '';
+        foreach( $templist as $each) {
+            if (intVal($this->get_firmwareRelease()) > 9000) {
+                $url = sprintf('api/%s/sensorType',$each);
+                $t_type = $this->_download($url);
+                if ($t_type == 'RES_NTC') {
+                    $id = substr($each,  11, strlen($each) - 11);
+                    $temp_data_bin = $this->_download(sprintf('extra.json?page=%s', $id));
+                    if (strlen($temp_data_bin) == 0) {
+                        return $temp_data_bin;
+                    }
+                    $item = sprintf('%s{"fid":"%s", "json":%s}'."\n".'', $sep, $each, $temp_data_bin);
+                    $ext_settings = $ext_settings . $item;
+                    $sep = ',';
+                }
+            }
+        }
+        $ext_settings =  $ext_settings . '],'."\n".'"files":[';
         if ($this->hasFunction('files')) {
             $json = $this->_download('files.json?a=dir&f=');
+            if (strlen($json) == 0) {
+                return $json;
+            }
             $filelist = $this->_json_get_array($json);
             $sep = '';
             foreach( $filelist as $each) {
                 $name = $this->_json_get_key($each, 'name');
+                if (strlen($name) == 0) {
+                    return $name;
+                }
                 $file_data_bin = $this->_download($this->_escapeAttr($name));
                 $file_data = YAPI::_bytesToHexStr($file_data_bin);
-                $file_data = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
+                $item = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
+                $ext_settings = $ext_settings . $item;
                 $sep = ',';
-                $all_file_data = $all_file_data . $file_data;
             }
         }
-        $all_file_data = $all_file_data . ']}';
-        $res = '{ "api":' . $settings . $all_file_data;
+        $ext_settings = $ext_settings . ']}';
+        $res = '{ "api":' . $settings . $ext_settings;
         return $res;
+    }
+
+    public function loadThermistorExtra($funcId,$jsonExtra)
+    {
+        $values = Array();      // strArr;
+        // $url                    is a str;
+        // $curr                   is a str;
+        // $currTemp               is a str;
+        // $ofs                    is a int;
+        // $size                   is a int;
+        $url = 'api/' . $funcId . '.json?command=Z';
+        // may throw an exception
+        $this->_download($url);
+        // add records in growing resistance value
+        $values = $this->_json_get_array($jsonExtra);
+        $ofs = 0;
+        $size = sizeof($values);
+        while ($ofs + 1 < $size) {
+            $curr = $values[$ofs];
+            $currTemp = $values[$ofs + 1];
+            $url = sprintf('api/%s/.json?command=m%s:%s',  $funcId, $curr,  $currTemp);
+            $this->_download($url);
+            $ofs = $ofs + 2;
+        }
+        return YAPI_SUCCESS;
+    }
+
+    public function set_extraSettings($jsonExtra)
+    {
+        $extras = Array();      // strArr;
+        // $functionId             is a str;
+        // $data                   is a str;
+        $extras = $this->_json_get_array($jsonExtra);
+        foreach( $extras as $each) {
+            $functionId = $this->_get_json_path($each, 'fid');
+            $functionId = $this->_decode_json_string($functionId);
+            $data = $this->_get_json_path($each, 'json');
+            if ($this->hasFunction($functionId)) {
+                $this->loadThermistorExtra($functionId, $data);
+            }
+        }
+        return YAPI_SUCCESS;
     }
 
     /**
@@ -6932,10 +7049,15 @@ class YModule extends YFunction
         // $json                   is a str;
         // $json_api               is a str;
         // $json_files             is a str;
+        // $json_extra             is a str;
         $json = $settings;
         $json_api = $this->_get_json_path($json, 'api');
         if ($json_api == '') {
             return $this->set_allSettings($settings);
+        }
+        $json_extra = $this->_get_json_path($json, 'extras');
+        if (!($json_extra == '')) {
+            $this->set_extraSettings($json_extra);
         }
         $this->set_allSettings($json_api);
         if ($this->hasFunction('files')) {

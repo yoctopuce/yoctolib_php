@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 21485 2015-09-11 14:10:22Z seb $
+ * $Id: yocto_cellular.php 21680 2015-10-02 13:42:44Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -170,7 +170,7 @@ class YCellular extends YFunction
     protected $_cellOperator             = Y_CELLOPERATOR_INVALID;       // Text
     protected $_cellIdentifier           = Y_CELLIDENTIFIER_INVALID;     // Text
     protected $_imsi                     = Y_IMSI_INVALID;               // IMSI
-    protected $_message                  = Y_MESSAGE_INVALID;            // Text
+    protected $_message                  = Y_MESSAGE_INVALID;            // YFSText
     protected $_pin                      = Y_PIN_INVALID;                // PinPassword
     protected $_lockedOperator           = Y_LOCKEDOPERATOR_INVALID;     // Text
     protected $_enableData               = Y_ENABLEDATA_INVALID;         // ServiceScope
@@ -610,7 +610,14 @@ class YCellular extends YFunction
     {
         // $chrPos                 is a int;
         // $cmdLen                 is a int;
-        // $content                is a bin;
+        // $waitMore               is a int;
+        // $res                    is a str;
+        // $buff                   is a bin;
+        // $bufflen                is a int;
+        // $buffstr                is a str;
+        // $buffstrlen             is a int;
+        // $idx                    is a int;
+        // $suffixlen              is a int;
         // quote dangerous characters used in AT commands
         $cmdLen = strlen($cmd);
         $chrPos = Ystrpos($cmd,'#');
@@ -634,9 +641,67 @@ class YCellular extends YFunction
             $cmdLen = $cmdLen + 2;
             $chrPos = Ystrpos($cmd,'=');
         }
+        $cmd = sprintf('at.txt?cmd=%s',$cmd);
+        $res = sprintf('');
+        // max 2 minutes (each iteration may take up to 5 seconds if waiting)
+        $waitMore = 24;
+        while ($waitMore > 0) {
+            $buff = $this->_download($cmd);
+            $bufflen = strlen($buff);
+            $buffstr = $buff;
+            $buffstrlen = strlen($buffstr);
+            $idx = $bufflen - 1;
+            while (($idx > 0) && (ord($buff[$idx]) != 64) && (ord($buff[$idx]) != 10) && (ord($buff[$idx]) != 13)) {
+                $idx = $idx - 1;
+            }
+            if (ord($buff[$idx]) == 64) {
+                $suffixlen = $bufflen - $idx;
+                $cmd = sprintf('at.txt?cmd=%s', substr($buffstr,  $buffstrlen - $suffixlen, $suffixlen));
+                $buffstr = substr($buffstr,  0, $buffstrlen - $suffixlen);
+                $waitMore = $waitMore - 1;
+            } else {
+                $waitMore = 0;
+            }
+            $res = sprintf('%s%s', $res, $buffstr);
+        }
+        return $res;
+    }
+
+    /**
+     * Returns the list detected cell operators in the neighborhood.
+     * This function will typically take between 30 seconds to 1 minute to
+     * return. Note that any SIM card can usually only connect to specific
+     * operators. All networks returned by this function might therefore
+     * not be available for connection.
+     *
+     * @return a list of string (cell operator names).
+     */
+    public function get_availableOperators()
+    {
+        // $cops                   is a str;
+        // $idx                    is a int;
+        // $slen                   is a int;
+        $res = Array();         // strArr;
         // may throw an exception
-        $content = $this->_download(sprintf('at.txt?cmd=%s',$cmd));
-        return $content;
+        $cops = $this->_AT('+COPS=?');
+        $slen = strlen($cops);
+        while(sizeof($res) > 0) { array_pop($res); };
+        $idx = Ystrpos($cops,'(');
+        while ($idx >= 0) {
+            $slen = $slen - ($idx+1);
+            $cops = substr($cops,  $idx+1, $slen);
+            $idx = Ystrpos($cops,'"');
+            if ($idx > 0) {
+                $slen = $slen - ($idx+1);
+                $cops = substr($cops,  $idx+1, $slen);
+                $idx = Ystrpos($cops,'"');
+                if ($idx > 0) {
+                    $res[] = substr($cops,  0, $idx);
+                }
+            }
+            $idx = Ystrpos($cops,'(');
+        }
+        return $res;
     }
 
     /**
