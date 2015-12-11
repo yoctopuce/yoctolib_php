@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 20704 2015-06-20 19:43:34Z mvuilleu $
+ * $Id: yocto_datalogger.php 22197 2015-12-02 12:58:24Z mvuilleu $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -685,12 +685,15 @@ class YDataLogger extends YFunction
     public function parse_dataSets($json)
     {
         $dslist = Array();      // strArr;
+        // $dataset                is a YDataSetPtr;
         $res = Array();         // YDataSetArr;
         // may throw an exception
         $dslist = $this->_json_get_array($json);
         while(sizeof($res) > 0) { array_pop($res); };
         foreach($dslist as $each) {
-            $res[] = new YDataSet($this, $each);
+            $dataset = new YDataSet($this);
+            $dataset->_parse($each);
+            $res[] = $dataset;
         }
         return $res;
     }

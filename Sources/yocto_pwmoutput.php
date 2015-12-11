@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 20287 2015-05-08 13:40:21Z seb $
+ * $Id: yocto_pwmoutput.php 21894 2015-11-02 10:30:24Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -83,7 +83,7 @@ class YPwmOutput extends YFunction
     protected $_period                   = Y_PERIOD_INVALID;             // MeasureVal
     protected $_dutyCycle                = Y_DUTYCYCLE_INVALID;          // MeasureVal
     protected $_pulseDuration            = Y_PULSEDURATION_INVALID;      // MeasureVal
-    protected $_pwmTransition            = Y_PWMTRANSITION_INVALID;      // PwmTransition
+    protected $_pwmTransition            = Y_PWMTRANSITION_INVALID;      // AnyFloatTransition
     protected $_enabledAtPowerOn         = Y_ENABLEDATPOWERON_INVALID;   // Bool
     protected $_dutyCycleAtPowerOn       = Y_DUTYCYCLEATPOWERON_INVALID; // MeasureVal
     //--- (end of YPwmOutput attributes)

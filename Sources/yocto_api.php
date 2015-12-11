@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 21680 2015-10-02 13:42:44Z seb $
+ * $Id: yocto_api.php 22191 2015-12-02 06:49:31Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -884,7 +884,8 @@ class YFunctionType
             $pos = strpos($resolved->result,'.');
             $serial_mod = substr($resolved->result,0,$pos);
             $friend_mod_full = YAPI::getFriendlyNameFunction("Module", $serial_mod)->result;
-            $friend_mod = substr($friend_mod_full,0,strpos($friend_mod_full,'.'));
+            $friend_mod_dot = strpos($friend_mod_full,'.');
+            $friend_mod = ($friend_mod_dot ? substr($friend_mod_full,0,$friend_mod_dot) : $friend_mod_full);
             $friend_func = substr($resolved->result,$pos+1);
             if(isset($this->_nameByHwId[$resolved->result]) && $this->_nameByHwId[$resolved->result]!= '')
                 $friend_func = $this->_nameByHwId[$resolved->result];
@@ -1327,6 +1328,19 @@ class YDevice
         return '';
     }
 
+    public function functionBaseType($functionIndex)
+    {
+        if($functionIndex < sizeof($this->_functions)) {
+            $ftype =  YAPI::getFunctionBaseType($this->_serialNumber.'.'.$this->_functions[$functionIndex][0]);
+            foreach (YAPI::$BASETYPES as $name=> $type) {
+                if ($ftype===$type){
+                    return $name;
+                }
+            }
+        }
+        return 'Function';
+    }
+
     /**
      * Retrieves the advertised value of the <i>n</i>th function on the module.
      *
@@ -1386,7 +1400,7 @@ class YAPI
     const DETECT_ALL            = 3;
 
     // Abstract function BaseTypes
-    protected static $BASETYPES = Array('Function' => 0,
+    public static $BASETYPES = Array('Function' => 0,
                                         'Sensor'   => 1);
 
     /**
@@ -2182,6 +2196,13 @@ class YAPI
         return self::$_fnByType[$classname]->getFunctionValue($str_hwid);
     }
 
+    // Retrieve a function base type
+    public static function getFunctionBaseType($str_hwid)
+    {
+        $classname = self::functionClass($str_hwid);
+        return self::$_fnByType[$classname]->getBaseType();
+    }
+
     // Queue a function value event
     public static function addValueEvent($obj_func, $str_newval)
     {
@@ -2483,7 +2504,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.21816";
+        return "1.10.22324";
     }
 
     /**
@@ -3496,7 +3517,7 @@ class YDataStream
                 $i = $i + 1;
             }
         }
-        $iCalib = $dataset->get_calibration();
+        $iCalib = $dataset->_get_calibration();
         $this->_caltyp = $iCalib[0];
         if ($this->_caltyp != 0) {
             $this->_calhdl = YAPI::_getCalibrationHandler($this->_caltyp);
@@ -3570,7 +3591,7 @@ class YDataStream
         return 0;
     }
 
-    public function parse($sdata)
+    public function _parseStream($sdata)
     {
         // $idx                    is a int;
         $udat = Array();        // intArr;
@@ -3621,7 +3642,7 @@ class YDataStream
         return YAPI_SUCCESS;
     }
 
-    public function get_url()
+    public function _get_url()
     {
         // $url                    is a str;
         $url = sprintf('logger.json?id=%s&run=%d&utc=%u',
@@ -3631,7 +3652,7 @@ class YDataStream
 
     public function loadStream()
     {
-        return $this->parse($this->_parent->_download($this->get_url()));
+        return $this->_parseStream($this->_parent->_download($this->_get_url()));
     }
 
     public function _decodeVal($w)
@@ -3962,23 +3983,18 @@ class YDataSet
     protected $_measures                 = Array();                      // YMeasureArr
     //--- (end of generated code: YDataSet attributes)
 
-    public function __construct($obj_parent, $str_vararg, $str_unit = null, $u32_startTime = null, $u32_endTime = null)
+    public function __construct($obj_parent, $str_functionId = null, $str_unit = null, $u32_startTime = null, $u32_endTime = null)
     {
         //--- (generated code: YDataSet constructor)
         //--- (end of generated code: YDataSet constructor)
         $this->_summary = new YMeasure(0, 0, 0, 0, 0);
         if(is_null($str_unit)) {
             // 1st version of constructor, called from YDataLogger
-            $str_json = $str_vararg;
-
             $this->_parent     = $obj_parent;
             $this->_startTime = 0;
             $this->_endTime   = 0;
-            $this->_parse($str_json);
         } else {
             // 2nd version of constructor, called from YFunction
-            $str_functionId = $str_vararg;
-
             $this->_parent     = $obj_parent;
             $this->_functionId = $str_functionId;
             $this->_unit       = $str_unit;
@@ -3990,7 +4006,7 @@ class YDataSet
 
     //--- (generated code: YDataSet implementation)
 
-    public function get_calibration()
+    public function _get_calibration()
     {
         return $this->_calib;
     }
@@ -4019,7 +4035,7 @@ class YDataSet
             return $this->_parse($strdata);
         }
         $stream = $this->_streams[$this->_progress];
-        $stream->parse($data);
+        $stream->_parseStream($data);
         $dataRows = $stream->get_dataRows();
         $this->_progress = $this->_progress + 1;
         if (sizeof($dataRows) == 0) {
@@ -4176,7 +4192,7 @@ class YDataSet
                 return 100;
             } else {
                 $stream = $this->_streams[$this->_progress];
-                $url = $stream->get_url();
+                $url = $stream->_get_url();
             }
         }
         return $this->processMore($this->_progress, $this->_parent->_download($url));
@@ -4530,6 +4546,12 @@ class YFunction
         return $this->_advertisedValue;
     }
 
+    public function set_advertisedValue($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("advertisedValue",$rest_val);
+    }
+
     /**
      * Retrieves a function for a given identifier.
      * The identifier can be specified using several formats:
@@ -4603,6 +4625,37 @@ class YFunction
         return 0;
     }
 
+    /**
+     * Disable the propagation of every new advertised value to the parent hub.
+     * You can use this function to save bandwidth and CPU on computers with limited
+     * resources, or to prevent unwanted invocations of the HTTP callback.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function muteValueCallbacks()
+    {
+        return $this->set_advertisedValue('SILENT');
+    }
+
+    /**
+     * Re-enable the propagation of every new advertised value to the parent hub.
+     * This function reverts the effect of a previous call to muteValueCallbacks().
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function unmuteValueCallbacks()
+    {
+        return $this->set_advertisedValue('');
+    }
+
     public function _parserHelper()
     {
         return 0;
@@ -4616,6 +4669,9 @@ class YFunction
 
     public function advertisedValue()
     { return $this->get_advertisedValue(); }
+
+    public function setAdvertisedValue($newval)
+    { return $this->set_advertisedValue($newval); }
 
     /**
      * comment from .yc definition
@@ -5085,8 +5141,8 @@ class YFunction
     }
 
     /**
-     * Invalidate the cache. Invalidate the cache of the function attributes. Force the
-     * next call to get_xxx() or loadxxx() to use value that come from the device..
+     * Invalidates the cache. Invalidates the cache of the function attributes. Forces the
+     * next call to get_xxx() or loadxxx() to use values that come from the device.
      *
      * @noreturn
      */
@@ -6380,6 +6436,22 @@ class YModule extends YFunction
         return $dev->functionType($functionIndex);
     }
 
+    /**
+     * Retrieves the base type of the <i>n</i>th function on the module.
+     *
+     * @param functionIndex : the index of the function for which the information is desired, starting at
+     * 0 for the first function.
+     *
+     * @return a the base type of the function
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function functionBaseType($functionIndex)
+    {
+        $dev = $this->_getDev();
+        return $dev->functionBaseType($functionIndex);
+    }
+
 
     /**
      * Retrieves the logical name of the <i>n</i>th function on the module.
@@ -7125,9 +7197,14 @@ class YModule extends YFunction
         $count = $this->functionCount();
         $i = 0;
         while ($i < $count) {
-            $ftype  = $this->functionType($i);
+            $ftype = $this->functionType($i);
             if ($ftype == $funType) {
                 $res[] = $this->functionId($i);
+            } else {
+                $ftype = $this->functionBaseType($i);
+                if ($ftype == $funType) {
+                    $res[] = $this->functionId($i);
+                }
             }
             $i = $i + 1;
         }

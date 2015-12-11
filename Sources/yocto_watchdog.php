@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_watchdog.php 22184 2015-11-30 21:56:05Z mvuilleu $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -400,7 +400,7 @@ class YWatchdog extends YFunction
 
     public function set_delayedPulseTimer($newval)
     {
-        $rest_val = strval($newval["target"]).":".strval($newval["ms"]);
+        $rest_val = strval($newval["target"]).':'.strval($newval["ms"]);
         return $this->_setAttr("delayedPulseTimer",$rest_val);
     }
 
@@ -416,7 +416,7 @@ class YWatchdog extends YFunction
      */
     public function delayedPulse($ms_delay,$ms_duration)
     {
-        $rest_val = strval($ms_delay).":".strval($ms_duration);
+        $rest_val = strval($ms_delay).':'.strval($ms_duration);
         return $this->_setAttr("delayedPulseTimer",$rest_val);
     }
 

@@ -1,24 +1,20 @@
 <HTML>
 <HEAD>
-    <TITLE>inventory</TITLE>
-</HEAD>
+ <TITLE>inventory</TITLE>
+</HEAD> 
 <BODY>
 <H1>Device list</H1>
-<pre>
-    <?php
+<TT>
+<?php
     include('../../Sources/yocto_api.php');
     yRegisterHub("http://127.0.0.1:4444/");
-    /** @var YModule $module */
-    $module = yFirstModule();
+    $module   = yFirstModule();
     while (!is_null($module)) {
         printf("%s (%s)<br>", $module->get_serialNumber(),
-            $module->get_productName());
-        $module->set_beacon(YModule::BEACON_ON);
-        $settings = $module->get_allSettings();
-        $module->set_allSettings($settings);
-        $module = $module->nextModule();
+               $module->get_productName());
+        $module=$module->nextModule(); 
     }
-    ?>
-</pre>
+?>
+</TT>
 </BODY>
 </HTML> 

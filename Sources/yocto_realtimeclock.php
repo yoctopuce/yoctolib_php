@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_realtimeclock.php 21894 2015-11-02 10:30:24Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -125,7 +125,6 @@ class YRealTimeClock extends YFunction
 
     /**
      * Changes the current time. Time is specifid in Unix format (number of elapsed seconds since Jan 1st, 1970).
-     * If current UTC time is known, utcOffset will be automatically adjusted for the new specified time.
      *
      * @param newval : an integer corresponding to the current time
      *
@@ -176,8 +175,6 @@ class YRealTimeClock extends YFunction
     /**
      * Changes the number of seconds between current time and UTC time (time zone).
      * The timezone is automatically rounded to the nearest multiple of 15 minutes.
-     * If current UTC time is known, the current time will automatically be updated according to the
-     * selected time zone.
      *
      * @param newval : an integer corresponding to the number of seconds between current time and UTC time (time zone)
      *
