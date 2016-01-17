@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_refframe.php 22360 2015-12-15 13:31:40Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -331,7 +331,6 @@ class YRefFrame extends YFunction
         // $b                      is a float;
         // $xa                     is a float;
         // $xb                     is a float;
-        
         // bubble sort is good since we will re-sort again after offset adjustment
         $changed = 1;
         while ($changed > 0) {
@@ -438,7 +437,6 @@ class YRefFrame extends YFunction
         if ($this->_calibProgress == 100) {
             return YAPI_SUCCESS;
         }
-        
         // make sure we leave at least 160ms between samples
         $currTick =  ((YAPI::GetTickCount()) & (0x7FFFFFFF));
         if ((($currTick - $this->_calibPrevTick) & (0x7FFFFFFF)) < 160) {
@@ -478,7 +476,6 @@ class YRefFrame extends YFunction
             return YAPI_SUCCESS;
         }
         $this->_calibPrevTick = $currTick;
-        
         // Determine the device orientation index
         $orient = 0;
         if ($zSq > 0.5) {
@@ -502,7 +499,6 @@ class YRefFrame extends YFunction
                 $orient = 5;
             }
         }
-        
         // Discard measures that are not in the proper orientation
         if ($this->_calibStageProgress == 0) {
             $idx = 0;
@@ -524,7 +520,6 @@ class YRefFrame extends YFunction
                 return YAPI_SUCCESS;
             }
         }
-        
         // Save measure
         $this->_calibStageHint = 'calibrating->.';
         $this->_calibDataAccX[] = $xVal;
@@ -537,7 +532,6 @@ class YRefFrame extends YFunction
             $this->_calibStageProgress = 1 + intVal((99 * $this->_calibInternalPos) / ($this->_calibCount));
             return YAPI_SUCCESS;
         }
-        
         // Stage done, compute preliminary result
         $intpos = ($this->_calibStage - 1) * $this->_calibCount;
         $this->_calibSort($intpos, $intpos + $this->_calibCount);
@@ -546,7 +540,6 @@ class YRefFrame extends YFunction
                                       round(1000*$this->_calibDataAccX[$intpos]),
                                       round(1000*$this->_calibDataAccY[$intpos]),
                                       round(1000*$this->_calibDataAccZ[$intpos]));
-        
         // move to next stage
         $this->_calibStage = $this->_calibStage + 1;
         if ($this->_calibStage < 7) {
@@ -578,7 +571,6 @@ class YRefFrame extends YFunction
         $this->_calibAccXOfs = $xVal / 2.0;
         $this->_calibAccYOfs = $yVal / 2.0;
         $this->_calibAccZOfs = $zVal / 2.0;
-        
         // Recompute all norms, taking into account the computed shift, and re-sort
         $intpos = 0;
         while ($intpos < sizeof($this->_calibDataAcc)) {
@@ -595,7 +587,6 @@ class YRefFrame extends YFunction
             $this->_calibSort($intpos, $intpos + $this->_calibCount);
             $idx = $idx + 1;
         }
-        
         // Compute the scaling factor for each axis
         $xVal = 0;
         $yVal = 0;
@@ -618,7 +609,6 @@ class YRefFrame extends YFunction
         $this->_calibAccXScale = $xVal / 2.0;
         $this->_calibAccYScale = $yVal / 2.0;
         $this->_calibAccZScale = $zVal / 2.0;
-        
         // Report completion
         $this->_calibProgress = 100;
         $this->_calibStageHint = 'Calibration data ready for saving';
@@ -705,7 +695,6 @@ class YRefFrame extends YFunction
         if ($this->_calibProgress != 100) {
             return YAPI_INVALID_ARGUMENT;
         }
-        
         // Compute integer values (correction unit is 732ug/count)
         $shiftX = -round($this->_calibAccXOfs / 0.000732);
         if ($shiftX < 0) {
@@ -751,7 +740,6 @@ class YRefFrame extends YFunction
         }
         $scaleLo = (((($scaleY) & (15))) << (12)) + (($scaleX) << (2)) + $scaleExp;
         $scaleHi = (($scaleZ) << (6)) + (($scaleY) >> (4));
-        
         // Save calibration parameters
         $newcalib = sprintf('5,%d,%d,%d,%d,%d', $shiftX, $shiftY, $shiftZ, $scaleLo, $scaleHi);
         $this->_calibStage = 0;

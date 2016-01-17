@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_files.php 22704 2016-01-13 11:09:55Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -265,6 +265,30 @@ class YFiles extends YFunction
             $res[] = new YFileRecord($each);
         }
         return $res;
+    }
+
+    /**
+     * Test if a file exist on the filesystem of the module.
+     *
+     * @param filename : the file name to test.
+     *
+     * @return a true if the file existe, false ortherwise.
+     *
+     * On failure, throws an exception.
+     */
+    public function fileExist($filename)
+    {
+        // $json                   is a bin;
+        $filelist = Array();    // strArr;
+        if (strlen($filename) == 0) {
+            return false;
+        }
+        $json = $this->sendCommand(sprintf('dir&f=%s',$filename));
+        $filelist = $this->_json_get_array($json);
+        if (sizeof($filelist) > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

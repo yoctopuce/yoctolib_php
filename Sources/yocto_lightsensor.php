@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_lightsensor.php 22705 2016-01-13 11:10:29Z seb $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -72,7 +72,7 @@ class YLightSensor extends YSensor
     //--- (end of YLightSensor declaration)
 
     //--- (YLightSensor attributes)
-    protected $_measureType              = Y_MEASURETYPE_INVALID;        // LightSensorType
+    protected $_measureType              = Y_MEASURETYPE_INVALID;        // LightSensorTypeAll
     //--- (end of YLightSensor attributes)
 
     function __construct($str_func)

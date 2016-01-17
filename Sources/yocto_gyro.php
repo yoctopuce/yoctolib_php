@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 19704 2015-03-13 06:10:37Z mvuilleu $
+ * $Id: yocto_gyro.php 22360 2015-12-15 13:31:40Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -360,7 +360,6 @@ class YGyro extends YSensor
     {
         // $now_stamp              is a int;
         // $age_ms                 is a int;
-        
         $now_stamp = ((YAPI::GetTickCount()) & (0x7FFFFFFF));
         $age_ms = ((($now_stamp - $this->_qt_stamp)) & (0x7FFFFFFF));
         if (($age_ms >= 10) || ($this->_qt_stamp == 0)) {

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 22191 2015-12-02 06:49:31Z mvuilleu $
+ * $Id: yocto_api.php 22776 2016-01-15 10:16:24Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2389,6 +2389,60 @@ class YAPI
                              'no error',
                              $tcpreq->reply);
     }
+    /**
+     * Retrun the serialnummber of all subdevcies
+     * @param string $str_device
+     * @return array of string 
+     */
+    public static function getSubDevicesFrom($str_device)
+    {
+        $dev = self::getDevice($str_device);
+        if(!$dev) {
+            return '';
+        }
+        $baseUrl = $dev->getRootUrl();
+        $baseUrl = str_replace('http://', '', $baseUrl);
+        $pos = strpos($baseUrl, '/');
+        if($pos !== false) {
+            $baseUrl = substr($baseUrl, 0, $pos);
+        }
+        $rooturl = "http://$baseUrl/";
+        if(!isset(self::$_hubs[$rooturl])) {
+            return new YAPI_YReq("", YAPI_DEVICE_NOT_FOUND, 'No hub registered on ' . $baseUrl, null);
+        }
+        $hub = self::$_hubs[$rooturl];
+        if($hub->serialByYdx[0] == $str_device) {
+            return array_slice($hub->serialByYdx, 1);
+        }
+        return array();
+    }
+
+
+    /**
+     * Retrun the serialnumber of the hub
+     * @param string $str_device
+     * @return string the serial of the hub on which the device is plugged
+     */
+    public static function getHubSerialFrom($str_device)
+    {
+        $dev = self::getDevice($str_device);
+        if(!$dev) {
+            return '';
+        }
+        $baseUrl = $dev->getRootUrl();
+        $baseUrl = str_replace('http://', '', $baseUrl);
+        $pos = strpos($baseUrl, '/');
+        if($pos !== false) {
+            $baseUrl = substr($baseUrl, 0, $pos);
+        }
+        $rooturl = "http://$baseUrl/";
+        if(!isset(self::$_hubs[$rooturl])) {
+            return new YAPI_YReq("", YAPI_DEVICE_NOT_FOUND, 'No hub registered on '.$baseUrl, null);
+        }
+        $hub = self::$_hubs[$rooturl];
+        return $hub->serialByYdx[0];
+    }
+
 
     /**
      * Load and parse the REST API for a function given by class name and identifier, possibly applying changes
@@ -2504,7 +2558,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.22324";
+        return "1.10.22835";
     }
 
     /**
@@ -3297,11 +3351,11 @@ class YFirmwareUpdate
      * In this case this method return the path of the most recent appropriate byn file. This method will
      * ignore firmware that are older than mintrelase.
      *
-     * @param serial  : the serial number of the module to update
-     * @param path    : the path of a byn file or a directory that contain byn files
-     * @param minrelease : an positif integer
+     * @param serial : the serial number of the module to update
+     * @param path : the path of a byn file or a directory that contains byn files
+     * @param minrelease : a positive integer
      *
-     * @return : the path of the byn file to use or a empty string if no byn files match the requirement
+     * @return : the path of the byn file to use or an empty string if no byn files match the requirement
      *
      * On failure, returns a string that start with "error:".
      */
@@ -5916,10 +5970,12 @@ class YSensor extends YFunction
      */
     public function registerTimedReportCallback($callback)
     {
+        // $sensor                 is a YSensor;
+        $sensor = $this;
         if (!is_null($callback)) {
-            YFunction::_UpdateTimedReportCallbackList($this, true);
+            YFunction::_UpdateTimedReportCallbackList($sensor, true);
         } else {
-            YFunction::_UpdateTimedReportCallbackList($this, false);
+            YFunction::_UpdateTimedReportCallbackList($sensor, false);
         }
         $this->_timedReportCallbackSensor = $callback;
         return 0;
@@ -6512,6 +6568,51 @@ class YModule extends YFunction
         return json_encode($attrs);
     }
 
+    /**
+     * Returns a list of all the modules that are plugged into the current module. This
+     * method is only useful on a YoctoHub/VirtualHub. This method return the serial number of all
+     * module connected to a YoctoHub. Calling this method on a standard device is not an
+     * error, and an empty array will be returned.
+     *
+     * @return an array of strings containing the sub modules.
+     */
+    public function get_subDevices()
+    {
+        $serial = $this->get_serialNumber();
+        return YAPI::getSubDevicesFrom($serial);
+    }
+
+    /**
+     * Returns the serial number of the YoctoHub on which this module is connected.
+     * If the module is connected by USB or if the module is the root YoctoHub an
+     * empty string is returned.
+     *
+     * @return a string with the serial number of the YoctoHub or an empty string
+     */
+    public function get_parentHub()
+    {
+        $serial = $this->get_serialNumber();
+        $hubserial = YAPI::getHubSerialFrom($serial);
+        if ($hubserial == $serial)
+            return '';
+        return $hubserial;
+    }
+
+    /**
+     * Returns the URL used to access the module. If the module is connected by USB the
+     * string 'usb' is returned.
+     *
+     * @return a string with the URL of the module.
+     */
+    public function get_url()
+    {
+        $dev = $this->_getDev();
+        if (!($dev == null)) {
+            return $dev->getRootUrl();
+        }
+        return "";
+    }
+
     //--- (generated code: YModule implementation)
 
     function _parseAttr($name, $val)
@@ -6938,7 +7039,7 @@ class YModule extends YFunction
      * older or equal to
      * the installed firmware.
      *
-     * @param path    : the path of a byn file or a directory that contains byn files
+     * @param path : the path of a byn file or a directory that contains byn files
      * @param onlynew : returns only files that are strictly newer
      *
      * @return : the path of the byn file to use or a empty string if no byn files matches the requirement
@@ -7746,6 +7847,15 @@ class YModule extends YFunction
         $content = $this->_download('logs.txt');
         return $content;
     }
+
+    //cannot be generated for PHP:
+    //public function get_subDevices()
+
+    //cannot be generated for PHP:
+    //public function get_parentHub()
+
+    //cannot be generated for PHP:
+    //public function get_url()
 
     public function productName()
     { return $this->get_productName(); }
