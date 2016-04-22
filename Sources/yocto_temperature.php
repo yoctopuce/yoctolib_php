@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 21576 2015-09-21 13:17:28Z seb $
+ * $Id: yocto_temperature.php 23527 2016-03-18 21:49:19Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -29,8 +29,8 @@
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
  *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
- *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
  *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
  *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
@@ -56,6 +56,8 @@ if(!defined('Y_SENSORTYPE_RES_OHM'))         define('Y_SENSORTYPE_RES_OHM',     
 if(!defined('Y_SENSORTYPE_RES_NTC'))         define('Y_SENSORTYPE_RES_NTC',        12);
 if(!defined('Y_SENSORTYPE_RES_LINEAR'))      define('Y_SENSORTYPE_RES_LINEAR',     13);
 if(!defined('Y_SENSORTYPE_INVALID'))         define('Y_SENSORTYPE_INVALID',        -1);
+if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
+if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YTemperature definitions)
 
@@ -86,11 +88,15 @@ class YTemperature extends YSensor
     const SENSORTYPE_RES_NTC             = 12;
     const SENSORTYPE_RES_LINEAR          = 13;
     const SENSORTYPE_INVALID             = -1;
+    const SIGNALVALUE_INVALID            = YAPI_INVALID_DOUBLE;
+    const SIGNALUNIT_INVALID             = YAPI_INVALID_STRING;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YTemperature declaration)
 
     //--- (YTemperature attributes)
     protected $_sensorType               = Y_SENSORTYPE_INVALID;         // TempSensorTypeAll
+    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // MeasureVal
+    protected $_signalUnit               = Y_SIGNALUNIT_INVALID;         // Text
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YTemperature attributes)
 
@@ -110,6 +116,12 @@ class YTemperature extends YSensor
         switch($name) {
         case 'sensorType':
             $this->_sensorType = intval($val);
+            return 1;
+        case 'signalValue':
+            $this->_signalValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'signalUnit':
+            $this->_signalUnit = $val;
             return 1;
         case 'command':
             $this->_command = $val;
@@ -182,6 +194,41 @@ class YTemperature extends YSensor
     {
         $rest_val = strval($newval);
         return $this->_setAttr("sensorType",$rest_val);
+    }
+
+    /**
+     * Returns the current value of the electrical signal measured by the sensor.
+     *
+     * @return a floating point number corresponding to the current value of the electrical signal
+     * measured by the sensor
+     *
+     * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
+     */
+    public function get_signalValue()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SIGNALVALUE_INVALID;
+            }
+        }
+        return round($this->_signalValue * 1000) / 1000;
+    }
+
+    /**
+     * Returns the measuring unit of the electrical signal used by the sensor.
+     *
+     * @return a string corresponding to the measuring unit of the electrical signal used by the sensor
+     *
+     * On failure, throws an exception or returns Y_SIGNALUNIT_INVALID.
+     */
+    public function get_signalUnit()
+    {
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SIGNALUNIT_INVALID;
+            }
+        }
+        return $this->_signalUnit;
     }
 
     public function get_command()
@@ -405,6 +452,12 @@ class YTemperature extends YSensor
 
     public function setSensorType($newval)
     { return $this->set_sensorType($newval); }
+
+    public function signalValue()
+    { return $this->get_signalValue(); }
+
+    public function signalUnit()
+    { return $this->get_signalUnit(); }
 
     public function command()
     { return $this->get_command(); }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 21680 2015-10-02 13:42:44Z seb $
+ * $Id: yocto_cellular.php 23960 2016-04-15 21:30:18Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -124,6 +124,16 @@ class YCellRecord
 //--- (generated code: YCellular return codes)
 //--- (end of generated code: YCellular return codes)
 //--- (generated code: YCellular definitions)
+if(!defined('Y_CELLTYPE_GPRS'))              define('Y_CELLTYPE_GPRS',             0);
+if(!defined('Y_CELLTYPE_EGPRS'))             define('Y_CELLTYPE_EGPRS',            1);
+if(!defined('Y_CELLTYPE_WCDMA'))             define('Y_CELLTYPE_WCDMA',            2);
+if(!defined('Y_CELLTYPE_HSDPA'))             define('Y_CELLTYPE_HSDPA',            3);
+if(!defined('Y_CELLTYPE_NONE'))              define('Y_CELLTYPE_NONE',             4);
+if(!defined('Y_CELLTYPE_CDMA'))              define('Y_CELLTYPE_CDMA',             5);
+if(!defined('Y_CELLTYPE_INVALID'))           define('Y_CELLTYPE_INVALID',          -1);
+if(!defined('Y_AIRPLANEMODE_OFF'))           define('Y_AIRPLANEMODE_OFF',          0);
+if(!defined('Y_AIRPLANEMODE_ON'))            define('Y_AIRPLANEMODE_ON',           1);
+if(!defined('Y_AIRPLANEMODE_INVALID'))       define('Y_AIRPLANEMODE_INVALID',      -1);
 if(!defined('Y_ENABLEDATA_HOMENETWORK'))     define('Y_ENABLEDATA_HOMENETWORK',    0);
 if(!defined('Y_ENABLEDATA_ROAMING'))         define('Y_ENABLEDATA_ROAMING',        1);
 if(!defined('Y_ENABLEDATA_NEVER'))           define('Y_ENABLEDATA_NEVER',          2);
@@ -137,6 +147,7 @@ if(!defined('Y_PIN_INVALID'))                define('Y_PIN_INVALID',            
 if(!defined('Y_LOCKEDOPERATOR_INVALID'))     define('Y_LOCKEDOPERATOR_INVALID',    YAPI_INVALID_STRING);
 if(!defined('Y_APN_INVALID'))                define('Y_APN_INVALID',               YAPI_INVALID_STRING);
 if(!defined('Y_APNSECRET_INVALID'))          define('Y_APNSECRET_INVALID',         YAPI_INVALID_STRING);
+if(!defined('Y_PINGINTERVAL_INVALID'))       define('Y_PINGINTERVAL_INVALID',      YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of generated code: YCellular definitions)
 
@@ -152,16 +163,27 @@ class YCellular extends YFunction
     const LINKQUALITY_INVALID            = YAPI_INVALID_UINT;
     const CELLOPERATOR_INVALID           = YAPI_INVALID_STRING;
     const CELLIDENTIFIER_INVALID         = YAPI_INVALID_STRING;
+    const CELLTYPE_GPRS                  = 0;
+    const CELLTYPE_EGPRS                 = 1;
+    const CELLTYPE_WCDMA                 = 2;
+    const CELLTYPE_HSDPA                 = 3;
+    const CELLTYPE_NONE                  = 4;
+    const CELLTYPE_CDMA                  = 5;
+    const CELLTYPE_INVALID               = -1;
     const IMSI_INVALID                   = YAPI_INVALID_STRING;
     const MESSAGE_INVALID                = YAPI_INVALID_STRING;
     const PIN_INVALID                    = YAPI_INVALID_STRING;
     const LOCKEDOPERATOR_INVALID         = YAPI_INVALID_STRING;
+    const AIRPLANEMODE_OFF               = 0;
+    const AIRPLANEMODE_ON                = 1;
+    const AIRPLANEMODE_INVALID           = -1;
     const ENABLEDATA_HOMENETWORK         = 0;
     const ENABLEDATA_ROAMING             = 1;
     const ENABLEDATA_NEVER               = 2;
     const ENABLEDATA_INVALID             = -1;
     const APN_INVALID                    = YAPI_INVALID_STRING;
     const APNSECRET_INVALID              = YAPI_INVALID_STRING;
+    const PINGINTERVAL_INVALID           = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of generated code: YCellular declaration)
 
@@ -169,13 +191,16 @@ class YCellular extends YFunction
     protected $_linkQuality              = Y_LINKQUALITY_INVALID;        // Percent
     protected $_cellOperator             = Y_CELLOPERATOR_INVALID;       // Text
     protected $_cellIdentifier           = Y_CELLIDENTIFIER_INVALID;     // Text
+    protected $_cellType                 = Y_CELLTYPE_INVALID;           // CellType
     protected $_imsi                     = Y_IMSI_INVALID;               // IMSI
     protected $_message                  = Y_MESSAGE_INVALID;            // YFSText
     protected $_pin                      = Y_PIN_INVALID;                // PinPassword
     protected $_lockedOperator           = Y_LOCKEDOPERATOR_INVALID;     // Text
+    protected $_airplaneMode             = Y_AIRPLANEMODE_INVALID;       // OnOff
     protected $_enableData               = Y_ENABLEDATA_INVALID;         // ServiceScope
     protected $_apn                      = Y_APN_INVALID;                // Text
     protected $_apnSecret                = Y_APNSECRET_INVALID;          // APNPassword
+    protected $_pingInterval             = Y_PINGINTERVAL_INVALID;       // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of generated code: YCellular attributes)
 
@@ -202,6 +227,9 @@ class YCellular extends YFunction
         case 'cellIdentifier':
             $this->_cellIdentifier = $val;
             return 1;
+        case 'cellType':
+            $this->_cellType = intval($val);
+            return 1;
         case 'imsi':
             $this->_imsi = $val;
             return 1;
@@ -214,6 +242,9 @@ class YCellular extends YFunction
         case 'lockedOperator':
             $this->_lockedOperator = $val;
             return 1;
+        case 'airplaneMode':
+            $this->_airplaneMode = intval($val);
+            return 1;
         case 'enableData':
             $this->_enableData = intval($val);
             return 1;
@@ -222,6 +253,9 @@ class YCellular extends YFunction
             return 1;
         case 'apnSecret':
             $this->_apnSecret = $val;
+            return 1;
+        case 'pingInterval':
+            $this->_pingInterval = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -280,6 +314,24 @@ class YCellular extends YFunction
             }
         }
         return $this->_cellIdentifier;
+    }
+
+    /**
+     * Active cellular connection type.
+     *
+     * @return a value among Y_CELLTYPE_GPRS, Y_CELLTYPE_EGPRS, Y_CELLTYPE_WCDMA, Y_CELLTYPE_HSDPA,
+     * Y_CELLTYPE_NONE and Y_CELLTYPE_CDMA
+     *
+     * On failure, throws an exception or returns Y_CELLTYPE_INVALID.
+     */
+    public function get_cellType()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CELLTYPE_INVALID;
+            }
+        }
+        return $this->_cellType;
     }
 
     /**
@@ -405,6 +457,40 @@ class YCellular extends YFunction
     }
 
     /**
+     * Returns true if the airplane mode is active (radio turned off).
+     *
+     * @return either Y_AIRPLANEMODE_OFF or Y_AIRPLANEMODE_ON, according to true if the airplane mode is
+     * active (radio turned off)
+     *
+     * On failure, throws an exception or returns Y_AIRPLANEMODE_INVALID.
+     */
+    public function get_airplaneMode()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_AIRPLANEMODE_INVALID;
+            }
+        }
+        return $this->_airplaneMode;
+    }
+
+    /**
+     * Changes the activation state of airplane mode (radio turned off).
+     *
+     * @param newval : either Y_AIRPLANEMODE_OFF or Y_AIRPLANEMODE_ON, according to the activation state
+     * of airplane mode (radio turned off)
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_airplaneMode($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("airplaneMode",$rest_val);
+    }
+
+    /**
      * Returns the condition for enabling IP data services (GPRS).
      * When data services are disabled, SMS are the only mean of communication.
      *
@@ -502,6 +588,38 @@ class YCellular extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("apnSecret",$rest_val);
+    }
+
+    /**
+     * Returns the automated connectivity check interval, in seconds.
+     *
+     * @return an integer corresponding to the automated connectivity check interval, in seconds
+     *
+     * On failure, throws an exception or returns Y_PINGINTERVAL_INVALID.
+     */
+    public function get_pingInterval()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PINGINTERVAL_INVALID;
+            }
+        }
+        return $this->_pingInterval;
+    }
+
+    /**
+     * Changes the automated connectivity check interval, in seconds.
+     *
+     * @param newval : an integer corresponding to the automated connectivity check interval, in seconds
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_pingInterval($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("pingInterval",$rest_val);
     }
 
     public function get_command()
@@ -790,6 +908,9 @@ class YCellular extends YFunction
     public function cellIdentifier()
     { return $this->get_cellIdentifier(); }
 
+    public function cellType()
+    { return $this->get_cellType(); }
+
     public function imsi()
     { return $this->get_imsi(); }
 
@@ -808,6 +929,12 @@ class YCellular extends YFunction
     public function setLockedOperator($newval)
     { return $this->set_lockedOperator($newval); }
 
+    public function airplaneMode()
+    { return $this->get_airplaneMode(); }
+
+    public function setAirplaneMode($newval)
+    { return $this->set_airplaneMode($newval); }
+
     public function enableData()
     { return $this->get_enableData(); }
 
@@ -825,6 +952,12 @@ class YCellular extends YFunction
 
     public function setApnSecret($newval)
     { return $this->set_apnSecret($newval); }
+
+    public function pingInterval()
+    { return $this->get_pingInterval(); }
+
+    public function setPingInterval($newval)
+    { return $this->set_pingInterval($newval); }
 
     public function command()
     { return $this->get_command(); }

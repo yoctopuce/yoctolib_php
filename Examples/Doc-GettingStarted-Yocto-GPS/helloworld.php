@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -19,7 +19,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $gps = yFindGps("$serial.gps");
-      if (!$gps->isOnline()) { 
+      if (!$gps->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -36,12 +36,12 @@
   if  ($gps->get_isFixed()!=Y_ISFIXED_TRUE)
       Print("Gps : fixing...<br>");
   else
-      Printf("Gps : %s %s<br>",$gps->get_latitude(),$gps->get_longitude());  
- 
+      Printf("Gps : %s %s<br>", $gps->get_latitude(), $gps->get_longitude());
+
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

@@ -5,8 +5,8 @@
 <BODY>
 <FORM method='get'>
     <?php
-    include('../../../../../../yoctolib/v1.0/Public/php/Sources/yocto_api.php');
-    include('../../../../../../yoctolib/v1.0/Public/php/Sources/yocto_serialport.php');
+    include('../../../Sources/yocto_api.php');
+    include('../../../Sources/yocto_serialport.php');
 
     // Use explicit error handling rather than exceptions
     yDisableExceptions();

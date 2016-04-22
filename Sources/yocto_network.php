@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 22194 2015-12-02 10:50:41Z mvuilleu $
+ * $Id: yocto_network.php 23930 2016-04-15 09:31:14Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -29,8 +29,8 @@
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
  *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
- *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
  *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
  *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
@@ -63,6 +63,7 @@ if(!defined('Y_CALLBACKENCODING_JSON_NUM'))  define('Y_CALLBACKENCODING_JSON_NUM
 if(!defined('Y_CALLBACKENCODING_EMONCMS'))   define('Y_CALLBACKENCODING_EMONCMS',  6);
 if(!defined('Y_CALLBACKENCODING_AZURE'))     define('Y_CALLBACKENCODING_AZURE',    7);
 if(!defined('Y_CALLBACKENCODING_INFLUXDB'))  define('Y_CALLBACKENCODING_INFLUXDB', 8);
+if(!defined('Y_CALLBACKENCODING_MQTT'))      define('Y_CALLBACKENCODING_MQTT',     9);
 if(!defined('Y_CALLBACKENCODING_INVALID'))   define('Y_CALLBACKENCODING_INVALID',  -1);
 if(!defined('Y_MACADDRESS_INVALID'))         define('Y_MACADDRESS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_IPADDRESS_INVALID'))          define('Y_IPADDRESS_INVALID',         YAPI_INVALID_STRING);
@@ -79,6 +80,7 @@ if(!defined('Y_DEFAULTPAGE_INVALID'))        define('Y_DEFAULTPAGE_INVALID',    
 if(!defined('Y_WWWWATCHDOGDELAY_INVALID'))   define('Y_WWWWATCHDOGDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_CALLBACKURL_INVALID'))        define('Y_CALLBACKURL_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_CALLBACKCREDENTIALS_INVALID')) define('Y_CALLBACKCREDENTIALS_INVALID', YAPI_INVALID_STRING);
+if(!defined('Y_CALLBACKINITIALDELAY_INVALID')) define('Y_CALLBACKINITIALDELAY_INVALID', YAPI_INVALID_UINT);
 if(!defined('Y_CALLBACKMINDELAY_INVALID'))   define('Y_CALLBACKMINDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_CALLBACKMAXDELAY_INVALID'))   define('Y_CALLBACKMAXDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_POECURRENT_INVALID'))         define('Y_POECURRENT_INVALID',        YAPI_INVALID_UINT);
@@ -129,8 +131,10 @@ class YNetwork extends YFunction
     const CALLBACKENCODING_EMONCMS       = 6;
     const CALLBACKENCODING_AZURE         = 7;
     const CALLBACKENCODING_INFLUXDB      = 8;
+    const CALLBACKENCODING_MQTT          = 9;
     const CALLBACKENCODING_INVALID       = -1;
     const CALLBACKCREDENTIALS_INVALID    = YAPI_INVALID_STRING;
+    const CALLBACKINITIALDELAY_INVALID   = YAPI_INVALID_UINT;
     const CALLBACKMINDELAY_INVALID       = YAPI_INVALID_UINT;
     const CALLBACKMAXDELAY_INVALID       = YAPI_INVALID_UINT;
     const POECURRENT_INVALID             = YAPI_INVALID_UINT;
@@ -156,6 +160,7 @@ class YNetwork extends YFunction
     protected $_callbackMethod           = Y_CALLBACKMETHOD_INVALID;     // HTTPMethod
     protected $_callbackEncoding         = Y_CALLBACKENCODING_INVALID;   // CallbackEncoding
     protected $_callbackCredentials      = Y_CALLBACKCREDENTIALS_INVALID; // Credentials
+    protected $_callbackInitialDelay     = Y_CALLBACKINITIALDELAY_INVALID; // UInt31
     protected $_callbackMinDelay         = Y_CALLBACKMINDELAY_INVALID;   // UInt31
     protected $_callbackMaxDelay         = Y_CALLBACKMAXDELAY_INVALID;   // UInt31
     protected $_poeCurrent               = Y_POECURRENT_INVALID;         // UsedCurrent
@@ -231,6 +236,9 @@ class YNetwork extends YFunction
             return 1;
         case 'callbackCredentials':
             $this->_callbackCredentials = $val;
+            return 1;
+        case 'callbackInitialDelay':
+            $this->_callbackInitialDelay = intval($val);
             return 1;
         case 'callbackMinDelay':
             $this->_callbackMinDelay = intval($val);
@@ -758,8 +766,9 @@ class YNetwork extends YFunction
      *
      * @return a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
      * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
-     * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE and
-     * Y_CALLBACKENCODING_INFLUXDB corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE,
+     * Y_CALLBACKENCODING_INFLUXDB and Y_CALLBACKENCODING_MQTT corresponding to the encoding standard to
+     * use for representing notification values
      *
      * On failure, throws an exception or returns Y_CALLBACKENCODING_INVALID.
      */
@@ -778,8 +787,9 @@ class YNetwork extends YFunction
      *
      * @param newval : a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
      * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
-     * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE and
-     * Y_CALLBACKENCODING_INFLUXDB corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE,
+     * Y_CALLBACKENCODING_INFLUXDB and Y_CALLBACKENCODING_MQTT corresponding to the encoding standard to
+     * use for representing notification values
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -850,6 +860,39 @@ class YNetwork extends YFunction
     {
         $rest_val = sprintf("%s:%s", $username, $password);
         return $this->_setAttr("callbackCredentials",$rest_val);
+    }
+
+    /**
+     * Returns the initial waiting time before first callback notifications, in seconds.
+     *
+     * @return an integer corresponding to the initial waiting time before first callback notifications, in seconds
+     *
+     * On failure, throws an exception or returns Y_CALLBACKINITIALDELAY_INVALID.
+     */
+    public function get_callbackInitialDelay()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKINITIALDELAY_INVALID;
+            }
+        }
+        return $this->_callbackInitialDelay;
+    }
+
+    /**
+     * Changes the initial waiting time before first callback notifications, in seconds.
+     *
+     * @param newval : an integer corresponding to the initial waiting time before first callback
+     * notifications, in seconds
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_callbackInitialDelay($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("callbackInitialDelay",$rest_val);
     }
 
     /**
@@ -1010,8 +1053,8 @@ class YNetwork extends YFunction
     }
 
     /**
-     * Pings str_host to test the network connectivity. Sends four ICMP ECHO_REQUEST requests from the
-     * module to the target str_host. This method returns a string with the result of the
+     * Pings host to test the network connectivity. Sends four ICMP ECHO_REQUEST requests from the
+     * module to the target host. This method returns a string with the result of the
      * 4 ICMP ECHO_REQUEST requests.
      *
      * @param host : the hostname or the IP address of the target
@@ -1024,6 +1067,21 @@ class YNetwork extends YFunction
         // may throw an exception
         $content = $this->_download(sprintf('ping.txt?host=%s',$host));
         return $content;
+    }
+
+    /**
+     * Trigger an HTTP callback quickly. This function can even be called within
+     * an HTTP callback, in which case the next callback will be triggered 5 seconds
+     * after the end of the current callback, regardless if the minimum time between
+     * callbacks configured in the device.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerCallback()
+    {
+        return $this->set_callbackMethod($this->get_callbackMethod());
     }
 
     public function readiness()
@@ -1124,6 +1182,12 @@ class YNetwork extends YFunction
 
     public function setCallbackCredentials($newval)
     { return $this->set_callbackCredentials($newval); }
+
+    public function callbackInitialDelay()
+    { return $this->get_callbackInitialDelay(); }
+
+    public function setCallbackInitialDelay($newval)
+    { return $this->set_callbackInitialDelay($newval); }
 
     public function callbackMinDelay()
     { return $this->get_callbackMinDelay(); }

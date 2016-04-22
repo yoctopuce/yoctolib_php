@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 22776 2016-01-15 10:16:24Z mvuilleu $
+ * $Id: yocto_api.php 23775 2016-04-06 07:49:51Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2558,7 +2558,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.22835";
+        return "1.10.24182";
     }
 
     /**
@@ -2632,8 +2632,12 @@ class YAPI
 
     private static function _parseRegisteredURL($str_url, &$rooturl, &$auth)
     {
+        $proto = 'http';
         if(substr($str_url, 0, 7) == 'http://') {
             $str_url = substr($str_url, 7);
+        } else if(substr($str_url, 0, 5) == 'ws://') {
+            $str_url = substr($str_url, 5);
+            $proto = "ws";
         }
         while(substr($str_url, -1) == '/') {
             $str_url = substr($str_url, 0, -1);
@@ -2651,7 +2655,7 @@ class YAPI
             if(strpos($str_url, ':') === false) {
                 $str_url .= ':4444';
             }
-            $rooturl = "http://{$str_url}/";
+            $rooturl = "{$proto}://{$str_url}/";
         }
     }
 
@@ -2802,14 +2806,14 @@ class YAPI
         $auth = '';
         self::_parseRegisteredURL($url, $str_url, $auth);
         $new_hubs = array();
-        for ($i = 0; $i < sizeof(self::$_hubs); $i++) {
-            if (self::$_hubs[$i]['rooturl'] == $str_url) {
+        foreach(self::$_hubs as $hub_url=> $hubst){
+            if ($hub_url == $str_url) {
                 // remove all connected devices
-                foreach (self::$_hubs[$i]['serialByYdx'] as $serial) {
+                foreach (self::$_hubs[$hub_url]->serialByYdx as $serial) {
                     self::forgetDevice(self::$_devs[$serial]);
                 }
             } else {
-                $new_hubs[] = self::$_hubs[$i];
+                $new_hubs[$hub_url] = self::$_hubs[$hub_url];
             }
         }
         self::$_hubs = $new_hubs;
@@ -3327,15 +3331,17 @@ class YFirmwareUpdate
     protected $_progress_c               = 0;                            // int
     protected $_progress                 = 0;                            // int
     protected $_restore_step             = 0;                            // int
+    protected $_force                    = 0;                            // bool
     //--- (end of generated code: YFirmwareUpdate attributes)
 
-    public function __construct($serial, $path, $settings)
+    public function __construct($serial, $path, $settings, $force)
     {
         //--- (generated code: YFirmwareUpdate constructor)
         //--- (end of generated code: YFirmwareUpdate constructor)
         $this->_serial = $serial;
         $this->_firmwarepath = $path;
         $this->_settings = $settings;
+        $this->_force = $force;
     }
 
     public function _processMore($i)
@@ -3347,17 +3353,17 @@ class YFirmwareUpdate
 
 
     /**
-     * Test if the byn file is valid for this module. It's possible to pass an directory instead of a file.
-     * In this case this method return the path of the most recent appropriate byn file. This method will
-     * ignore firmware that are older than mintrelase.
+     * Test if the byn file is valid for this module. It is possible to pass a directory instead of a file.
+     * In that case, this method returns the path of the most recent appropriate byn file. This method will
+     * ignore any firmware older than minrelease.
      *
      * @param serial : the serial number of the module to update
      * @param path : the path of a byn file or a directory that contains byn files
      * @param minrelease : a positive integer
      *
-     * @return : the path of the byn file to use or an empty string if no byn files match the requirement
+     * @return : the path of the byn file to use, or an empty string if no byn files matches the requirement
      *
-     * On failure, returns a string that start with "error:".
+     * On failure, returns a string that starts with "error:".
      */
     public static function CheckFirmware($serial,$path,$minrelease)
     {
@@ -6569,10 +6575,9 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns a list of all the modules that are plugged into the current module. This
-     * method is only useful on a YoctoHub/VirtualHub. This method return the serial number of all
-     * module connected to a YoctoHub. Calling this method on a standard device is not an
-     * error, and an empty array will be returned.
+     * Returns a list of all the modules that are plugged into the current module.
+     * This method only makes sense when called for a YoctoHub/VirtualHub.
+     * Otherwise, an empty array will be returned.
      *
      * @return an array of strings containing the sub modules.
      */
@@ -6584,7 +6589,7 @@ class YModule extends YFunction
 
     /**
      * Returns the serial number of the YoctoHub on which this module is connected.
-     * If the module is connected by USB or if the module is the root YoctoHub an
+     * If the module is connected by USB, or if the module is the root YoctoHub, an
      * empty string is returned.
      *
      * @return a string with the serial number of the YoctoHub or an empty string
@@ -6599,7 +6604,7 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns the URL used to access the module. If the module is connected by USB the
+     * Returns the URL used to access the module. If the module is connected by USB, the
      * string 'usb' is returned.
      *
      * @return a string with the URL of the module.
@@ -6733,7 +6738,7 @@ class YModule extends YFunction
      */
     public function get_productRelease()
     {
-        if ($this->_cacheExpiration == 0) {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PRODUCTRELEASE_INVALID;
             }
@@ -7035,14 +7040,13 @@ class YModule extends YFunction
      * needs to be updated.
      * It is possible to pass a directory as argument instead of a file. In this case, this method returns
      * the path of the most recent
-     * appropriate byn file. If the parameter onlynew is true, the function discards firmware that are
-     * older or equal to
-     * the installed firmware.
+     * appropriate .byn file. If the parameter onlynew is true, the function discards firmwares that are older or
+     * equal to the installed firmware.
      *
      * @param path : the path of a byn file or a directory that contains byn files
      * @param onlynew : returns only files that are strictly newer
      *
-     * @return : the path of the byn file to use or a empty string if no byn files matches the requirement
+     * @return the path of the byn file to use or a empty string if no byn files matches the requirement
      *
      * On failure, throws an exception or returns a string that start with "error:".
      */
@@ -7069,11 +7073,12 @@ class YModule extends YFunction
      * Prepares a firmware update of the module. This method returns a YFirmwareUpdate object which
      * handles the firmware update process.
      *
-     * @param path : the path of the byn file to use.
+     * @param path : the path of the .byn file to use.
+     * @param force : true to force the firmware update even if some prerequisites appear not to be met
      *
-     * @return : A YFirmwareUpdate object or NULL on error.
+     * @return a YFirmwareUpdate object or NULL on error.
      */
-    public function updateFirmware($path)
+    public function updateFirmwareEx($path,$force)
     {
         // $serial                 is a str;
         // $settings               is a bin;
@@ -7084,13 +7089,25 @@ class YModule extends YFunction
             $this->_throw(YAPI_IO_ERROR, 'Unable to get device settings');
             $settings = 'error:Unable to get device settings';
         }
-        return new YFirmwareUpdate($serial, $path, $settings);
+        return new YFirmwareUpdate($serial, $path, $settings, $force);
     }
 
     /**
-     * Returns all the settings and uploaded files of the module. Useful to backup all the logical names,
-     * calibrations parameters,
-     * and uploaded files of a connected module.
+     * Prepares a firmware update of the module. This method returns a YFirmwareUpdate object which
+     * handles the firmware update process.
+     *
+     * @param path : the path of the .byn file to use.
+     *
+     * @return a YFirmwareUpdate object or NULL on error.
+     */
+    public function updateFirmware($path)
+    {
+        return $this->updateFirmwareEx($path, false);
+    }
+
+    /**
+     * Returns all the settings and uploaded files of the module. Useful to backup all the
+     * logical names, calibrations parameters, and uploaded files of a device.
      *
      * @return a binary buffer with all the settings.
      *
@@ -7137,7 +7154,7 @@ class YModule extends YFunction
                 }
             }
         }
-        $ext_settings =  $ext_settings . '],'."\n".'"files":[';
+        $ext_settings = $ext_settings . '],'."\n".'"files":[';
         if ($this->hasFunction('files')) {
             $json = $this->_download('files.json?a=dir&f=');
             if (strlen($json) == 0) {
@@ -7147,18 +7164,16 @@ class YModule extends YFunction
             $sep = '';
             foreach( $filelist as $each) {
                 $name = $this->_json_get_key($each, 'name');
-                if (strlen($name) == 0) {
-                    return $name;
+                if ((strlen($name) > 0) && !($name == 'startupConf.json')) {
+                    $file_data_bin = $this->_download($this->_escapeAttr($name));
+                    $file_data = YAPI::_bytesToHexStr($file_data_bin);
+                    $item = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
+                    $ext_settings = $ext_settings . $item;
+                    $sep = ',';
                 }
-                $file_data_bin = $this->_download($this->_escapeAttr($name));
-                $file_data = YAPI::_bytesToHexStr($file_data_bin);
-                $item = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
-                $ext_settings = $ext_settings . $item;
-                $sep = ',';
             }
         }
-        $ext_settings = $ext_settings . ']}';
-        $res = '{ "api":' . $settings . $ext_settings;
+        $res = '{ "api":' . $settings . $ext_settings . ']}';
         return $res;
     }
 
@@ -7205,9 +7220,10 @@ class YModule extends YFunction
     }
 
     /**
-     * Restores all the settings and uploaded files of the module. Useful to restore all the logical names
-     * and calibrations parameters, uploaded
-     * files etc.. of a module from a backup.Remember to call the saveToFlash() method of the module if the
+     * Restores all the settings and uploaded files to the module.
+     * This method is useful to restore all the logical names and calibrations parameters,
+     * uploaded files etc. of a device from a backup.
+     * Remember to call the saveToFlash() method of the module if the
      * modifications must be kept.
      *
      * @param settings : a binary buffer with all the settings.
@@ -7256,12 +7272,12 @@ class YModule extends YFunction
     }
 
     /**
-     * Test if the device has a specific function. This method took an function identifier
-     * and return a boolean.
+     * Tests if the device includes a specific function. This method takes a function identifier
+     * and returns a boolean.
      *
      * @param funcId : the requested function identifier
      *
-     * @return : true if the device has the function identifier
+     * @return true if the device has the function identifier
      */
     public function hasFunction($funcId)
     {
@@ -7286,7 +7302,7 @@ class YModule extends YFunction
      *
      * @param funType : The type of function (Relay, LightSensor, Voltage,...)
      *
-     * @return : A array of string.
+     * @return an array of strings.
      */
     public function get_functionIds($funType)
     {
@@ -7526,7 +7542,7 @@ class YModule extends YFunction
     }
 
     /**
-     * Restores all the settings of the module. Useful to restore all the logical names and calibrations parameters
+     * Restores all the settings of the device. Useful to restore all the logical names and calibrations parameters
      * of a module from a backup.Remember to call the saveToFlash() method of the module if the
      * modifications must be kept.
      *
@@ -7846,6 +7862,22 @@ class YModule extends YFunction
         // may throw an exception
         $content = $this->_download('logs.txt');
         return $content;
+    }
+
+    /**
+     * Adds a text message to the device logs. This function is useful in
+     * particular to trace the execution of HTTP callbacks. If a newline
+     * is desired after the message, it must be included in the string.
+     *
+     * @param text : the string to append to the logs.
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function log($text)
+    {
+        return $this->_upload('logs.txt', $text);
     }
 
     //cannot be generated for PHP:

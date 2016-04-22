@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_buzzer.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_buzzer.php 23243 2016-02-23 14:13:12Z seb $
  *
  * Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -29,8 +29,8 @@
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
  *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
- *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
  *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
  *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
@@ -177,7 +177,7 @@ class YBuzzer extends YFunction
     }
 
     /**
-     * Returns the current length of the playing sequence
+     * Returns the current length of the playing sequence.
      *
      * @return an integer corresponding to the current length of the playing sequence
      *
@@ -194,7 +194,7 @@ class YBuzzer extends YFunction
     }
 
     /**
-     * Returns the maximum length of the playing sequence
+     * Returns the maximum length of the playing sequence.
      *
      * @return an integer corresponding to the maximum length of the playing sequence
      *

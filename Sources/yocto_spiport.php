@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 23780 2016-04-06 10:27:21Z seb $
+ * $Id: yocto_spiport.php 24086 2016-04-21 15:43:42Z seb $
  *
- * Implements YSerialPort, the high-level API for SerialPort functions
+ * Implements YSpiPort, the high-level API for SpiPort functions
  *
  * - - - - - - - - - License information: - - - - - - - - - 
  *
@@ -38,9 +38,9 @@
  *
  *********************************************************************/
 
-//--- (YSerialPort return codes)
-//--- (end of YSerialPort return codes)
-//--- (YSerialPort definitions)
+//--- (YSpiPort return codes)
+//--- (end of YSpiPort return codes)
+//--- (YSpiPort definitions)
 if(!defined('Y_VOLTAGELEVEL_OFF'))           define('Y_VOLTAGELEVEL_OFF',          0);
 if(!defined('Y_VOLTAGELEVEL_TTL3V'))         define('Y_VOLTAGELEVEL_TTL3V',        1);
 if(!defined('Y_VOLTAGELEVEL_TTL3VR'))        define('Y_VOLTAGELEVEL_TTL3VR',       2);
@@ -49,6 +49,12 @@ if(!defined('Y_VOLTAGELEVEL_TTL5VR'))        define('Y_VOLTAGELEVEL_TTL5VR',    
 if(!defined('Y_VOLTAGELEVEL_RS232'))         define('Y_VOLTAGELEVEL_RS232',        5);
 if(!defined('Y_VOLTAGELEVEL_RS485'))         define('Y_VOLTAGELEVEL_RS485',        6);
 if(!defined('Y_VOLTAGELEVEL_INVALID'))       define('Y_VOLTAGELEVEL_INVALID',      -1);
+if(!defined('Y_SSPOLARITY_ACTIVE_LOW'))      define('Y_SSPOLARITY_ACTIVE_LOW',     0);
+if(!defined('Y_SSPOLARITY_ACTIVE_HIGH'))     define('Y_SSPOLARITY_ACTIVE_HIGH',    1);
+if(!defined('Y_SSPOLARITY_INVALID'))         define('Y_SSPOLARITY_INVALID',        -1);
+if(!defined('Y_SHITFTSAMPLING_OFF'))         define('Y_SHITFTSAMPLING_OFF',        0);
+if(!defined('Y_SHITFTSAMPLING_ON'))          define('Y_SHITFTSAMPLING_ON',         1);
+if(!defined('Y_SHITFTSAMPLING_INVALID'))     define('Y_SHITFTSAMPLING_INVALID',    -1);
 if(!defined('Y_RXCOUNT_INVALID'))            define('Y_RXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_TXCOUNT_INVALID'))            define('Y_TXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_ERRCOUNT_INVALID'))           define('Y_ERRCOUNT_INVALID',          YAPI_INVALID_UINT);
@@ -59,12 +65,12 @@ if(!defined('Y_CURRENTJOB_INVALID'))         define('Y_CURRENTJOB_INVALID',     
 if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
-if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',        YAPI_INVALID_STRING);
-//--- (end of YSerialPort definitions)
+if(!defined('Y_SPIMODE_INVALID'))            define('Y_SPIMODE_INVALID',           YAPI_INVALID_STRING);
+//--- (end of YSpiPort definitions)
 
-//--- (YSerialPort declaration)
+//--- (YSpiPort declaration)
 /**
- * YSerialPort Class: SerialPort function interface
+ * YSpiPort Class: SerialPort function interface
  *
  * The SerialPort function interface allows you to fully drive a Yoctopuce
  * serial port, to send and receive data, and to configure communication
@@ -72,7 +78,7 @@ if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',     
  * Note that Yoctopuce serial ports are not exposed as virtual COM ports.
  * They are meant to be used in the same way as all Yoctopuce devices.
  */
-class YSerialPort extends YFunction
+class YSpiPort extends YFunction
 {
     const RXCOUNT_INVALID                = YAPI_INVALID_UINT;
     const TXCOUNT_INVALID                = YAPI_INVALID_UINT;
@@ -92,10 +98,16 @@ class YSerialPort extends YFunction
     const VOLTAGELEVEL_RS485             = 6;
     const VOLTAGELEVEL_INVALID           = -1;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
-    const SERIALMODE_INVALID             = YAPI_INVALID_STRING;
-    //--- (end of YSerialPort declaration)
+    const SPIMODE_INVALID                = YAPI_INVALID_STRING;
+    const SSPOLARITY_ACTIVE_LOW          = 0;
+    const SSPOLARITY_ACTIVE_HIGH         = 1;
+    const SSPOLARITY_INVALID             = -1;
+    const SHITFTSAMPLING_OFF             = 0;
+    const SHITFTSAMPLING_ON              = 1;
+    const SHITFTSAMPLING_INVALID         = -1;
+    //--- (end of YSpiPort declaration)
 
-    //--- (YSerialPort attributes)
+    //--- (YSpiPort attributes)
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
@@ -107,20 +119,22 @@ class YSerialPort extends YFunction
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_voltageLevel             = Y_VOLTAGELEVEL_INVALID;       // SerialVoltageLevel
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
-    protected $_serialMode               = Y_SERIALMODE_INVALID;         // SerialMode
+    protected $_spiMode                  = Y_SPIMODE_INVALID;            // SpiMode
+    protected $_ssPolarity               = Y_SSPOLARITY_INVALID;         // Polarity
+    protected $_shitftSampling           = Y_SHITFTSAMPLING_INVALID;     // OnOff
     protected $_rxptr                    = 0;                            // int
-    //--- (end of YSerialPort attributes)
+    //--- (end of YSpiPort attributes)
 
     function __construct($str_func)
     {
-        //--- (YSerialPort constructor)
+        //--- (YSpiPort constructor)
         parent::__construct($str_func);
-        $this->_className = 'SerialPort';
+        $this->_className = 'SpiPort';
 
-        //--- (end of YSerialPort constructor)
+        //--- (end of YSpiPort constructor)
     }
 
-    //--- (YSerialPort implementation)
+    //--- (YSpiPort implementation)
 
     function _parseAttr($name, $val)
     {
@@ -158,8 +172,14 @@ class YSerialPort extends YFunction
         case 'protocol':
             $this->_protocol = $val;
             return 1;
-        case 'serialMode':
-            $this->_serialMode = $val;
+        case 'spiMode':
+            $this->_spiMode = $val;
+            return 1;
+        case 'ssPolarity':
+            $this->_ssPolarity = intval($val);
+            return 1;
+        case 'shitftSampling':
+            $this->_shitftSampling = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -251,9 +271,9 @@ class YSerialPort extends YFunction
     }
 
     /**
-     * Returns the latest message fully received (for Line, Frame and Modbus protocols).
+     * Returns the latest message fully received (for Line and Frame protocols).
      *
-     * @return a string corresponding to the latest message fully received (for Line, Frame and Modbus protocols)
+     * @return a string corresponding to the latest message fully received (for Line and Frame protocols)
      *
      * On failure, throws an exception or returns Y_LASTMSG_INVALID.
      */
@@ -395,8 +415,6 @@ class YSerialPort extends YFunction
      * Returns the type of protocol used over the serial line, as a string.
      * Possible values are "Line" for ASCII messages separated by CR and/or LF,
      * "Frame:[timeout]ms" for binary messages separated by a delay time,
-     * "Modbus-ASCII" for MODBUS messages in ASCII mode,
-     * "Modbus-RTU" for MODBUS messages in RTU mode,
      * "Char" for a continuous ASCII stream or
      * "Byte" for a continuous binary stream.
      *
@@ -418,8 +436,6 @@ class YSerialPort extends YFunction
      * Changes the type of protocol used over the serial line.
      * Possible values are "Line" for ASCII messages separated by CR and/or LF,
      * "Frame:[timeout]ms" for binary messages separated by a delay time,
-     * "Modbus-ASCII" for MODBUS messages in ASCII mode,
-     * "Modbus-RTU" for MODBUS messages in RTU mode,
      * "Char" for a continuous ASCII stream or
      * "Byte" for a continuous binary stream.
      * The suffix "/[wait]ms" can be added to reduce the transmit rate so that there
@@ -439,50 +455,111 @@ class YSerialPort extends YFunction
 
     /**
      * Returns the serial port communication parameters, as a string such as
-     * "9600,8N1". The string includes the baud rate, the number of data bits,
-     * the parity, and the number of stop bits. An optional suffix is included
-     * if flow control is active: "CtsRts" for hardware handshake, "XOnXOff"
-     * for logical flow control and "Simplex" for acquiring a shared bus using
-     * the RTS line (as used by some RS485 adapters for instance).
+     * "125000,0,msb". The string includes the baud rate, the SPI mode (between
+     * 0 and 3) and the bit order.
      *
      * @return a string corresponding to the serial port communication parameters, as a string such as
-     *         "9600,8N1"
+     *         "125000,0,msb"
      *
-     * On failure, throws an exception or returns Y_SERIALMODE_INVALID.
+     * On failure, throws an exception or returns Y_SPIMODE_INVALID.
      */
-    public function get_serialMode()
+    public function get_spiMode()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_SERIALMODE_INVALID;
+                return Y_SPIMODE_INVALID;
             }
         }
-        return $this->_serialMode;
+        return $this->_spiMode;
     }
 
     /**
      * Changes the serial port communication parameters, with a string such as
-     * "9600,8N1". The string includes the baud rate, the number of data bits,
-     * the parity, and the number of stop bits. An optional suffix can be added
-     * to enable flow control: "CtsRts" for hardware handshake, "XOnXOff"
-     * for logical flow control and "Simplex" for acquiring a shared bus using
-     * the RTS line (as used by some RS485 adapters for instance).
+     * "125000,0,msb". The string includes the baud rate, the SPI mode (between
+     * 0 and 3) and the bit order.
      *
      * @param newval : a string corresponding to the serial port communication parameters, with a string such as
-     *         "9600,8N1"
+     *         "125000,0,msb"
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_serialMode($newval)
+    public function set_spiMode($newval)
     {
         $rest_val = $newval;
-        return $this->_setAttr("serialMode",$rest_val);
+        return $this->_setAttr("spiMode",$rest_val);
     }
 
     /**
-     * Retrieves a serial port for a given identifier.
+     * Returns the SS line polarity.
+     *
+     * @return either Y_SSPOLARITY_ACTIVE_LOW or Y_SSPOLARITY_ACTIVE_HIGH, according to the SS line polarity
+     *
+     * On failure, throws an exception or returns Y_SSPOLARITY_INVALID.
+     */
+    public function get_ssPolarity()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SSPOLARITY_INVALID;
+            }
+        }
+        return $this->_ssPolarity;
+    }
+
+    /**
+     * Changes the SS line polarity.
+     *
+     * @param newval : either Y_SSPOLARITY_ACTIVE_LOW or Y_SSPOLARITY_ACTIVE_HIGH, according to the SS line polarity
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_ssPolarity($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("ssPolarity",$rest_val);
+    }
+
+    /**
+     * Returns true when SDI line phase is shifted with regards to SDO line.
+     *
+     * @return either Y_SHITFTSAMPLING_OFF or Y_SHITFTSAMPLING_ON, according to true when SDI line phase
+     * is shifted with regards to SDO line
+     *
+     * On failure, throws an exception or returns Y_SHITFTSAMPLING_INVALID.
+     */
+    public function get_shitftSampling()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SHITFTSAMPLING_INVALID;
+            }
+        }
+        return $this->_shitftSampling;
+    }
+
+    /**
+     * Changes the SDI line sampling shift. When disabled, SDI line is
+     * sampled in the middle of data output time. When enabled, SDI line is
+     * samples at the end of data output time.
+     *
+     * @param newval : either Y_SHITFTSAMPLING_OFF or Y_SHITFTSAMPLING_ON, according to the SDI line sampling shift
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_shitftSampling($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("shitftSampling",$rest_val);
+    }
+
+    /**
+     * Retrieves a SPI port for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -492,25 +569,25 @@ class YSerialPort extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the serial port is online at the time
+     * This function does not require that the SPI port is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YSerialPort.isOnline() to test if the serial port is
+     * Use the method YSpiPort.isOnline() to test if the SPI port is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a serial port by logical name, no error is notified: the first instance
+     * a SPI port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
-     * @param func : a string that uniquely characterizes the serial port
+     * @param func : a string that uniquely characterizes the SPI port
      *
-     * @return a YSerialPort object allowing you to drive the serial port.
+     * @return a YSpiPort object allowing you to drive the SPI port.
      */
-    public static function FindSerialPort($func)
+    public static function FindSpiPort($func)
     {
-        // $obj                    is a YSerialPort;
-        $obj = YFunction::_FindFromCache('SerialPort', $func);
+        // $obj                    is a YSpiPort;
+        $obj = YFunction::_FindFromCache('SpiPort', $func);
         if ($obj == null) {
-            $obj = new YSerialPort($func);
-            YFunction::_AddToCache('SerialPort', $func, $obj);
+            $obj = new YSpiPort($func);
+            YFunction::_AddToCache('SpiPort', $func, $obj);
         }
         return $obj;
     }
@@ -1101,571 +1178,18 @@ class YSerialPort extends YFunction
     }
 
     /**
-     * Manually sets the state of the RTS line. This function has no effect when
-     * hardware handshake is enabled, as the RTS line is driven automatically.
+     * Manually sets the state of the SS line. This function has no effect when
+     * the SS line is handled automatically.
      *
-     * @param val : 1 to turn RTS on, 0 to turn RTS off
-     *
-     * @return YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_RTS($val)
-    {
-        return $this->sendCommand(sprintf('R%d',$val));
-    }
-
-    /**
-     * Reads the level of the CTS line. The CTS line is usually driven by
-     * the RTS signal of the connected serial device.
-     *
-     * @return 1 if the CTS line is high, 0 if the CTS line is low.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function get_CTS()
-    {
-        // $buff                   is a bin;
-        // $res                    is a int;
-        // may throw an exception
-        $buff = $this->_download('cts.txt');
-        if (!(strlen($buff) == 1)) return $this->_throw( YAPI_IO_ERROR, 'invalid CTS reply',YAPI_IO_ERROR);
-        $res = ord($buff[0]) - 48;
-        return $res;
-    }
-
-    /**
-     * Sends a MODBUS message (provided as a hexadecimal string) to the serial port.
-     * The message must start with the slave address. The MODBUS CRC/LRC is
-     * automatically added by the function. This function does not wait for a reply.
-     *
-     * @param hexString : a hexadecimal message string, including device address but no CRC/LRC
+     * @param val : 1 to turn SS active, 0 to release SS.
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function writeMODBUS($hexString)
+    public function set_SS($val)
     {
-        return $this->sendCommand(sprintf(':%s',$hexString));
-    }
-
-    /**
-     * Sends a message to a specified MODBUS slave connected to the serial port, and reads the
-     * reply, if any. The message is the PDU, provided as a vector of bytes.
-     *
-     * @param slaveNo : the address of the slave MODBUS device to query
-     * @param pduBytes : the message to send (PDU), as a vector of bytes. The first byte of the
-     *         PDU is the MODBUS function code.
-     *
-     * @return the received reply, as a vector of bytes.
-     *
-     * On failure, throws an exception or returns an empty array (or a MODBUS error reply).
-     */
-    public function queryMODBUS($slaveNo,$pduBytes)
-    {
-        // $funCode                is a int;
-        // $nib                    is a int;
-        // $i                      is a int;
-        // $cmd                    is a str;
-        // $url                    is a str;
-        // $pat                    is a str;
-        // $msgs                   is a bin;
-        $reps = Array();        // strArr;
-        // $rep                    is a str;
-        $res = Array();         // intArr;
-        // $replen                 is a int;
-        // $hexb                   is a int;
-        $funCode = $pduBytes[0];
-        $nib = (($funCode) >> (4));
-        $pat = sprintf('%02x[%x%x]%x.*', $slaveNo, $nib, ($nib+8), (($funCode) & (15)));
-        $cmd = sprintf('%02x%02x', $slaveNo, $funCode);
-        $i = 1;
-        while ($i < sizeof($pduBytes)) {
-            $cmd = sprintf('%s%02x', $cmd, (($pduBytes[$i]) & (0xff)));
-            $i = $i + 1;
-        }
-        // may throw an exception
-        $url = sprintf('rxmsg.json?cmd=:%s&pat=:%s', $cmd, $pat);
-        $msgs = $this->_download($url);
-        $reps = $this->_json_get_array($msgs);
-        if (!(sizeof($reps) > 1)) return $this->_throw( YAPI_IO_ERROR, 'no reply from slave',$res);
-        if (sizeof($reps) > 1) {
-            $rep = $this->_json_get_string($reps[0]);
-            $replen = ((strlen($rep) - 3) >> (1));
-            $i = 0;
-            while ($i < $replen) {
-                $hexb = hexdec(substr($rep, 2 * $i + 3, 2));
-                $res[] = $hexb;
-                $i = $i + 1;
-            }
-            if ($res[0] != $funCode) {
-                $i = $res[1];
-                if (!($i > 1)) return $this->_throw( YAPI_NOT_SUPPORTED, 'MODBUS error: unsupported function code',$res);
-                if (!($i > 2)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'MODBUS error: illegal data address',$res);
-                if (!($i > 3)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'MODBUS error: illegal data value',$res);
-                if (!($i > 4)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'MODBUS error: failed to execute function',$res);
-            }
-        }
-        return $res;
-    }
-
-    /**
-     * Reads one or more contiguous internal bits (or coil status) from a MODBUS serial device.
-     * This method uses the MODBUS function code 0x01 (Read Coils).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to query
-     * @param pduAddr : the relative address of the first bit/coil to read (zero-based)
-     * @param nBits : the number of bits/coils to read
-     *
-     * @return a vector of integers, each corresponding to one bit.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function modbusReadBits($slaveNo,$pduAddr,$nBits)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        $res = Array();         // intArr;
-        // $bitpos                 is a int;
-        // $idx                    is a int;
-        // $val                    is a int;
-        // $mask                   is a int;
-        $pdu[] = 0x01;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $bitpos = 0;
-        $idx = 2;
-        $val = $reply[$idx];
-        $mask = 1;
-        while ($bitpos < $nBits) {
-            if ((($val) & ($mask)) == 0) {
-                $res[] = 0;
-            } else {
-                $res[] = 1;
-            }
-            $bitpos = $bitpos + 1;
-            if ($mask == 0x80) {
-                $idx = $idx + 1;
-                $val = $reply[$idx];
-                $mask = 1;
-            } else {
-                $mask = (($mask) << (1));
-            }
-        }
-        return $res;
-    }
-
-    /**
-     * Reads one or more contiguous input bits (or discrete inputs) from a MODBUS serial device.
-     * This method uses the MODBUS function code 0x02 (Read Discrete Inputs).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to query
-     * @param pduAddr : the relative address of the first bit/input to read (zero-based)
-     * @param nBits : the number of bits/inputs to read
-     *
-     * @return a vector of integers, each corresponding to one bit.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function modbusReadInputBits($slaveNo,$pduAddr,$nBits)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        $res = Array();         // intArr;
-        // $bitpos                 is a int;
-        // $idx                    is a int;
-        // $val                    is a int;
-        // $mask                   is a int;
-        $pdu[] = 0x02;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $bitpos = 0;
-        $idx = 2;
-        $val = $reply[$idx];
-        $mask = 1;
-        while ($bitpos < $nBits) {
-            if ((($val) & ($mask)) == 0) {
-                $res[] = 0;
-            } else {
-                $res[] = 1;
-            }
-            $bitpos = $bitpos + 1;
-            if ($mask == 0x80) {
-                $idx = $idx + 1;
-                $val = $reply[$idx];
-                $mask = 1;
-            } else {
-                $mask = (($mask) << (1));
-            }
-        }
-        return $res;
-    }
-
-    /**
-     * Reads one or more contiguous internal registers (holding registers) from a MODBUS serial device.
-     * This method uses the MODBUS function code 0x03 (Read Holding Registers).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to query
-     * @param pduAddr : the relative address of the first holding register to read (zero-based)
-     * @param nWords : the number of holding registers to read
-     *
-     * @return a vector of integers, each corresponding to one 16-bit register value.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function modbusReadRegisters($slaveNo,$pduAddr,$nWords)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        $res = Array();         // intArr;
-        // $regpos                 is a int;
-        // $idx                    is a int;
-        // $val                    is a int;
-        $pdu[] = 0x03;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $regpos = 0;
-        $idx = 2;
-        while ($regpos < $nWords) {
-            $val = (($reply[$idx]) << (8));
-            $idx = $idx + 1;
-            $val = $val + $reply[$idx];
-            $idx = $idx + 1;
-            $res[] = $val;
-            $regpos = $regpos + 1;
-        }
-        return $res;
-    }
-
-    /**
-     * Reads one or more contiguous input registers (read-only registers) from a MODBUS serial device.
-     * This method uses the MODBUS function code 0x04 (Read Input Registers).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to query
-     * @param pduAddr : the relative address of the first input register to read (zero-based)
-     * @param nWords : the number of input registers to read
-     *
-     * @return a vector of integers, each corresponding to one 16-bit input value.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function modbusReadInputRegisters($slaveNo,$pduAddr,$nWords)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        $res = Array();         // intArr;
-        // $regpos                 is a int;
-        // $idx                    is a int;
-        // $val                    is a int;
-        $pdu[] = 0x04;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $regpos = 0;
-        $idx = 2;
-        while ($regpos < $nWords) {
-            $val = (($reply[$idx]) << (8));
-            $idx = $idx + 1;
-            $val = $val + $reply[$idx];
-            $idx = $idx + 1;
-            $res[] = $val;
-            $regpos = $regpos + 1;
-        }
-        return $res;
-    }
-
-    /**
-     * Sets a single internal bit (or coil) on a MODBUS serial device.
-     * This method uses the MODBUS function code 0x05 (Write Single Coil).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to drive
-     * @param pduAddr : the relative address of the bit/coil to set (zero-based)
-     * @param value : the value to set (0 for OFF state, non-zero for ON state)
-     *
-     * @return the number of bits/coils affected on the device (1)
-     *
-     * On failure, throws an exception or returns zero.
-     */
-    public function modbusWriteBit($slaveNo,$pduAddr,$value)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        // $res                    is a int;
-        $res = 0;
-        if ($value != 0) {
-            $value = 0xff;
-        }
-        $pdu[] = 0x05;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = $value;
-        $pdu[] = 0x00;
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $res = 1;
-        return $res;
-    }
-
-    /**
-     * Sets several contiguous internal bits (or coils) on a MODBUS serial device.
-     * This method uses the MODBUS function code 0x0f (Write Multiple Coils).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to drive
-     * @param pduAddr : the relative address of the first bit/coil to set (zero-based)
-     * @param bits : the vector of bits to be set (one integer per bit)
-     *
-     * @return the number of bits/coils affected on the device
-     *
-     * On failure, throws an exception or returns zero.
-     */
-    public function modbusWriteBits($slaveNo,$pduAddr,$bits)
-    {
-        // $nBits                  is a int;
-        // $nBytes                 is a int;
-        // $bitpos                 is a int;
-        // $val                    is a int;
-        // $mask                   is a int;
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        // $res                    is a int;
-        $res = 0;
-        $nBits = sizeof($bits);
-        $nBytes = ((($nBits + 7)) >> (3));
-        $pdu[] = 0x0f;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
-        $pdu[] = $nBytes;
-        $bitpos = 0;
-        $val = 0;
-        $mask = 1;
-        while ($bitpos < $nBits) {
-            if ($bits[$bitpos] != 0) {
-                $val = (($val) | ($mask));
-            }
-            $bitpos = $bitpos + 1;
-            if ($mask == 0x80) {
-                $pdu[] = $val;
-                $val = 0;
-                $mask = 1;
-            } else {
-                $mask = (($mask) << (1));
-            }
-        }
-        if ($mask != 1) {
-            $pdu[] = $val;
-        }
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $res = (($reply[3]) << (8));
-        $res = $res + $reply[4];
-        return $res;
-    }
-
-    /**
-     * Sets a single internal register (or holding register) on a MODBUS serial device.
-     * This method uses the MODBUS function code 0x06 (Write Single Register).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to drive
-     * @param pduAddr : the relative address of the register to set (zero-based)
-     * @param value : the 16 bit value to set
-     *
-     * @return the number of registers affected on the device (1)
-     *
-     * On failure, throws an exception or returns zero.
-     */
-    public function modbusWriteRegister($slaveNo,$pduAddr,$value)
-    {
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        // $res                    is a int;
-        $res = 0;
-        if ($value != 0) {
-            $value = 0xff;
-        }
-        $pdu[] = 0x06;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($value) >> (8));
-        $pdu[] = (($value) & (0xff));
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $res = 1;
-        return $res;
-    }
-
-    /**
-     * Sets several contiguous internal registers (or holding registers) on a MODBUS serial device.
-     * This method uses the MODBUS function code 0x10 (Write Multiple Registers).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to drive
-     * @param pduAddr : the relative address of the first internal register to set (zero-based)
-     * @param values : the vector of 16 bit values to set
-     *
-     * @return the number of registers affected on the device
-     *
-     * On failure, throws an exception or returns zero.
-     */
-    public function modbusWriteRegisters($slaveNo,$pduAddr,$values)
-    {
-        // $nWords                 is a int;
-        // $nBytes                 is a int;
-        // $regpos                 is a int;
-        // $val                    is a int;
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        // $res                    is a int;
-        $res = 0;
-        $nWords = sizeof($values);
-        $nBytes = 2 * $nWords;
-        $pdu[] = 0x10;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
-        $pdu[] = $nBytes;
-        $regpos = 0;
-        while ($regpos < $nWords) {
-            $val = $values[$regpos];
-            $pdu[] = (($val) >> (8));
-            $pdu[] = (($val) & (0xff));
-            $regpos = $regpos + 1;
-        }
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $res = (($reply[3]) << (8));
-        $res = $res + $reply[4];
-        return $res;
-    }
-
-    /**
-     * Sets several contiguous internal registers (holding registers) on a MODBUS serial device,
-     * then performs a contiguous read of a set of (possibly different) internal registers.
-     * This method uses the MODBUS function code 0x17 (Read/Write Multiple Registers).
-     *
-     * @param slaveNo : the address of the slave MODBUS device to drive
-     * @param pduWriteAddr : the relative address of the first internal register to set (zero-based)
-     * @param values : the vector of 16 bit values to set
-     * @param pduReadAddr : the relative address of the first internal register to read (zero-based)
-     * @param nReadWords : the number of 16 bit values to read
-     *
-     * @return a vector of integers, each corresponding to one 16-bit register value read.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function modbusWriteAndReadRegisters($slaveNo,$pduWriteAddr,$values,$pduReadAddr,$nReadWords)
-    {
-        // $nWriteWords            is a int;
-        // $nBytes                 is a int;
-        // $regpos                 is a int;
-        // $val                    is a int;
-        // $idx                    is a int;
-        $pdu = Array();         // intArr;
-        $reply = Array();       // intArr;
-        $res = Array();         // intArr;
-        $nWriteWords = sizeof($values);
-        $nBytes = 2 * $nWriteWords;
-        $pdu[] = 0x17;
-        $pdu[] = (($pduReadAddr) >> (8));
-        $pdu[] = (($pduReadAddr) & (0xff));
-        $pdu[] = (($nReadWords) >> (8));
-        $pdu[] = (($nReadWords) & (0xff));
-        $pdu[] = (($pduWriteAddr) >> (8));
-        $pdu[] = (($pduWriteAddr) & (0xff));
-        $pdu[] = (($nWriteWords) >> (8));
-        $pdu[] = (($nWriteWords) & (0xff));
-        $pdu[] = $nBytes;
-        $regpos = 0;
-        while ($regpos < $nWriteWords) {
-            $val = $values[$regpos];
-            $pdu[] = (($val) >> (8));
-            $pdu[] = (($val) & (0xff));
-            $regpos = $regpos + 1;
-        }
-        // may throw an exception
-        $reply = $this->queryMODBUS($slaveNo, $pdu);
-        if (sizeof($reply) == 0) {
-            return $res;
-        }
-        if ($reply[0] != $pdu[0]) {
-            return $res;
-        }
-        $regpos = 0;
-        $idx = 2;
-        while ($regpos < $nReadWords) {
-            $val = (($reply[$idx]) << (8));
-            $idx = $idx + 1;
-            $val = $val + $reply[$idx];
-            $idx = $idx + 1;
-            $res[] = $val;
-            $regpos = $regpos + 1;
-        }
-        return $res;
+        return $this->sendCommand(sprintf('S%d',$val));
     }
 
     public function rxCount()
@@ -1716,50 +1240,62 @@ class YSerialPort extends YFunction
     public function setProtocol($newval)
     { return $this->set_protocol($newval); }
 
-    public function serialMode()
-    { return $this->get_serialMode(); }
+    public function spiMode()
+    { return $this->get_spiMode(); }
 
-    public function setSerialMode($newval)
-    { return $this->set_serialMode($newval); }
+    public function setSpiMode($newval)
+    { return $this->set_spiMode($newval); }
+
+    public function ssPolarity()
+    { return $this->get_ssPolarity(); }
+
+    public function setSsPolarity($newval)
+    { return $this->set_ssPolarity($newval); }
+
+    public function shitftSampling()
+    { return $this->get_shitftSampling(); }
+
+    public function setShitftSampling($newval)
+    { return $this->set_shitftSampling($newval); }
 
     /**
-     * Continues the enumeration of serial ports started using yFirstSerialPort().
+     * Continues the enumeration of SPI ports started using yFirstSpiPort().
      *
-     * @return a pointer to a YSerialPort object, corresponding to
-     *         a serial port currently online, or a null pointer
-     *         if there are no more serial ports to enumerate.
+     * @return a pointer to a YSpiPort object, corresponding to
+     *         a SPI port currently online, or a null pointer
+     *         if there are no more SPI ports to enumerate.
      */
-    public function nextSerialPort()
+    public function nextSpiPort()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindSerialPort($next_hwid);
+        return yFindSpiPort($next_hwid);
     }
 
     /**
-     * Starts the enumeration of serial ports currently accessible.
-     * Use the method YSerialPort.nextSerialPort() to iterate on
-     * next serial ports.
+     * Starts the enumeration of SPI ports currently accessible.
+     * Use the method YSpiPort.nextSpiPort() to iterate on
+     * next SPI ports.
      *
-     * @return a pointer to a YSerialPort object, corresponding to
-     *         the first serial port currently online, or a null pointer
+     * @return a pointer to a YSpiPort object, corresponding to
+     *         the first SPI port currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstSerialPort()
-    {   $next_hwid = YAPI::getFirstHardwareId('SerialPort');
+    public static function FirstSpiPort()
+    {   $next_hwid = YAPI::getFirstHardwareId('SpiPort');
         if($next_hwid == null) return null;
-        return self::FindSerialPort($next_hwid);
+        return self::FindSpiPort($next_hwid);
     }
 
-    //--- (end of YSerialPort implementation)
+    //--- (end of YSpiPort implementation)
 
 };
 
-//--- (SerialPort functions)
+//--- (SpiPort functions)
 
 /**
- * Retrieves a serial port for a given identifier.
+ * Retrieves a SPI port for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -1769,36 +1305,36 @@ class YSerialPort extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the serial port is online at the time
+ * This function does not require that the SPI port is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YSerialPort.isOnline() to test if the serial port is
+ * Use the method YSpiPort.isOnline() to test if the SPI port is
  * indeed online at a given time. In case of ambiguity when looking for
- * a serial port by logical name, no error is notified: the first instance
+ * a SPI port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
- * @param func : a string that uniquely characterizes the serial port
+ * @param func : a string that uniquely characterizes the SPI port
  *
- * @return a YSerialPort object allowing you to drive the serial port.
+ * @return a YSpiPort object allowing you to drive the SPI port.
  */
-function yFindSerialPort($func)
+function yFindSpiPort($func)
 {
-    return YSerialPort::FindSerialPort($func);
+    return YSpiPort::FindSpiPort($func);
 }
 
 /**
- * Starts the enumeration of serial ports currently accessible.
- * Use the method YSerialPort.nextSerialPort() to iterate on
- * next serial ports.
+ * Starts the enumeration of SPI ports currently accessible.
+ * Use the method YSpiPort.nextSpiPort() to iterate on
+ * next SPI ports.
  *
- * @return a pointer to a YSerialPort object, corresponding to
- *         the first serial port currently online, or a null pointer
+ * @return a pointer to a YSpiPort object, corresponding to
+ *         the first SPI port currently online, or a null pointer
  *         if there are none.
  */
-function yFirstSerialPort()
+function yFirstSpiPort()
 {
-    return YSerialPort::FirstSerialPort();
+    return YSpiPort::FirstSpiPort();
 }
 
-//--- (end of SerialPort functions)
+//--- (end of SpiPort functions)
 ?>

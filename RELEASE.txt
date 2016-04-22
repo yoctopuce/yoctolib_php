@@ -1,1 +1,8 @@
-- Add get_subDevices(), get_parentHub() and get_url() methods to YModule class
+- Add YSpiPort class
+- Add Doc-GettingStarted example for Yocto-SPI
+- Add Doc-GettingStarted example for Yocto-Thermistor-C
+- Add Doc-GettingStarted example for Yocto-MaxiThermistor
+- Fix Doc-GettingStarted example of Yocto-GPS
+- Fix YModule.registerLogCallback() that was not working if it was used from a callback
+- Fix YAPI::UnregisterHub() that unregister all hubs
+- Minor fixes

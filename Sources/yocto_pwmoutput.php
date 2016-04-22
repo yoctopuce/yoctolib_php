@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 21894 2015-11-02 10:30:24Z seb $
+ * $Id: yocto_pwmoutput.php 23243 2016-02-23 14:13:12Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -29,8 +29,8 @@
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
  *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
- *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
  *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
  *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
@@ -361,7 +361,7 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the PWMs duty cycle at device power on as a floating point number between 0 and 100
+     * Returns the PWMs duty cycle at device power on as a floating point number between 0 and 100.
      *
      * @return a floating point number corresponding to the PWMs duty cycle at device power on as a
      * floating point number between 0 and 100
