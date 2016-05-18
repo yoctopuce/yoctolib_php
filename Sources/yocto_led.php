@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 23578 2016-03-22 23:00:41Z mvuilleu $
+ * $Id: yocto_led.php 24475 2016-05-12 14:03:35Z mvuilleu $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -58,7 +58,7 @@ if(!defined('Y_LUMINOSITY_INVALID'))         define('Y_LUMINOSITY_INVALID',     
 /**
  * YLed Class: Led function interface
  *
- * Yoctopuce application programming interface
+ * The Yoctopuce application programming interface
  * allows you not only to drive the intensity of the LED, but also to
  * have it blink at various preset frequencies.
  */
