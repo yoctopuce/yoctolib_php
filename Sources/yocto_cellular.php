@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 24465 2016-05-12 07:30:46Z mvuilleu $
+ * $Id: yocto_cellular.php 24622 2016-05-27 12:51:52Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -148,6 +148,8 @@ if(!defined('Y_LOCKEDOPERATOR_INVALID'))     define('Y_LOCKEDOPERATOR_INVALID', 
 if(!defined('Y_APN_INVALID'))                define('Y_APN_INVALID',               YAPI_INVALID_STRING);
 if(!defined('Y_APNSECRET_INVALID'))          define('Y_APNSECRET_INVALID',         YAPI_INVALID_STRING);
 if(!defined('Y_PINGINTERVAL_INVALID'))       define('Y_PINGINTERVAL_INVALID',      YAPI_INVALID_UINT);
+if(!defined('Y_DATASENT_INVALID'))           define('Y_DATASENT_INVALID',          YAPI_INVALID_UINT);
+if(!defined('Y_DATARECEIVED_INVALID'))       define('Y_DATARECEIVED_INVALID',      YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of generated code: YCellular definitions)
 
@@ -184,6 +186,8 @@ class YCellular extends YFunction
     const APN_INVALID                    = YAPI_INVALID_STRING;
     const APNSECRET_INVALID              = YAPI_INVALID_STRING;
     const PINGINTERVAL_INVALID           = YAPI_INVALID_UINT;
+    const DATASENT_INVALID               = YAPI_INVALID_UINT;
+    const DATARECEIVED_INVALID           = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of generated code: YCellular declaration)
 
@@ -201,6 +205,8 @@ class YCellular extends YFunction
     protected $_apn                      = Y_APN_INVALID;                // Text
     protected $_apnSecret                = Y_APNSECRET_INVALID;          // APNPassword
     protected $_pingInterval             = Y_PINGINTERVAL_INVALID;       // UInt31
+    protected $_dataSent                 = Y_DATASENT_INVALID;           // UInt31
+    protected $_dataReceived             = Y_DATARECEIVED_INVALID;       // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of generated code: YCellular attributes)
 
@@ -256,6 +262,12 @@ class YCellular extends YFunction
             return 1;
         case 'pingInterval':
             $this->_pingInterval = intval($val);
+            return 1;
+        case 'dataSent':
+            $this->_dataSent = intval($val);
+            return 1;
+        case 'dataReceived':
+            $this->_dataReceived = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -622,6 +634,70 @@ class YCellular extends YFunction
         return $this->_setAttr("pingInterval",$rest_val);
     }
 
+    /**
+     * Returns the number of bytes sent so far.
+     *
+     * @return an integer corresponding to the number of bytes sent so far
+     *
+     * On failure, throws an exception or returns Y_DATASENT_INVALID.
+     */
+    public function get_dataSent()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DATASENT_INVALID;
+            }
+        }
+        return $this->_dataSent;
+    }
+
+    /**
+     * Changes the value of the outgoing data counter.
+     *
+     * @param newval : an integer corresponding to the value of the outgoing data counter
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_dataSent($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("dataSent",$rest_val);
+    }
+
+    /**
+     * Returns the number of bytes received so far.
+     *
+     * @return an integer corresponding to the number of bytes received so far
+     *
+     * On failure, throws an exception or returns Y_DATARECEIVED_INVALID.
+     */
+    public function get_dataReceived()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DATARECEIVED_INVALID;
+            }
+        }
+        return $this->_dataReceived;
+    }
+
+    /**
+     * Changes the value of the incoming data counter.
+     *
+     * @param newval : an integer corresponding to the value of the incoming data counter
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_dataReceived($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("dataReceived",$rest_val);
+    }
+
     public function get_command()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -690,7 +766,7 @@ class YCellular extends YFunction
     {
         // $gsmMsg                 is a str;
         $gsmMsg = $this->get_message();
-        if (!(substr($gsmMsg, 0, 13) == 'Enter SIM PUK')) return $this->_throw(YAPI_INVALID_ARGUMENT, 'PUK not expected at $this time',YAPI_INVALID_ARGUMENT);
+        if (!(!(substr($gsmMsg, 0, 13) == 'Enter SIM PUK'))) return $this->_throw(YAPI_INVALID_ARGUMENT, 'PUK not expected at $this time',YAPI_INVALID_ARGUMENT);
         if ($newPin == '') {
             return $this->set_command(sprintf('AT+CPIN=%s,0000;+CLCK=SC,0,0000',$puk));
         }
@@ -711,6 +787,25 @@ class YCellular extends YFunction
     public function set_apnAuth($username,$password)
     {
         return $this->set_apnSecret(sprintf('%s,%s',$username,$password));
+    }
+
+    /**
+     * Clear the transmitted data counters.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function clearDataCounters()
+    {
+        // $retcode                is a int;
+        // may throw an exception
+        $retcode = $this->set_dataReceived(0);
+        if ($retcode != YAPI_SUCCESS) {
+            return $retcode;
+        }
+        $retcode = $this->set_dataSent(0);
+        return $retcode;
     }
 
     /**
@@ -958,6 +1053,18 @@ class YCellular extends YFunction
 
     public function setPingInterval($newval)
     { return $this->set_pingInterval($newval); }
+
+    public function dataSent()
+    { return $this->get_dataSent(); }
+
+    public function setDataSent($newval)
+    { return $this->set_dataSent($newval); }
+
+    public function dataReceived()
+    { return $this->get_dataReceived(); }
+
+    public function setDataReceived($newval)
+    { return $this->set_dataReceived($newval); }
 
     public function command()
     { return $this->get_command(); }
