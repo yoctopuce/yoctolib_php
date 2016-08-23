@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_anbutton.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -392,7 +392,9 @@ class YAnButton extends YFunction
     }
 
     /**
-     * Returns the pulse counter value.
+     * Returns the pulse counter value. The value is a 32 bit integer. In case
+     * of overflow (>=2^32), the counter will wrap. To reset the counter, just
+     * call the resetCounter() method.
      *
      * @return an integer corresponding to the pulse counter value
      *
@@ -537,7 +539,7 @@ class YAnButton extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindAnButton($next_hwid);
+        return self::FindAnButton($next_hwid);
     }
 
     /**

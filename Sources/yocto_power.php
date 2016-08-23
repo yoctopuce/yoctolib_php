@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_power.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -226,7 +226,7 @@ class YPower extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindPower($next_hwid);
+        return self::FindPower($next_hwid);
     }
 
     /**

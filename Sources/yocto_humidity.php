@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_humidity.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_humidity.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YHumidity, the high-level API for Humidity functions
  *
@@ -198,7 +198,7 @@ class YHumidity extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindHumidity($next_hwid);
+        return self::FindHumidity($next_hwid);
     }
 
     /**

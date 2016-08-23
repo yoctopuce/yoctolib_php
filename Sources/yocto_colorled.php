@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 24475 2016-05-12 14:03:35Z mvuilleu $
+ * $Id: yocto_colorled.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -519,7 +519,7 @@ class YColorLed extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindColorLed($next_hwid);
+        return self::FindColorLed($next_hwid);
     }
 
     /**

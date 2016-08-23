@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_quadraturedecoder.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_quadraturedecoder.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -217,7 +217,7 @@ class YQuadratureDecoder extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindQuadratureDecoder($next_hwid);
+        return self::FindQuadratureDecoder($next_hwid);
     }
 
     /**

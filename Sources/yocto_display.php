@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 19611 2015-03-05 10:40:15Z seb $
+ * $Id: yocto_display.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -1296,7 +1296,7 @@ class YDisplay extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindDisplay($next_hwid);
+        return self::FindDisplay($next_hwid);
     }
 
     /**

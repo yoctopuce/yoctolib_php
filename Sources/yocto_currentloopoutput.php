@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_currentloopoutput.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -299,7 +299,7 @@ class YCurrentLoopOutput extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindCurrentLoopOutput($next_hwid);
+        return self::FindCurrentLoopOutput($next_hwid);
     }
 
     /**

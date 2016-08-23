@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_motor.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_motor.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -618,7 +618,7 @@ class YMotor extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindMotor($next_hwid);
+        return self::FindMotor($next_hwid);
     }
 
     /**

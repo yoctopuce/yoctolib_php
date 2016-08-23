@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmpowersource.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_pwmpowersource.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -181,7 +181,7 @@ class YPwmPowerSource extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindPwmPowerSource($next_hwid);
+        return self::FindPwmPowerSource($next_hwid);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voc.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_voc.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YVoc, the high-level API for Voc functions
  *
@@ -115,7 +115,7 @@ class YVoc extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindVoc($next_hwid);
+        return self::FindVoc($next_hwid);
     }
 
     /**

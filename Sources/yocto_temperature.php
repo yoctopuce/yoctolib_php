@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 23527 2016-03-18 21:49:19Z mvuilleu $
+ * $Id: yocto_temperature.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -477,7 +477,7 @@ class YTemperature extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindTemperature($next_hwid);
+        return self::FindTemperature($next_hwid);
     }
 
     /**

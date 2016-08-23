@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_realtimeclock.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -270,7 +270,7 @@ class YRealTimeClock extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindRealTimeClock($next_hwid);
+        return self::FindRealTimeClock($next_hwid);
     }
 
     /**

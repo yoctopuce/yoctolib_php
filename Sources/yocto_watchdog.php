@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_watchdog.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -701,7 +701,7 @@ class YWatchdog extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindWatchdog($next_hwid);
+        return self::FindWatchdog($next_hwid);
     }
 
     /**

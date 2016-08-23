@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 24717 2016-06-03 16:09:53Z seb $
+ * $Id: yocto_colorledcluster.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -564,6 +564,11 @@ class YColorLedCluster extends YFunction
         return $this->sendCommand('WL');
     }
 
+    public function saveLedsState()
+    {
+        return $this->sendCommand('WL');
+    }
+
     /**
      * Saves the definition of a sequence. Warning: only sequence steps and flags are saved.
      * to save the LEDs startup bindings, the method saveLedsConfigAtPowerOn()
@@ -1020,7 +1025,7 @@ class YColorLedCluster extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindColorLedCluster($next_hwid);
+        return self::FindColorLedCluster($next_hwid);
     }
 
     /**

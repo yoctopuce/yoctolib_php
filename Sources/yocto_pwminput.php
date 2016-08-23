@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_pwminput.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -363,7 +363,7 @@ class YPwmInput extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindPwmInput($next_hwid);
+        return self::FindPwmInput($next_hwid);
     }
 
     /**

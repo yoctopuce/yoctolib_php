@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioout.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_audioout.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -294,7 +294,7 @@ class YAudioOut extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindAudioOut($next_hwid);
+        return self::FindAudioOut($next_hwid);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 21680 2015-10-02 13:42:44Z seb $
+ * $Id: yocto_wireless.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -440,7 +440,7 @@ class YWireless extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindWireless($next_hwid);
+        return self::FindWireless($next_hwid);
     }
 
     /**

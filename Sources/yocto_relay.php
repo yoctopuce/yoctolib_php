@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_relay.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YRelay, the high-level API for Relay functions
  *
@@ -499,7 +499,7 @@ class YRelay extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindRelay($next_hwid);
+        return self::FindRelay($next_hwid);
     }
 
     /**

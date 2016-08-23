@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 24649 2016-05-31 11:20:13Z mvuilleu $
+ * $Id: yocto_messagebox.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -2148,7 +2148,7 @@ class YMessageBox extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindMessageBox($next_hwid);
+        return self::FindMessageBox($next_hwid);
     }
 
     /**

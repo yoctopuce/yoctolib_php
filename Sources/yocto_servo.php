@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_servo.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YServo, the high-level API for Servo functions
  *
@@ -451,7 +451,7 @@ class YServo extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindServo($next_hwid);
+        return self::FindServo($next_hwid);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_groundspeed.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_groundspeed.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *
@@ -116,7 +116,7 @@ class YGroundSpeed extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindGroundSpeed($next_hwid);
+        return self::FindGroundSpeed($next_hwid);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 23930 2016-04-15 09:31:14Z seb $
+ * $Id: yocto_network.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -1216,7 +1216,7 @@ class YNetwork extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindNetwork($next_hwid);
+        return self::FindNetwork($next_hwid);
     }
 
     /**

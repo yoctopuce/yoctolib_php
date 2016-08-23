@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_current.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YCurrent, the high-level API for Current functions
  *
@@ -115,7 +115,7 @@ class YCurrent extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindCurrent($next_hwid);
+        return self::FindCurrent($next_hwid);
     }
 
     /**

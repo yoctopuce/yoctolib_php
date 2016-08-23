@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 24475 2016-05-12 14:03:35Z mvuilleu $
+ * $Id: yocto_led.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -272,7 +272,7 @@ class YLed extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindLed($next_hwid);
+        return self::FindLed($next_hwid);
     }
 
     /**

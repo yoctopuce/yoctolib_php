@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_spiport.php 24252 2016-04-26 13:39:30Z seb $
+ * $Id: yocto_spiport.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -123,6 +123,8 @@ class YSpiPort extends YFunction
     protected $_ssPolarity               = Y_SSPOLARITY_INVALID;         // Polarity
     protected $_shitftSampling           = Y_SHITFTSAMPLING_INVALID;     // OnOff
     protected $_rxptr                    = 0;                            // int
+    protected $_rxbuff                   = "";                           // bin
+    protected $_rxbuffptr                = 0;                            // int
     //--- (end of YSpiPort attributes)
 
     function __construct($str_func)
@@ -607,6 +609,8 @@ class YSpiPort extends YFunction
     public function reset()
     {
         $this->_rxptr = 0;
+        $this->_rxbuffptr = 0;
+        $this->_rxbuff =  pack('C',array_fill(0, 0, 0));
         // may throw an exception
         return $this->sendCommand('Z');
     }
@@ -784,11 +788,49 @@ class YSpiPort extends YFunction
      */
     public function readByte()
     {
+        // $currpos                is a int;
+        // $reqlen                 is a int;
         // $buff                   is a bin;
         // $bufflen                is a int;
         // $mult                   is a int;
         // $endpos                 is a int;
         // $res                    is a int;
+        
+        // first check if we have the requested character in the look-ahead buffer
+        $bufflen = strlen($this->_rxbuff);
+        if (($this->_rxptr >= $this->_rxbuffptr) && ($this->_rxptr < $this->_rxbuffptr+$bufflen)) {
+            $res = ord($this->_rxbuff[$this->_rxptr-$this->_rxbuffptr]);
+            $this->_rxptr = $this->_rxptr + 1;
+            return $res;
+        }
+        
+        // try to preload more than one byte to speed-up byte-per-byte access
+        $currpos = $this->_rxptr;
+        $reqlen = 1024;
+        $buff = $this->readBin($reqlen);
+        $bufflen = strlen($buff);
+        if ($this->_rxptr == $currpos+$bufflen) {
+            $res = ord($buff[0]);
+            $this->_rxptr = $currpos+1;
+            $this->_rxbuffptr = $currpos;
+            $this->_rxbuff = $buff;
+            return $res;
+        }
+        // mixed bidirectional data, retry with a smaller block
+        $this->_rxptr = $currpos;
+        $reqlen = 16;
+        $buff = $this->readBin($reqlen);
+        $bufflen = strlen($buff);
+        if ($this->_rxptr == $currpos+$bufflen) {
+            $res = ord($buff[0]);
+            $this->_rxptr = $currpos+1;
+            $this->_rxbuffptr = $currpos;
+            $this->_rxbuff = $buff;
+            return $res;
+        }
+        // still mixed, need to process character by character
+        $this->_rxptr = $currpos;
+        
         // may throw an exception
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=1', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
@@ -1270,7 +1312,7 @@ class YSpiPort extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindSpiPort($next_hwid);
+        return self::FindSpiPort($next_hwid);
     }
 
     /**

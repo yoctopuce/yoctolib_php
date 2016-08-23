@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 23775 2016-04-06 07:49:51Z seb $
+ * $Id: yocto_api.php 25202 2016-08-17 10:24:49Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -239,6 +239,7 @@ class YTcpHub
     public $missing;                    // list of missing devices during updateDeviceList
     public $writeProtected;             // true if an adminPassword is set
     public $user;                       // user for authentication
+    public $callbackData;               // raw HTTP callback data received
     public $callbackCache;              // pre-parsed cache for callback-based API
     public $reuseskt;                   // keep-alive socket to be reused
     protected $realm;                   // hub authentication realm
@@ -302,6 +303,7 @@ class YTcpHub
 
             if ($fullTest) {
                 $data = file_get_contents('php://input', 'rb');
+                $this->callbackData = $data;
                 if($data == "") {
                     $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
                     Print("\n!YoctoAPI:$errmsg\n");
@@ -2392,7 +2394,7 @@ class YAPI
     /**
      * Retrun the serialnummber of all subdevcies
      * @param string $str_device
-     * @return array of string 
+     * @return array of string
      */
     public static function getSubDevicesFrom($str_device)
     {
@@ -2558,7 +2560,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.24718";
+        return "1.10.25250";
     }
 
     /**
@@ -2796,7 +2798,6 @@ class YAPI
      * @param url : a string containing either "usb" or the
      *         root URL of the hub to monitor
      */
-
     public static function UnregisterHub($url)
     {
         if (is_null(self::$_hubs))
@@ -2818,7 +2819,6 @@ class YAPI
         }
         self::$_hubs = $new_hubs;
     }
-
 
     /**
      * Test if the hub is reachable. This method do not register the hub, it only test if the
@@ -2874,6 +2874,173 @@ class YAPI
         return YAPI_SUCCESS;
     }
 
+    static public function _forwardHTTPreq($host, $relurl, $cbdata, &$errmsg)
+    {
+        $errno = 0;
+        $errstr = '';
+        $implicitPort = '';
+        if(strpos($host,':') === false) {
+            $implicitPort = ':80';
+        }
+        $skt = stream_socket_client("tcp://$host$implicitPort", $errno, $errstr, 10);
+        if ($skt === false) {
+            $errmsg = "failed to open socket ($errno): $errstr";
+            return YAPI_IO_ERROR;
+        }
+        $request = "POST $relurl HTTP/1.1\r\nHost: $host\r\nConnection: close\r\n";
+        $request .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
+        $request .= "Content-Type: application/json\r\n";
+        $request .= "Content-Length: ".strlen($cbdata)."\r\n\r\n";
+        $reqlen = strlen($request);
+        if (fwrite($skt, $request, $reqlen) != $reqlen) {
+            fclose($skt);
+            $errmsg = "failed to write to socket";
+            return YAPI_IO_ERROR;
+        }
+        $bodylen = strlen($cbdata);
+        fwrite($skt, $cbdata, $bodylen);
+        stream_set_blocking($skt, 0);
+        $header = '';
+        $headerOK = false;
+        $chunked = false;
+        $chunkhdr = '';
+        $chunksize = 0;
+        while(true) {
+            $data = fread($skt, 8192);
+            if($data === false || !is_resource($skt)) {
+                fclose($skt);
+                $errmsg = "failed to read from socket";
+                return YAPI_IO_ERROR;
+            }
+            if(strlen($data) == 0) {
+                if(feof($skt)) {
+                    fclose($skt);
+                    if(!$headerOK) {
+                        $errmsg = "connection closed unexpectly";
+                        return YAPI_IO_ERROR;
+                    }
+                    return YAPI_SUCCESS;
+                } else {
+                    $rd = Array($skt);
+                    $wr = NULL;
+                    $ex = NULL;
+                    if(false === ($select_res = stream_select($rd, $wr, $ex, 0, 1000000))) {
+                        $errmsg = "stream select error";
+                        return YAPI_IO_ERROR;
+                    }
+                }
+                continue;
+            }
+            if(!$headerOK) {
+                $header .= $data;
+                $data = '';
+                $eoh = strpos($header, "\r\n\r\n");
+                if($eoh !== false) {
+                    // fully received header
+                    $headerOK = true;
+                    $data = substr($header, $eoh+4);
+                    $header = substr($header, 0, $eoh+4);
+                    $lines = explode("\r\n", preg_replace('/\x0D\x0A[\x09\x20]+/', ' ', $header));
+                    $meta = array();
+                    foreach($lines as $line) {
+                        if(preg_match('/([^:]+): (.+)/m', $line, $match)) {
+                            $match[1] = preg_replace('/(?<=^|[\x09\x20\x2D])./e', 'strtoupper("\0")', strtolower(trim($match[1])));
+                            $meta[$match[1]] = trim($match[2]);
+                        }
+                    }
+                    $firstline = $lines[0];
+                    $words = explode(' ', $firstline);
+                    $code = $words[1];
+                    if($code == '401') {
+                        fclose($skt);
+                        $errmsg = "HTTP Authentication not supported";
+                        return YAPI_UNAUTHORIZED;
+                    } else if($code == '101') {
+                        fclose($skt);
+                        $errmsg = "Websocket not supported";
+                        return YAPI_NOT_SUPPORTED;
+                    } else if($code >= '300' && $code <= '302' && isset($meta['Location'])) {
+                        fclose($skt);
+                        return self::_forwardHTTPreq($host, $meta['Location'], $cbdata, $errmsg);
+                    } else if(substr($code,0,2) != '20' || $code[2] == '3') {
+                        fclose($skt);
+                        $errmsg = "HTTP error".substr($firstline, strlen($words[0]));
+                        return YAPI_NOT_SUPPORTED;
+                    }
+                    $chunked = isset($meta['Transfer-Encoding']) && strtolower($meta['Transfer-Encoding']) == 'chunked';
+                }
+            }
+            // process body according to encoding
+            if(!$chunked) {
+                print $data;
+                continue;
+            }
+            // chunk decoding
+            while(strlen($data) > 0) {
+                if($chunksize == 0) {
+                    // reading chunk size
+                    $chunkhdr .= $data;
+                    if(substr($chunkhdr, 0, 2) == "\r\n") {
+                        $chunkhdr = substr($chunkhdr,2);
+                    }
+                    $endhdr = strpos($chunkhdr, "\r\n");
+                    if($endhdr !== false) {
+                        $data = substr($chunkhdr, $endhdr+2);
+                        $sizestr = substr($chunkhdr, 0, $endhdr);
+                        $chunksize = hexdec($sizestr);
+                        $chunkhdr = '';
+                    } else {
+                        $data = '';
+                    }
+                } else {
+                    // reading chunk data
+                    $datalen = strlen($data);
+                    if($datalen > $chunksize) {
+                        $datalen = $chunksize;
+                    }
+                    print(substr($data,0,$datalen));
+                    $data = substr($data,$datalen);
+                    $chunksize -= $datalen;
+                }
+            }
+        }
+    }
+
+    /**
+     * Trigger an HTTP request to another server, and forward the HTTP callback data
+     * previously received from a YoctoHub. This function only works after a successful
+     * call to yRegisterHub("callback")
+     *
+     * @param url : a string containing the URL of the server to which the HTTP callback
+     *              should be forwarded
+     * @param errmsg : a string passed by reference to receive any error message.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public static function ForwardHTTPCallback($url,&$errmsg="")
+    {
+        $rooturl = 'callback';
+        $auth = '';
+        self::_parseRegisteredURL('callback', $rooturl, $auth);
+        if(isset(self::$_hubs[$rooturl])) {
+            $cb_hub = self::$_hubs[$rooturl];
+            // data to post is found in $cb_hub->callbackData
+            $url = str_replace('http://', '', $url);
+            $pos = strpos($url, '/');
+            if($pos === FALSE) {
+                $relurl = '/';
+            } else {
+                $relurl = substr($url, $pos);
+                $url = substr($url, 0, $pos);
+            }
+            return self::_forwardHTTPreq($url, $relurl, $cb_hub->callbackData, $errmsg);
+        } else {
+            $errmsg = 'ForwardHTTPCallback must be called AFTER RegisterHub("callback")';
+            return YAPI_NOT_INITIALIZED;
+        }
+    }
 
     /**
      * Triggers a (re)detection of connected Yoctopuce modules.
@@ -4741,7 +4908,7 @@ class YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindFunction($next_hwid);
+        return self::FindFunction($next_hwid);
     }
 
     /**
@@ -6365,7 +6532,7 @@ class YSensor extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindSensor($next_hwid);
+        return self::FindSensor($next_hwid);
     }
 
     /**
@@ -7952,7 +8119,7 @@ class YModule extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindModule($next_hwid);
+        return self::FindModule($next_hwid);
     }
 
     /**
@@ -8104,7 +8271,21 @@ function yRegisterHub($url,&$errmsg="")
     return YAPI::RegisterHub($url,$errmsg);
 }
 
-
+/**
+ * Fault-tolerant alternative to RegisterHub(). This function has the same
+ * purpose and same arguments as RegisterHub(), but does not trigger
+ * an error when the selected hub is not available at the time of the function call.
+ * This makes it possible to register a network hub independently of the current
+ * connectivity, and to try to contact it only when a device is actively needed.
+ *
+ * @param url : a string containing either "usb","callback" or the
+ *         root URL of the hub to monitor
+ * @param errmsg : a string passed by reference to receive any error message.
+ *
+ * @return YAPI_SUCCESS when the call succeeds.
+ *
+ * On failure, throws an exception or returns a negative error code.
+ */
 function yPreregisterHub($url,&$errmsg="")
 {
     return YAPI::PreregisterHub($url,$errmsg);
@@ -8121,7 +8302,6 @@ function yUnregisterHub($url)
 {
     YAPI::UnregisterHub($url);
 }
-
 
 /**
  * Test if the hub is reachable. This method do not register the hub, it only test if the
@@ -8143,6 +8323,23 @@ function yTestHub($url, $mstimeout, &$errmsg="")
     return YAPI::TestHub($url, $mstimeout, $errmsg);
 }
 
+/**
+ * Trigger an HTTP request to another server, and forward the HTTP callback data
+ * previously received from a YoctoHub. This function only works after a successful
+ * call to yRegisterHub("callback")
+ *
+ * @param url : a string containing the URL of the server to which the HTTP callback
+ *              should be forwarded
+ * @param errmsg : a string passed by reference to receive any error message.
+ *
+ * @return YAPI_SUCCESS when the call succeeds.
+ *
+ * On failure, throws an exception or returns a negative error code.
+ */
+function yForwardHTTPCallback($url,&$errmsg="")
+{
+    return YAPI::ForwardHTTPCallback($url,$errmsg);
+}
 
 /**
  * Triggers a (re)detection of connected Yoctopuce modules.
@@ -8292,6 +8489,49 @@ for($yHdlrIdx = 1; $yHdlrIdx <= 20; $yHdlrIdx++) {
     yRegisterCalibrationHandler($yHdlrIdx, 'yLinearCalibrationHandler');
 }
 yRegisterCalibrationHandler(YOCTO_CALIB_TYPE_OFS, 'yLinearCalibrationHandler');
+
+
+
+//--- (generated code: Function functions)
+
+/**
+ * Retrieves a function for a given identifier.
+ * The identifier can be specified using several formats:
+ * <ul>
+ * <li>FunctionLogicalName</li>
+ * <li>ModuleSerialNumber.FunctionIdentifier</li>
+ * <li>ModuleSerialNumber.FunctionLogicalName</li>
+ * <li>ModuleLogicalName.FunctionIdentifier</li>
+ * <li>ModuleLogicalName.FunctionLogicalName</li>
+ * </ul>
+ *
+ * This function does not require that the function is online at the time
+ * it is invoked. The returned object is nevertheless valid.
+ * Use the method YFunction.isOnline() to test if the function is
+ * indeed online at a given time. In case of ambiguity when looking for
+ * a function by logical name, no error is notified: the first instance
+ * found is returned. The search is performed first by hardware name,
+ * then by logical name.
+ *
+ * @param func : a string that uniquely characterizes the function
+ *
+ * @return a YFunction object allowing you to drive the function.
+ */
+function yFindFunction($func)
+{
+    return YFunction::FindFunction($func);
+}
+
+/**
+ * comment from .yc definition
+ */
+function yFirstFunction()
+{
+    return YFunction::FirstFunction();
+}
+
+//--- (end of generated code: Function functions)
+
 
 //--- (generated code: Sensor functions)
 

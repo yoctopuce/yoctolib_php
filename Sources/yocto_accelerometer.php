@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_accelerometer.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -44,6 +44,7 @@
 if(!defined('Y_GRAVITYCANCELLATION_OFF'))    define('Y_GRAVITYCANCELLATION_OFF',   0);
 if(!defined('Y_GRAVITYCANCELLATION_ON'))     define('Y_GRAVITYCANCELLATION_ON',    1);
 if(!defined('Y_GRAVITYCANCELLATION_INVALID')) define('Y_GRAVITYCANCELLATION_INVALID', -1);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_XVALUE_INVALID'))             define('Y_XVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_YVALUE_INVALID'))             define('Y_YVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',            YAPI_INVALID_DOUBLE);
@@ -65,6 +66,7 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
  */
 class YAccelerometer extends YSensor
 {
+    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
     const XVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const YVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const ZVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
@@ -74,6 +76,7 @@ class YAccelerometer extends YSensor
     //--- (end of YAccelerometer declaration)
 
     //--- (YAccelerometer attributes)
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
     protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
     protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
     protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
@@ -94,6 +97,9 @@ class YAccelerometer extends YSensor
     function _parseAttr($name, $val)
     {
         switch($name) {
+        case 'bandwidth':
+            $this->_bandwidth = intval($val);
+            return 1;
         case 'xValue':
             $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
@@ -108,6 +114,39 @@ class YAccelerometer extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
+     *
+     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     */
+    public function get_bandwidth()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BANDWIDTH_INVALID;
+            }
+        }
+        return $this->_bandwidth;
+    }
+
+    /**
+     * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
+     * frequency is lower, the device performs averaging.
+     *
+     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bandwidth($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("bandwidth",$rest_val);
     }
 
     /**
@@ -211,6 +250,12 @@ class YAccelerometer extends YSensor
         return $obj;
     }
 
+    public function bandwidth()
+    { return $this->get_bandwidth(); }
+
+    public function setBandwidth($newval)
+    { return $this->set_bandwidth($newval); }
+
     public function xValue()
     { return $this->get_xValue(); }
 
@@ -238,7 +283,7 @@ class YAccelerometer extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindAccelerometer($next_hwid);
+        return self::FindAccelerometer($next_hwid);
     }
 
     /**

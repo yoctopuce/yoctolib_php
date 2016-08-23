@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 23527 2016-03-18 21:49:19Z mvuilleu $
+ * $Id: yocto_genericsensor.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -417,7 +417,7 @@ class YGenericSensor extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindGenericSensor($next_hwid);
+        return self::FindGenericSensor($next_hwid);
     }
 
     /**

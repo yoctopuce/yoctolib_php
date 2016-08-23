@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 24622 2016-05-27 12:51:52Z mvuilleu $
+ * $Id: yocto_cellular.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -137,6 +137,7 @@ if(!defined('Y_AIRPLANEMODE_INVALID'))       define('Y_AIRPLANEMODE_INVALID',   
 if(!defined('Y_ENABLEDATA_HOMENETWORK'))     define('Y_ENABLEDATA_HOMENETWORK',    0);
 if(!defined('Y_ENABLEDATA_ROAMING'))         define('Y_ENABLEDATA_ROAMING',        1);
 if(!defined('Y_ENABLEDATA_NEVER'))           define('Y_ENABLEDATA_NEVER',          2);
+if(!defined('Y_ENABLEDATA_NEUTRALITY'))      define('Y_ENABLEDATA_NEUTRALITY',     3);
 if(!defined('Y_ENABLEDATA_INVALID'))         define('Y_ENABLEDATA_INVALID',        -1);
 if(!defined('Y_LINKQUALITY_INVALID'))        define('Y_LINKQUALITY_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_CELLOPERATOR_INVALID'))       define('Y_CELLOPERATOR_INVALID',      YAPI_INVALID_STRING);
@@ -182,6 +183,7 @@ class YCellular extends YFunction
     const ENABLEDATA_HOMENETWORK         = 0;
     const ENABLEDATA_ROAMING             = 1;
     const ENABLEDATA_NEVER               = 2;
+    const ENABLEDATA_NEUTRALITY          = 3;
     const ENABLEDATA_INVALID             = -1;
     const APN_INVALID                    = YAPI_INVALID_STRING;
     const APNSECRET_INVALID              = YAPI_INVALID_STRING;
@@ -506,8 +508,8 @@ class YCellular extends YFunction
      * Returns the condition for enabling IP data services (GPRS).
      * When data services are disabled, SMS are the only mean of communication.
      *
-     * @return a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING and Y_ENABLEDATA_NEVER
-     * corresponding to the condition for enabling IP data services (GPRS)
+     * @return a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING, Y_ENABLEDATA_NEVER and
+     * Y_ENABLEDATA_NEUTRALITY corresponding to the condition for enabling IP data services (GPRS)
      *
      * On failure, throws an exception or returns Y_ENABLEDATA_INVALID.
      */
@@ -529,8 +531,8 @@ class YCellular extends YFunction
      *
      * When data services are disabled, SMS are the only mean of communication.
      *
-     * @param newval : a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING and Y_ENABLEDATA_NEVER
-     * corresponding to the condition for enabling IP data services (GPRS)
+     * @param newval : a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING, Y_ENABLEDATA_NEVER
+     * and Y_ENABLEDATA_NEUTRALITY corresponding to the condition for enabling IP data services (GPRS)
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -1084,7 +1086,7 @@ class YCellular extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindCellular($next_hwid);
+        return self::FindCellular($next_hwid);
     }
 
     /**

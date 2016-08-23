@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_tilt.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_tilt.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YTilt, the high-level API for Tilt functions
  *
@@ -45,6 +45,7 @@ if(!defined('Y_AXIS_X'))                     define('Y_AXIS_X',                 
 if(!defined('Y_AXIS_Y'))                     define('Y_AXIS_Y',                    1);
 if(!defined('Y_AXIS_Z'))                     define('Y_AXIS_Z',                    2);
 if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',              -1);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
 //--- (end of YTilt definitions)
 
 //--- (YTilt declaration)
@@ -63,6 +64,7 @@ if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',           
  */
 class YTilt extends YSensor
 {
+    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
     const AXIS_X                         = 0;
     const AXIS_Y                         = 1;
     const AXIS_Z                         = 2;
@@ -70,6 +72,7 @@ class YTilt extends YSensor
     //--- (end of YTilt declaration)
 
     //--- (YTilt attributes)
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
     protected $_axis                     = Y_AXIS_INVALID;               // Axis
     //--- (end of YTilt attributes)
 
@@ -87,11 +90,47 @@ class YTilt extends YSensor
     function _parseAttr($name, $val)
     {
         switch($name) {
+        case 'bandwidth':
+            $this->_bandwidth = intval($val);
+            return 1;
         case 'axis':
             $this->_axis = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
+     *
+     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     */
+    public function get_bandwidth()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BANDWIDTH_INVALID;
+            }
+        }
+        return $this->_bandwidth;
+    }
+
+    /**
+     * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
+     * frequency is lower, the device performs averaging.
+     *
+     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bandwidth($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("bandwidth",$rest_val);
     }
 
     public function get_axis()
@@ -138,6 +177,12 @@ class YTilt extends YSensor
         return $obj;
     }
 
+    public function bandwidth()
+    { return $this->get_bandwidth(); }
+
+    public function setBandwidth($newval)
+    { return $this->set_bandwidth($newval); }
+
     public function axis()
     { return $this->get_axis(); }
 
@@ -153,7 +198,7 @@ class YTilt extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindTilt($next_hwid);
+        return self::FindTilt($next_hwid);
     }
 
     /**

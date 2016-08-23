@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_refframe.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -87,6 +87,7 @@ class YRefFrame extends YFunction
     protected $_mountPos                 = Y_MOUNTPOS_INVALID;           // UInt31
     protected $_bearing                  = Y_BEARING_INVALID;            // MeasureVal
     protected $_calibrationParam         = Y_CALIBRATIONPARAM_INVALID;   // CalibParams
+    protected $_calibV2                  = 0;                            // bool
     protected $_calibStage               = 0;                            // int
     protected $_calibStageHint           = "";                           // str
     protected $_calibStageProgress       = 0;                            // int
@@ -323,6 +324,67 @@ class YRefFrame extends YFunction
         return $this->set_mountPos($mixedPos);
     }
 
+    /**
+     * Returns the 3D sensor calibration state (Yocto-3D-V2 only). This function returns
+     * an integer representing the calibration state of the 3 inertial sensors of
+     * the BNO055 chip, found in the Yocto-3D-V2. Hundredths show the calibration state
+     * of the accelerometer, tenths show the calibration state of the magnetometer while
+     * units show the calibration state of the gyroscope. For each sensor, the value 0
+     * means no calibration and the value 3 means full calibration.
+     *
+     * @return an integer representing the calibration state of Yocto-3D-V2:
+     *         333 when fully calibrated, 0 when not calibrated at all.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * For the Yocto-3D (V1), this function always return -3 (unsupported function).
+     */
+    public function get_calibrationState()
+    {
+        // $calibParam             is a str;
+        $iCalib = Array();      // intArr;
+        // $caltyp                 is a int;
+        // $res                    is a int;
+        // may throw an exception
+        $calibParam = $this->get_calibrationParam();
+        $iCalib = YAPI::_decodeFloats($calibParam);
+        $caltyp = intVal(($iCalib[0]) / (1000));
+        if ($caltyp != 33) {
+            return YAPI_NOT_SUPPORTED;
+        }
+        $res = intVal(($iCalib[1]) / (1000));
+        return $res;
+    }
+
+    /**
+     * Returns estimated quality of the orientation (Yocto-3D-V2 only). This function returns
+     * an integer between 0 and 3 representing the degree of confidence of the position
+     * estimate. When the value is 3, the estimation is reliable. Below 3, one should
+     * expect sudden corrections, in particular for heading (compass function).
+     * The most frequent causes for values below 3 are magnetic interferences, and
+     * accelerations or rotations beyond the sensor range.
+     *
+     * @return an integer between 0 and 3 (3 when the measure is reliable)
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * For the Yocto-3D (V1), this function always return -3 (unsupported function).
+     */
+    public function get_measureQuality()
+    {
+        // $calibParam             is a str;
+        $iCalib = Array();      // intArr;
+        // $caltyp                 is a int;
+        // $res                    is a int;
+        // may throw an exception
+        $calibParam = $this->get_calibrationParam();
+        $iCalib = YAPI::_decodeFloats($calibParam);
+        $caltyp = intVal(($iCalib[0]) / (1000));
+        if ($caltyp != 33) {
+            return YAPI_NOT_SUPPORTED;
+        }
+        $res = intVal(($iCalib[2]) / (1000));
+        return $res;
+    }
+
     public function _calibSort($start,$stopidx)
     {
         // $idx                    is a int;
@@ -389,6 +451,7 @@ class YRefFrame extends YFunction
             $this->cancel3DCalibration();
         }
         $this->_calibSavedParams = $this->get_calibrationParam();
+        $this->_calibV2 = (intVal($this->_calibSavedParams) == 33);
         $this->set_calibrationParam('0');
         $this->_calibCount = 50;
         $this->_calibStage = 1;
@@ -416,6 +479,14 @@ class YRefFrame extends YFunction
      * On failure, throws an exception or returns a negative error code.
      */
     public function more3DCalibration()
+    {
+        if ($this->_calibV2) {
+            return $this->more3DCalibrationV2();
+        }
+        return $this->more3DCalibrationV1();
+    }
+
+    public function more3DCalibrationV1()
     {
         // $currTick               is a int;
         // $jsonData               is a bin;
@@ -615,6 +686,65 @@ class YRefFrame extends YFunction
         return YAPI_SUCCESS;
     }
 
+    public function more3DCalibrationV2()
+    {
+        // $currTick               is a int;
+        // $calibParam             is a bin;
+        $iCalib = Array();      // intArr;
+        // $cal3                   is a int;
+        // $calAcc                 is a int;
+        // $calMag                 is a int;
+        // $calGyr                 is a int;
+        // make sure calibration has been started
+        if ($this->_calibStage == 0) {
+            return YAPI_INVALID_ARGUMENT;
+        }
+        if ($this->_calibProgress == 100) {
+            return YAPI_SUCCESS;
+        }
+        // make sure we don't start before previous calibration is cleared
+        if ($this->_calibStage == 1) {
+            $currTick = ((YAPI::GetTickCount()) & (0x7FFFFFFF));
+            $currTick = (($currTick - $this->_calibPrevTick) & (0x7FFFFFFF));
+            if ($currTick < 1600) {
+                $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
+                $this->_calibStageProgress = intVal(($currTick) / (40));
+                $this->_calibProgress = 1;
+                return YAPI_SUCCESS;
+            }
+        }
+        // may throw an exception
+        $calibParam = $this->_download('api/refFrame/calibrationParam.txt');
+        $iCalib = YAPI::_decodeFloats($calibParam);
+        $cal3 = intVal(($iCalib[1]) / (1000));
+        $calAcc = intVal(($cal3) / (100));
+        $calMag = intVal(($cal3) / (10)) - 10*$calAcc;
+        $calGyr = (($cal3) % (10));
+        if ($calGyr < 3) {
+            $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
+            $this->_calibStageProgress = 40 + $calGyr*20;
+            $this->_calibProgress = 4 + $calGyr*2;
+        } else {
+            $this->_calibStage = 2;
+            if ($calMag < 3) {
+                $this->_calibStageHint = 'Slowly draw \'8\' shapes along the 3 axis';
+                $this->_calibStageProgress = 1 + $calMag*33;
+                $this->_calibProgress = 10 + $calMag*5;
+            } else {
+                $this->_calibStage = 3;
+                if ($calAcc < 3) {
+                    $this->_calibStageHint = 'Slowly turn the device, stopping at each 90 degrees';
+                    $this->_calibStageProgress = 1 + $calAcc*33;
+                    $this->_calibProgress = 25 + $calAcc*25;
+                } else {
+                    $this->_calibStageProgress = 99;
+                    $this->_calibProgress = 100;
+                }
+            }
+        }
+        return YAPI_SUCCESS;
+    }
+
     /**
      * Returns instructions to proceed to the tridimensional calibration initiated with
      * method start3DCalibration.
@@ -682,6 +812,14 @@ class YRefFrame extends YFunction
      */
     public function save3DCalibration()
     {
+        if ($this->_calibV2) {
+            return $this->save3DCalibrationV2();
+        }
+        return $this->save3DCalibrationV1();
+    }
+
+    public function save3DCalibrationV1()
+    {
         // $shiftX                 is a int;
         // $shiftY                 is a int;
         // $shiftZ                 is a int;
@@ -746,6 +884,11 @@ class YRefFrame extends YFunction
         return $this->set_calibrationParam($newcalib);
     }
 
+    public function save3DCalibrationV2()
+    {
+        return $this->set_calibrationParam('5,5,5,5,5,5');
+    }
+
     /**
      * Aborts the sensors tridimensional calibration process et restores normal settings.
      *
@@ -791,7 +934,7 @@ class YRefFrame extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindRefFrame($next_hwid);
+        return self::FindRefFrame($next_hwid);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 22360 2015-12-15 13:31:40Z seb $
+ * $Id: yocto_gyro.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -115,7 +115,7 @@ class YQt extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindQt($next_hwid);
+        return self::FindQt($next_hwid);
     }
 
     /**
@@ -186,6 +186,7 @@ function yFirstQt()
 //--- (generated code: YGyro return codes)
 //--- (end of generated code: YGyro return codes)
 //--- (generated code: YGyro definitions)
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_XVALUE_INVALID'))             define('Y_XVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_YVALUE_INVALID'))             define('Y_YVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',            YAPI_INVALID_DOUBLE);
@@ -215,12 +216,14 @@ function yInternalGyroCallback($YQt_obj, $str_value)
  */
 class YGyro extends YSensor
 {
+    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
     const XVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const YVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const ZVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     //--- (end of generated code: YGyro declaration)
 
     //--- (generated code: YGyro attributes)
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
     protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
     protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
     protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
@@ -255,6 +258,9 @@ class YGyro extends YSensor
     function _parseAttr($name, $val)
     {
         switch($name) {
+        case 'bandwidth':
+            $this->_bandwidth = intval($val);
+            return 1;
         case 'xValue':
             $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
@@ -266,6 +272,39 @@ class YGyro extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
+     *
+     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     */
+    public function get_bandwidth()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_BANDWIDTH_INVALID;
+            }
+        }
+        return $this->_bandwidth;
+    }
+
+    /**
+     * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
+     * frequency is lower, the device performs averaging.
+     *
+     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bandwidth($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("bandwidth",$rest_val);
     }
 
     /**
@@ -414,11 +453,11 @@ class YGyro extends YSensor
             $delta = $this->_y * $this->_w - $this->_x * $this->_z;
             if ($delta > 0.499 * $norm) {
                 $this->_pitch = 90.0;
-                $this->_head  = round(2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,$this->_w)) / 10.0;
+                $this->_head  = round(2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,-$this->_w)) / 10.0;
             } else {
                 if ($delta < -0.499 * $norm) {
                     $this->_pitch = -90.0;
-                    $this->_head  = round(-2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,$this->_w)) / 10.0;
+                    $this->_head  = round(-2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,-$this->_w)) / 10.0;
                 } else {
                     $this->_roll  = round(1800.0/3.141592653589793238463 * atan2(2.0 * ($this->_w * $this->_x + $this->_y * $this->_z),$sqw - $sqx - $sqy + $sqz)) / 10.0;
                     $this->_pitch = round(1800.0/3.141592653589793238463 * asin(2.0 * $delta / $norm)) / 10.0;
@@ -656,6 +695,12 @@ class YGyro extends YSensor
         return 0;
     }
 
+    public function bandwidth()
+    { return $this->get_bandwidth(); }
+
+    public function setBandwidth($newval)
+    { return $this->set_bandwidth($newval); }
+
     public function xValue()
     { return $this->get_xValue(); }
 
@@ -677,7 +722,7 @@ class YGyro extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindGyro($next_hwid);
+        return self::FindGyro($next_hwid);
     }
 
     /**

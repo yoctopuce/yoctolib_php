@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voltage.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_voltage.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YVoltage, the high-level API for Voltage functions
  *
@@ -115,7 +115,7 @@ class YVoltage extends YSensor
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindVoltage($next_hwid);
+        return self::FindVoltage($next_hwid);
     }
 
     /**

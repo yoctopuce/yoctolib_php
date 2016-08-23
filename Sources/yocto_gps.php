@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gps.php 23243 2016-02-23 14:13:12Z seb $
+ * $Id: yocto_gps.php 25202 2016-08-17 10:24:49Z seb $
  *
  * Implements YGps, the high-level API for Gps functions
  *
@@ -522,7 +522,7 @@ class YGps extends YFunction
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return yFindGps($next_hwid);
+        return self::FindGps($next_hwid);
     }
 
     /**
