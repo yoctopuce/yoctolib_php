@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -19,8 +19,8 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $led = yFindLed("$serial.led");   
-      if (!$led->isOnline()) { 
+      $led = yFindLed("$serial.led");
+      if (!$led->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -35,15 +35,16 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   // Drive the selected module
-  if (isset($_GET['state'])) { 
-      $state = $_GET['state'];  
+  if (isset($_GET['state'])) {
+      $state = $_GET['state'];
       if ($state=='OFF') $led->set_power(Y_POWER_OFF);
       if ($state=='ON')  $led->set_power(Y_POWER_ON);
-  } 
-?>  
+  }
+  yFreeAPI();
+?>
 <input type='radio' name='state' value='ON'>Turn led ON
 <input type='radio' name='state' value='OFF'>Turn led OFF
 <br><input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

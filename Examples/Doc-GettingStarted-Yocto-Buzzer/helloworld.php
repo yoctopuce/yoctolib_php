@@ -66,6 +66,7 @@
     } else {
         print ("Module offline");
     }
+    yFreeAPI();
 
     ?>
     Frequency: <input name='freq' value='1000'>

@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE> Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -21,7 +21,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $alt = yFindAltitude("$serial.altitude");
-      if (!$alt->isOnline()) { 
+      if (!$alt->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -47,11 +47,12 @@
   Print("Altitude: $hvalue m  (QNH=$qvalue hPa)<br>");
   Print("Temperature: $tvalue deg C <br>");
   Print("Pressure: $pvalue hPa<br>");
+  yFreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -21,7 +21,7 @@
       // Check if a specified module is available online
       $pwmoutput1 = yFindPwmOutput("$serial.pwmOutput1");
       $pwmoutput2 = yFindPwmOutput("$serial.pwmOutput2");
-      if (!$pwmoutput1->isOnline()) { 
+      if (!$pwmoutput1->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -39,14 +39,15 @@
   $pwmoutput1->set_enabled(Y_ENABLED_TRUE);
   $pwmoutput2->set_frequency(1000);
   $pwmoutput2->set_enabled(Y_ENABLED_TRUE);
-  
+
   Print("Module to use: <input name='serial' value='$serial'><br>");
   if(isset($_GET['dutycycle'])) {
       $dutyCycle = $_GET['dutycycle'];
       $pwmoutput1->set_dutyCycle($dutyCycle);      // immediate change
-      $pwmoutput2->dutyCycleMove($dutyCycle,3000); // smooth change  
-   }      
-?>  
+      $pwmoutput2->dutyCycleMove($dutyCycle,3000); // smooth change
+   }
+  yFreeAPI();
+?>
 <input type='radio' name='dutycycle' value='0'>Change Duty Cycle to 0 %<br>
 <input type='radio' name='dutycycle' value='25'>Change Duty Cycle to 25 %<br>
 <input type='radio' name='dutycycle' value='50'>Change Duty Cycle to 50 %<br>
@@ -55,4 +56,4 @@
 <input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

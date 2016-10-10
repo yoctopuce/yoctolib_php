@@ -37,6 +37,7 @@
       Print("Gps : fixing...<br>");
   else
       Printf("Gps : %s %s<br>", $gps->get_latitude(), $gps->get_longitude());
+  yFreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

@@ -5,7 +5,7 @@
 <FORM method='get'>
 <?php
   include('../../Sources/yocto_api.php');
- 
+
   // Use explicit error handling rather than exceptions
   yDisableExceptions();
 
@@ -17,8 +17,8 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $module = yFindModule("$serial");   
-      if (!$module->isOnline()) { 
+      $module = yFindModule("$serial");
+      if (!$module->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -44,8 +44,9 @@
   }
   printf("Current name: %s<br>", $module->get_logicalName());
   print("New name: <input name='newname' value='' maxlength=19><br>");
+  yFreeAPI();
 ?>
 <input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

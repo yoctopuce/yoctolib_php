@@ -50,6 +50,7 @@
 
   $temp6 = yFindTemperature("$serial.temperature6");
   Printf("Temperature channel 6: %.1f &deg;C<br>",$temp6->get_currentValue());
+  yFreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

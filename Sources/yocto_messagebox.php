@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_messagebox.php 25379 2016-09-16 16:07:16Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -163,7 +163,7 @@ class YSms
         }
         if ($this->_alphab == 2) {
             $isosize = ((strlen($this->_udata)) >> (1));
-            $isolatin =  pack('C',array_fill(0, $isosize, 0));
+            $isolatin = ($isosize > 0 ? pack('C',array_fill(0, $isosize, 0)) : '');
             $i = 0;
             while ($i < $isosize) {
                 $isolatin[$i] = pack('C', ord($this->_udata[2*$i+1]));
@@ -373,7 +373,7 @@ class YSms
             }
         }
         $this->_alphab = 2;
-        $this->_udata =  pack('C',array_fill(0, 0, 0));
+        $this->_udata = '';
         $this->addUnicodeData($ucs2);
         
         return YAPI_SUCCESS;
@@ -405,7 +405,7 @@ class YSms
         }
         $udatalen = strlen($this->_udata);
         if ($this->_alphab == 2) {
-            $udata =  pack('C',array_fill(0, $udatalen + 2*$newdatalen, 0));
+            $udata = ($udatalen + 2*$newdatalen > 0 ? pack('C',array_fill(0, $udatalen + 2*$newdatalen, 0)) : '');
             $i = 0;
             while ($i < $udatalen) {
                 $udata[$i] = pack('C', ord($this->_udata[$i]));
@@ -418,7 +418,7 @@ class YSms
                 $i = $i + 1;
             }
         } else {
-            $udata =  pack('C',array_fill(0, $udatalen+$newdatalen, 0));
+            $udata = ($udatalen+$newdatalen > 0 ? pack('C',array_fill(0, $udatalen+$newdatalen, 0)) : '');
             $i = 0;
             while ($i < $udatalen) {
                 $udata[$i] = pack('C', ord($this->_udata[$i]));
@@ -461,7 +461,7 @@ class YSms
         }
         // now build utf-16 buffer
         $udatalen = strlen($this->_udata);
-        $udata =  pack('C',array_fill(0, $udatalen+2*$newdatalen, 0));
+        $udata = ($udatalen+2*$newdatalen > 0 ? pack('C',array_fill(0, $udatalen+2*$newdatalen, 0)) : '');
         $i = 0;
         while ($i < $udatalen) {
             $udata[$i] = pack('C', ord($this->_udata[$i]));
@@ -544,7 +544,7 @@ class YSms
             $totsize = $totsize + strlen($subdata);
             $partno = $partno + 1;
         }
-        $res =  pack('C',array_fill(0, $totsize, 0));
+        $res = ($totsize > 0 ? pack('C',array_fill(0, $totsize, 0)) : '');
         $totsize = 0;
         $partno = 0;
         while ($partno < sizeof($this->_parts)) {
@@ -583,11 +583,11 @@ class YSms
             $i = $i + 1;
         }
         if ($numlen == 0) {
-            $res =  pack('C',array_fill(0, 1, 0));
+            $res = (1 > 0 ? pack('C',array_fill(0, 1, 0)) : '');
             $res[0] = pack('C', 0);
             return $res;
         }
-        $res =  pack('C',array_fill(0, 2+(($numlen+1) >> (1)), 0));
+        $res = (2+(($numlen+1) >> (1)) > 0 ? pack('C',array_fill(0, 2+(($numlen+1) >> (1)), 0)) : '');
         $res[0] = pack('C', $numlen);
         if (ord($bytes[0]) == 43) {
             $res[1] = pack('C', 145);
@@ -633,7 +633,7 @@ class YSms
         $addrType = ((ord($addr[$ofs])) & (112));
         if ($addrType == 80) {
             $siz = intVal((4*$siz) / (7));
-            $gsm7 =  pack('C',array_fill(0, $siz, 0));
+            $gsm7 = ($siz > 0 ? pack('C',array_fill(0, $siz, 0)) : '');
             $rpos = 1;
             $carry = 0;
             $nbits = 0;
@@ -682,12 +682,12 @@ class YSms
         // $v2                     is a int;
         $explen = strlen($exp);
         if ($explen == 0) {
-            $res =  pack('C',array_fill(0, 0, 0));
+            $res = '';
             return $res;
         }
         if (substr($exp, 0, 1) == '+') {
             $n = intVal(substr($exp, 1, $explen-1));
-            $res =  pack('C',array_fill(0, 1, 0));
+            $res = (1 > 0 ? pack('C',array_fill(0, 1, 0)) : '');
             if ($n > 30*86400) {
                 $n = 192+intVal((($n+6*86400)) / ((7*86400)));
             } else {
@@ -712,7 +712,7 @@ class YSms
             $explen = strlen($exp);
         }
         $expasc = $exp;
-        $res =  pack('C',array_fill(0, 7, 0));
+        $res = (7 > 0 ? pack('C',array_fill(0, 7, 0)) : '');
         $n = 0;
         $i = 0;
         while (($i+1 < $explen) && ($n < 7)) {
@@ -856,7 +856,7 @@ class YSms
         $udsize = $this->udataSize();
         $udhsize = strlen($this->_udh);
         $udlen = strlen($this->_udata);
-        $res =  pack('C',array_fill(0, 1+$udsize, 0));
+        $res = (1+$udsize > 0 ? pack('C',array_fill(0, 1+$udsize, 0)) : '');
         $udhlen = 0;
         $nbits = 0;
         $carry = 0;
@@ -936,7 +936,7 @@ class YSms
         $wpos = 0;
         while ($wpos < $udlen) {
             $partno = $partno + 1;
-            $newudh =  pack('C',array_fill(0, 5+$udhsize, 0));
+            $newudh = (5+$udhsize > 0 ? pack('C',array_fill(0, 5+$udhsize, 0)) : '');
             $newudh[0] = pack('C', 0);
             $newudh[1] = pack('C', 3);
             $newudh[2] = pack('C', $this->_mref);
@@ -952,7 +952,7 @@ class YSms
             } else {
                 $partlen = $udlen-$wpos;
             }
-            $newud =  pack('C',array_fill(0, $partlen, 0));
+            $newud = ($partlen > 0 ? pack('C',array_fill(0, $partlen, 0)) : '');
             $i = 0;
             while ($i < $partlen) {
                 $newud[$i] = pack('C', ord($this->_udata[$wpos]));
@@ -988,7 +988,7 @@ class YSms
         // Determine if the message can fit within a single PDU
         while(sizeof($this->_parts) > 0) { array_pop($this->_parts); };
         if ($this->udataSize() > 140) {
-            $this->_pdu =  pack('C',array_fill(0, 0, 0));
+            $this->_pdu = '';
             return $this->generateParts();
         }
         $sca = $this->encodeAddress($this->_smsc);
@@ -999,12 +999,12 @@ class YSms
         $udata = $this->encodeUserData();
         if ($this->_deliv) {
             $addr = $this->encodeAddress($this->_orig);
-            $hdr =  pack('C',array_fill(0, 1, 0));
+            $hdr = (1 > 0 ? pack('C',array_fill(0, 1, 0)) : '');
             $pdutyp = 0;
         } else {
             $addr = $this->encodeAddress($this->_dest);
             $this->_mref = $this->_mbox->nextMsgRef();
-            $hdr =  pack('C',array_fill(0, 2, 0));
+            $hdr = (2 > 0 ? pack('C',array_fill(0, 2, 0)) : '');
             $hdr[1] = pack('C', $this->_mref);
             $pdutyp = 1;
             if (strlen($stamp) > 0) {
@@ -1019,7 +1019,7 @@ class YSms
         }
         $hdr[0] = pack('C', $pdutyp);
         $pdulen = strlen($sca)+strlen($hdr)+strlen($addr)+2+strlen($stamp)+strlen($udata);
-        $this->_pdu =  pack('C',array_fill(0, $pdulen, 0));
+        $this->_pdu = ($pdulen > 0 ? pack('C',array_fill(0, $pdulen, 0)) : '');
         $pdulen = 0;
         $i = 0;
         while ($i < strlen($sca)) {
@@ -1162,7 +1162,7 @@ class YSms
         if ((($pdutyp) & (64)) != 0) {
             $udhsize = ord($pdu[$rpos]);
             $rpos = $rpos + 1;
-            $this->_udh =  pack('C',array_fill(0, $udhsize, 0));
+            $this->_udh = ($udhsize > 0 ? pack('C',array_fill(0, $udhsize, 0)) : '');
             $i = 0;
             while ($i < $udhsize) {
                 $this->_udh[$i] = pack('C', ord($pdu[$rpos]));
@@ -1184,9 +1184,9 @@ class YSms
             $udlen = $udlen - $udhlen;
         } else {
             $udhsize = 0;
-            $this->_udh =  pack('C',array_fill(0, 0, 0));
+            $this->_udh = '';
         }
-        $this->_udata =  pack('C',array_fill(0, $udlen, 0));
+        $this->_udata = ($udlen > 0 ? pack('C',array_fill(0, $udlen, 0)) : '');
         if ($this->_alphab == 0) {
             $i = 0;
             while ($i < $udlen) {
@@ -1596,7 +1596,7 @@ class YMessageBox extends YFunction
         $this->_gsm2unicode[] = 252;
         $this->_gsm2unicode[] = 224;
         // Invert table as well wherever possible
-        $this->_iso2gsm =  pack('C',array_fill(0, 256, 0));
+        $this->_iso2gsm = (256 > 0 ? pack('C',array_fill(0, 256, 0)) : '');
         $i = 0;
         while ($i <= 127) {
             $uni = $this->_gsm2unicode[$i];
@@ -1723,7 +1723,7 @@ class YMessageBox extends YFunction
             }
             $i = $i + 1;
         }
-        $resbin =  pack('C',array_fill(0, $reslen, 0));
+        $resbin = ($reslen > 0 ? pack('C',array_fill(0, $reslen, 0)) : '');
         $i = 0;
         $reslen = 0;
         while ($i < $gsmlen) {
@@ -1819,12 +1819,12 @@ class YMessageBox extends YFunction
                 $extra = $extra + 1;
             }
             if ($gsm7 == 0) {
-                $res =  pack('C',array_fill(0, 0, 0));
+                $res = '';
                 return $res;
             }
             $i = $i + 1;
         }
-        $res =  pack('C',array_fill(0, $asclen+$extra, 0));
+        $res = ($asclen+$extra > 0 ? pack('C',array_fill(0, $asclen+$extra, 0)) : '');
         $wpos = 0;
         $i = 0;
         while ($i < $asclen) {

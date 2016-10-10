@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -20,7 +20,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $loop = yFindCurrentLoopOutput("$serial.currentLoopOutput");
-      if (!$loop->isOnline()) { 
+      if (!$loop->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -33,15 +33,15 @@
           $loop = yFindCurrentLoopOutput("$serial.currentLoopOutput");
       }
   }
-  
+
   Print("Module to use: <input name='serial' value='$serial'><br>");
   if(isset($_GET['value'])) {
       $value = floatval($_GET['value']);
       $loop->set_current($value);      // immediate change
       Printf("Current loop set to $value mA<br>");
-    
-   } 
-  
+
+   }
+
    switch ($loop->get_loopPower()) {
     case Y_LOOPPOWER_POWEROK:
         print('Loop is powered<br>');
@@ -53,8 +53,9 @@
         print('Loop is not Powered<br>');
         break;
     }
+  yFreeAPI();
 
-?>  
+?>
 <input type='radio' name='value' value='4'>Change current loop to 4mA<br>
 <input type='radio' name='value' value='8'>Change current loop to 8mA<br>
 <input type='radio' name='value' value='12'>Change current loop to 12mA<br>
@@ -63,4 +64,4 @@
 <input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

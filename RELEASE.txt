@@ -1,5 +1,4 @@
-- Add roaming neutrality support for YoctoHub-GSM
-- Add Yocto-3D-V2 support (new calibration instructions)
-- Add read-ahead buffer for readByte function
-- Fix MODBUS write register command
-- Fix bug in method nextFunction on YFunction object.
+- Fix some comments in sources
+- Fix YFunction.FirstFunction() method that was not returning all functions.
+- Fix implementation of YC BINCREATE
+- Fix some demo examples

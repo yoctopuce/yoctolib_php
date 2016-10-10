@@ -18,8 +18,8 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $module = yFindModule("$serial");   
-      if (!$module->isOnline()) { 
+      $module = yFindModule("$serial");
+      if (!$module->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -37,11 +37,11 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   if (isset($_GET['beacon'])) {
-      if ($_GET['beacon']=='ON') 
+      if ($_GET['beacon']=='ON')
           $module->set_beacon(Y_BEACON_ON);
-      else  
+      else
           $module->set_beacon(Y_BEACON_OFF);
-  }          
+  }
   printf('serial: %s<br>',$module->get_serialNumber());
   printf('logical name: %s<br>',$module->get_logicalName());
   printf('luminosity: %s<br>',$module->get_luminosity());
@@ -56,8 +56,9 @@
   printf('upTime: %s sec<br>',intVal($module->get_upTime()/1000));
   printf('USB current: %smA<br>',$module->get_usbCurrent());
   printf('logs:<br><pre>%s</pre>',$module->get_lastLogs());
-?>  
+  yFreeAPI();
+?>
 <input type='submit' value='refresh'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

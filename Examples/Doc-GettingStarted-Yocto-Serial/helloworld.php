@@ -39,6 +39,7 @@
         $serialPort->set_protocol("Line");
         $serialPort->reset();
     }
+    yFreeAPI();
     ?>
     <input type='submit'>
 

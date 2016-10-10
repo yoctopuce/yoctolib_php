@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_colorledcluster.php 25379 2016-09-16 16:07:16Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -622,7 +622,7 @@ class YColorLedCluster extends YFunction
         // $rgb                    is a int;
         // $res                    is a int;
         $listlen = sizeof($rgbList);
-        $buff =  pack('C',array_fill(0, 3*$listlen, 0));
+        $buff = (3*$listlen > 0 ? pack('C',array_fill(0, 3*$listlen, 0)) : '');
         $idx = 0;
         while ($idx < $listlen) {
             $rgb = $rgbList[$idx];
@@ -656,7 +656,7 @@ class YColorLedCluster extends YFunction
         // $rgb                    is a int;
         // $res                    is a int;
         $listlen = sizeof($rgbList);
-        $buff =  pack('C',array_fill(0, 3*$listlen, 0));
+        $buff = (3*$listlen > 0 ? pack('C',array_fill(0, 3*$listlen, 0)) : '');
         $idx = 0;
         while ($idx < $listlen) {
             $rgb = $rgbList[$idx];
@@ -707,7 +707,7 @@ class YColorLedCluster extends YFunction
         // $hsl                    is a int;
         // $res                    is a int;
         $listlen = sizeof($hslList);
-        $buff =  pack('C',array_fill(0, 3*$listlen, 0));
+        $buff = (3*$listlen > 0 ? pack('C',array_fill(0, 3*$listlen, 0)) : '');
         $idx = 0;
         while ($idx < $listlen) {
             $hsl = $hslList[$idx];
@@ -741,7 +741,7 @@ class YColorLedCluster extends YFunction
         // $hsl                    is a int;
         // $res                    is a int;
         $listlen = sizeof($hslList);
-        $buff =  pack('C',array_fill(0, 3*$listlen, 0));
+        $buff = (3*$listlen > 0 ? pack('C',array_fill(0, 3*$listlen, 0)) : '');
         $idx = 0;
         while ($idx < $listlen) {
             $hsl = $hslList[$idx];

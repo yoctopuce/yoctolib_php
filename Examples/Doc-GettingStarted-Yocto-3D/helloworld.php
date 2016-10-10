@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE> Hello World</TITLE>
-</HEAD>   
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -9,7 +9,7 @@
   include('../../Sources/yocto_compass.php');
   include('../../Sources/yocto_gyro.php');
   include('../../Sources/yocto_accelerometer.php');
-  
+
   // Use explicit error handling rather than exceptions
   yDisableExceptions();
 
@@ -22,7 +22,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $anytilt = yFindTilt("$serial.tilt1");
-      if (!$anytilt->isOnline()) { 
+      if (!$anytilt->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -42,24 +42,24 @@
   $compass       = yFindCompass("$serial.compass");
   $gyro          = yFindGyro("$serial.gyro");
   $accelerometer = yFindAccelerometer ("$serial.accelerometer");
-   
+
   $tilt1value         =  $tilt1->get_currentValue();
-  $tilt2value         =  $tilt2 ->get_currentValue(); 
-  $compassvalue       = $compass->get_currentValue();  
-  $gyrovalue          = $gyro->get_currentValue();  
+  $tilt2value         =  $tilt2 ->get_currentValue();
+  $compassvalue       = $compass->get_currentValue();
+  $gyrovalue          = $gyro->get_currentValue();
   $accelerometervalue =  $accelerometer->get_currentValue();
- 
+
   Print("tilt1: $tilt1value &deg;<br>");
   Print("tilt2: $tilt2value &deg;<br>");
   Print("compass: $compassvalue &deg;<br>");
   Print("gyro: $gyrovalue &deg;/s<br>");
   Print("Accelerometer: $accelerometervalue  g<br>");
-  
-  
+  yFreeAPI();
+
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',500);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -21,7 +21,7 @@
       // Check if a specified module is available online
       $servo1 = yFindServo("$serial.servo1");
       $servo5 = yFindServo("$serial.servo5");
-      if (!$servo1->isOnline()) { 
+      if (!$servo1->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -41,8 +41,9 @@
       $pos = $_GET['pos'];
       $servo1->set_position($pos); // move as fast as possible
       $servo5->move($pos,3000);    // move in 3 seconds
-   }      
-?>  
+   }
+  yFreeAPI();
+?>
 <input type='radio' name='pos' value='-1000'>Move to -1000<br>
 <input type='radio' name='pos' value='-500'>Move to -500<br>
 <input type='radio' name='pos' value='0'>Move to center<br>
@@ -51,4 +52,4 @@
 <input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

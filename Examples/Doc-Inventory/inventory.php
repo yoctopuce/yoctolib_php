@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>inventory</TITLE>
-</HEAD> 
+</HEAD>
 <BODY>
 <H1>Device list</H1>
 <TT>
@@ -12,9 +12,10 @@
     while (!is_null($module)) {
         printf("%s (%s)<br>", $module->get_serialNumber(),
                $module->get_productName());
-        $module=$module->nextModule(); 
+        $module=$module->nextModule();
     }
+    yFreeAPI();
 ?>
 </TT>
 </BODY>
-</HTML> 
+</HTML>

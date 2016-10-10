@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_refframe.php 25275 2016-08-24 13:42:24Z mvuilleu $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -47,10 +47,12 @@ if(!defined('Y_MOUNTPOSITION_FRONT'))        define('Y_MOUNTPOSITION_FRONT',    
 if(!defined('Y_MOUNTPOSITION_REAR'))         define('Y_MOUNTPOSITION_REAR',        3);
 if(!defined('Y_MOUNTPOSITION_RIGHT'))        define('Y_MOUNTPOSITION_RIGHT',       4);
 if(!defined('Y_MOUNTPOSITION_LEFT'))         define('Y_MOUNTPOSITION_LEFT',        5);
+if(!defined('Y_MOUNTPOSITION_INVALID'))      define('Y_MOUNTPOSITION_INVALID',     6);
 if(!defined('Y_MOUNTORIENTATION_TWELVE'))    define('Y_MOUNTORIENTATION_TWELVE',   0);
 if(!defined('Y_MOUNTORIENTATION_THREE'))     define('Y_MOUNTORIENTATION_THREE',    1);
 if(!defined('Y_MOUNTORIENTATION_SIX'))       define('Y_MOUNTORIENTATION_SIX',      2);
 if(!defined('Y_MOUNTORIENTATION_NINE'))      define('Y_MOUNTORIENTATION_NINE',     3);
+if(!defined('Y_MOUNTORIENTATION_INVALID'))   define('Y_MOUNTORIENTATION_INVALID',  4);
 if(!defined('Y_MOUNTPOS_INVALID'))           define('Y_MOUNTPOS_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_BEARING_INVALID'))            define('Y_BEARING_INVALID',           YAPI_INVALID_DOUBLE);
 if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID',  YAPI_INVALID_STRING);
@@ -77,10 +79,12 @@ class YRefFrame extends YFunction
     const MOUNTPOSITION_REAR             = 3;
     const MOUNTPOSITION_RIGHT            = 4;
     const MOUNTPOSITION_LEFT             = 5;
+    const MOUNTPOSITION_INVALID          = 6;
     const MOUNTORIENTATION_TWELVE        = 0;
     const MOUNTORIENTATION_THREE         = 1;
     const MOUNTORIENTATION_SIX           = 2;
     const MOUNTORIENTATION_NINE          = 3;
+    const MOUNTORIENTATION_INVALID       = 4;
     //--- (end of YRefFrame declaration)
 
     //--- (YRefFrame attributes)
@@ -261,12 +265,15 @@ class YRefFrame extends YFunction
      *         Y_MOUNTPOSITION_REAR,     Y_MOUNTPOSITION_LEFT),
      *         corresponding to the installation in a box, on one of the six faces.
      *
-     * On failure, throws an exception or returns a negative error code.
+     * On failure, throws an exception or returns Y_MOUNTPOSITION_INVALID.
      */
     public function get_mountPosition()
     {
         // $position               is a int;
         $position = $this->get_mountPos();
+        if ($position < 0) {
+            return Y_MOUNTPOSITION_INVALID;
+        }
         return (($position) >> (2));
     }
 
@@ -283,12 +290,15 @@ class YRefFrame extends YFunction
      *         On the bottom face, the 12H orientation points to the front, while
      *         on the top face, the 12H orientation points to the rear.
      *
-     * On failure, throws an exception or returns a negative error code.
+     * On failure, throws an exception or returns Y_MOUNTORIENTATION_INVALID.
      */
     public function get_mountOrientation()
     {
         // $position               is a int;
         $position = $this->get_mountPos();
+        if ($position < 0) {
+            return Y_MOUNTORIENTATION_INVALID;
+        }
         return (($position) & (3));
     }
 

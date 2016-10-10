@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -19,7 +19,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $sensor= yFindVoltage("$serial.voltage1");
-      if (!$sensor->isOnline()) { 
+      if (!$sensor->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -32,19 +32,20 @@
       }
   }
   Print("Module to use: <input name='serial' value='$serial'><br>");
- 
-  if ($sensor->isOnline()) 
+
+  if ($sensor->isOnline())
    {  $sensorDC = yFindVoltage($serial.".voltage1");
       $sensorAC = yFindVoltage($serial.".voltage2");
       $DC = $sensorDC->get_currentValue();
       $AC = $sensorAC->get_currentValue();
       Print("Voltage, DC : $DC v    AC : $AC v  <br>");
    }
-   
+  yFreeAPI();
+
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

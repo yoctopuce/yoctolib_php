@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -19,8 +19,8 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $relay = yFindRelay("$serial.relay1");   
-      if (!$relay->isOnline()) { 
+      $relay = yFindRelay("$serial.relay1");
+      if (!$relay->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -35,15 +35,16 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   // Drive the selected module
-  if (isset($_GET['state'])) { 
-      $state = $_GET['state'];  
+  if (isset($_GET['state'])) {
+      $state = $_GET['state'];
       if ($state=='A') $relay->set_state(Y_STATE_A);
       if ($state=='B') $relay->set_state(Y_STATE_B);
-  } 
-?>  
+  }
+  yFreeAPI();
+?>
 <input type='radio' name='state' value='A'>Output A
 <input type='radio' name='state' value='B'>Output B
 <br><input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

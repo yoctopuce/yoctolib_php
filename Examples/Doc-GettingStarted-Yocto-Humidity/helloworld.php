@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -19,7 +19,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $hum = yFindHumidity("$serial.humidity");
-      if (!$hum->isOnline()) { 
+      if (!$hum->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -35,11 +35,12 @@
 
   $value = $hum->get_currentValue();
   Print("Humidity: $value %RH<br>");
+  yFreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

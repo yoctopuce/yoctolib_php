@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_api.php 25324 2016-09-10 20:40:48Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -973,6 +973,13 @@ class YFunctionType
     public function getBaseType()
     {
         return $this->_baseType;
+    }
+
+    public function matchBaseType($baseType)
+    {
+        if ($baseType == 0)
+            return true;
+        return $this->_baseType == $baseType;
     }
 
     // Find the the hardwareId of the first instance of a given function class
@@ -2123,7 +2130,7 @@ class YAPI
         $baseType = self::$BASETYPES[$str_className];
         $res = null;
         foreach(self::$_fnByType as $str_className => $funtype) {
-            if($funtype->getBaseType() == $baseType) {
+            if($funtype->matchBaseType($baseType)) {
                 $res = $funtype->resolve($str_func);
                 if($res->errorType == YAPI_SUCCESS) return $res;
             }
@@ -2147,7 +2154,7 @@ class YAPI
         $baseType = self::$BASETYPES[$str_className];
         $res = null;
         foreach(self::$_fnByType as $str_className => $funtype) {
-            if($funtype->getBaseType() == $baseType) {
+            if($funtype->matchBaseType($baseType)) {
                 $res = $funtype->getFriendlyName($str_func);
                 if($res->errorType == YAPI_SUCCESS) return $res;
             }
@@ -2232,7 +2239,7 @@ class YAPI
         $baseType = self::$BASETYPES[$str_className];
         $res = null;
         foreach(self::$_fnByType as $funtype) {
-            if($funtype->getBaseType() == $baseType) {
+            if($funtype->matchBaseType($baseType)) {
                 $res = $funtype->getFirstHardwareId();
                 if(!is_null($res)) return $res;
             }
@@ -2259,7 +2266,7 @@ class YAPI
                 $prevclass = "";
                 continue;
             }
-            if($funtype->getBaseType() == $baseType) {
+            if($funtype->matchBaseType($baseType)) {
                 $res = $funtype->getFirstHardwareId();
                 if(!is_null($res)) return $res;
             }
@@ -2560,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.25250";
+        return "1.10.25534";
     }
 
     /**

@@ -8,15 +8,15 @@
 
     function readModBus($serialPort, $slave, $reg)
     {
-        if($reg >= 40001) $res = $serialPort->modbusReadInputRegisters($slave, $reg - 40001, 1);
-        else if($reg >= 30001) $res = $serialPort->modbusReadRegisters($slave, $reg - 30001, 1);
+        if($reg >= 40001) $res = $serialPort->modbusReadRegisters($slave, $reg - 40001, 1);
+        else if($reg >= 30001) $res = $serialPort->modbusReadInputRegisters($slave, $reg - 30001, 1);
         else if($reg >= 10001) $res = $serialPort->modbusReadInputBits($slave, $reg - 10001, 1);
         else $res = $serialPort->modbusReadBits($slave, $reg - 1, 1);
         return $res[0];
     }
 
-    include('../../../Sources/yocto_api.php');
-    include('../../../Sources/yocto_serialport.php');
+    include('../../Sources/yocto_api.php');
+    include('../../Sources/yocto_serialport.php');
 
     // Use explicit error handling rather than exceptions
     yDisableExceptions();
@@ -43,7 +43,7 @@
         $reg = "";
         if(isset($_GET["reg"])) $reg = $_GET["reg"];
         print("Please select a Coil No (>=1), Input Bit No (>=10001+),<br>");
-        print("       Register No (>=30001) or Input Register No (>=40001)<br>");
+        print("       Input Register No (>=30001) or Register No (>=40001)<br>");
         Print("No:");
         if($reg == '') Printf("<input name='reg'>");
         else {
@@ -67,8 +67,9 @@
             }
         }
     }
+    yFreeAPI();
     ?>
     <input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

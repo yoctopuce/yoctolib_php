@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -19,8 +19,8 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $disp = yFindDisplay("$serial.display");   
-      if (!$disp->isOnline()) { 
+      $disp = yFindDisplay("$serial.display");
+      if (!$disp->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -28,9 +28,9 @@
       $disp = yFirstDisplay();
       if(is_null($disp)) {
           die("No module connected (check USB cable)");
-      }  
+      }
    }
-  $serial = $disp->get_module()->get_serialNumber(); 
+  $serial = $disp->get_module()->get_serialNumber();
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   $disp->resetAll();
@@ -50,9 +50,10 @@
   $l0->moveTo(0,$h-6);   $l0->lineTo(0,$h-1);   $l0->lineTo(5,$h-1);
   $l0->moveTo($w-1,$h-6);$l0->lineTo($w-1,$h-1);$l0->lineTo($w-6,$h-1);
   $l0->moveTo($w-1,5);   $l0->lineTo($w-1,0);   $l0->lineTo($w-6,0);
+  yFreeAPI();
 
 ?>
-<br><input type='submit'>
+<br><input type='submit' value="Refresh">
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

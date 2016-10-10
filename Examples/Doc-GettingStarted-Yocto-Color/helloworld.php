@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
@@ -19,9 +19,9 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $led1 = yFindColorLed("$serial.colorLed1");   
-      $led2 = yFindColorLed("$serial.colorLed2"); 
-      if (!$led1->isOnline()) { 
+      $led1 = yFindColorLed("$serial.colorLed1");
+      $led2 = yFindColorLed("$serial.colorLed2");
+      if (!$led1->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -41,8 +41,9 @@
       // Change the color in two different ways
       $color = hexdec($_GET['color']);
       $led1->set_rgbColor($color);  // immediate switch
-      $led2->rgbMove($color,1000);  // smooth transition  
-  } 
+      $led2->rgbMove($color,1000);  // smooth transition
+  }
+  yFreeAPI();
 ?>
 <input type='radio' name='color' value='0xFF0000'>Red
 <input type='radio' name='color' value='0x00FF00'>Green
@@ -50,4 +51,4 @@
 <br><input type='submit'>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 25248 2016-08-22 15:51:04Z seb $
+ * $Id: yocto_serialport.php 25379 2016-09-16 16:07:16Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -533,7 +533,7 @@ class YSerialPort extends YFunction
     {
         $this->_rxptr = 0;
         $this->_rxbuffptr = 0;
-        $this->_rxbuff =  pack('C',array_fill(0, 0, 0));
+        $this->_rxbuff = '';
         // may throw an exception
         return $this->sendCommand('Z');
     }
@@ -619,7 +619,7 @@ class YSerialPort extends YFunction
         // $hexb                   is a int;
         // $res                    is a int;
         $bufflen = sizeof($byteList);
-        $buff =  pack('C',array_fill(0, $bufflen, 0));
+        $buff = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {
             $hexb = $byteList[$idx];
@@ -652,7 +652,7 @@ class YSerialPort extends YFunction
             return $this->sendCommand(sprintf('$%s',$hexString));
         }
         $bufflen = (($bufflen) >> (1));
-        $buff =  pack('C',array_fill(0, $bufflen, 0));
+        $buff = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {
             $hexb = hexdec(substr($hexString,  2 * $idx, 2));
@@ -841,7 +841,7 @@ class YSerialPort extends YFunction
             $bufflen = $bufflen - 1;
         }
         $this->_rxptr = $endpos;
-        $res =  pack('C',array_fill(0, $bufflen, 0));
+        $res = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {
             $res[$idx] = pack('C', ord($buff[$idx]));

@@ -5,8 +5,8 @@
 <BODY>
 <FORM method='get'>
     <?php
-    include('../../../Sources/yocto_api.php');
-    include('../../../Sources/yocto_serialport.php');
+    include('../../Sources/yocto_api.php');
+    include('../../Sources/yocto_serialport.php');
 
     // Use explicit error handling rather than exceptions
     yDisableExceptions();
@@ -38,6 +38,7 @@
         $serialPort->set_protocol("Line");
         $serialPort->reset();
     }
+    yFreeAPI();
     ?>
     <input type='submit'>
 

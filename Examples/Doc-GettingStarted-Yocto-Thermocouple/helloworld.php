@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
@@ -19,7 +19,7 @@
   if ($serial != '') {
       // Check if a specified module is available online
       $temp = yFindTemperature("$serial.temperature1");
-      if (!$temp->isOnline()) { 
+      if (!$temp->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
@@ -38,13 +38,12 @@
 
   $temp2 = yFindTemperature("$serial.temperature2");
   Printf("Temperature channel 2: %.1f &deg;C<br>",$temp2->get_currentValue());
+  yFreeAPI();
 
-  
-  
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>
