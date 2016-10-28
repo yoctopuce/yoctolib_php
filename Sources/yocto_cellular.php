@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_cellular.php 25609 2016-10-19 12:37:17Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -768,7 +768,7 @@ class YCellular extends YFunction
     {
         // $gsmMsg                 is a str;
         $gsmMsg = $this->get_message();
-        if (!(!(substr($gsmMsg, 0, 13) == 'Enter SIM PUK'))) return $this->_throw(YAPI_INVALID_ARGUMENT, 'PUK not expected at $this time',YAPI_INVALID_ARGUMENT);
+        if (!(substr($gsmMsg, 0, 13) == 'Enter SIM PUK')) return $this->_throw(YAPI_INVALID_ARGUMENT, 'PUK not expected at $this time',YAPI_INVALID_ARGUMENT);
         if ($newPin == '') {
             return $this->set_command(sprintf('AT+CPIN=%s,0000;+CLCK=SC,0,0000',$puk));
         }

@@ -1,4 +1,3 @@
-- Fix some comments in sources
-- Fix YFunction.FirstFunction() method that was not returning all functions.
-- Fix implementation of YC BINCREATE
-- Fix some demo examples
+- Ensure all request are correctly flushed on YAPI::FreeAPI.
+- Fix method sendPUK of class YCellular
+- Fix read write access that where not correctly checked in HTTP callback

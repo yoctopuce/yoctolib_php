@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 25324 2016-09-10 20:40:48Z seb $
+ * $Id: yocto_api.php 25746 2016-10-28 09:31:31Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2336,7 +2336,7 @@ class YAPI
             return new YAPI_YReq("", YAPI_DEVICE_NOT_FOUND, 'No hub registered on '.$baseUrl, null);
         }
         $hub = self::$_hubs[$rooturl];
-        if($async && $hub->writeProtected && $hub->user != 'admin') {
+        if($async && $hub->writeProtected && $hub->user != 'admin' && !$hub->isCachedHub()) {
             // async query, make sure the hub is not write-protected
             return new YAPI_YReq("", YAPI_UNAUTHORIZED,
                                  'Access denied: admin credentials required',
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.25534";
+        return "1.10.25748";
     }
 
     /**
@@ -2608,6 +2608,17 @@ class YAPI
      */
     public static function FreeAPI()
     {
+        // leave max 10 second to finish pending requests
+        $timeout = YAPI::GetTickCount() + 10000;
+        foreach (self::$_pendingRequests as $tcpreq) {
+            $request = trim($tcpreq->request);
+            if (substr($request, 0, 12) == 'GET /not.byn') {
+                continue;
+            }
+            while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout) {
+                self::_handleEvents_internal(100);
+            }
+        }
         // clear all caches
         self::_init();
     }
@@ -3903,7 +3914,9 @@ class YDataStream
             }
         }
         if ($this->_caltyp != 0) {
-            $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+            if (!is_null($this->_calhdl)) {
+                $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+            }
         }
         return $val;
     }
@@ -3922,7 +3935,9 @@ class YDataStream
             }
         }
         if ($this->_caltyp != 0) {
-            $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+            if (!is_null($this->_calhdl)) {
+                $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+            }
         }
         return $val;
     }
