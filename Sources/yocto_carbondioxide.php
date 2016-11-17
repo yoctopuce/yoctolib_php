@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_carbondioxide.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_carbondioxide.php 25831 2016-11-08 11:12:15Z seb $
  *
  * Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -190,9 +190,14 @@ class YCarbonDioxide extends YSensor
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function triggetBaselineCalibration()
+    public function triggerBaselineCalibration()
     {
         return $this->set_command('BC');
+    }
+
+    public function triggetBaselineCalibration()
+    {
+        return $this->triggerBaselineCalibration();
     }
 
     /**
@@ -211,9 +216,14 @@ class YCarbonDioxide extends YSensor
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function triggetZeroCalibration()
+    public function triggerZeroCalibration()
     {
         return $this->set_command('ZC');
+    }
+
+    public function triggetZeroCalibration()
+    {
+        return $this->triggerZeroCalibration();
     }
 
     public function abcPeriod()

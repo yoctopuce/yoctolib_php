@@ -1,3 +1,3 @@
-- Ensure all request are correctly flushed on YAPI::FreeAPI.
-- Fix method sendPUK of class YCellular
-- Fix read write access that where not correctly checked in HTTP callback
+- Add README.md for Github
+- Fix typo in CO2 calibration function name
+- Fix comment of method set_portPolarity() of YDigitalIO class.
