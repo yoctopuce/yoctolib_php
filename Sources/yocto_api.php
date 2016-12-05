@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 25746 2016-10-28 09:31:31Z seb $
+ * $Id: yocto_api.php 26132 2016-12-01 17:02:38Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.25913";
+        return "1.10.26144";
     }
 
     /**
@@ -4313,8 +4313,8 @@ class YDataSet
                 $this->_measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
             }
             $tim = $tim + $itv;
+            $tim = round($tim * 1000) / 1000.0;
         }
-        
         return $this->get_progress();
     }
 
