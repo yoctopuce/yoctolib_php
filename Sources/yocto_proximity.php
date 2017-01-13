@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 25964 2016-11-21 15:30:59Z mvuilleu $
+ * $Id: pic24config.php 26169 2016-12-12 01:36:34Z mvuilleu $
  *
  * Implements YProximity, the high-level API for Proximity functions
  *
@@ -176,12 +176,12 @@ class YProximity extends YSensor
     }
 
     /**
-     * Returns the number of elapsed milliseconds between the module power on and the last time
-     * the input button was pressed (the input contact transitioned from absent to present).
+     * Returns the number of elapsed milliseconds between the module power on and the last observed
+     * detection (the input contact transitioned from absent to present).
      *
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
-     * and the last time
-     *         the input button was pressed (the input contact transitioned from absent to present)
+     * and the last observed
+     *         detection (the input contact transitioned from absent to present)
      *
      * On failure, throws an exception or returns Y_LASTTIMEAPPROACHED_INVALID.
      */
@@ -196,12 +196,12 @@ class YProximity extends YSensor
     }
 
     /**
-     * Returns the number of elapsed milliseconds between the module power on and the last time
-     * the input button was released (the input contact transitioned from present to absent).
+     * Returns the number of elapsed milliseconds between the module power on and the last observed
+     * detection (the input contact transitioned from present to absent).
      *
      * @return an integer corresponding to the number of elapsed milliseconds between the module power on
-     * and the last time
-     *         the input button was released (the input contact transitioned from present to absent)
+     * and the last observed
+     *         detection (the input contact transitioned from present to absent)
      *
      * On failure, throws an exception or returns Y_LASTTIMEREMOVED_INVALID.
      */

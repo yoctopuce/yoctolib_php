@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 26132 2016-12-01 17:02:38Z seb $
+ * $Id: yocto_api.php 26329 2017-01-11 14:04:39Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.26144";
+        return "1.10.26380";
     }
 
     /**
@@ -4903,6 +4903,25 @@ class YFunction
     public function unmuteValueCallbacks()
     {
         return $this->set_advertisedValue('');
+    }
+
+    /**
+     * Returns the current value of a single function attribute, as a text string, as quickly as
+     * possible but without using the cached value.
+     *
+     * @param attrName : le nom de l'attribut désiré
+     *
+     * @return une chaîne de caractères représentant la valeur actuelle de l'attribut.
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function loadAttribute($attrName)
+    {
+        // $url                    is a str;
+        // $attrVal                is a bin;
+        $url = sprintf('api/%s/%s', $this->get_functionId(), $attrName);
+        $attrVal = $this->_download($url);
+        return $attrVal;
     }
 
     public function _parserHelper()

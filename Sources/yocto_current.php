@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_current.php 26183 2016-12-15 00:14:02Z mvuilleu $
  *
  * Implements YCurrent, the high-level API for Current functions
  *
@@ -41,6 +41,9 @@
 //--- (YCurrent return codes)
 //--- (end of YCurrent return codes)
 //--- (YCurrent definitions)
+if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
+if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
+if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
 //--- (end of YCurrent definitions)
 
 //--- (YCurrent declaration)
@@ -53,9 +56,13 @@
  */
 class YCurrent extends YSensor
 {
+    const ENABLED_FALSE                  = 0;
+    const ENABLED_TRUE                   = 1;
+    const ENABLED_INVALID                = -1;
     //--- (end of YCurrent declaration)
 
     //--- (YCurrent attributes)
+    protected $_enabled                  = Y_ENABLED_INVALID;            // Bool
     //--- (end of YCurrent attributes)
 
     function __construct($str_func)
@@ -68,6 +75,32 @@ class YCurrent extends YSensor
     }
 
     //--- (YCurrent implementation)
+
+    function _parseAttr($name, $val)
+    {
+        switch($name) {
+        case 'enabled':
+            $this->_enabled = intval($val);
+            return 1;
+        }
+        return parent::_parseAttr($name, $val);
+    }
+
+    public function get_enabled()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_ENABLED_INVALID;
+            }
+        }
+        return $this->_enabled;
+    }
+
+    public function set_enabled($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("enabled",$rest_val);
+    }
 
     /**
      * Retrieves a current sensor for a given identifier.
@@ -102,6 +135,12 @@ class YCurrent extends YSensor
         }
         return $obj;
     }
+
+    public function enabled()
+    { return $this->get_enabled(); }
+
+    public function setEnabled($newval)
+    { return $this->set_enabled($newval); }
 
     /**
      * Continues the enumeration of current sensors started using yFirstCurrent().

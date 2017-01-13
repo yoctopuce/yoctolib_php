@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 25964 2016-11-21 15:30:59Z mvuilleu $
+ * $Id: yocto_steppermotor.php 26253 2017-01-03 17:41:07Z seb $
  *
  * Implements YStepperMotor, the high-level API for StepperMotor functions
  *
@@ -60,11 +60,12 @@ if(!defined('Y_SPEED_INVALID'))              define('Y_SPEED_INVALID',          
 if(!defined('Y_PULLINSPEED_INVALID'))        define('Y_PULLINSPEED_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_MAXACCEL_INVALID'))           define('Y_MAXACCEL_INVALID',          YAPI_INVALID_DOUBLE);
 if(!defined('Y_MAXSPEED_INVALID'))           define('Y_MAXSPEED_INVALID',          YAPI_INVALID_DOUBLE);
-if(!defined('Y_USTEPMAXSPEED_INVALID'))      define('Y_USTEPMAXSPEED_INVALID',     YAPI_INVALID_DOUBLE);
 if(!defined('Y_OVERCURRENT_INVALID'))        define('Y_OVERCURRENT_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_TCURRSTOP_INVALID'))          define('Y_TCURRSTOP_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_TCURRRUN_INVALID'))           define('Y_TCURRRUN_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_ALERTMODE_INVALID'))          define('Y_ALERTMODE_INVALID',         YAPI_INVALID_STRING);
+if(!defined('Y_AUXMODE_INVALID'))            define('Y_AUXMODE_INVALID',           YAPI_INVALID_STRING);
+if(!defined('Y_AUXSIGNAL_INVALID'))          define('Y_AUXSIGNAL_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YStepperMotor definitions)
 
@@ -95,11 +96,12 @@ class YStepperMotor extends YFunction
     const STEPPING_HALFSTEP              = 3;
     const STEPPING_FULLSTEP              = 4;
     const STEPPING_INVALID               = -1;
-    const USTEPMAXSPEED_INVALID          = YAPI_INVALID_DOUBLE;
     const OVERCURRENT_INVALID            = YAPI_INVALID_UINT;
     const TCURRSTOP_INVALID              = YAPI_INVALID_UINT;
     const TCURRRUN_INVALID               = YAPI_INVALID_UINT;
     const ALERTMODE_INVALID              = YAPI_INVALID_STRING;
+    const AUXMODE_INVALID                = YAPI_INVALID_STRING;
+    const AUXSIGNAL_INVALID              = YAPI_INVALID_INT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YStepperMotor declaration)
 
@@ -112,11 +114,12 @@ class YStepperMotor extends YFunction
     protected $_maxAccel                 = Y_MAXACCEL_INVALID;           // MeasureVal
     protected $_maxSpeed                 = Y_MAXSPEED_INVALID;           // MeasureVal
     protected $_stepping                 = Y_STEPPING_INVALID;           // SteppingMode
-    protected $_ustepMaxSpeed            = Y_USTEPMAXSPEED_INVALID;      // MeasureVal
     protected $_overcurrent              = Y_OVERCURRENT_INVALID;        // UInt31
     protected $_tCurrStop                = Y_TCURRSTOP_INVALID;          // UInt31
     protected $_tCurrRun                 = Y_TCURRRUN_INVALID;           // UInt31
     protected $_alertMode                = Y_ALERTMODE_INVALID;          // AlertMode
+    protected $_auxMode                  = Y_AUXMODE_INVALID;            // AuxMode
+    protected $_auxSignal                = Y_AUXSIGNAL_INVALID;          // Int
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YStepperMotor attributes)
 
@@ -158,9 +161,6 @@ class YStepperMotor extends YFunction
         case 'stepping':
             $this->_stepping = intval($val);
             return 1;
-        case 'ustepMaxSpeed':
-            $this->_ustepMaxSpeed = round($val * 1000.0 / 65536.0) / 1000.0;
-            return 1;
         case 'overcurrent':
             $this->_overcurrent = intval($val);
             return 1;
@@ -172,6 +172,12 @@ class YStepperMotor extends YFunction
             return 1;
         case 'alertMode':
             $this->_alertMode = $val;
+            return 1;
+        case 'auxMode':
+            $this->_auxMode = $val;
+            return 1;
+        case 'auxSignal':
+            $this->_auxSignal = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -405,40 +411,6 @@ class YStepperMotor extends YFunction
     }
 
     /**
-     * Changes the maximal motor speed for micro-stepping, measured in steps per second.
-     *
-     * @param newval : a floating point number corresponding to the maximal motor speed for
-     * micro-stepping, measured in steps per second
-     *
-     * @return YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_ustepMaxSpeed($newval)
-    {
-        $rest_val = strval(round($newval * 65536.0));
-        return $this->_setAttr("ustepMaxSpeed",$rest_val);
-    }
-
-    /**
-     * Returns the maximal motor speed for micro-stepping, measured in steps per second.
-     *
-     * @return a floating point number corresponding to the maximal motor speed for micro-stepping,
-     * measured in steps per second
-     *
-     * On failure, throws an exception or returns Y_USTEPMAXSPEED_INVALID.
-     */
-    public function get_ustepMaxSpeed()
-    {
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_USTEPMAXSPEED_INVALID;
-            }
-        }
-        return $this->_ustepMaxSpeed;
-    }
-
-    /**
      * Returns the overcurrent alert and emergency stop threshold, measured in mA.
      *
      * @return an integer corresponding to the overcurrent alert and emergency stop threshold, measured in mA
@@ -552,6 +524,55 @@ class YStepperMotor extends YFunction
         return $this->_setAttr("alertMode",$rest_val);
     }
 
+    public function get_auxMode()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_AUXMODE_INVALID;
+            }
+        }
+        return $this->_auxMode;
+    }
+
+    public function set_auxMode($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("auxMode",$rest_val);
+    }
+
+    /**
+     * Returns the current value of the signal generated on the auxiliary output.
+     *
+     * @return an integer corresponding to the current value of the signal generated on the auxiliary output
+     *
+     * On failure, throws an exception or returns Y_AUXSIGNAL_INVALID.
+     */
+    public function get_auxSignal()
+    {
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_AUXSIGNAL_INVALID;
+            }
+        }
+        return $this->_auxSignal;
+    }
+
+    /**
+     * Changes the value of the signal generated on the auxiliary output.
+     * Acceptable values depend on the auxiliary output signal type configured.
+     *
+     * @param newval : an integer corresponding to the value of the signal generated on the auxiliary output
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_auxSignal($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("auxSignal",$rest_val);
+    }
+
     public function get_command()
     {
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -628,7 +649,7 @@ class YStepperMotor extends YFunction
      */
     public function findHomePosition($speed)
     {
-        return $this->sendCommand('H');
+        return $this->sendCommand(sprintf('H%d',round(1000*$speed)));
     }
 
     /**
@@ -662,19 +683,31 @@ class YStepperMotor extends YFunction
     }
 
     /**
-     * Starts the motor to reach a given absolute position. The time needed to reach the requested
+     * Starts the motor to reach a given relative position. The time needed to reach the requested
      * position will depend on the acceleration and max speed parameters configured for
      * the motor.
      *
      * @param relPos : relative position, measured in steps from the current position.
      *
      * @return YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
+     *         On failure, throws an exception or returns a negative error code.
      */
     public function moveRel($relPos)
     {
         return $this->sendCommand(sprintf('m%d',round(16*$relPos)));
+    }
+
+    /**
+     * Keep the motor in the same state for the specified amount of time, before processing next command.
+     *
+     * @param waitMs : wait time, specified in milliseconds.
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function pause($waitMs)
+    {
+        return $this->sendCommand(sprintf('_%d',$waitMs));
     }
 
     /**
@@ -762,12 +795,6 @@ class YStepperMotor extends YFunction
     public function setStepping($newval)
     { return $this->set_stepping($newval); }
 
-    public function setUstepMaxSpeed($newval)
-    { return $this->set_ustepMaxSpeed($newval); }
-
-    public function ustepMaxSpeed()
-    { return $this->get_ustepMaxSpeed(); }
-
     public function overcurrent()
     { return $this->get_overcurrent(); }
 
@@ -791,6 +818,18 @@ class YStepperMotor extends YFunction
 
     public function setAlertMode($newval)
     { return $this->set_alertMode($newval); }
+
+    public function auxMode()
+    { return $this->get_auxMode(); }
+
+    public function setAuxMode($newval)
+    { return $this->set_auxMode($newval); }
+
+    public function auxSignal()
+    { return $this->get_auxSignal(); }
+
+    public function setAuxSignal($newval)
+    { return $this->set_auxSignal($newval); }
 
     public function command()
     { return $this->get_command(); }
