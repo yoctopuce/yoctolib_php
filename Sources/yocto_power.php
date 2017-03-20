@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_power.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',     
  *
  * The Yoctopuce class YPower allows you to read and configure Yoctopuce power
  * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to access the energy counter and the power factor.
  */
 class YPower extends YSensor
@@ -106,12 +106,14 @@ class YPower extends YSensor
      */
     public function get_cosPhi()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COSPHI_INVALID;
             }
         }
-        return $this->_cosPhi;
+        $res = $this->_cosPhi;
+        return $res;
     }
 
     public function set_meter($newval)
@@ -131,12 +133,14 @@ class YPower extends YSensor
      */
     public function get_meter()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_METER_INVALID;
             }
         }
-        return $this->_meter;
+        $res = $this->_meter;
+        return $res;
     }
 
     /**
@@ -148,12 +152,14 @@ class YPower extends YSensor
      */
     public function get_meterTimer()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_METERTIMER_INVALID;
             }
         }
-        return $this->_meterTimer;
+        $res = $this->_meterTimer;
+        return $res;
     }
 
     /**

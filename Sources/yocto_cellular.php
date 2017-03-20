@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 25609 2016-10-19 12:37:17Z seb $
+ * $Id: yocto_cellular.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -287,12 +287,14 @@ class YCellular extends YFunction
      */
     public function get_linkQuality()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LINKQUALITY_INVALID;
             }
         }
-        return $this->_linkQuality;
+        $res = $this->_linkQuality;
+        return $res;
     }
 
     /**
@@ -304,12 +306,14 @@ class YCellular extends YFunction
      */
     public function get_cellOperator()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CELLOPERATOR_INVALID;
             }
         }
-        return $this->_cellOperator;
+        $res = $this->_cellOperator;
+        return $res;
     }
 
     /**
@@ -322,12 +326,14 @@ class YCellular extends YFunction
      */
     public function get_cellIdentifier()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CELLIDENTIFIER_INVALID;
             }
         }
-        return $this->_cellIdentifier;
+        $res = $this->_cellIdentifier;
+        return $res;
     }
 
     /**
@@ -340,12 +346,14 @@ class YCellular extends YFunction
      */
     public function get_cellType()
     {
+        // $res                    is a enumCELLTYPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CELLTYPE_INVALID;
             }
         }
-        return $this->_cellType;
+        $res = $this->_cellType;
+        return $res;
     }
 
     /**
@@ -361,12 +369,14 @@ class YCellular extends YFunction
      */
     public function get_imsi()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_IMSI_INVALID;
             }
         }
-        return $this->_imsi;
+        $res = $this->_imsi;
+        return $res;
     }
 
     /**
@@ -378,12 +388,14 @@ class YCellular extends YFunction
      */
     public function get_message()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MESSAGE_INVALID;
             }
         }
-        return $this->_message;
+        $res = $this->_message;
+        return $res;
     }
 
     /**
@@ -399,12 +411,14 @@ class YCellular extends YFunction
      */
     public function get_pin()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PIN_INVALID;
             }
         }
-        return $this->_pin;
+        $res = $this->_pin;
+        return $res;
     }
 
     /**
@@ -445,12 +459,14 @@ class YCellular extends YFunction
      */
     public function get_lockedOperator()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LOCKEDOPERATOR_INVALID;
             }
         }
-        return $this->_lockedOperator;
+        $res = $this->_lockedOperator;
+        return $res;
     }
 
     /**
@@ -480,12 +496,14 @@ class YCellular extends YFunction
      */
     public function get_airplaneMode()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_AIRPLANEMODE_INVALID;
             }
         }
-        return $this->_airplaneMode;
+        $res = $this->_airplaneMode;
+        return $res;
     }
 
     /**
@@ -515,12 +533,14 @@ class YCellular extends YFunction
      */
     public function get_enableData()
     {
+        // $res                    is a enumSERVICESCOPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLEDATA_INVALID;
             }
         }
-        return $this->_enableData;
+        $res = $this->_enableData;
+        return $res;
     }
 
     /**
@@ -554,12 +574,14 @@ class YCellular extends YFunction
      */
     public function get_apn()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_APN_INVALID;
             }
         }
-        return $this->_apn;
+        $res = $this->_apn;
+        return $res;
     }
 
     /**
@@ -590,12 +612,14 @@ class YCellular extends YFunction
      */
     public function get_apnSecret()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_APNSECRET_INVALID;
             }
         }
-        return $this->_apnSecret;
+        $res = $this->_apnSecret;
+        return $res;
     }
 
     public function set_apnSecret($newval)
@@ -613,12 +637,14 @@ class YCellular extends YFunction
      */
     public function get_pingInterval()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PINGINTERVAL_INVALID;
             }
         }
-        return $this->_pingInterval;
+        $res = $this->_pingInterval;
+        return $res;
     }
 
     /**
@@ -645,12 +671,14 @@ class YCellular extends YFunction
      */
     public function get_dataSent()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DATASENT_INVALID;
             }
         }
-        return $this->_dataSent;
+        $res = $this->_dataSent;
+        return $res;
     }
 
     /**
@@ -677,12 +705,14 @@ class YCellular extends YFunction
      */
     public function get_dataReceived()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DATARECEIVED_INVALID;
             }
         }
-        return $this->_dataReceived;
+        $res = $this->_dataReceived;
+        return $res;
     }
 
     /**
@@ -702,12 +732,14 @@ class YCellular extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

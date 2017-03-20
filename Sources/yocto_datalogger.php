@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_datalogger.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -457,12 +457,14 @@ class YDataLogger extends YFunction
      */
     public function get_currentRunIndex()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTRUNINDEX_INVALID;
             }
         }
-        return $this->_currentRunIndex;
+        $res = $this->_currentRunIndex;
+        return $res;
     }
 
     /**
@@ -474,12 +476,14 @@ class YDataLogger extends YFunction
      */
     public function get_timeUTC()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TIMEUTC_INVALID;
             }
         }
-        return $this->_timeUTC;
+        $res = $this->_timeUTC;
+        return $res;
     }
 
     /**
@@ -507,12 +511,14 @@ class YDataLogger extends YFunction
      */
     public function get_recording()
     {
+        // $res                    is a enumOFFONPENDING;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RECORDING_INVALID;
             }
         }
-        return $this->_recording;
+        $res = $this->_recording;
+        return $res;
     }
 
     /**
@@ -541,12 +547,14 @@ class YDataLogger extends YFunction
      */
     public function get_autoStart()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_AUTOSTART_INVALID;
             }
         }
-        return $this->_autoStart;
+        $res = $this->_autoStart;
+        return $res;
     }
 
     /**
@@ -568,20 +576,23 @@ class YDataLogger extends YFunction
     }
 
     /**
-     * Return true if the data logger is synchronised with the localization beacon.
+     * Returns true if the data logger is synchronised with the localization beacon.
      *
-     * @return either Y_BEACONDRIVEN_OFF or Y_BEACONDRIVEN_ON
+     * @return either Y_BEACONDRIVEN_OFF or Y_BEACONDRIVEN_ON, according to true if the data logger is
+     * synchronised with the localization beacon
      *
      * On failure, throws an exception or returns Y_BEACONDRIVEN_INVALID.
      */
     public function get_beaconDriven()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BEACONDRIVEN_INVALID;
             }
         }
-        return $this->_beaconDriven;
+        $res = $this->_beaconDriven;
+        return $res;
     }
 
     /**
@@ -604,12 +615,14 @@ class YDataLogger extends YFunction
 
     public function get_clearHistory()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CLEARHISTORY_INVALID;
             }
         }
-        return $this->_clearHistory;
+        $res = $this->_clearHistory;
+        return $res;
     }
 
     public function set_clearHistory($newval)

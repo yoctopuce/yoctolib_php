@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_network.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -81,6 +81,7 @@ if(!defined('Y_WWWWATCHDOGDELAY_INVALID'))   define('Y_WWWWATCHDOGDELAY_INVALID'
 if(!defined('Y_CALLBACKURL_INVALID'))        define('Y_CALLBACKURL_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_CALLBACKCREDENTIALS_INVALID')) define('Y_CALLBACKCREDENTIALS_INVALID', YAPI_INVALID_STRING);
 if(!defined('Y_CALLBACKINITIALDELAY_INVALID')) define('Y_CALLBACKINITIALDELAY_INVALID', YAPI_INVALID_UINT);
+if(!defined('Y_CALLBACKSCHEDULE_INVALID'))   define('Y_CALLBACKSCHEDULE_INVALID',  YAPI_INVALID_STRING);
 if(!defined('Y_CALLBACKMINDELAY_INVALID'))   define('Y_CALLBACKMINDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_CALLBACKMAXDELAY_INVALID'))   define('Y_CALLBACKMAXDELAY_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_POECURRENT_INVALID'))         define('Y_POECURRENT_INVALID',        YAPI_INVALID_UINT);
@@ -135,6 +136,7 @@ class YNetwork extends YFunction
     const CALLBACKENCODING_INVALID       = -1;
     const CALLBACKCREDENTIALS_INVALID    = YAPI_INVALID_STRING;
     const CALLBACKINITIALDELAY_INVALID   = YAPI_INVALID_UINT;
+    const CALLBACKSCHEDULE_INVALID       = YAPI_INVALID_STRING;
     const CALLBACKMINDELAY_INVALID       = YAPI_INVALID_UINT;
     const CALLBACKMAXDELAY_INVALID       = YAPI_INVALID_UINT;
     const POECURRENT_INVALID             = YAPI_INVALID_UINT;
@@ -161,6 +163,7 @@ class YNetwork extends YFunction
     protected $_callbackEncoding         = Y_CALLBACKENCODING_INVALID;   // CallbackEncoding
     protected $_callbackCredentials      = Y_CALLBACKCREDENTIALS_INVALID; // Credentials
     protected $_callbackInitialDelay     = Y_CALLBACKINITIALDELAY_INVALID; // UInt31
+    protected $_callbackSchedule         = Y_CALLBACKSCHEDULE_INVALID;   // CallbackSchedule
     protected $_callbackMinDelay         = Y_CALLBACKMINDELAY_INVALID;   // UInt31
     protected $_callbackMaxDelay         = Y_CALLBACKMAXDELAY_INVALID;   // UInt31
     protected $_poeCurrent               = Y_POECURRENT_INVALID;         // UsedCurrent
@@ -240,6 +243,9 @@ class YNetwork extends YFunction
         case 'callbackInitialDelay':
             $this->_callbackInitialDelay = intval($val);
             return 1;
+        case 'callbackSchedule':
+            $this->_callbackSchedule = $val;
+            return 1;
         case 'callbackMinDelay':
             $this->_callbackMinDelay = intval($val);
             return 1;
@@ -276,12 +282,14 @@ class YNetwork extends YFunction
      */
     public function get_readiness()
     {
+        // $res                    is a enumREADINESS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_READINESS_INVALID;
             }
         }
-        return $this->_readiness;
+        $res = $this->_readiness;
+        return $res;
     }
 
     /**
@@ -294,12 +302,14 @@ class YNetwork extends YFunction
      */
     public function get_macAddress()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MACADDRESS_INVALID;
             }
         }
-        return $this->_macAddress;
+        $res = $this->_macAddress;
+        return $res;
     }
 
     /**
@@ -312,12 +322,14 @@ class YNetwork extends YFunction
      */
     public function get_ipAddress()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_IPADDRESS_INVALID;
             }
         }
-        return $this->_ipAddress;
+        $res = $this->_ipAddress;
+        return $res;
     }
 
     /**
@@ -329,12 +341,14 @@ class YNetwork extends YFunction
      */
     public function get_subnetMask()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SUBNETMASK_INVALID;
             }
         }
-        return $this->_subnetMask;
+        $res = $this->_subnetMask;
+        return $res;
     }
 
     /**
@@ -346,22 +360,45 @@ class YNetwork extends YFunction
      */
     public function get_router()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ROUTER_INVALID;
             }
         }
-        return $this->_router;
+        $res = $this->_router;
+        return $res;
     }
 
+    /**
+     * Returns the IP configuration of the network interface.
+     *
+     * If the network interface is setup to use a static IP address, the string starts with "STATIC:" and
+     * is followed by three
+     * parameters, separated by "/". The first is the device IP address, followed by the subnet mask
+     * length, and finally the
+     * router IP address (default gateway). For instance: "STATIC:192.168.1.14/16/192.168.1.1"
+     *
+     * If the network interface is configured to receive its IP from a DHCP server, the string start with
+     * "DHCP:" and is followed by
+     * three parameters separated by "/". The first is the fallback IP address, then the fallback subnet
+     * mask length and finally the
+     * fallback router IP address. These three parameters are used when no DHCP reply is received.
+     *
+     * @return a string corresponding to the IP configuration of the network interface
+     *
+     * On failure, throws an exception or returns Y_IPCONFIG_INVALID.
+     */
     public function get_ipConfig()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_IPCONFIG_INVALID;
             }
         }
-        return $this->_ipConfig;
+        $res = $this->_ipConfig;
+        return $res;
     }
 
     public function set_ipConfig($newval)
@@ -379,12 +416,14 @@ class YNetwork extends YFunction
      */
     public function get_primaryDNS()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PRIMARYDNS_INVALID;
             }
         }
-        return $this->_primaryDNS;
+        $res = $this->_primaryDNS;
+        return $res;
     }
 
     /**
@@ -413,12 +452,14 @@ class YNetwork extends YFunction
      */
     public function get_secondaryDNS()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SECONDARYDNS_INVALID;
             }
         }
-        return $this->_secondaryDNS;
+        $res = $this->_secondaryDNS;
+        return $res;
     }
 
     /**
@@ -447,12 +488,14 @@ class YNetwork extends YFunction
      */
     public function get_ntpServer()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_NTPSERVER_INVALID;
             }
         }
-        return $this->_ntpServer;
+        $res = $this->_ntpServer;
+        return $res;
     }
 
     /**
@@ -482,12 +525,14 @@ class YNetwork extends YFunction
      */
     public function get_userPassword()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_USERPASSWORD_INVALID;
             }
         }
-        return $this->_userPassword;
+        $res = $this->_userPassword;
+        return $res;
     }
 
     /**
@@ -520,12 +565,14 @@ class YNetwork extends YFunction
      */
     public function get_adminPassword()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ADMINPASSWORD_INVALID;
             }
         }
-        return $this->_adminPassword;
+        $res = $this->_adminPassword;
+        return $res;
     }
 
     /**
@@ -556,12 +603,14 @@ class YNetwork extends YFunction
      */
     public function get_httpPort()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_HTTPPORT_INVALID;
             }
         }
-        return $this->_httpPort;
+        $res = $this->_httpPort;
+        return $res;
     }
 
     /**
@@ -590,12 +639,14 @@ class YNetwork extends YFunction
      */
     public function get_defaultPage()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DEFAULTPAGE_INVALID;
             }
         }
-        return $this->_defaultPage;
+        $res = $this->_defaultPage;
+        return $res;
     }
 
     /**
@@ -627,12 +678,14 @@ class YNetwork extends YFunction
      */
     public function get_discoverable()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISCOVERABLE_INVALID;
             }
         }
-        return $this->_discoverable;
+        $res = $this->_discoverable;
+        return $res;
     }
 
     /**
@@ -666,12 +719,14 @@ class YNetwork extends YFunction
      */
     public function get_wwwWatchdogDelay()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_WWWWATCHDOGDELAY_INVALID;
             }
         }
-        return $this->_wwwWatchdogDelay;
+        $res = $this->_wwwWatchdogDelay;
+        return $res;
     }
 
     /**
@@ -703,12 +758,14 @@ class YNetwork extends YFunction
      */
     public function get_callbackUrl()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKURL_INVALID;
             }
         }
-        return $this->_callbackUrl;
+        $res = $this->_callbackUrl;
+        return $res;
     }
 
     /**
@@ -737,12 +794,14 @@ class YNetwork extends YFunction
      */
     public function get_callbackMethod()
     {
+        // $res                    is a enumHTTPMETHOD;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKMETHOD_INVALID;
             }
         }
-        return $this->_callbackMethod;
+        $res = $this->_callbackMethod;
+        return $res;
     }
 
     /**
@@ -774,12 +833,14 @@ class YNetwork extends YFunction
      */
     public function get_callbackEncoding()
     {
+        // $res                    is a enumCALLBACKENCODING;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKENCODING_INVALID;
             }
         }
-        return $this->_callbackEncoding;
+        $res = $this->_callbackEncoding;
+        return $res;
     }
 
     /**
@@ -812,12 +873,14 @@ class YNetwork extends YFunction
      */
     public function get_callbackCredentials()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKCREDENTIALS_INVALID;
             }
         }
-        return $this->_callbackCredentials;
+        $res = $this->_callbackCredentials;
+        return $res;
     }
 
     /**
@@ -871,12 +934,14 @@ class YNetwork extends YFunction
      */
     public function get_callbackInitialDelay()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKINITIALDELAY_INVALID;
             }
         }
-        return $this->_callbackInitialDelay;
+        $res = $this->_callbackInitialDelay;
+        return $res;
     }
 
     /**
@@ -896,27 +961,62 @@ class YNetwork extends YFunction
     }
 
     /**
-     * Returns the minimum waiting time between two callback notifications, in seconds.
+     * Returns the HTTP callback schedule strategy, as a text string.
      *
-     * @return an integer corresponding to the minimum waiting time between two callback notifications, in seconds
+     * @return a string corresponding to the HTTP callback schedule strategy, as a text string
+     *
+     * On failure, throws an exception or returns Y_CALLBACKSCHEDULE_INVALID.
+     */
+    public function get_callbackSchedule()
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CALLBACKSCHEDULE_INVALID;
+            }
+        }
+        $res = $this->_callbackSchedule;
+        return $res;
+    }
+
+    /**
+     * Changes the HTTP callback schedule strategy, as a text string.
+     *
+     * @param newval : a string corresponding to the HTTP callback schedule strategy, as a text string
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_callbackSchedule($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("callbackSchedule",$rest_val);
+    }
+
+    /**
+     * Returns the minimum waiting time between two HTTP callbacks, in seconds.
+     *
+     * @return an integer corresponding to the minimum waiting time between two HTTP callbacks, in seconds
      *
      * On failure, throws an exception or returns Y_CALLBACKMINDELAY_INVALID.
      */
     public function get_callbackMinDelay()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKMINDELAY_INVALID;
             }
         }
-        return $this->_callbackMinDelay;
+        $res = $this->_callbackMinDelay;
+        return $res;
     }
 
     /**
-     * Changes the minimum waiting time between two callback notifications, in seconds.
+     * Changes the minimum waiting time between two HTTP callbacks, in seconds.
      *
-     * @param newval : an integer corresponding to the minimum waiting time between two callback
-     * notifications, in seconds
+     * @param newval : an integer corresponding to the minimum waiting time between two HTTP callbacks, in seconds
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -929,27 +1029,29 @@ class YNetwork extends YFunction
     }
 
     /**
-     * Returns the maximum waiting time between two callback notifications, in seconds.
+     * Returns the waiting time between two HTTP callbacks when there is nothing new.
      *
-     * @return an integer corresponding to the maximum waiting time between two callback notifications, in seconds
+     * @return an integer corresponding to the waiting time between two HTTP callbacks when there is nothing new
      *
      * On failure, throws an exception or returns Y_CALLBACKMAXDELAY_INVALID.
      */
     public function get_callbackMaxDelay()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALLBACKMAXDELAY_INVALID;
             }
         }
-        return $this->_callbackMaxDelay;
+        $res = $this->_callbackMaxDelay;
+        return $res;
     }
 
     /**
-     * Changes the maximum waiting time between two callback notifications, in seconds.
+     * Changes the waiting time between two HTTP callbacks when there is nothing new.
      *
-     * @param newval : an integer corresponding to the maximum waiting time between two callback
-     * notifications, in seconds
+     * @param newval : an integer corresponding to the waiting time between two HTTP callbacks when there
+     * is nothing new
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -973,12 +1075,14 @@ class YNetwork extends YFunction
      */
     public function get_poeCurrent()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POECURRENT_INVALID;
             }
         }
-        return $this->_poeCurrent;
+        $res = $this->_poeCurrent;
+        return $res;
     }
 
     /**
@@ -1188,6 +1292,12 @@ class YNetwork extends YFunction
 
     public function setCallbackInitialDelay($newval)
     { return $this->set_callbackInitialDelay($newval); }
+
+    public function callbackSchedule()
+    { return $this->get_callbackSchedule(); }
+
+    public function setCallbackSchedule($newval)
+    { return $this->set_callbackSchedule($newval); }
 
     public function callbackMinDelay()
     { return $this->get_callbackMinDelay(); }

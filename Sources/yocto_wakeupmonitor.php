@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_wakeupmonitor.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -137,12 +137,14 @@ class YWakeUpMonitor extends YFunction
      */
     public function get_powerDuration()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POWERDURATION_INVALID;
             }
         }
-        return $this->_powerDuration;
+        $res = $this->_powerDuration;
+        return $res;
     }
 
     /**
@@ -170,12 +172,14 @@ class YWakeUpMonitor extends YFunction
      */
     public function get_sleepCountdown()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SLEEPCOUNTDOWN_INVALID;
             }
         }
-        return $this->_sleepCountdown;
+        $res = $this->_sleepCountdown;
+        return $res;
     }
 
     /**
@@ -202,12 +206,14 @@ class YWakeUpMonitor extends YFunction
      */
     public function get_nextWakeUp()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_NEXTWAKEUP_INVALID;
             }
         }
-        return $this->_nextWakeUp;
+        $res = $this->_nextWakeUp;
+        return $res;
     }
 
     /**
@@ -236,12 +242,14 @@ class YWakeUpMonitor extends YFunction
      */
     public function get_wakeUpReason()
     {
+        // $res                    is a enumWAKEUPREASON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_WAKEUPREASON_INVALID;
             }
         }
-        return $this->_wakeUpReason;
+        $res = $this->_wakeUpReason;
+        return $res;
     }
 
     /**
@@ -253,12 +261,14 @@ class YWakeUpMonitor extends YFunction
      */
     public function get_wakeUpState()
     {
+        // $res                    is a enumWAKEUPSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_WAKEUPSTATE_INVALID;
             }
         }
-        return $this->_wakeUpState;
+        $res = $this->_wakeUpState;
+        return $res;
     }
 
     public function set_wakeUpState($newval)
@@ -269,12 +279,14 @@ class YWakeUpMonitor extends YFunction
 
     public function get_rtcTime()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RTCTIME_INVALID;
             }
         }
-        return $this->_rtcTime;
+        $res = $this->_rtcTime;
+        return $res;
     }
 
     /**

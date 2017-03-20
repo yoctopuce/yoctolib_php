@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmpowersource.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_pwmpowersource.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -99,12 +99,14 @@ class YPwmPowerSource extends YFunction
      */
     public function get_powerMode()
     {
+        // $res                    is a enumPWMPWRMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POWERMODE_INVALID;
             }
         }
-        return $this->_powerMode;
+        $res = $this->_powerMode;
+        return $res;
     }
 
     /**

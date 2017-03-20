@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_motor.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_motor.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -169,12 +169,14 @@ class YMotor extends YFunction
      */
     public function get_motorStatus()
     {
+        // $res                    is a enumMOTORSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MOTORSTATUS_INVALID;
             }
         }
-        return $this->_motorStatus;
+        $res = $this->_motorStatus;
+        return $res;
     }
 
     public function set_motorStatus($newval)
@@ -212,12 +214,14 @@ class YMotor extends YFunction
      */
     public function get_drivingForce()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DRIVINGFORCE_INVALID;
             }
         }
-        return $this->_drivingForce;
+        $res = $this->_drivingForce;
+        return $res;
     }
 
     /**
@@ -248,12 +252,14 @@ class YMotor extends YFunction
      */
     public function get_brakingForce()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BRAKINGFORCE_INVALID;
             }
         }
-        return $this->_brakingForce;
+        $res = $this->_brakingForce;
+        return $res;
     }
 
     /**
@@ -290,12 +296,14 @@ class YMotor extends YFunction
      */
     public function get_cutOffVoltage()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CUTOFFVOLTAGE_INVALID;
             }
         }
-        return $this->_cutOffVoltage;
+        $res = $this->_cutOffVoltage;
+        return $res;
     }
 
     /**
@@ -309,12 +317,14 @@ class YMotor extends YFunction
      */
     public function get_overCurrentLimit()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_OVERCURRENTLIMIT_INVALID;
             }
         }
-        return $this->_overCurrentLimit;
+        $res = $this->_overCurrentLimit;
+        return $res;
     }
 
     /**
@@ -364,12 +374,14 @@ class YMotor extends YFunction
      */
     public function get_frequency()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
-        return $this->_frequency;
+        $res = $this->_frequency;
+        return $res;
     }
 
     /**
@@ -384,12 +396,14 @@ class YMotor extends YFunction
      */
     public function get_starterTime()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STARTERTIME_INVALID;
             }
         }
-        return $this->_starterTime;
+        $res = $this->_starterTime;
+        return $res;
     }
 
     /**
@@ -424,12 +438,14 @@ class YMotor extends YFunction
      */
     public function get_failSafeTimeout()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FAILSAFETIMEOUT_INVALID;
             }
         }
-        return $this->_failSafeTimeout;
+        $res = $this->_failSafeTimeout;
+        return $res;
     }
 
     /**
@@ -454,12 +470,14 @@ class YMotor extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

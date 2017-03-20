@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_watchdog.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -183,12 +183,14 @@ class YWatchdog extends YFunction
      */
     public function get_state()
     {
+        // $res                    is a enumTOGGLE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STATE_INVALID;
             }
         }
-        return $this->_state;
+        $res = $this->_state;
+        return $res;
     }
 
     /**
@@ -219,12 +221,14 @@ class YWatchdog extends YFunction
      */
     public function get_stateAtPowerOn()
     {
+        // $res                    is a enumTOGGLEATPOWERON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STATEATPOWERON_INVALID;
             }
         }
-        return $this->_stateAtPowerOn;
+        $res = $this->_stateAtPowerOn;
+        return $res;
     }
 
     /**
@@ -254,12 +258,14 @@ class YWatchdog extends YFunction
      */
     public function get_maxTimeOnStateA()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEA_INVALID;
             }
         }
-        return $this->_maxTimeOnStateA;
+        $res = $this->_maxTimeOnStateA;
+        return $res;
     }
 
     /**
@@ -288,12 +294,14 @@ class YWatchdog extends YFunction
      */
     public function get_maxTimeOnStateB()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEB_INVALID;
             }
         }
-        return $this->_maxTimeOnStateB;
+        $res = $this->_maxTimeOnStateB;
+        return $res;
     }
 
     /**
@@ -322,12 +330,14 @@ class YWatchdog extends YFunction
      */
     public function get_output()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_OUTPUT_INVALID;
             }
         }
-        return $this->_output;
+        $res = $this->_output;
+        return $res;
     }
 
     /**
@@ -358,12 +368,14 @@ class YWatchdog extends YFunction
      */
     public function get_pulseTimer()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
-        return $this->_pulseTimer;
+        $res = $this->_pulseTimer;
+        return $res;
     }
 
     public function set_pulseTimer($newval)
@@ -390,12 +402,14 @@ class YWatchdog extends YFunction
 
     public function get_delayedPulseTimer()
     {
+        // $res                    is a YDelayedPulse;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DELAYEDPULSETIMER_INVALID;
             }
         }
-        return $this->_delayedPulseTimer;
+        $res = $this->_delayedPulseTimer;
+        return $res;
     }
 
     public function set_delayedPulseTimer($newval)
@@ -431,12 +445,14 @@ class YWatchdog extends YFunction
      */
     public function get_countdown()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COUNTDOWN_INVALID;
             }
         }
-        return $this->_countdown;
+        $res = $this->_countdown;
+        return $res;
     }
 
     /**
@@ -448,12 +464,14 @@ class YWatchdog extends YFunction
      */
     public function get_autoStart()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_AUTOSTART_INVALID;
             }
         }
-        return $this->_autoStart;
+        $res = $this->_autoStart;
+        return $res;
     }
 
     /**
@@ -482,12 +500,14 @@ class YWatchdog extends YFunction
      */
     public function get_running()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RUNNING_INVALID;
             }
         }
-        return $this->_running;
+        $res = $this->_running;
+        return $res;
     }
 
     /**
@@ -530,12 +550,14 @@ class YWatchdog extends YFunction
      */
     public function get_triggerDelay()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TRIGGERDELAY_INVALID;
             }
         }
-        return $this->_triggerDelay;
+        $res = $this->_triggerDelay;
+        return $res;
     }
 
     /**
@@ -563,12 +585,14 @@ class YWatchdog extends YFunction
      */
     public function get_triggerDuration()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TRIGGERDURATION_INVALID;
             }
         }
-        return $this->_triggerDuration;
+        $res = $this->_triggerDuration;
+        return $res;
     }
 
     /**

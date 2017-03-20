@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pressure.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_pressure.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YPressure, the high-level API for Pressure functions
  *
@@ -49,7 +49,7 @@
  *
  * The Yoctopuce class YPressure allows you to read and configure Yoctopuce pressure
  * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YPressure extends YSensor
 {

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_genericsensor.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -59,7 +59,7 @@ if(!defined('Y_SIGNALBIAS_INVALID'))         define('Y_SIGNALBIAS_INVALID',     
  *
  * The YGenericSensor class allows you to read and configure Yoctopuce signal
  * transducers. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to configure the automatic conversion between the
  * measured signal and the corresponding engineering unit.
  */
@@ -149,12 +149,14 @@ class YGenericSensor extends YSensor
      */
     public function get_signalValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALVALUE_INVALID;
             }
         }
-        return round($this->_signalValue * 1000) / 1000;
+        $res = round($this->_signalValue * 1000) / 1000;
+        return $res;
     }
 
     /**
@@ -166,12 +168,14 @@ class YGenericSensor extends YSensor
      */
     public function get_signalUnit()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALUNIT_INVALID;
             }
         }
-        return $this->_signalUnit;
+        $res = $this->_signalUnit;
+        return $res;
     }
 
     /**
@@ -183,16 +187,18 @@ class YGenericSensor extends YSensor
      */
     public function get_signalRange()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALRANGE_INVALID;
             }
         }
-        return $this->_signalRange;
+        $res = $this->_signalRange;
+        return $res;
     }
 
     /**
-     * Changes the electric signal range used by the sensor.
+     * Changes the electric signal range used by the sensor. Default value is "-999999.999...999999.999".
      *
      * @param newval : a string corresponding to the electric signal range used by the sensor
      *
@@ -215,17 +221,19 @@ class YGenericSensor extends YSensor
      */
     public function get_valueRange()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VALUERANGE_INVALID;
             }
         }
-        return $this->_valueRange;
+        $res = $this->_valueRange;
+        return $res;
     }
 
     /**
      * Changes the physical value range measured by the sensor. As a side effect, the range modification may
-     * automatically modify the display resolution.
+     * automatically modify the display resolution. Default value is "-999999.999...999999.999".
      *
      * @param newval : a string corresponding to the physical value range measured by the sensor
      *
@@ -267,12 +275,14 @@ class YGenericSensor extends YSensor
      */
     public function get_signalBias()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALBIAS_INVALID;
             }
         }
-        return $this->_signalBias;
+        $res = $this->_signalBias;
+        return $res;
     }
 
     /**
@@ -291,12 +301,14 @@ class YGenericSensor extends YSensor
      */
     public function get_signalSampling()
     {
+        // $res                    is a enumSIGNALSAMPLING;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALSAMPLING_INVALID;
             }
         }
-        return $this->_signalSampling;
+        $res = $this->_signalSampling;
+        return $res;
     }
 
     /**

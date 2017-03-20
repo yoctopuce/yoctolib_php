@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_display.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -778,12 +778,14 @@ class YDisplay extends YFunction
      */
     public function get_enabled()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
-        return $this->_enabled;
+        $res = $this->_enabled;
+        return $res;
     }
 
     /**
@@ -810,12 +812,14 @@ class YDisplay extends YFunction
      */
     public function get_startupSeq()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STARTUPSEQ_INVALID;
             }
         }
-        return $this->_startupSeq;
+        $res = $this->_startupSeq;
+        return $res;
     }
 
     /**
@@ -844,12 +848,14 @@ class YDisplay extends YFunction
      */
     public function get_brightness()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BRIGHTNESS_INVALID;
             }
         }
-        return $this->_brightness;
+        $res = $this->_brightness;
+        return $res;
     }
 
     /**
@@ -879,12 +885,14 @@ class YDisplay extends YFunction
      */
     public function get_orientation()
     {
+        // $res                    is a enumORIENTATION;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ORIENTATION_INVALID;
             }
         }
-        return $this->_orientation;
+        $res = $this->_orientation;
+        return $res;
     }
 
     /**
@@ -913,12 +921,14 @@ class YDisplay extends YFunction
      */
     public function get_displayWidth()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISPLAYWIDTH_INVALID;
             }
         }
-        return $this->_displayWidth;
+        $res = $this->_displayWidth;
+        return $res;
     }
 
     /**
@@ -930,12 +940,14 @@ class YDisplay extends YFunction
      */
     public function get_displayHeight()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISPLAYHEIGHT_INVALID;
             }
         }
-        return $this->_displayHeight;
+        $res = $this->_displayHeight;
+        return $res;
     }
 
     /**
@@ -948,12 +960,14 @@ class YDisplay extends YFunction
      */
     public function get_displayType()
     {
+        // $res                    is a enumDISPLAYTYPE;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISPLAYTYPE_INVALID;
             }
         }
-        return $this->_displayType;
+        $res = $this->_displayType;
+        return $res;
     }
 
     /**
@@ -965,12 +979,14 @@ class YDisplay extends YFunction
      */
     public function get_layerWidth()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LAYERWIDTH_INVALID;
             }
         }
-        return $this->_layerWidth;
+        $res = $this->_layerWidth;
+        return $res;
     }
 
     /**
@@ -982,12 +998,14 @@ class YDisplay extends YFunction
      */
     public function get_layerHeight()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LAYERHEIGHT_INVALID;
             }
         }
-        return $this->_layerHeight;
+        $res = $this->_layerHeight;
+        return $res;
     }
 
     /**
@@ -999,22 +1017,26 @@ class YDisplay extends YFunction
      */
     public function get_layerCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LAYERCOUNT_INVALID;
             }
         }
-        return $this->_layerCount;
+        $res = $this->_layerCount;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_dualpower.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_dualpower.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YDualPower, the high-level API for DualPower functions
  *
@@ -120,12 +120,14 @@ class YDualPower extends YFunction
      */
     public function get_powerState()
     {
+        // $res                    is a enumPWRSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POWERSTATE_INVALID;
             }
         }
-        return $this->_powerState;
+        $res = $this->_powerState;
+        return $res;
     }
 
     /**
@@ -138,12 +140,14 @@ class YDualPower extends YFunction
      */
     public function get_powerControl()
     {
+        // $res                    is a enumPWRCTRL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POWERCONTROL_INVALID;
             }
         }
-        return $this->_powerControl;
+        $res = $this->_powerControl;
+        return $res;
     }
 
     /**
@@ -172,12 +176,14 @@ class YDualPower extends YFunction
      */
     public function get_extVoltage()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_EXTVOLTAGE_INVALID;
             }
         }
-        return $this->_extVoltage;
+        $res = $this->_extVoltage;
+        return $res;
     }
 
     /**

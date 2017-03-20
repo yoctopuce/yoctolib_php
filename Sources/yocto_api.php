@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 26329 2017-01-11 14:04:39Z mvuilleu $
+ * $Id: yocto_api.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.26380";
+        return "1.10.26849";
     }
 
     /**
@@ -4750,12 +4750,14 @@ class YFunction
      */
     public function get_logicalName()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LOGICALNAME_INVALID;
             }
         }
-        return $this->_logicalName;
+        $res = $this->_logicalName;
+        return $res;
     }
 
     /**
@@ -4787,12 +4789,14 @@ class YFunction
      */
     public function get_advertisedValue()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ADVERTISEDVALUE_INVALID;
             }
         }
-        return $this->_advertisedValue;
+        $res = $this->_advertisedValue;
+        return $res;
     }
 
     public function set_advertisedValue($newval)
@@ -4875,7 +4879,7 @@ class YFunction
     }
 
     /**
-     * Disable the propagation of every new advertised value to the parent hub.
+     * Disables the propagation of every new advertised value to the parent hub.
      * You can use this function to save bandwidth and CPU on computers with limited
      * resources, or to prevent unwanted invocations of the HTTP callback.
      * Remember to call the saveToFlash() method of the module if the
@@ -4891,7 +4895,7 @@ class YFunction
     }
 
     /**
-     * Re-enable the propagation of every new advertised value to the parent hub.
+     * Re-enables the propagation of every new advertised value to the parent hub.
      * This function reverts the effect of a previous call to muteValueCallbacks().
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
@@ -4909,9 +4913,9 @@ class YFunction
      * Returns the current value of a single function attribute, as a text string, as quickly as
      * possible but without using the cached value.
      *
-     * @param attrName : le nom de l'attribut désiré
+     * @param attrName : the name of the requested attribute
      *
-     * @return une chaîne de caractères représentant la valeur actuelle de l'attribut.
+     * @return a string with the value of the the attribute
      *
      * On failure, throws an exception or returns an empty string.
      */
@@ -5652,12 +5656,14 @@ class YSensor extends YFunction
      */
     public function get_unit()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UNIT_INVALID;
             }
         }
-        return $this->_unit;
+        $res = $this->_unit;
+        return $res;
     }
 
     /**
@@ -5681,7 +5687,8 @@ class YSensor extends YFunction
             $res = $this->_currentValue;
         }
         $res = $res * $this->_iresol;
-        return round($res) / $this->_iresol;
+        $res = round($res) / $this->_iresol;
+        return $res;
     }
 
     /**
@@ -5716,7 +5723,8 @@ class YSensor extends YFunction
             }
         }
         $res = $this->_lowestValue * $this->_iresol;
-        return round($res) / $this->_iresol;
+        $res = round($res) / $this->_iresol;
+        return $res;
     }
 
     /**
@@ -5751,7 +5759,8 @@ class YSensor extends YFunction
             }
         }
         $res = $this->_highestValue * $this->_iresol;
-        return round($res) / $this->_iresol;
+        $res = round($res) / $this->_iresol;
+        return $res;
     }
 
     /**
@@ -5765,12 +5774,14 @@ class YSensor extends YFunction
      */
     public function get_currentRawValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTRAWVALUE_INVALID;
             }
         }
-        return $this->_currentRawValue;
+        $res = $this->_currentRawValue;
+        return $res;
     }
 
     /**
@@ -5784,12 +5795,14 @@ class YSensor extends YFunction
      */
     public function get_logFrequency()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LOGFREQUENCY_INVALID;
             }
         }
-        return $this->_logFrequency;
+        $res = $this->_logFrequency;
+        return $res;
     }
 
     /**
@@ -5822,12 +5835,14 @@ class YSensor extends YFunction
      */
     public function get_reportFrequency()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_REPORTFREQUENCY_INVALID;
             }
         }
-        return $this->_reportFrequency;
+        $res = $this->_reportFrequency;
+        return $res;
     }
 
     /**
@@ -5851,12 +5866,14 @@ class YSensor extends YFunction
 
     public function get_calibrationParam()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONPARAM_INVALID;
             }
         }
-        return $this->_calibrationParam;
+        $res = $this->_calibrationParam;
+        return $res;
     }
 
     public function set_calibrationParam($newval)
@@ -5891,12 +5908,14 @@ class YSensor extends YFunction
      */
     public function get_resolution()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RESOLUTION_INVALID;
             }
         }
-        return $this->_resolution;
+        $res = $this->_resolution;
+        return $res;
     }
 
     /**
@@ -5911,12 +5930,14 @@ class YSensor extends YFunction
      */
     public function get_sensorState()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SENSORSTATE_INVALID;
             }
         }
-        return $this->_sensorState;
+        $res = $this->_sensorState;
+        return $res;
     }
 
     /**
@@ -6880,6 +6901,7 @@ class YModule extends YFunction
      */
     public function get_productName()
     {
+        // $res                    is a string;
         // $dev                    is a YDevice;
         if ($this->_cacheExpiration == 0) {
             $dev = $this->_getDev();
@@ -6890,7 +6912,8 @@ class YModule extends YFunction
                 return Y_PRODUCTNAME_INVALID;
             }
         }
-        return $this->_productName;
+        $res = $this->_productName;
+        return $res;
     }
 
     /**
@@ -6902,6 +6925,7 @@ class YModule extends YFunction
      */
     public function get_serialNumber()
     {
+        // $res                    is a string;
         // $dev                    is a YDevice;
         if ($this->_cacheExpiration == 0) {
             $dev = $this->_getDev();
@@ -6912,7 +6936,8 @@ class YModule extends YFunction
                 return Y_SERIALNUMBER_INVALID;
             }
         }
-        return $this->_serialNumber;
+        $res = $this->_serialNumber;
+        return $res;
     }
 
     /**
@@ -6924,6 +6949,7 @@ class YModule extends YFunction
      */
     public function get_productId()
     {
+        // $res                    is a int;
         // $dev                    is a YDevice;
         if ($this->_cacheExpiration == 0) {
             $dev = $this->_getDev();
@@ -6934,7 +6960,8 @@ class YModule extends YFunction
                 return Y_PRODUCTID_INVALID;
             }
         }
-        return $this->_productId;
+        $res = $this->_productId;
+        return $res;
     }
 
     /**
@@ -6946,12 +6973,14 @@ class YModule extends YFunction
      */
     public function get_productRelease()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PRODUCTRELEASE_INVALID;
             }
         }
-        return $this->_productRelease;
+        $res = $this->_productRelease;
+        return $res;
     }
 
     /**
@@ -6963,12 +6992,14 @@ class YModule extends YFunction
      */
     public function get_firmwareRelease()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FIRMWARERELEASE_INVALID;
             }
         }
-        return $this->_firmwareRelease;
+        $res = $this->_firmwareRelease;
+        return $res;
     }
 
     /**
@@ -6981,12 +7012,14 @@ class YModule extends YFunction
      */
     public function get_persistentSettings()
     {
+        // $res                    is a enumFLASHSETTINGS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PERSISTENTSETTINGS_INVALID;
             }
         }
-        return $this->_persistentSettings;
+        $res = $this->_persistentSettings;
+        return $res;
     }
 
     public function set_persistentSettings($newval)
@@ -7004,12 +7037,14 @@ class YModule extends YFunction
      */
     public function get_luminosity()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LUMINOSITY_INVALID;
             }
         }
-        return $this->_luminosity;
+        $res = $this->_luminosity;
+        return $res;
     }
 
     /**
@@ -7039,6 +7074,7 @@ class YModule extends YFunction
      */
     public function get_beacon()
     {
+        // $res                    is a enumONOFF;
         // $dev                    is a YDevice;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             $dev = $this->_getDev();
@@ -7049,7 +7085,8 @@ class YModule extends YFunction
                 return Y_BEACON_INVALID;
             }
         }
-        return $this->_beacon;
+        $res = $this->_beacon;
+        return $res;
     }
 
     /**
@@ -7076,12 +7113,14 @@ class YModule extends YFunction
      */
     public function get_upTime()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UPTIME_INVALID;
             }
         }
-        return $this->_upTime;
+        $res = $this->_upTime;
+        return $res;
     }
 
     /**
@@ -7093,12 +7132,14 @@ class YModule extends YFunction
      */
     public function get_usbCurrent()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_USBCURRENT_INVALID;
             }
         }
-        return $this->_usbCurrent;
+        $res = $this->_usbCurrent;
+        return $res;
     }
 
     /**
@@ -7112,12 +7153,14 @@ class YModule extends YFunction
      */
     public function get_rebootCountdown()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_REBOOTCOUNTDOWN_INVALID;
             }
         }
-        return $this->_rebootCountdown;
+        $res = $this->_rebootCountdown;
+        return $res;
     }
 
     public function set_rebootCountdown($newval)
@@ -7136,12 +7179,14 @@ class YModule extends YFunction
      */
     public function get_userVar()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_USERVAR_INVALID;
             }
         }
-        return $this->_userVar;
+        $res = $this->_userVar;
+        return $res;
     }
 
     /**

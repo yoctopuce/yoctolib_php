@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_compass.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -115,12 +115,14 @@ class YCompass extends YSensor
      */
     public function get_bandwidth()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BANDWIDTH_INVALID;
             }
         }
-        return $this->_bandwidth;
+        $res = $this->_bandwidth;
+        return $res;
     }
 
     /**
@@ -141,12 +143,14 @@ class YCompass extends YSensor
 
     public function get_axis()
     {
+        // $res                    is a enumAXIS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_AXIS_INVALID;
             }
         }
-        return $this->_axis;
+        $res = $this->_axis;
+        return $res;
     }
 
     /**
@@ -158,12 +162,14 @@ class YCompass extends YSensor
      */
     public function get_magneticHeading()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAGNETICHEADING_INVALID;
             }
         }
-        return $this->_magneticHeading;
+        $res = $this->_magneticHeading;
+        return $res;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_carbondioxide.php 25831 2016-11-08 11:12:15Z seb $
+ * $Id: yocto_carbondioxide.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -51,7 +51,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
  *
  * The Yoctopuce class YCarbonDioxide allows you to read and configure Yoctopuce CO2
  * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions,  to access the autonomous datalogger.
  * This class adds the ability to perform manual calibration if reuired.
  */
 class YCarbonDioxide extends YSensor
@@ -99,12 +99,14 @@ class YCarbonDioxide extends YSensor
      */
     public function get_abcPeriod()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ABCPERIOD_INVALID;
             }
         }
-        return $this->_abcPeriod;
+        $res = $this->_abcPeriod;
+        return $res;
     }
 
     /**
@@ -128,12 +130,14 @@ class YCarbonDioxide extends YSensor
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

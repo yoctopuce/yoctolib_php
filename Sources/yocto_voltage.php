@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voltage.php 26183 2016-12-15 00:14:02Z mvuilleu $
+ * $Id: yocto_voltage.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YVoltage, the high-level API for Voltage functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',        
  *
  * The Yoctopuce class YVoltage allows you to read and configure Yoctopuce voltage
  * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YVoltage extends YSensor
 {
@@ -88,12 +88,14 @@ class YVoltage extends YSensor
 
     public function get_enabled()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
-        return $this->_enabled;
+        $res = $this->_enabled;
+        return $res;
     }
 
     public function set_enabled($newval)

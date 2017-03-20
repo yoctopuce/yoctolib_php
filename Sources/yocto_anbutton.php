@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_anbutton.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YAnButton, the high-level API for AnButton functions
  *
@@ -162,12 +162,14 @@ class YAnButton extends YFunction
      */
     public function get_calibratedValue()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALIBRATEDVALUE_INVALID;
             }
         }
-        return $this->_calibratedValue;
+        $res = $this->_calibratedValue;
+        return $res;
     }
 
     /**
@@ -179,12 +181,14 @@ class YAnButton extends YFunction
      */
     public function get_rawValue()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RAWVALUE_INVALID;
             }
         }
-        return $this->_rawValue;
+        $res = $this->_rawValue;
+        return $res;
     }
 
     /**
@@ -196,12 +200,14 @@ class YAnButton extends YFunction
      */
     public function get_analogCalibration()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ANALOGCALIBRATION_INVALID;
             }
         }
-        return $this->_analogCalibration;
+        $res = $this->_analogCalibration;
+        return $res;
     }
 
     /**
@@ -230,12 +236,14 @@ class YAnButton extends YFunction
      */
     public function get_calibrationMax()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONMAX_INVALID;
             }
         }
-        return $this->_calibrationMax;
+        $res = $this->_calibrationMax;
+        return $res;
     }
 
     /**
@@ -267,12 +275,14 @@ class YAnButton extends YFunction
      */
     public function get_calibrationMin()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONMIN_INVALID;
             }
         }
-        return $this->_calibrationMin;
+        $res = $this->_calibrationMin;
+        return $res;
     }
 
     /**
@@ -304,12 +314,14 @@ class YAnButton extends YFunction
      */
     public function get_sensitivity()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SENSITIVITY_INVALID;
             }
         }
-        return $this->_sensitivity;
+        $res = $this->_sensitivity;
+        return $res;
     }
 
     /**
@@ -343,12 +355,14 @@ class YAnButton extends YFunction
      */
     public function get_isPressed()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ISPRESSED_INVALID;
             }
         }
-        return $this->_isPressed;
+        $res = $this->_isPressed;
+        return $res;
     }
 
     /**
@@ -363,12 +377,14 @@ class YAnButton extends YFunction
      */
     public function get_lastTimePressed()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTTIMEPRESSED_INVALID;
             }
         }
-        return $this->_lastTimePressed;
+        $res = $this->_lastTimePressed;
+        return $res;
     }
 
     /**
@@ -383,12 +399,14 @@ class YAnButton extends YFunction
      */
     public function get_lastTimeReleased()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTTIMERELEASED_INVALID;
             }
         }
-        return $this->_lastTimeReleased;
+        $res = $this->_lastTimeReleased;
+        return $res;
     }
 
     /**
@@ -402,12 +420,14 @@ class YAnButton extends YFunction
      */
     public function get_pulseCounter()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSECOUNTER_INVALID;
             }
         }
-        return $this->_pulseCounter;
+        $res = $this->_pulseCounter;
+        return $res;
     }
 
     public function set_pulseCounter($newval)
@@ -425,12 +445,14 @@ class YAnButton extends YFunction
      */
     public function get_pulseTimer()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
-        return $this->_pulseTimer;
+        $res = $this->_pulseTimer;
+        return $res;
     }
 
     /**

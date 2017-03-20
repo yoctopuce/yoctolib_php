@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_buzzer.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_buzzer.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -136,12 +136,14 @@ class YBuzzer extends YFunction
      */
     public function get_frequency()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
-        return $this->_frequency;
+        $res = $this->_frequency;
+        return $res;
     }
 
     /**
@@ -153,12 +155,14 @@ class YBuzzer extends YFunction
      */
     public function get_volume()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLUME_INVALID;
             }
         }
-        return $this->_volume;
+        $res = $this->_volume;
+        return $res;
     }
 
     /**
@@ -185,12 +189,14 @@ class YBuzzer extends YFunction
      */
     public function get_playSeqSize()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PLAYSEQSIZE_INVALID;
             }
         }
-        return $this->_playSeqSize;
+        $res = $this->_playSeqSize;
+        return $res;
     }
 
     /**
@@ -202,12 +208,14 @@ class YBuzzer extends YFunction
      */
     public function get_playSeqMaxSize()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PLAYSEQMAXSIZE_INVALID;
             }
         }
-        return $this->_playSeqMaxSize;
+        $res = $this->_playSeqMaxSize;
+        return $res;
     }
 
     /**
@@ -222,22 +230,26 @@ class YBuzzer extends YFunction
      */
     public function get_playSeqSignature()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PLAYSEQSIGNATURE_INVALID;
             }
         }
-        return $this->_playSeqSignature;
+        $res = $this->_playSeqSignature;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

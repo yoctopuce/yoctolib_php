@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_realtimeclock.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -115,12 +115,14 @@ class YRealTimeClock extends YFunction
      */
     public function get_unixTime()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UNIXTIME_INVALID;
             }
         }
-        return $this->_unixTime;
+        $res = $this->_unixTime;
+        return $res;
     }
 
     /**
@@ -147,12 +149,14 @@ class YRealTimeClock extends YFunction
      */
     public function get_dateTime()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DATETIME_INVALID;
             }
         }
-        return $this->_dateTime;
+        $res = $this->_dateTime;
+        return $res;
     }
 
     /**
@@ -164,12 +168,14 @@ class YRealTimeClock extends YFunction
      */
     public function get_utcOffset()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UTCOFFSET_INVALID;
             }
         }
-        return $this->_utcOffset;
+        $res = $this->_utcOffset;
+        return $res;
     }
 
     /**
@@ -198,12 +204,14 @@ class YRealTimeClock extends YFunction
      */
     public function get_timeSet()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TIMESET_INVALID;
             }
         }
-        return $this->_timeSet;
+        $res = $this->_timeSet;
+        return $res;
     }
 
     /**

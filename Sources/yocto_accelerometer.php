@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_accelerometer.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -125,12 +125,14 @@ class YAccelerometer extends YSensor
      */
     public function get_bandwidth()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BANDWIDTH_INVALID;
             }
         }
-        return $this->_bandwidth;
+        $res = $this->_bandwidth;
+        return $res;
     }
 
     /**
@@ -158,12 +160,14 @@ class YAccelerometer extends YSensor
      */
     public function get_xValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_XVALUE_INVALID;
             }
         }
-        return $this->_xValue;
+        $res = $this->_xValue;
+        return $res;
     }
 
     /**
@@ -175,12 +179,14 @@ class YAccelerometer extends YSensor
      */
     public function get_yValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_YVALUE_INVALID;
             }
         }
-        return $this->_yValue;
+        $res = $this->_yValue;
+        return $res;
     }
 
     /**
@@ -192,22 +198,26 @@ class YAccelerometer extends YSensor
      */
     public function get_zValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ZVALUE_INVALID;
             }
         }
-        return $this->_zValue;
+        $res = $this->_zValue;
+        return $res;
     }
 
     public function get_gravityCancellation()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_GRAVITYCANCELLATION_INVALID;
             }
         }
-        return $this->_gravityCancellation;
+        $res = $this->_gravityCancellation;
+        return $res;
     }
 
     public function set_gravityCancellation($newval)

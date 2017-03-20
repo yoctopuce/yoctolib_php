@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gps.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_gps.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YGps, the high-level API for Gps functions
  *
@@ -176,12 +176,14 @@ class YGps extends YFunction
      */
     public function get_isFixed()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ISFIXED_INVALID;
             }
         }
-        return $this->_isFixed;
+        $res = $this->_isFixed;
+        return $res;
     }
 
     /**
@@ -193,12 +195,14 @@ class YGps extends YFunction
      */
     public function get_satCount()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SATCOUNT_INVALID;
             }
         }
-        return $this->_satCount;
+        $res = $this->_satCount;
+        return $res;
     }
 
     /**
@@ -211,12 +215,14 @@ class YGps extends YFunction
      */
     public function get_coordSystem()
     {
+        // $res                    is a enumGPSCOORDINATESYSTEM;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COORDSYSTEM_INVALID;
             }
         }
-        return $this->_coordSystem;
+        $res = $this->_coordSystem;
+        return $res;
     }
 
     /**
@@ -244,12 +250,14 @@ class YGps extends YFunction
      */
     public function get_latitude()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LATITUDE_INVALID;
             }
         }
-        return $this->_latitude;
+        $res = $this->_latitude;
+        return $res;
     }
 
     /**
@@ -261,12 +269,14 @@ class YGps extends YFunction
      */
     public function get_longitude()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LONGITUDE_INVALID;
             }
         }
-        return $this->_longitude;
+        $res = $this->_longitude;
+        return $res;
     }
 
     /**
@@ -280,12 +290,14 @@ class YGps extends YFunction
      */
     public function get_dilution()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DILUTION_INVALID;
             }
         }
-        return $this->_dilution;
+        $res = $this->_dilution;
+        return $res;
     }
 
     /**
@@ -298,12 +310,14 @@ class YGps extends YFunction
      */
     public function get_altitude()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ALTITUDE_INVALID;
             }
         }
-        return $this->_altitude;
+        $res = $this->_altitude;
+        return $res;
     }
 
     /**
@@ -315,12 +329,14 @@ class YGps extends YFunction
      */
     public function get_groundSpeed()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_GROUNDSPEED_INVALID;
             }
         }
-        return $this->_groundSpeed;
+        $res = $this->_groundSpeed;
+        return $res;
     }
 
     /**
@@ -334,12 +350,14 @@ class YGps extends YFunction
      */
     public function get_direction()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DIRECTION_INVALID;
             }
         }
-        return $this->_direction;
+        $res = $this->_direction;
+        return $res;
     }
 
     /**
@@ -353,12 +371,14 @@ class YGps extends YFunction
      */
     public function get_unixTime()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UNIXTIME_INVALID;
             }
         }
-        return $this->_unixTime;
+        $res = $this->_unixTime;
+        return $res;
     }
 
     /**
@@ -370,12 +390,14 @@ class YGps extends YFunction
      */
     public function get_dateTime()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DATETIME_INVALID;
             }
         }
-        return $this->_dateTime;
+        $res = $this->_dateTime;
+        return $res;
     }
 
     /**
@@ -387,12 +409,14 @@ class YGps extends YFunction
      */
     public function get_utcOffset()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_UTCOFFSET_INVALID;
             }
         }
-        return $this->_utcOffset;
+        $res = $this->_utcOffset;
+        return $res;
     }
 
     /**
@@ -414,12 +438,14 @@ class YGps extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

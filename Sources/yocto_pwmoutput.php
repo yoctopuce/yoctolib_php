@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_pwmoutput.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -139,12 +139,14 @@ class YPwmOutput extends YFunction
      */
     public function get_enabled()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
-        return $this->_enabled;
+        $res = $this->_enabled;
+        return $res;
     }
 
     /**
@@ -187,12 +189,14 @@ class YPwmOutput extends YFunction
      */
     public function get_frequency()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
-        return $this->_frequency;
+        $res = $this->_frequency;
+        return $res;
     }
 
     /**
@@ -219,12 +223,14 @@ class YPwmOutput extends YFunction
      */
     public function get_period()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PERIOD_INVALID;
             }
         }
-        return $this->_period;
+        $res = $this->_period;
+        return $res;
     }
 
     /**
@@ -251,12 +257,14 @@ class YPwmOutput extends YFunction
      */
     public function get_dutyCycle()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLE_INVALID;
             }
         }
-        return $this->_dutyCycle;
+        $res = $this->_dutyCycle;
+        return $res;
     }
 
     /**
@@ -285,22 +293,26 @@ class YPwmOutput extends YFunction
      */
     public function get_pulseDuration()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSEDURATION_INVALID;
             }
         }
-        return $this->_pulseDuration;
+        $res = $this->_pulseDuration;
+        return $res;
     }
 
     public function get_pwmTransition()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PWMTRANSITION_INVALID;
             }
         }
-        return $this->_pwmTransition;
+        $res = $this->_pwmTransition;
+        return $res;
     }
 
     public function set_pwmTransition($newval)
@@ -319,12 +331,14 @@ class YPwmOutput extends YFunction
      */
     public function get_enabledAtPowerOn()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLEDATPOWERON_INVALID;
             }
         }
-        return $this->_enabledAtPowerOn;
+        $res = $this->_enabledAtPowerOn;
+        return $res;
     }
 
     /**
@@ -370,12 +384,14 @@ class YPwmOutput extends YFunction
      */
     public function get_dutyCycleAtPowerOn()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLEATPOWERON_INVALID;
             }
         }
-        return $this->_dutyCycleAtPowerOn;
+        $res = $this->_dutyCycleAtPowerOn;
+        return $res;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioin.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_audioin.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -117,12 +117,14 @@ class YAudioIn extends YFunction
      */
     public function get_volume()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLUME_INVALID;
             }
         }
-        return $this->_volume;
+        $res = $this->_volume;
+        return $res;
     }
 
     /**
@@ -149,12 +151,14 @@ class YAudioIn extends YFunction
      */
     public function get_mute()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MUTE_INVALID;
             }
         }
-        return $this->_mute;
+        $res = $this->_mute;
+        return $res;
     }
 
     /**
@@ -185,12 +189,14 @@ class YAudioIn extends YFunction
      */
     public function get_volumeRange()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLUMERANGE_INVALID;
             }
         }
-        return $this->_volumeRange;
+        $res = $this->_volumeRange;
+        return $res;
     }
 
     /**
@@ -202,12 +208,14 @@ class YAudioIn extends YFunction
      */
     public function get_signal()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNAL_INVALID;
             }
         }
-        return $this->_signal;
+        $res = $this->_signal;
+        return $res;
     }
 
     /**
@@ -219,12 +227,14 @@ class YAudioIn extends YFunction
      */
     public function get_noSignalFor()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_NOSIGNALFOR_INVALID;
             }
         }
-        return $this->_noSignalFor;
+        $res = $this->_noSignalFor;
+        return $res;
     }
 
     /**

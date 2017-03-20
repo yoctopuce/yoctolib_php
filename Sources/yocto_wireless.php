@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_wireless.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -188,12 +188,14 @@ class YWireless extends YFunction
      */
     public function get_linkQuality()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LINKQUALITY_INVALID;
             }
         }
-        return $this->_linkQuality;
+        $res = $this->_linkQuality;
+        return $res;
     }
 
     /**
@@ -205,12 +207,14 @@ class YWireless extends YFunction
      */
     public function get_ssid()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SSID_INVALID;
             }
         }
-        return $this->_ssid;
+        $res = $this->_ssid;
+        return $res;
     }
 
     /**
@@ -223,12 +227,14 @@ class YWireless extends YFunction
      */
     public function get_channel()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CHANNEL_INVALID;
             }
         }
-        return $this->_channel;
+        $res = $this->_channel;
+        return $res;
     }
 
     /**
@@ -241,12 +247,14 @@ class YWireless extends YFunction
      */
     public function get_security()
     {
+        // $res                    is a enumWLANSEC;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SECURITY_INVALID;
             }
         }
-        return $this->_security;
+        $res = $this->_security;
+        return $res;
     }
 
     /**
@@ -258,22 +266,26 @@ class YWireless extends YFunction
      */
     public function get_message()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MESSAGE_INVALID;
             }
         }
-        return $this->_message;
+        $res = $this->_message;
+        return $res;
     }
 
     public function get_wlanConfig()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_WLANCONFIG_INVALID;
             }
         }
-        return $this->_wlanConfig;
+        $res = $this->_wlanConfig;
+        return $res;
     }
 
     public function set_wlanConfig($newval)

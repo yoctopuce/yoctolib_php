@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 25379 2016-09-16 16:07:16Z seb $
+ * $Id: yocto_messagebox.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -1354,12 +1354,14 @@ class YMessageBox extends YFunction
      */
     public function get_slotsInUse()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SLOTSINUSE_INVALID;
             }
         }
-        return $this->_slotsInUse;
+        $res = $this->_slotsInUse;
+        return $res;
     }
 
     /**
@@ -1371,22 +1373,26 @@ class YMessageBox extends YFunction
      */
     public function get_slotsCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SLOTSCOUNT_INVALID;
             }
         }
-        return $this->_slotsCount;
+        $res = $this->_slotsCount;
+        return $res;
     }
 
     public function get_slotsBitmap()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SLOTSBITMAP_INVALID;
             }
         }
-        return $this->_slotsBitmap;
+        $res = $this->_slotsBitmap;
+        return $res;
     }
 
     /**
@@ -1398,12 +1404,14 @@ class YMessageBox extends YFunction
      */
     public function get_pduSent()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PDUSENT_INVALID;
             }
         }
-        return $this->_pduSent;
+        $res = $this->_pduSent;
+        return $res;
     }
 
     /**
@@ -1430,12 +1438,14 @@ class YMessageBox extends YFunction
      */
     public function get_pduReceived()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PDURECEIVED_INVALID;
             }
         }
-        return $this->_pduReceived;
+        $res = $this->_pduReceived;
+        return $res;
     }
 
     /**
@@ -1455,12 +1465,14 @@ class YMessageBox extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

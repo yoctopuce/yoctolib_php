@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_latitude.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_latitude.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YLatitude, the high-level API for Latitude functions
  *
@@ -49,7 +49,7 @@
  *
  * The Yoctopuce class YLatitude allows you to read the latitude from Yoctopuce
  * geolocalization sensors. It inherits from the YSensor class the core functions to
- * read measurements, register callback functions, access the autonomous
+ * read measurements, to register callback functions, to access the autonomous
  * datalogger.
  */
 class YLatitude extends YSensor

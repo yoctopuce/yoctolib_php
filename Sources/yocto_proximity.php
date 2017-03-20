@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 26169 2016-12-12 01:36:34Z mvuilleu $
+ * $Id: pic24config.php 26780 2017-03-16 14:02:09Z mvuilleu $
  *
  * Implements YProximity, the high-level API for Proximity functions
  *
@@ -44,6 +44,11 @@
 if(!defined('Y_ISPRESENT_FALSE'))            define('Y_ISPRESENT_FALSE',           0);
 if(!defined('Y_ISPRESENT_TRUE'))             define('Y_ISPRESENT_TRUE',            1);
 if(!defined('Y_ISPRESENT_INVALID'))          define('Y_ISPRESENT_INVALID',         -1);
+if(!defined('Y_PROXIMITYREPORTMODE_NUMERIC')) define('Y_PROXIMITYREPORTMODE_NUMERIC', 0);
+if(!defined('Y_PROXIMITYREPORTMODE_PRESENCE')) define('Y_PROXIMITYREPORTMODE_PRESENCE', 1);
+if(!defined('Y_PROXIMITYREPORTMODE_PULSECOUNT')) define('Y_PROXIMITYREPORTMODE_PULSECOUNT', 2);
+if(!defined('Y_PROXIMITYREPORTMODE_INVALID')) define('Y_PROXIMITYREPORTMODE_INVALID', -1);
+if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_DETECTIONTHRESHOLD_INVALID')) define('Y_DETECTIONTHRESHOLD_INVALID', YAPI_INVALID_UINT);
 if(!defined('Y_LASTTIMEAPPROACHED_INVALID')) define('Y_LASTTIMEAPPROACHED_INVALID', YAPI_INVALID_LONG);
 if(!defined('Y_LASTTIMEREMOVED_INVALID'))    define('Y_LASTTIMEREMOVED_INVALID',   YAPI_INVALID_LONG);
@@ -56,13 +61,14 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
  * YProximity Class: Proximity function interface
  *
  * The Yoctopuce class YProximity allows you to use and configure Yoctopuce proximity
- * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * sensors. It inherits from the YSensor class the core functions to read measurements,
+ * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to easily perform a one-point linear calibration
  * to compensate the effect of a glass or filter placed in front of the sensor.
  */
 class YProximity extends YSensor
 {
+    const SIGNALVALUE_INVALID            = YAPI_INVALID_DOUBLE;
     const DETECTIONTHRESHOLD_INVALID     = YAPI_INVALID_UINT;
     const ISPRESENT_FALSE                = 0;
     const ISPRESENT_TRUE                 = 1;
@@ -71,15 +77,21 @@ class YProximity extends YSensor
     const LASTTIMEREMOVED_INVALID        = YAPI_INVALID_LONG;
     const PULSECOUNTER_INVALID           = YAPI_INVALID_LONG;
     const PULSETIMER_INVALID             = YAPI_INVALID_LONG;
+    const PROXIMITYREPORTMODE_NUMERIC    = 0;
+    const PROXIMITYREPORTMODE_PRESENCE   = 1;
+    const PROXIMITYREPORTMODE_PULSECOUNT = 2;
+    const PROXIMITYREPORTMODE_INVALID    = -1;
     //--- (end of YProximity declaration)
 
     //--- (YProximity attributes)
+    protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // MeasureVal
     protected $_detectionThreshold       = Y_DETECTIONTHRESHOLD_INVALID; // UInt31
     protected $_isPresent                = Y_ISPRESENT_INVALID;          // Bool
     protected $_lastTimeApproached       = Y_LASTTIMEAPPROACHED_INVALID; // Time
     protected $_lastTimeRemoved          = Y_LASTTIMEREMOVED_INVALID;    // Time
     protected $_pulseCounter             = Y_PULSECOUNTER_INVALID;       // UInt
     protected $_pulseTimer               = Y_PULSETIMER_INVALID;         // Time
+    protected $_proximityReportMode      = Y_PROXIMITYREPORTMODE_INVALID; // ProximityReportModeType
     //--- (end of YProximity attributes)
 
     function __construct($str_func)
@@ -96,6 +108,9 @@ class YProximity extends YSensor
     function _parseAttr($name, $val)
     {
         switch($name) {
+        case 'signalValue':
+            $this->_signalValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
         case 'detectionThreshold':
             $this->_detectionThreshold = intval($val);
             return 1;
@@ -114,8 +129,30 @@ class YProximity extends YSensor
         case 'pulseTimer':
             $this->_pulseTimer = intval($val);
             return 1;
+        case 'proximityReportMode':
+            $this->_proximityReportMode = intval($val);
+            return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns the current value of signal measured by the proximity sensor.
+     *
+     * @return a floating point number corresponding to the current value of signal measured by the proximity sensor
+     *
+     * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
+     */
+    public function get_signalValue()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_SIGNALVALUE_INVALID;
+            }
+        }
+        $res = round($this->_signalValue * 1000) / 1000;
+        return $res;
     }
 
     /**
@@ -130,12 +167,14 @@ class YProximity extends YSensor
      */
     public function get_detectionThreshold()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DETECTIONTHRESHOLD_INVALID;
             }
         }
-        return $this->_detectionThreshold;
+        $res = $this->_detectionThreshold;
+        return $res;
     }
 
     /**
@@ -167,12 +206,14 @@ class YProximity extends YSensor
      */
     public function get_isPresent()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ISPRESENT_INVALID;
             }
         }
-        return $this->_isPresent;
+        $res = $this->_isPresent;
+        return $res;
     }
 
     /**
@@ -187,12 +228,14 @@ class YProximity extends YSensor
      */
     public function get_lastTimeApproached()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTTIMEAPPROACHED_INVALID;
             }
         }
-        return $this->_lastTimeApproached;
+        $res = $this->_lastTimeApproached;
+        return $res;
     }
 
     /**
@@ -207,12 +250,14 @@ class YProximity extends YSensor
      */
     public function get_lastTimeRemoved()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTTIMEREMOVED_INVALID;
             }
         }
-        return $this->_lastTimeRemoved;
+        $res = $this->_lastTimeRemoved;
+        return $res;
     }
 
     /**
@@ -226,12 +271,14 @@ class YProximity extends YSensor
      */
     public function get_pulseCounter()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSECOUNTER_INVALID;
             }
         }
-        return $this->_pulseCounter;
+        $res = $this->_pulseCounter;
+        return $res;
     }
 
     public function set_pulseCounter($newval)
@@ -241,20 +288,63 @@ class YProximity extends YSensor
     }
 
     /**
-     * Returns the timer of the pulses counter (ms).
+     * Returns the timer of the pulse counter (ms).
      *
-     * @return an integer corresponding to the timer of the pulses counter (ms)
+     * @return an integer corresponding to the timer of the pulse counter (ms)
      *
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
-        return $this->_pulseTimer;
+        $res = $this->_pulseTimer;
+        return $res;
+    }
+
+    /**
+     * Returns the parameter (sensor value, presence or pulse count) returned by the get_currentValue
+     * function and callbacks.
+     *
+     * @return a value among Y_PROXIMITYREPORTMODE_NUMERIC, Y_PROXIMITYREPORTMODE_PRESENCE and
+     * Y_PROXIMITYREPORTMODE_PULSECOUNT corresponding to the parameter (sensor value, presence or pulse
+     * count) returned by the get_currentValue function and callbacks
+     *
+     * On failure, throws an exception or returns Y_PROXIMITYREPORTMODE_INVALID.
+     */
+    public function get_proximityReportMode()
+    {
+        // $res                    is a enumPROXIMITYREPORTMODETYPE;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PROXIMITYREPORTMODE_INVALID;
+            }
+        }
+        $res = $this->_proximityReportMode;
+        return $res;
+    }
+
+    /**
+     * Modifies the  parameter  type (sensor value, presence or pulse count) returned by the
+     * get_currentValue function and callbacks.
+     * The edge count value is limited to the 6 lowest digits. For values greater than one million, use
+     * get_pulseCounter().
+     *
+     * @param newval : a value among Y_PROXIMITYREPORTMODE_NUMERIC, Y_PROXIMITYREPORTMODE_PRESENCE and
+     * Y_PROXIMITYREPORTMODE_PULSECOUNT
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_proximityReportMode($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("proximityReportMode",$rest_val);
     }
 
     /**
@@ -292,7 +382,7 @@ class YProximity extends YSensor
     }
 
     /**
-     * Returns the pulse counter value as well as its timer.
+     * Resets the pulse counter value as well as its timer.
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -302,6 +392,9 @@ class YProximity extends YSensor
     {
         return $this->set_pulseCounter(0);
     }
+
+    public function signalValue()
+    { return $this->get_signalValue(); }
 
     public function detectionThreshold()
     { return $this->get_detectionThreshold(); }
@@ -326,6 +419,12 @@ class YProximity extends YSensor
 
     public function pulseTimer()
     { return $this->get_pulseTimer(); }
+
+    public function proximityReportMode()
+    { return $this->get_proximityReportMode(); }
+
+    public function setProximityReportMode($newval)
+    { return $this->set_proximityReportMode($newval); }
 
     /**
      * Continues the enumeration of proximity sensors started using yFirstProximity().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_rangefinder.php 26329 2017-01-11 14:04:39Z mvuilleu $
+ * $Id: yocto_rangefinder.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -46,6 +46,8 @@ if(!defined('Y_RANGEFINDERMODE_LONG_RANGE')) define('Y_RANGEFINDERMODE_LONG_RANG
 if(!defined('Y_RANGEFINDERMODE_HIGH_ACCURACY')) define('Y_RANGEFINDERMODE_HIGH_ACCURACY', 2);
 if(!defined('Y_RANGEFINDERMODE_HIGH_SPEED')) define('Y_RANGEFINDERMODE_HIGH_SPEED', 3);
 if(!defined('Y_RANGEFINDERMODE_INVALID'))    define('Y_RANGEFINDERMODE_INVALID',   -1);
+if(!defined('Y_HARDWARECALIBRATION_INVALID')) define('Y_HARDWARECALIBRATION_INVALID', YAPI_INVALID_STRING);
+if(!defined('Y_CURRENTTEMPERATURE_INVALID')) define('Y_CURRENTTEMPERATURE_INVALID', YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YRangeFinder definitions)
 
@@ -53,9 +55,9 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YRangeFinder Class: RangeFinder function interface
  *
- * The Yoctopuce class YRangeFinder allows you to use and configure Yoctopuce range finders
- * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * The Yoctopuce class YRangeFinder allows you to use and configure Yoctopuce range finder
+ * sensors. It inherits from the YSensor class the core functions to read measurements,
+ * register callback functions, access the autonomous datalogger.
  * This class adds the ability to easily perform a one-point linear calibration
  * to compensate the effect of a glass or filter placed in front of the sensor.
  */
@@ -66,11 +68,15 @@ class YRangeFinder extends YSensor
     const RANGEFINDERMODE_HIGH_ACCURACY  = 2;
     const RANGEFINDERMODE_HIGH_SPEED     = 3;
     const RANGEFINDERMODE_INVALID        = -1;
+    const HARDWARECALIBRATION_INVALID    = YAPI_INVALID_STRING;
+    const CURRENTTEMPERATURE_INVALID     = YAPI_INVALID_DOUBLE;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YRangeFinder declaration)
 
     //--- (YRangeFinder attributes)
     protected $_rangeFinderMode          = Y_RANGEFINDERMODE_INVALID;    // RangeFinderMode
+    protected $_hardwareCalibration      = Y_HARDWARECALIBRATION_INVALID; // RangeFinderCalib
+    protected $_currentTemperature       = Y_CURRENTTEMPERATURE_INVALID; // MeasureVal
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YRangeFinder attributes)
 
@@ -91,6 +97,12 @@ class YRangeFinder extends YSensor
         case 'rangeFinderMode':
             $this->_rangeFinderMode = intval($val);
             return 1;
+        case 'hardwareCalibration':
+            $this->_hardwareCalibration = $val;
+            return 1;
+        case 'currentTemperature':
+            $this->_currentTemperature = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
         case 'command':
             $this->_command = $val;
             return 1;
@@ -99,13 +111,13 @@ class YRangeFinder extends YSensor
     }
 
     /**
-     * Changes the measuring unit for the measured temperature. That unit is a string.
-     * String value can be " or mm. Any other value will be ignored.
+     * Changes the measuring unit for the measured range. That unit is a string.
+     * String value can be " or mm. Any other value is ignored.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      * WARNING: if a specific calibration is defined for the rangeFinder function, a
      * unit system change will probably break it.
      *
-     * @param newval : a string corresponding to the measuring unit for the measured temperature
+     * @param newval : a string corresponding to the measuring unit for the measured range
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
@@ -118,31 +130,33 @@ class YRangeFinder extends YSensor
     }
 
     /**
-     * Returns the rangefinder running mode. The rangefinder running mode
-     * allows to put priority on precision, speed or maximum range.
+     * Returns the range finder running mode. The rangefinder running mode
+     * allows you to put priority on precision, speed or maximum range.
      *
      * @return a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
-     * Y_RANGEFINDERMODE_HIGH_ACCURACY and Y_RANGEFINDERMODE_HIGH_SPEED corresponding to the rangefinder running mode
+     * Y_RANGEFINDERMODE_HIGH_ACCURACY and Y_RANGEFINDERMODE_HIGH_SPEED corresponding to the range finder running mode
      *
      * On failure, throws an exception or returns Y_RANGEFINDERMODE_INVALID.
      */
     public function get_rangeFinderMode()
     {
+        // $res                    is a enumRANGEFINDERMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RANGEFINDERMODE_INVALID;
             }
         }
-        return $this->_rangeFinderMode;
+        $res = $this->_rangeFinderMode;
+        return $res;
     }
 
     /**
-     * Changes the rangefinder running mode, allowing to put priority on
+     * Changes the rangefinder running mode, allowing you to put priority on
      * precision, speed or maximum range.
      *
      * @param newval : a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
      * Y_RANGEFINDERMODE_HIGH_ACCURACY and Y_RANGEFINDERMODE_HIGH_SPEED corresponding to the rangefinder
-     * running mode, allowing to put priority on
+     * running mode, allowing you to put priority on
      *         precision, speed or maximum range
      *
      * @return YAPI_SUCCESS if the call succeeds.
@@ -155,14 +169,53 @@ class YRangeFinder extends YSensor
         return $this->_setAttr("rangeFinderMode",$rest_val);
     }
 
+    public function get_hardwareCalibration()
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_HARDWARECALIBRATION_INVALID;
+            }
+        }
+        $res = $this->_hardwareCalibration;
+        return $res;
+    }
+
+    public function set_hardwareCalibration($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("hardwareCalibration",$rest_val);
+    }
+
+    /**
+     * Returns the current sensor temperature, as a floating point number.
+     *
+     * @return a floating point number corresponding to the current sensor temperature, as a floating point number
+     *
+     * On failure, throws an exception or returns Y_CURRENTTEMPERATURE_INVALID.
+     */
+    public function get_currentTemperature()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CURRENTTEMPERATURE_INVALID;
+            }
+        }
+        $res = $this->_currentTemperature;
+        return $res;
+    }
+
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)
@@ -206,17 +259,111 @@ class YRangeFinder extends YSensor
     }
 
     /**
+     * Returns the temperature at the time when the latest calibration was performed.
+     * This function can be used to determine if a new calibration for ambient temperature
+     * is required.
+     *
+     * @return a temperature, as a floating point number.
+     *         On failure, throws an exception or return YAPI_INVALID_DOUBLE.
+     */
+    public function get_hardwareCalibrationTemperature()
+    {
+        // $hwcal                  is a string;
+        
+        $hwcal = $this->get_hardwareCalibration();
+        if (!(substr($hwcal, 0, 1) == '@')) {
+            return YAPI_INVALID_DOUBLE;
+        }
+        return intVal(substr($hwcal, 1, strlen($hwcal)));
+    }
+
+    /**
      * Triggers a sensor calibration according to the current ambient temperature. That
      * calibration process needs no physical interaction with the sensor. It is performed
      * automatically at device startup, but it is recommended to start it again when the
-     * temperature delta since last calibration exceeds 8°C.
+     * temperature delta since the latest calibration exceeds 8°C.
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
-    public function triggerTempCalibration()
+    public function triggerTemperatureCalibration()
     {
         return $this->set_command('T');
+    }
+
+    /**
+     * Triggers the photon detector hardware calibration.
+     * This function is part of the calibration procedure to compensate for the the effect
+     * of a cover glass. Make sure to read the chapter about hardware calibration for details
+     * on the calibration procedure for proper results.
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerSpadCalibration()
+    {
+        return $this->set_command('S');
+    }
+
+    /**
+     * Triggers the hardware offset calibration of the distance sensor.
+     * This function is part of the calibration procedure to compensate for the the effect
+     * of a cover glass. Make sure to read the chapter about hardware calibration for details
+     * on the calibration procedure for proper results.
+     *
+     * @param targetDist : true distance of the calibration target, in mm or inches, depending
+     *         on the unit selected in the device
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerOffsetCalibration($targetDist)
+    {
+        // $distmm                 is a int;
+        
+        if ($this->get_unit() == '"') {
+            $distmm = round($targetDist * 25.4);
+        } else {
+            $distmm = round($targetDist);
+        }
+        return $this->set_command(sprintf('O%d',$distmm));
+    }
+
+    /**
+     * Triggers the hardware cross-talk calibration of the distance sensor.
+     * This function is part of the calibration procedure to compensate for the the effect
+     * of a cover glass. Make sure to read the chapter about hardware calibration for details
+     * on the calibration procedure for proper results.
+     *
+     * @param targetDist : true distance of the calibration target, in mm or inches, depending
+     *         on the unit selected in the device
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerXTalkCalibration($targetDist)
+    {
+        // $distmm                 is a int;
+        
+        if ($this->get_unit() == '"') {
+            $distmm = round($targetDist * 25.4);
+        } else {
+            $distmm = round($targetDist);
+        }
+        return $this->set_command(sprintf('X%d',$distmm));
+    }
+
+    /**
+     * Cancels the effect of previous hardware calibration procedures to compensate
+     * for cover glass, and restores factory settings.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
+     *
+     * @return YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function cancelCoverGlassCalibrations()
+    {
+        return $this->set_hardwareCalibration('');
     }
 
     public function setUnit($newval)
@@ -227,6 +374,15 @@ class YRangeFinder extends YSensor
 
     public function setRangeFinderMode($newval)
     { return $this->set_rangeFinderMode($newval); }
+
+    public function hardwareCalibration()
+    { return $this->get_hardwareCalibration(); }
+
+    public function setHardwareCalibration($newval)
+    { return $this->set_hardwareCalibration($newval); }
+
+    public function currentTemperature()
+    { return $this->get_currentTemperature(); }
 
     public function command()
     { return $this->get_command(); }

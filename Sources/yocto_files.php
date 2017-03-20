@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_files.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -155,12 +155,14 @@ class YFiles extends YFunction
      */
     public function get_filesCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FILESCOUNT_INVALID;
             }
         }
-        return $this->_filesCount;
+        $res = $this->_filesCount;
+        return $res;
     }
 
     /**
@@ -172,12 +174,14 @@ class YFiles extends YFunction
      */
     public function get_freeSpace()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FREESPACE_INVALID;
             }
         }
-        return $this->_freeSpace;
+        $res = $this->_freeSpace;
+        return $res;
     }
 
     /**

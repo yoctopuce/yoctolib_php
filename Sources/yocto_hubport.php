@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_hubport.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YHubPort, the high-level API for HubPort functions
  *
@@ -119,12 +119,14 @@ class YHubPort extends YFunction
      */
     public function get_enabled()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
-        return $this->_enabled;
+        $res = $this->_enabled;
+        return $res;
     }
 
     /**
@@ -153,12 +155,14 @@ class YHubPort extends YFunction
      */
     public function get_portState()
     {
+        // $res                    is a enumPORTSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PORTSTATE_INVALID;
             }
         }
-        return $this->_portState;
+        $res = $this->_portState;
+        return $res;
     }
 
     /**
@@ -172,12 +176,14 @@ class YHubPort extends YFunction
      */
     public function get_baudRate()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BAUDRATE_INVALID;
             }
         }
-        return $this->_baudRate;
+        $res = $this->_baudRate;
+        return $res;
     }
 
     /**

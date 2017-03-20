@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_currentloopoutput.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -131,22 +131,26 @@ class YCurrentLoopOutput extends YFunction
      */
     public function get_current()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENT_INVALID;
             }
         }
-        return $this->_current;
+        $res = $this->_current;
+        return $res;
     }
 
     public function get_currentTransition()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTTRANSITION_INVALID;
             }
         }
-        return $this->_currentTransition;
+        $res = $this->_currentTransition;
+        return $res;
     }
 
     public function set_currentTransition($newval)
@@ -180,12 +184,14 @@ class YCurrentLoopOutput extends YFunction
      */
     public function get_currentAtStartUp()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTATSTARTUP_INVALID;
             }
         }
-        return $this->_currentAtStartUp;
+        $res = $this->_currentAtStartUp;
+        return $res;
     }
 
     /**
@@ -200,12 +206,14 @@ class YCurrentLoopOutput extends YFunction
      */
     public function get_loopPower()
     {
+        // $res                    is a enumLOOPPWRSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LOOPPOWER_INVALID;
             }
         }
-        return $this->_loopPower;
+        $res = $this->_loopPower;
+        return $res;
     }
 
     /**

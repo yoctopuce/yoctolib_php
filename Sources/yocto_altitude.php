@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_altitude.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_altitude.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -51,7 +51,7 @@ if(!defined('Y_TECHNOLOGY_INVALID'))         define('Y_TECHNOLOGY_INVALID',     
  *
  * The Yoctopuce class YAltitude allows you to read and configure Yoctopuce altitude
  * sensors. It inherits from the YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to configure the barometric pressure adjusted to
  * sea level (QNH) for barometric sensors.
  */
@@ -136,12 +136,14 @@ class YAltitude extends YSensor
      */
     public function get_qnh()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_QNH_INVALID;
             }
         }
-        return $this->_qnh;
+        $res = $this->_qnh;
+        return $res;
     }
 
     /**
@@ -155,12 +157,14 @@ class YAltitude extends YSensor
      */
     public function get_technology()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TECHNOLOGY_INVALID;
             }
         }
-        return $this->_technology;
+        $res = $this->_technology;
+        return $res;
     }
 
     /**

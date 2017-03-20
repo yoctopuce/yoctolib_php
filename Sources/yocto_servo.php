@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_servo.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YServo, the high-level API for Servo functions
  *
@@ -136,12 +136,14 @@ class YServo extends YFunction
      */
     public function get_position()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POSITION_INVALID;
             }
         }
-        return $this->_position;
+        $res = $this->_position;
+        return $res;
     }
 
     /**
@@ -168,12 +170,14 @@ class YServo extends YFunction
      */
     public function get_enabled()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
-        return $this->_enabled;
+        $res = $this->_enabled;
+        return $res;
     }
 
     /**
@@ -200,12 +204,14 @@ class YServo extends YFunction
      */
     public function get_range()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RANGE_INVALID;
             }
         }
-        return $this->_range;
+        $res = $this->_range;
+        return $res;
     }
 
     /**
@@ -238,12 +244,14 @@ class YServo extends YFunction
      */
     public function get_neutral()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_NEUTRAL_INVALID;
             }
         }
-        return $this->_neutral;
+        $res = $this->_neutral;
+        return $res;
     }
 
     /**
@@ -269,12 +277,14 @@ class YServo extends YFunction
 
     public function get_move()
     {
+        // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MOVE_INVALID;
             }
         }
-        return $this->_move;
+        $res = $this->_move;
+        return $res;
     }
 
     public function set_move($newval)
@@ -308,12 +318,14 @@ class YServo extends YFunction
      */
     public function get_positionAtPowerOn()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POSITIONATPOWERON_INVALID;
             }
         }
-        return $this->_positionAtPowerOn;
+        $res = $this->_positionAtPowerOn;
+        return $res;
     }
 
     /**
@@ -342,12 +354,14 @@ class YServo extends YFunction
      */
     public function get_enabledAtPowerOn()
     {
+        // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ENABLEDATPOWERON_INVALID;
             }
         }
-        return $this->_enabledAtPowerOn;
+        $res = $this->_enabledAtPowerOn;
+        return $res;
     }
 
     /**

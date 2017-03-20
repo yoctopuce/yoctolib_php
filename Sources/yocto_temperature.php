@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_temperature.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -66,8 +66,8 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
  * YTemperature Class: Temperature function interface
  *
  * The Yoctopuce class YTemperature allows you to read and configure Yoctopuce temperature
- * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * sensors. It inherits from YSensor class the core functions to read measurements, to
+ * register callback functions, to access the autonomous datalogger.
  * This class adds the ability to configure some specific parameters for some
  * sensors (connection type, temperature mapping table).
  */
@@ -166,12 +166,14 @@ class YTemperature extends YSensor
      */
     public function get_sensorType()
     {
+        // $res                    is a enumTEMPSENSORTYPEALL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SENSORTYPE_INVALID;
             }
         }
-        return $this->_sensorType;
+        $res = $this->_sensorType;
+        return $res;
     }
 
     /**
@@ -206,12 +208,14 @@ class YTemperature extends YSensor
      */
     public function get_signalValue()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALVALUE_INVALID;
             }
         }
-        return round($this->_signalValue * 1000) / 1000;
+        $res = round($this->_signalValue * 1000) / 1000;
+        return $res;
     }
 
     /**
@@ -223,22 +227,26 @@ class YTemperature extends YSensor
      */
     public function get_signalUnit()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SIGNALUNIT_INVALID;
             }
         }
-        return $this->_signalUnit;
+        $res = $this->_signalUnit;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)
@@ -282,7 +290,7 @@ class YTemperature extends YSensor
     }
 
     /**
-     * Configure NTC thermistor parameters in order to properly compute the temperature from
+     * Configures NTC thermistor parameters in order to properly compute the temperature from
      * the measured resistance. For increased precision, you can enter a complete mapping
      * table using set_thermistorResponseTable. This function can only be used with a
      * temperature sensor based on thermistors.

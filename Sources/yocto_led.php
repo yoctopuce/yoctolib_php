@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_led.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -119,12 +119,14 @@ class YLed extends YFunction
      */
     public function get_power()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_POWER_INVALID;
             }
         }
-        return $this->_power;
+        $res = $this->_power;
+        return $res;
     }
 
     /**
@@ -151,12 +153,14 @@ class YLed extends YFunction
      */
     public function get_luminosity()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LUMINOSITY_INVALID;
             }
         }
-        return $this->_luminosity;
+        $res = $this->_luminosity;
+        return $res;
     }
 
     /**
@@ -184,12 +188,14 @@ class YLed extends YFunction
      */
     public function get_blinking()
     {
+        // $res                    is a enumBLINK;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKING_INVALID;
             }
         }
-        return $this->_blinking;
+        $res = $this->_blinking;
+        return $res;
     }
 
     /**

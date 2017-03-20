@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_poweroutput.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_poweroutput.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -99,12 +99,14 @@ class YPowerOutput extends YFunction
      */
     public function get_voltage()
     {
+        // $res                    is a enumPOWEROUPUTVOLTAGE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLTAGE_INVALID;
             }
         }
-        return $this->_voltage;
+        $res = $this->_voltage;
+        return $res;
     }
 
     /**

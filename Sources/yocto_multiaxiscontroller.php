@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 26266 2017-01-04 14:31:46Z seb $
+ * $Id: yocto_multiaxiscontroller.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -113,12 +113,14 @@ class YMultiAxisController extends YFunction
      */
     public function get_nAxis()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_NAXIS_INVALID;
             }
         }
-        return $this->_nAxis;
+        $res = $this->_nAxis;
+        return $res;
     }
 
     /**
@@ -147,22 +149,26 @@ class YMultiAxisController extends YFunction
      */
     public function get_globalState()
     {
+        // $res                    is a enumSTEPPERSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_GLOBALSTATE_INVALID;
             }
         }
-        return $this->_globalState;
+        $res = $this->_globalState;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

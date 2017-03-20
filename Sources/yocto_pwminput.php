@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_pwminput.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -60,7 +60,7 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
  *
  * The Yoctopuce class YPwmInput allows you to read and configure Yoctopuce PWM
  * sensors. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to configure the signal parameter used to transmit
  * information: the duty cycle, the frequency or the pulse width.
  */
@@ -137,12 +137,14 @@ class YPwmInput extends YSensor
      */
     public function get_dutyCycle()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLE_INVALID;
             }
         }
-        return $this->_dutyCycle;
+        $res = $this->_dutyCycle;
+        return $res;
     }
 
     /**
@@ -155,12 +157,14 @@ class YPwmInput extends YSensor
      */
     public function get_pulseDuration()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSEDURATION_INVALID;
             }
         }
-        return $this->_pulseDuration;
+        $res = $this->_pulseDuration;
+        return $res;
     }
 
     /**
@@ -172,12 +176,14 @@ class YPwmInput extends YSensor
      */
     public function get_frequency()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
-        return $this->_frequency;
+        $res = $this->_frequency;
+        return $res;
     }
 
     /**
@@ -189,12 +195,14 @@ class YPwmInput extends YSensor
      */
     public function get_period()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PERIOD_INVALID;
             }
         }
-        return $this->_period;
+        $res = $this->_period;
+        return $res;
     }
 
     /**
@@ -208,12 +216,14 @@ class YPwmInput extends YSensor
      */
     public function get_pulseCounter()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSECOUNTER_INVALID;
             }
         }
-        return $this->_pulseCounter;
+        $res = $this->_pulseCounter;
+        return $res;
     }
 
     public function set_pulseCounter($newval)
@@ -231,12 +241,14 @@ class YPwmInput extends YSensor
      */
     public function get_pulseTimer()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
-        return $this->_pulseTimer;
+        $res = $this->_pulseTimer;
+        return $res;
     }
 
     /**
@@ -251,12 +263,14 @@ class YPwmInput extends YSensor
      */
     public function get_pwmReportMode()
     {
+        // $res                    is a enumPWMREPORTMODETYPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PWMREPORTMODE_INVALID;
             }
         }
-        return $this->_pwmReportMode;
+        $res = $this->_pwmReportMode;
+        return $res;
     }
 
     /**

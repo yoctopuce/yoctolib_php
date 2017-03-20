@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 25379 2016-09-16 16:07:16Z seb $
+ * $Id: yocto_colorledcluster.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -120,12 +120,14 @@ class YColorLedCluster extends YFunction
      */
     public function get_activeLedCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ACTIVELEDCOUNT_INVALID;
             }
         }
-        return $this->_activeLedCount;
+        $res = $this->_activeLedCount;
+        return $res;
     }
 
     /**
@@ -152,12 +154,14 @@ class YColorLedCluster extends YFunction
      */
     public function get_maxLedCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAXLEDCOUNT_INVALID;
             }
         }
-        return $this->_maxLedCount;
+        $res = $this->_maxLedCount;
+        return $res;
     }
 
     /**
@@ -169,12 +173,14 @@ class YColorLedCluster extends YFunction
      */
     public function get_blinkSeqMaxCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXCOUNT_INVALID;
             }
         }
-        return $this->_blinkSeqMaxCount;
+        $res = $this->_blinkSeqMaxCount;
+        return $res;
     }
 
     /**
@@ -186,22 +192,26 @@ class YColorLedCluster extends YFunction
      */
     public function get_blinkSeqMaxSize()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXSIZE_INVALID;
             }
         }
-        return $this->_blinkSeqMaxSize;
+        $res = $this->_blinkSeqMaxSize;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_segmenteddisplay.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_segmenteddisplay.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -103,12 +103,14 @@ class YSegmentedDisplay extends YFunction
      */
     public function get_displayedText()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISPLAYEDTEXT_INVALID;
             }
         }
-        return $this->_displayedText;
+        $res = $this->_displayedText;
+        return $res;
     }
 
     /**
@@ -128,12 +130,14 @@ class YSegmentedDisplay extends YFunction
 
     public function get_displayMode()
     {
+        // $res                    is a enumDISPLAYMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DISPLAYMODE_INVALID;
             }
         }
-        return $this->_displayMode;
+        $res = $this->_displayMode;
+        return $res;
     }
 
     public function set_displayMode($newval)

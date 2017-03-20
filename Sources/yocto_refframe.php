@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 25275 2016-08-24 13:42:24Z mvuilleu $
+ * $Id: yocto_refframe.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -143,12 +143,14 @@ class YRefFrame extends YFunction
 
     public function get_mountPos()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MOUNTPOS_INVALID;
             }
         }
-        return $this->_mountPos;
+        $res = $this->_mountPos;
+        return $res;
     }
 
     public function set_mountPos($newval)
@@ -196,22 +198,26 @@ class YRefFrame extends YFunction
      */
     public function get_bearing()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BEARING_INVALID;
             }
         }
-        return $this->_bearing;
+        $res = $this->_bearing;
+        return $res;
     }
 
     public function get_calibrationParam()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONPARAM_INVALID;
             }
         }
-        return $this->_calibrationParam;
+        $res = $this->_calibrationParam;
+        return $res;
     }
 
     public function set_calibrationParam($newval)

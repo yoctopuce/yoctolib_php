@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_quadraturedecoder.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_quadraturedecoder.php 26826 2017-03-17 11:20:57Z mvuilleu $
  *
  * Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -53,7 +53,7 @@ if(!defined('Y_SPEED_INVALID'))              define('Y_SPEED_INVALID',          
  *
  * The class YQuadratureDecoder allows you to decode a two-wire signal produced by a
  * quadrature encoder. It inherits from YSensor class the core functions to read measurements,
- * register callback functions, access to the autonomous datalogger.
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YQuadratureDecoder extends YSensor
 {
@@ -117,12 +117,14 @@ class YQuadratureDecoder extends YSensor
      */
     public function get_speed()
     {
+        // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SPEED_INVALID;
             }
         }
-        return $this->_speed;
+        $res = $this->_speed;
+        return $res;
     }
 
     /**
@@ -135,12 +137,14 @@ class YQuadratureDecoder extends YSensor
      */
     public function get_decoding()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DECODING_INVALID;
             }
         }
-        return $this->_decoding;
+        $res = $this->_decoding;
+        return $res;
     }
 
     /**

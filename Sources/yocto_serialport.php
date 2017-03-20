@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 25379 2016-09-16 16:07:16Z seb $
+ * $Id: yocto_serialport.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -176,12 +176,14 @@ class YSerialPort extends YFunction
      */
     public function get_rxCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RXCOUNT_INVALID;
             }
         }
-        return $this->_rxCount;
+        $res = $this->_rxCount;
+        return $res;
     }
 
     /**
@@ -193,12 +195,14 @@ class YSerialPort extends YFunction
      */
     public function get_txCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TXCOUNT_INVALID;
             }
         }
-        return $this->_txCount;
+        $res = $this->_txCount;
+        return $res;
     }
 
     /**
@@ -210,12 +214,14 @@ class YSerialPort extends YFunction
      */
     public function get_errCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ERRCOUNT_INVALID;
             }
         }
-        return $this->_errCount;
+        $res = $this->_errCount;
+        return $res;
     }
 
     /**
@@ -227,12 +233,14 @@ class YSerialPort extends YFunction
      */
     public function get_rxMsgCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RXMSGCOUNT_INVALID;
             }
         }
-        return $this->_rxMsgCount;
+        $res = $this->_rxMsgCount;
+        return $res;
     }
 
     /**
@@ -244,12 +252,14 @@ class YSerialPort extends YFunction
      */
     public function get_txMsgCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TXMSGCOUNT_INVALID;
             }
         }
-        return $this->_txMsgCount;
+        $res = $this->_txMsgCount;
+        return $res;
     }
 
     /**
@@ -261,12 +271,14 @@ class YSerialPort extends YFunction
      */
     public function get_lastMsg()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTMSG_INVALID;
             }
         }
-        return $this->_lastMsg;
+        $res = $this->_lastMsg;
+        return $res;
     }
 
     /**
@@ -278,12 +290,14 @@ class YSerialPort extends YFunction
      */
     public function get_currentJob()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTJOB_INVALID;
             }
         }
-        return $this->_currentJob;
+        $res = $this->_currentJob;
+        return $res;
     }
 
     /**
@@ -312,12 +326,14 @@ class YSerialPort extends YFunction
      */
     public function get_startupJob()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STARTUPJOB_INVALID;
             }
         }
-        return $this->_startupJob;
+        $res = $this->_startupJob;
+        return $res;
     }
 
     /**
@@ -339,12 +355,14 @@ class YSerialPort extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)
@@ -364,12 +382,14 @@ class YSerialPort extends YFunction
      */
     public function get_voltageLevel()
     {
+        // $res                    is a enumSERIALVOLTAGELEVEL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLTAGELEVEL_INVALID;
             }
         }
-        return $this->_voltageLevel;
+        $res = $this->_voltageLevel;
+        return $res;
     }
 
     /**
@@ -408,12 +428,14 @@ class YSerialPort extends YFunction
      */
     public function get_protocol()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PROTOCOL_INVALID;
             }
         }
-        return $this->_protocol;
+        $res = $this->_protocol;
+        return $res;
     }
 
     /**
@@ -454,12 +476,14 @@ class YSerialPort extends YFunction
      */
     public function get_serialMode()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SERIALMODE_INVALID;
             }
         }
-        return $this->_serialMode;
+        $res = $this->_serialMode;
+        return $res;
     }
 
     /**

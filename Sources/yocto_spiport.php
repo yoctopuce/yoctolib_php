@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_spiport.php 25379 2016-09-16 16:07:16Z seb $
+ * $Id: yocto_spiport.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -196,12 +196,14 @@ class YSpiPort extends YFunction
      */
     public function get_rxCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RXCOUNT_INVALID;
             }
         }
-        return $this->_rxCount;
+        $res = $this->_rxCount;
+        return $res;
     }
 
     /**
@@ -213,12 +215,14 @@ class YSpiPort extends YFunction
      */
     public function get_txCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TXCOUNT_INVALID;
             }
         }
-        return $this->_txCount;
+        $res = $this->_txCount;
+        return $res;
     }
 
     /**
@@ -230,12 +234,14 @@ class YSpiPort extends YFunction
      */
     public function get_errCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_ERRCOUNT_INVALID;
             }
         }
-        return $this->_errCount;
+        $res = $this->_errCount;
+        return $res;
     }
 
     /**
@@ -247,12 +253,14 @@ class YSpiPort extends YFunction
      */
     public function get_rxMsgCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RXMSGCOUNT_INVALID;
             }
         }
-        return $this->_rxMsgCount;
+        $res = $this->_rxMsgCount;
+        return $res;
     }
 
     /**
@@ -264,12 +272,14 @@ class YSpiPort extends YFunction
      */
     public function get_txMsgCount()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_TXMSGCOUNT_INVALID;
             }
         }
-        return $this->_txMsgCount;
+        $res = $this->_txMsgCount;
+        return $res;
     }
 
     /**
@@ -281,12 +291,14 @@ class YSpiPort extends YFunction
      */
     public function get_lastMsg()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_LASTMSG_INVALID;
             }
         }
-        return $this->_lastMsg;
+        $res = $this->_lastMsg;
+        return $res;
     }
 
     /**
@@ -298,12 +310,14 @@ class YSpiPort extends YFunction
      */
     public function get_currentJob()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_CURRENTJOB_INVALID;
             }
         }
-        return $this->_currentJob;
+        $res = $this->_currentJob;
+        return $res;
     }
 
     /**
@@ -332,12 +346,14 @@ class YSpiPort extends YFunction
      */
     public function get_startupJob()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STARTUPJOB_INVALID;
             }
         }
-        return $this->_startupJob;
+        $res = $this->_startupJob;
+        return $res;
     }
 
     /**
@@ -359,12 +375,14 @@ class YSpiPort extends YFunction
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)
@@ -384,12 +402,14 @@ class YSpiPort extends YFunction
      */
     public function get_voltageLevel()
     {
+        // $res                    is a enumSERIALVOLTAGELEVEL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_VOLTAGELEVEL_INVALID;
             }
         }
-        return $this->_voltageLevel;
+        $res = $this->_voltageLevel;
+        return $res;
     }
 
     /**
@@ -426,12 +446,14 @@ class YSpiPort extends YFunction
      */
     public function get_protocol()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PROTOCOL_INVALID;
             }
         }
-        return $this->_protocol;
+        $res = $this->_protocol;
+        return $res;
     }
 
     /**
@@ -467,12 +489,14 @@ class YSpiPort extends YFunction
      */
     public function get_spiMode()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SPIMODE_INVALID;
             }
         }
-        return $this->_spiMode;
+        $res = $this->_spiMode;
+        return $res;
     }
 
     /**
@@ -502,12 +526,14 @@ class YSpiPort extends YFunction
      */
     public function get_ssPolarity()
     {
+        // $res                    is a enumPOLARITY;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SSPOLARITY_INVALID;
             }
         }
-        return $this->_ssPolarity;
+        $res = $this->_ssPolarity;
+        return $res;
     }
 
     /**
@@ -535,12 +561,14 @@ class YSpiPort extends YFunction
      */
     public function get_shitftSampling()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_SHITFTSAMPLING_INVALID;
             }
         }
-        return $this->_shitftSampling;
+        $res = $this->_shitftSampling;
+        return $res;
     }
 
     /**

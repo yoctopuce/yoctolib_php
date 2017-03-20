@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_colorled.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -142,12 +142,14 @@ class YColorLed extends YFunction
      */
     public function get_rgbColor()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RGBCOLOR_INVALID;
             }
         }
-        return $this->_rgbColor;
+        $res = $this->_rgbColor;
+        return $res;
     }
 
     /**
@@ -174,12 +176,14 @@ class YColorLed extends YFunction
      */
     public function get_hslColor()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_HSLCOLOR_INVALID;
             }
         }
-        return $this->_hslColor;
+        $res = $this->_hslColor;
+        return $res;
     }
 
     /**
@@ -199,12 +203,14 @@ class YColorLed extends YFunction
 
     public function get_rgbMove()
     {
+        // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RGBMOVE_INVALID;
             }
         }
-        return $this->_rgbMove;
+        $res = $this->_rgbMove;
+        return $res;
     }
 
     public function set_rgbMove($newval)
@@ -231,12 +237,14 @@ class YColorLed extends YFunction
 
     public function get_hslMove()
     {
+        // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_HSLMOVE_INVALID;
             }
         }
-        return $this->_hslMove;
+        $res = $this->_hslMove;
+        return $res;
     }
 
     public function set_hslMove($newval)
@@ -270,12 +278,14 @@ class YColorLed extends YFunction
      */
     public function get_rgbColorAtPowerOn()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_RGBCOLORATPOWERON_INVALID;
             }
         }
-        return $this->_rgbColorAtPowerOn;
+        $res = $this->_rgbColorAtPowerOn;
+        return $res;
     }
 
     /**
@@ -303,12 +313,14 @@ class YColorLed extends YFunction
      */
     public function get_blinkSeqSize()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKSEQSIZE_INVALID;
             }
         }
-        return $this->_blinkSeqSize;
+        $res = $this->_blinkSeqSize;
+        return $res;
     }
 
     /**
@@ -320,12 +332,14 @@ class YColorLed extends YFunction
      */
     public function get_blinkSeqMaxSize()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXSIZE_INVALID;
             }
         }
-        return $this->_blinkSeqMaxSize;
+        $res = $this->_blinkSeqMaxSize;
+        return $res;
     }
 
     /**
@@ -340,22 +354,26 @@ class YColorLed extends YFunction
      */
     public function get_blinkSeqSignature()
     {
+        // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_BLINKSEQSIGNATURE_INVALID;
             }
         }
-        return $this->_blinkSeqSignature;
+        $res = $this->_blinkSeqSignature;
+        return $res;
     }
 
     public function get_command()
     {
+        // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }
-        return $this->_command;
+        $res = $this->_command;
+        return $res;
     }
 
     public function set_command($newval)

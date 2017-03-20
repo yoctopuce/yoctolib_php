@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 25202 2016-08-17 10:24:49Z seb $
+ * $Id: yocto_relay.php 26674 2017-02-28 13:44:41Z seb $
  *
  * Implements YRelay, the high-level API for Relay functions
  *
@@ -152,12 +152,14 @@ class YRelay extends YFunction
      */
     public function get_state()
     {
+        // $res                    is a enumTOGGLE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STATE_INVALID;
             }
         }
-        return $this->_state;
+        $res = $this->_state;
+        return $res;
     }
 
     /**
@@ -188,12 +190,14 @@ class YRelay extends YFunction
      */
     public function get_stateAtPowerOn()
     {
+        // $res                    is a enumTOGGLEATPOWERON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_STATEATPOWERON_INVALID;
             }
         }
-        return $this->_stateAtPowerOn;
+        $res = $this->_stateAtPowerOn;
+        return $res;
     }
 
     /**
@@ -223,12 +227,14 @@ class YRelay extends YFunction
      */
     public function get_maxTimeOnStateA()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEA_INVALID;
             }
         }
-        return $this->_maxTimeOnStateA;
+        $res = $this->_maxTimeOnStateA;
+        return $res;
     }
 
     /**
@@ -257,12 +263,14 @@ class YRelay extends YFunction
      */
     public function get_maxTimeOnStateB()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEB_INVALID;
             }
         }
-        return $this->_maxTimeOnStateB;
+        $res = $this->_maxTimeOnStateB;
+        return $res;
     }
 
     /**
@@ -291,12 +299,14 @@ class YRelay extends YFunction
      */
     public function get_output()
     {
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_OUTPUT_INVALID;
             }
         }
-        return $this->_output;
+        $res = $this->_output;
+        return $res;
     }
 
     /**
@@ -327,12 +337,14 @@ class YRelay extends YFunction
      */
     public function get_pulseTimer()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
-        return $this->_pulseTimer;
+        $res = $this->_pulseTimer;
+        return $res;
     }
 
     public function set_pulseTimer($newval)
@@ -359,12 +371,14 @@ class YRelay extends YFunction
 
     public function get_delayedPulseTimer()
     {
+        // $res                    is a YDelayedPulse;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_DELAYEDPULSETIMER_INVALID;
             }
         }
-        return $this->_delayedPulseTimer;
+        $res = $this->_delayedPulseTimer;
+        return $res;
     }
 
     public function set_delayedPulseTimer($newval)
@@ -400,12 +414,14 @@ class YRelay extends YFunction
      */
     public function get_countdown()
     {
+        // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
                 return Y_COUNTDOWN_INVALID;
             }
         }
-        return $this->_countdown;
+        $res = $this->_countdown;
+        return $res;
     }
 
     /**
