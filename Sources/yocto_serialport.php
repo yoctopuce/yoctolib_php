@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_serialport.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -558,7 +558,7 @@ class YSerialPort extends YFunction
         $this->_rxptr = 0;
         $this->_rxbuffptr = 0;
         $this->_rxbuff = '';
-        // may throw an exception
+        
         return $this->sendCommand('Z');
     }
 
@@ -594,6 +594,7 @@ class YSerialPort extends YFunction
         $buff = $text;
         $bufflen = strlen($buff);
         if ($bufflen < 100) {
+            // if string is pure text, we can send it as a simple command (faster)
             $ch = 0x20;
             $idx = 0;
             while (($idx < $bufflen) && ($ch != 0)) {
@@ -650,7 +651,7 @@ class YSerialPort extends YFunction
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
-        // may throw an exception
+        
         $res = $this->_upload('txdata', $buff);
         return $res;
     }
@@ -683,7 +684,7 @@ class YSerialPort extends YFunction
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
-        // may throw an exception
+        
         $res = $this->_upload('txdata', $buff);
         return $res;
     }
@@ -706,6 +707,7 @@ class YSerialPort extends YFunction
         $buff = sprintf('%s'."\r".''."\n".'', $text);
         $bufflen = strlen($buff)-2;
         if ($bufflen < 100) {
+            // if string is pure text, we can send it as a simple command (faster)
             $ch = 0x20;
             $idx = 0;
             while (($idx < $bufflen) && ($ch != 0)) {
@@ -778,7 +780,7 @@ class YSerialPort extends YFunction
         // still mixed, need to process character by character
         $this->_rxptr = $currpos;
         
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=1', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -817,7 +819,7 @@ class YSerialPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -854,7 +856,7 @@ class YSerialPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -897,7 +899,7 @@ class YSerialPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -940,7 +942,7 @@ class YSerialPort extends YFunction
         if ($nBytes > 65535) {
             $nBytes = 65535;
         }
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nBytes));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -984,7 +986,7 @@ class YSerialPort extends YFunction
         $msgarr = Array();      // strArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        // may throw an exception
+        
         $url = sprintf('rxmsg.json?pos=%d&len=1&maxw=1', $this->_rxptr);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
@@ -1031,7 +1033,7 @@ class YSerialPort extends YFunction
         // $msglen                 is a int;
         $res = Array();         // strArr;
         // $idx                    is a int;
-        // may throw an exception
+        
         $url = sprintf('rxmsg.json?pos=%d&maxw=%d&pat=%s', $this->_rxptr, $maxWait, $pattern);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
@@ -1086,7 +1088,7 @@ class YSerialPort extends YFunction
         // $buff                   is a bin;
         // $bufflen                is a int;
         // $res                    is a int;
-        // may throw an exception
+        
         $buff = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
         while (($bufflen > 0) && (ord($buff[$bufflen]) != 64)) {
@@ -1115,7 +1117,7 @@ class YSerialPort extends YFunction
         $msgarr = Array();      // strArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        // may throw an exception
+        
         $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $query);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
@@ -1193,7 +1195,7 @@ class YSerialPort extends YFunction
     {
         // $buff                   is a bin;
         // $res                    is a int;
-        // may throw an exception
+        
         $buff = $this->_download('cts.txt');
         if (!(strlen($buff) == 1)) return $this->_throw( YAPI_IO_ERROR, 'invalid CTS reply',YAPI_IO_ERROR);
         $res = ord($buff[0]) - 48;
@@ -1251,7 +1253,7 @@ class YSerialPort extends YFunction
             $cmd = sprintf('%s%02x', $cmd, (($pduBytes[$i]) & (0xff)));
             $i = $i + 1;
         }
-        // may throw an exception
+        
         $url = sprintf('rxmsg.json?cmd=:%s&pat=:%s', $cmd, $pat);
         $msgs = $this->_download($url);
         $reps = $this->_json_get_array($msgs);
@@ -1302,7 +1304,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = (($nBits) >> (8));
         $pdu[] = (($nBits) & (0xff));
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1358,7 +1360,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = (($nBits) >> (8));
         $pdu[] = (($nBits) & (0xff));
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1413,7 +1415,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = (($nWords) >> (8));
         $pdu[] = (($nWords) & (0xff));
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1459,7 +1461,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = (($nWords) >> (8));
         $pdu[] = (($nWords) & (0xff));
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1506,7 +1508,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = $value;
         $pdu[] = 0x00;
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1568,7 +1570,7 @@ class YSerialPort extends YFunction
         if ($mask != 1) {
             $pdu[] = $val;
         }
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1604,7 +1606,7 @@ class YSerialPort extends YFunction
         $pdu[] = (($pduAddr) & (0xff));
         $pdu[] = (($value) >> (8));
         $pdu[] = (($value) & (0xff));
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1653,7 +1655,7 @@ class YSerialPort extends YFunction
             $pdu[] = (($val) & (0xff));
             $regpos = $regpos + 1;
         }
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;
@@ -1710,7 +1712,7 @@ class YSerialPort extends YFunction
             $pdu[] = (($val) & (0xff));
             $regpos = $regpos + 1;
         }
-        // may throw an exception
+        
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
             return $res;

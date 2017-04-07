@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_rangefinder.php 26826 2017-03-17 11:20:57Z mvuilleu $
+ * $Id: yocto_rangefinder.php 26996 2017-03-30 16:18:14Z seb $
  *
  * Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -269,7 +269,6 @@ class YRangeFinder extends YSensor
     public function get_hardwareCalibrationTemperature()
     {
         // $hwcal                  is a string;
-        
         $hwcal = $this->get_hardwareCalibration();
         if (!(substr($hwcal, 0, 1) == '@')) {
             return YAPI_INVALID_DOUBLE;
@@ -320,7 +319,6 @@ class YRangeFinder extends YSensor
     public function triggerOffsetCalibration($targetDist)
     {
         // $distmm                 is a int;
-        
         if ($this->get_unit() == '"') {
             $distmm = round($targetDist * 25.4);
         } else {
@@ -344,7 +342,6 @@ class YRangeFinder extends YSensor
     public function triggerXTalkCalibration($targetDist)
     {
         // $distmm                 is a int;
-        
         if ($this->get_unit() == '"') {
             $distmm = round($targetDist * 25.4);
         } else {

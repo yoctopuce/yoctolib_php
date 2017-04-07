@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_refframe.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -360,7 +360,7 @@ class YRefFrame extends YFunction
         $iCalib = Array();      // intArr;
         // $caltyp                 is a int;
         // $res                    is a int;
-        // may throw an exception
+        
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
         $caltyp = intVal(($iCalib[0]) / (1000));
@@ -390,7 +390,7 @@ class YRefFrame extends YFunction
         $iCalib = Array();      // intArr;
         // $caltyp                 is a int;
         // $res                    is a int;
-        // may throw an exception
+        
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
         $caltyp = intVal(($iCalib[0]) / (1000));
@@ -588,6 +588,7 @@ class YRefFrame extends YFunction
         }
         // Discard measures that are not in the proper orientation
         if ($this->_calibStageProgress == 0) {
+            // New stage, check that $this orientation is not yet done
             $idx = 0;
             $err = 0;
             while ($idx + 1 < $this->_calibStage) {
@@ -602,6 +603,7 @@ class YRefFrame extends YFunction
             }
             $this->_calibOrient[] = $orient;
         } else {
+            // Make sure device is not turned before stage is completed
             if ($orient != $this->_calibOrient[$this->_calibStage-1]) {
                 $this->_calibStageHint = 'Not yet done, please move back to the previous face';
                 return YAPI_SUCCESS;
@@ -729,7 +731,7 @@ class YRefFrame extends YFunction
                 return YAPI_SUCCESS;
             }
         }
-        // may throw an exception
+        
         $calibParam = $this->_download('api/refFrame/calibrationParam.txt');
         $iCalib = YAPI::_decodeFloats($calibParam);
         $cal3 = intVal(($iCalib[1]) / (1000));
@@ -915,7 +917,7 @@ class YRefFrame extends YFunction
         if ($this->_calibStage == 0) {
             return YAPI_SUCCESS;
         }
-        // may throw an exception
+        
         $this->_calibStage = 0;
         return $this->set_calibrationParam($this->_calibSavedParams);
     }

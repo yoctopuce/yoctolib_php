@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 26826 2017-03-17 11:20:57Z mvuilleu $
+ * $Id: yocto_api.php 27106 2017-04-06 22:17:35Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.26849";
+        return "1.10.27127";
     }
 
     /**
@@ -3845,7 +3845,7 @@ class YDataStream
             $this->_nRows = 0;
             return YAPI_SUCCESS;
         }
-        // may throw an exception
+        
         $udat = YAPI::_decodeWords($this->_parent->_json_get_string($sdata));
         while(sizeof($this->_values) > 0) { array_pop($this->_values); };
         $idx = 0;
@@ -4271,7 +4271,7 @@ class YDataSet
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
-        // may throw an exception
+        
         if ($progress != $this->_progress) {
             return $this->_progress;
         }
@@ -4514,7 +4514,7 @@ class YDataSet
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
-        // may throw an exception
+        
         $startUtc = round($measure.get_startTimeUTC());
         $stream = null;
         foreach($this->_streams as $each) {
@@ -6002,19 +6002,23 @@ class YSensor extends YFunction
             return 0;
         }
         if (Ystrpos($this->_calibrationParam,',') >= 0) {
+            // Plain text format
             $iCalib = YAPI::_decodeFloats($this->_calibrationParam);
             $this->_caltyp = intVal(($iCalib[0]) / (1000));
             if ($this->_caltyp > 0) {
                 if ($this->_caltyp < YOCTO_CALIB_TYPE_OFS) {
+                    // Unknown calibration type: calibrated value will be provided by the device
                     $this->_caltyp = -1;
                     return 0;
                 }
                 $this->_calhdl = YAPI::_getCalibrationHandler($this->_caltyp);
                 if (!(!is_null($this->_calhdl))) {
+                    // Unknown calibration type: calibrated value will be provided by the device
                     $this->_caltyp = -1;
                     return 0;
                 }
             }
+            // New 32bit text format
             $this->_isScal = true;
             $this->_isScal32 = true;
             $this->_offset = 0;
@@ -6039,11 +6043,14 @@ class YSensor extends YFunction
                 $position = $position + 2;
             }
         } else {
+            // Recorder-encoded format, including encoding
             $iCalib = YAPI::_decodeWords($this->_calibrationParam);
+            // In case of unknown format, calibrated value will be provided by the device
             if (sizeof($iCalib) < 2) {
                 $this->_caltyp = -1;
                 return 0;
             }
+            // Save variable format (scale for scalar, or decimal exponent)
             $this->_isScal = ($iCalib[1] > 0);
             if ($this->_isScal) {
                 $this->_offset = $iCalib[0];
@@ -6062,12 +6069,14 @@ class YSensor extends YFunction
                     $position = $position - 1;
                 }
             }
+            // Shortcut when there is no calibration parameter
             if (sizeof($iCalib) == 2) {
                 $this->_caltyp = 0;
                 return 0;
             }
             $this->_caltyp = $iCalib[2];
             $this->_calhdl = YAPI::_getCalibrationHandler($this->_caltyp);
+            // parse calibration points
             if ($this->_caltyp <= 10) {
                 $maxpos = $this->_caltyp;
             } else {
@@ -6136,7 +6145,7 @@ class YSensor extends YFunction
     public function startDataLogger()
     {
         // $res                    is a bin;
-        // may throw an exception
+        
         $res = $this->_download('api/dataLogger/recording?recording=1');
         if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to start datalogger',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
@@ -6150,7 +6159,7 @@ class YSensor extends YFunction
     public function stopDataLogger()
     {
         // $res                    is a bin;
-        // may throw an exception
+        
         $res = $this->_download('api/dataLogger/recording?recording=0');
         if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to stop datalogger',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
@@ -6186,7 +6195,7 @@ class YSensor extends YFunction
     {
         // $funcid                 is a str;
         // $funit                  is a str;
-        // may throw an exception
+        
         $funcid = $this->get_functionId();
         $funit = $this->get_unit();
         return new YDataSet($this, $funcid, $funit, $startTime, $endTime);
@@ -6249,9 +6258,11 @@ class YSensor extends YFunction
     public function calibrateFromPoints($rawValues,$refValues)
     {
         // $rest_val               is a str;
-        // may throw an exception
+        // $res                    is a int;
+        
         $rest_val = $this->_encodeCalibrationPoints($rawValues, $refValues);
-        return $this->_setAttr('calibrationParam', $rest_val);
+        $res = $this->_setAttr('calibrationParam', $rest_val);
+        return $res;
     }
 
     /**
@@ -6320,6 +6331,7 @@ class YSensor extends YFunction
             return '0';
         }
         if ($this->_isScal32) {
+            // 32-bit fixed-point encoding
             $res = sprintf('%d', YOCTO_CALIB_TYPE_OFS);
             $idx = 0;
             while ($idx < $npt) {
@@ -6328,6 +6340,7 @@ class YSensor extends YFunction
             }
         } else {
             if ($this->_isScal) {
+                // 16-bit fixed-point encoding
                 $res = sprintf('%d', $npt);
                 $idx = 0;
                 while ($idx < $npt) {
@@ -6337,6 +6350,7 @@ class YSensor extends YFunction
                     $idx = $idx + 1;
                 }
             } else {
+                // 16-bit floating-point decimal encoding
                 $res = sprintf('%d', 10 + $npt);
                 $idx = 0;
                 while ($idx < $npt) {
@@ -6389,7 +6403,9 @@ class YSensor extends YFunction
             $startTime = $endTime;
         }
         if ($report[0] == 2) {
+            // 32bit timed report format
             if (sizeof($report) <= 5) {
+                // sub-second report, 1-4 bytes
                 $poww = 1;
                 $avgRaw = 0;
                 $byteVal = 0;
@@ -6412,6 +6428,7 @@ class YSensor extends YFunction
                 $minVal = $avgVal;
                 $maxVal = $avgVal;
             } else {
+                // averaged report: avg,avg-min,max-avg
                 $sublen = 1 + (($report[1]) & (3));
                 $poww = 1;
                 $avgRaw = 0;
@@ -6461,7 +6478,9 @@ class YSensor extends YFunction
                 }
             }
         } else {
+            // 16bit timed report format
             if ($report[0] == 0) {
+                // sub-second report, 1-4 bytes
                 $poww = 1;
                 $avgRaw = 0;
                 $byteVal = 0;
@@ -6483,6 +6502,7 @@ class YSensor extends YFunction
                 $minVal = $avgVal;
                 $maxVal = $avgVal;
             } else {
+                // averaged report 2+4+2 bytes
                 $minRaw = $report[1] + 0x100 * $report[2];
                 $maxRaw = $report[3] + 0x100 * $report[4];
                 $avgRaw = $report[5] + 0x100 * $report[6] + 0x10000 * $report[7];
@@ -7335,7 +7355,7 @@ class YModule extends YFunction
     {
         // $serial                 is a str;
         // $settings               is a bin;
-        // may throw an exception
+        
         $serial = $this->get_serialNumber();
         $settings = $this->get_allSettings();
         if (strlen($settings) == 0) {
@@ -7383,7 +7403,7 @@ class YModule extends YFunction
         // $ext_settings           is a str;
         $filelist = Array();    // strArr;
         $templist = Array();    // strArr;
-        // may throw an exception
+        
         $settings = $this->_download('api.json');
         if (strlen($settings) == 0) {
             return $settings;
@@ -7439,7 +7459,7 @@ class YModule extends YFunction
         // $ofs                    is a int;
         // $size                   is a int;
         $url = 'api/' . $funcId . '.json?command=Z';
-        // may throw an exception
+        
         $this->_download($url);
         // add records in growing resistance value
         $values = $this->_json_get_array($jsonExtra);
@@ -7537,7 +7557,7 @@ class YModule extends YFunction
         // $count                  is a int;
         // $i                      is a int;
         // $fid                    is a str;
-        // may throw an exception
+        
         $count  = $this->functionCount();
         $i = 0;
         while ($i < $count) {
@@ -7563,7 +7583,7 @@ class YModule extends YFunction
         // $i                      is a int;
         // $ftype                  is a str;
         $res = Array();         // strArr;
-        // may throw an exception
+        
         $count = $this->functionCount();
         $i = 0;
         while ($i < $count) {
@@ -7661,9 +7681,11 @@ class YModule extends YFunction
         $paramScale = $funScale;
         $paramOffset = $funOffset;
         if ($funVer < 3) {
+            // Read the effective device scale if available
             if ($funVer == 2) {
                 $words = YAPI::_decodeWords($currentFuncValue);
                 if (($words[0] == 1366) && ($words[1] == 12500)) {
+                    // Yocto-3D RefFrame used a special encoding
                     $funScale = 1;
                     $funOffset = 0;
                 } else {
@@ -7681,9 +7703,11 @@ class YModule extends YFunction
         while(sizeof($calibData) > 0) { array_pop($calibData); };
         $calibType = 0;
         if ($paramVer < 3) {
+            // Handle old 16 bit parameters formats
             if ($paramVer == 2) {
                 $words = YAPI::_decodeWords($param);
                 if (($words[0] == 1366) && ($words[1] == 12500)) {
+                    // Yocto-3D RefFrame used a special encoding
                     $paramScale = 1;
                     $paramOffset = 0;
                 } else {
@@ -7736,13 +7760,16 @@ class YModule extends YFunction
             $i = 0;
             while ($i < sizeof($calibData)) {
                 if ($paramScale > 0) {
+                    // scalar decoding
                     $calibData[$i] = ($calibData[$i] - $paramOffset) / $paramScale;
                 } else {
+                    // floating-point decoding
                     $calibData[$i] = YAPI::_decimalToDouble(round($calibData[$i]));
                 }
                 $i = $i + 1;
             }
         } else {
+            // Handle latest 32bit parameter format
             $iCalib = YAPI::_decodeFloats($param);
             $calibType = round($iCalib[0] / 1000.0);
             if ($calibType >= 30) {
@@ -7755,6 +7782,7 @@ class YModule extends YFunction
             }
         }
         if ($funVer >= 3) {
+            // Encode parameters in new format
             if (sizeof($calibData) == 0) {
                 $param = '0,';
             } else {
@@ -7773,6 +7801,7 @@ class YModule extends YFunction
             }
         } else {
             if ($funVer >= 1) {
+                // Encode parameters for older devices
                 $nPoints = intVal((sizeof($calibData)) / (2));
                 $param = $nPoints;
                 $i = 0;
@@ -7786,6 +7815,7 @@ class YModule extends YFunction
                     $i = $i + 1;
                 }
             } else {
+                // Initial V0 encoding used for old Yocto-Light
                 if (sizeof($calibData) == 4) {
                     $param = round(1000 * ($calibData[3] - $calibData[1]) / $calibData[2] - $calibData[0]);
                 }
@@ -7850,6 +7880,7 @@ class YModule extends YFunction
         $old_dslist = $this->_json_get_array($old_json_flat);
         foreach($old_dslist as $each) {
             $each_str = $this->_json_get_string($each);
+            // split json path and attr
             $leng = strlen($each_str);
             $eqpos = Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
@@ -7863,12 +7894,14 @@ class YModule extends YFunction
             $old_jpath_len[] = strlen($jpath);
             $old_val_arr[] = $value;
         }
-        // may throw an exception
+        
         $actualSettings = $this->_download('api.json');
         $actualSettings = $this->_flattenJsonStruct($actualSettings);
         $new_dslist = $this->_json_get_array($actualSettings);
         foreach($new_dslist as $each) {
+            // remove quotes
             $each_str = $this->_json_get_string($each);
+            // split json path and attr
             $leng = strlen($each_str);
             $eqpos = Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
@@ -8112,7 +8145,7 @@ class YModule extends YFunction
     public function get_lastLogs()
     {
         // $content                is a bin;
-        // may throw an exception
+        
         $content = $this->_download('logs.txt');
         return $content;
     }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_cellular.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -833,7 +833,7 @@ class YCellular extends YFunction
     public function clearDataCounters()
     {
         // $retcode                is a int;
-        // may throw an exception
+        
         $retcode = $this->set_dataReceived(0);
         if ($retcode != YAPI_SUCCESS) {
             return $retcode;
@@ -902,11 +902,13 @@ class YCellular extends YFunction
                 $idx = $idx - 1;
             }
             if (ord($buff[$idx]) == 64) {
+                // continuation detected
                 $suffixlen = $bufflen - $idx;
                 $cmd = sprintf('at.txt?cmd=%s', substr($buffstr,  $buffstrlen - $suffixlen, $suffixlen));
                 $buffstr = substr($buffstr,  0, $buffstrlen - $suffixlen);
                 $waitMore = $waitMore - 1;
             } else {
+                // request complete
                 $waitMore = 0;
             }
             $res = sprintf('%s%s', $res, $buffstr);
@@ -929,7 +931,7 @@ class YCellular extends YFunction
         // $idx                    is a int;
         // $slen                   is a int;
         $res = Array();         // strArr;
-        // may throw an exception
+        
         $cops = $this->_AT('+COPS=?');
         $slen = strlen($cops);
         while(sizeof($res) > 0) { array_pop($res); };
@@ -976,7 +978,7 @@ class YCellular extends YFunction
         // $tad                    is a int;
         // $oper                   is a str;
         $res = Array();         // YCellRecordArr;
-        // may throw an exception
+        
         $moni = $this->_AT('+CCED=0;#MONI=7;#MONI');
         $mccs = substr($moni, 7, 3);
         if (substr($mccs, 0, 1) == '0') {

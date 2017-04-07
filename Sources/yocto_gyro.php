@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_gyro.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -448,7 +448,7 @@ class YGyro extends YSensor
         // $sqz                    is a float;
         // $norm                   is a float;
         // $delta                  is a float;
-        // may throw an exception
+        
         if ($this->_loadQuaternion() != YAPI_SUCCESS) {
             return YAPI_DEVICE_NOT_FOUND;
         }
@@ -460,10 +460,12 @@ class YGyro extends YSensor
             $norm = $sqx + $sqy + $sqz + $sqw;
             $delta = $this->_y * $this->_w - $this->_x * $this->_z;
             if ($delta > 0.499 * $norm) {
+                // singularity at north pole
                 $this->_pitch = 90.0;
                 $this->_head  = round(2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,-$this->_w)) / 10.0;
             } else {
                 if ($delta < -0.499 * $norm) {
+                    // singularity at south pole
                     $this->_pitch = -90.0;
                     $this->_head  = round(-2.0 * 1800.0/3.141592653589793238463 * atan2($this->_x,-$this->_w)) / 10.0;
                 } else {

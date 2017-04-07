@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_digitalio.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_digitalio.php 26949 2017-03-28 15:36:15Z mvuilleu $
  *
  * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -49,6 +49,7 @@ if(!defined('Y_PORTSTATE_INVALID'))          define('Y_PORTSTATE_INVALID',      
 if(!defined('Y_PORTDIRECTION_INVALID'))      define('Y_PORTDIRECTION_INVALID',     YAPI_INVALID_UINT);
 if(!defined('Y_PORTOPENDRAIN_INVALID'))      define('Y_PORTOPENDRAIN_INVALID',     YAPI_INVALID_UINT);
 if(!defined('Y_PORTPOLARITY_INVALID'))       define('Y_PORTPOLARITY_INVALID',      YAPI_INVALID_UINT);
+if(!defined('Y_PORTDIAGS_INVALID'))          define('Y_PORTDIAGS_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_PORTSIZE_INVALID'))           define('Y_PORTSIZE_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YDigitalIO definitions)
@@ -68,6 +69,7 @@ class YDigitalIO extends YFunction
     const PORTDIRECTION_INVALID          = YAPI_INVALID_UINT;
     const PORTOPENDRAIN_INVALID          = YAPI_INVALID_UINT;
     const PORTPOLARITY_INVALID           = YAPI_INVALID_UINT;
+    const PORTDIAGS_INVALID              = YAPI_INVALID_UINT;
     const PORTSIZE_INVALID               = YAPI_INVALID_UINT;
     const OUTPUTVOLTAGE_USB_5V           = 0;
     const OUTPUTVOLTAGE_USB_3V           = 1;
@@ -81,6 +83,7 @@ class YDigitalIO extends YFunction
     protected $_portDirection            = Y_PORTDIRECTION_INVALID;      // BitByte
     protected $_portOpenDrain            = Y_PORTOPENDRAIN_INVALID;      // BitByte
     protected $_portPolarity             = Y_PORTPOLARITY_INVALID;       // BitByte
+    protected $_portDiags                = Y_PORTDIAGS_INVALID;          // DigitalIODiags
     protected $_portSize                 = Y_PORTSIZE_INVALID;           // UInt31
     protected $_outputVoltage            = Y_OUTPUTVOLTAGE_INVALID;      // IOVoltage
     protected $_command                  = Y_COMMAND_INVALID;            // Text
@@ -111,6 +114,9 @@ class YDigitalIO extends YFunction
             return 1;
         case 'portPolarity':
             $this->_portPolarity = intval($val);
+            return 1;
+        case 'portDiags':
+            $this->_portDiags = intval($val);
             return 1;
         case 'portSize':
             $this->_portSize = intval($val);
@@ -272,6 +278,27 @@ class YDigitalIO extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("portPolarity",$rest_val);
+    }
+
+    /**
+     * Returns the port state diagnostics (Yocto-IO and Yocto-MaxiIO-V2 only). Bit 0 indicates a shortcut on
+     * output 0, etc. Bit 8 indicates a power failure, and bit 9 signals overheating (overcurrent).
+     * During normal use, all diagnostic bits should stay clear.
+     *
+     * @return an integer corresponding to the port state diagnostics (Yocto-IO and Yocto-MaxiIO-V2 only)
+     *
+     * On failure, throws an exception or returns Y_PORTDIAGS_INVALID.
+     */
+    public function get_portDiags()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PORTDIAGS_INVALID;
+            }
+        }
+        $res = $this->_portDiags;
+        return $res;
     }
 
     /**
@@ -594,6 +621,9 @@ class YDigitalIO extends YFunction
 
     public function setPortPolarity($newval)
     { return $this->set_portPolarity($newval); }
+
+    public function portDiags()
+    { return $this->get_portDiags(); }
 
     public function portSize()
     { return $this->get_portSize(); }

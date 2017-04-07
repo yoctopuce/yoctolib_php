@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_network.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -1168,7 +1168,7 @@ class YNetwork extends YFunction
     public function ping($host)
     {
         // $content                is a bin;
-        // may throw an exception
+        
         $content = $this->_download(sprintf('ping.txt?host=%s',$host));
         return $content;
     }

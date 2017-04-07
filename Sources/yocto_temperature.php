@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 26826 2017-03-17 11:20:57Z mvuilleu $
+ * $Id: yocto_temperature.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -350,7 +350,7 @@ class YTemperature extends YSensor
         $siz = sizeof($tempValues);
         if (!($siz >= 2)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'thermistor response table must have at least two points',YAPI_INVALID_ARGUMENT);
         if (!($siz == sizeof($resValues))) return $this->_throw( YAPI_INVALID_ARGUMENT, 'table sizes mismatch',YAPI_INVALID_ARGUMENT);
-        // may throw an exception
+        
         $res = $this->set_command('Z');
         if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to reset thermistor parameters',YAPI_IO_ERROR);
         // add records in growing resistance value
@@ -410,7 +410,7 @@ class YTemperature extends YSensor
         // $currRes                is a float;
         while(sizeof($tempValues) > 0) { array_pop($tempValues); };
         while(sizeof($resValues) > 0) { array_pop($resValues); };
-        // may throw an exception
+        
         $id = $this->get_functionId();
         $id = substr($id,  11, strlen($id) - 11);
         $bin_json = $this->_download(sprintf('extra.json?page=%s', $id));

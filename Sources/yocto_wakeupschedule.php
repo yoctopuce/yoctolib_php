@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupschedule.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_wakeupschedule.php 27106 2017-04-06 22:17:35Z seb $
  *
  * Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -381,7 +381,7 @@ class YWakeUpSchedule extends YFunction
     public function get_minutes()
     {
         // $res                    is a long;
-        // may throw an exception
+        
         $res = $this->get_minutesB();
         $res = (($res) << (30));
         $res = $res + $this->get_minutesA();
