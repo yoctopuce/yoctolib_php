@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_colorledcluster.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -641,7 +641,7 @@ class YColorLedCluster extends YFunction
             $buff[3*$idx+2] = pack('C', (($rgb) & (255)));
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload(sprintf('rgb:0:%d', $ledIndex), $buff);
         return $res;
     }
@@ -675,7 +675,7 @@ class YColorLedCluster extends YFunction
             $buff[3*$idx+2] = pack('C', (($rgb) & (255)));
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload(sprintf('rgb:%d',$delay), $buff);
         return $res;
     }
@@ -726,7 +726,7 @@ class YColorLedCluster extends YFunction
             $buff[3*$idx+2] = pack('C', (($hsl) & (255)));
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload(sprintf('hsl:0:%d', $ledIndex), $buff);
         return $res;
     }
@@ -760,7 +760,7 @@ class YColorLedCluster extends YFunction
             $buff[3*$idx+2] = pack('C', (($hsl) & (255)));
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload(sprintf('hsl:%d',$delay), $buff);
         return $res;
     }
@@ -802,7 +802,7 @@ class YColorLedCluster extends YFunction
         // $r                      is a int;
         // $g                      is a int;
         // $b                      is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=0&pos=%d&len=%d',3*$ledIndex,3*$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -836,7 +836,7 @@ class YColorLedCluster extends YFunction
         // $r                      is a int;
         // $g                      is a int;
         // $b                      is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=4&pos=%d&len=%d',3*$ledIndex,3*$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -868,7 +868,7 @@ class YColorLedCluster extends YFunction
         $res = Array();         // intArr;
         // $idx                    is a int;
         // $seq                    is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=1&pos=%d&len=%d',$ledIndex,$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -901,7 +901,7 @@ class YColorLedCluster extends YFunction
         // $hl                     is a int;
         // $lh                     is a int;
         // $ll                     is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=2&pos=%d&len=%d',4*$seqIndex,4*$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -933,7 +933,7 @@ class YColorLedCluster extends YFunction
         // $idx                    is a int;
         // $lh                     is a int;
         // $ll                     is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=6&pos=%d&len=%d',$seqIndex,$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -962,7 +962,7 @@ class YColorLedCluster extends YFunction
         $res = Array();         // intArr;
         // $idx                    is a int;
         // $started                is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=5&pos=%d&len=%d',$seqIndex,$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;
@@ -990,7 +990,7 @@ class YColorLedCluster extends YFunction
         $res = Array();         // intArr;
         // $idx                    is a int;
         // $started                is a int;
-        
+
         $buff = $this->_download(sprintf('rgb.bin?typ=3&pos=%d&len=%d',$seqIndex,$count));
         while(sizeof($res) > 0) { array_pop($res); };
         $idx = 0;

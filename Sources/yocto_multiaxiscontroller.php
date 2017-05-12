@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_multiaxiscontroller.php 27159 2017-04-07 21:21:06Z mvuilleu $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -243,7 +243,7 @@ class YMultiAxisController extends YFunction
         $ndim = sizeof($speed);
         $cmd = sprintf('H%d', round(1000*$speed[0]));
         $i = 1;
-        while ($i + 1 < $ndim) {
+        while ($i < $ndim) {
             $cmd = sprintf('%s,%d', $cmd, round(1000*$speed[$i]));
             $i = $i + 1;
         }
@@ -269,7 +269,7 @@ class YMultiAxisController extends YFunction
         $ndim = sizeof($absPos);
         $cmd = sprintf('M%d', round(16*$absPos[0]));
         $i = 1;
-        while ($i + 1 < $ndim) {
+        while ($i < $ndim) {
             $cmd = sprintf('%s,%d', $cmd, round(16*$absPos[$i]));
             $i = $i + 1;
         }
@@ -295,7 +295,7 @@ class YMultiAxisController extends YFunction
         $ndim = sizeof($relPos);
         $cmd = sprintf('m%d', round(16*$relPos[0]));
         $i = 1;
-        while ($i + 1 < $ndim) {
+        while ($i < $ndim) {
             $cmd = sprintf('%s,%d', $cmd, round(16*$relPos[$i]));
             $i = $i + 1;
         }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_files.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -222,7 +222,7 @@ class YFiles extends YFunction
     {
         // $url                    is a str;
         $url = sprintf('files.json?a=%s',$command);
-        
+
         return $this->_download($url);
     }
 

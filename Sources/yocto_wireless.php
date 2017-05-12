@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_wireless.php 27437 2017-05-12 13:13:55Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -48,6 +48,11 @@ if(!defined('Y_SECURITY_WEP'))               define('Y_SECURITY_WEP',           
 if(!defined('Y_SECURITY_WPA'))               define('Y_SECURITY_WPA',              3);
 if(!defined('Y_SECURITY_WPA2'))              define('Y_SECURITY_WPA2',             4);
 if(!defined('Y_SECURITY_INVALID'))           define('Y_SECURITY_INVALID',          -1);
+if(!defined('Y_WLANSTATE_DOWN'))             define('Y_WLANSTATE_DOWN',            0);
+if(!defined('Y_WLANSTATE_SCANNING'))         define('Y_WLANSTATE_SCANNING',        1);
+if(!defined('Y_WLANSTATE_CONNECTED'))        define('Y_WLANSTATE_CONNECTED',       2);
+if(!defined('Y_WLANSTATE_REJECTED'))         define('Y_WLANSTATE_REJECTED',        3);
+if(!defined('Y_WLANSTATE_INVALID'))          define('Y_WLANSTATE_INVALID',         -1);
 if(!defined('Y_LINKQUALITY_INVALID'))        define('Y_LINKQUALITY_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_SSID_INVALID'))               define('Y_SSID_INVALID',              YAPI_INVALID_STRING);
 if(!defined('Y_CHANNEL_INVALID'))            define('Y_CHANNEL_INVALID',           YAPI_INVALID_UINT);
@@ -132,6 +137,11 @@ class YWireless extends YFunction
     const SECURITY_INVALID               = -1;
     const MESSAGE_INVALID                = YAPI_INVALID_STRING;
     const WLANCONFIG_INVALID             = YAPI_INVALID_STRING;
+    const WLANSTATE_DOWN                 = 0;
+    const WLANSTATE_SCANNING             = 1;
+    const WLANSTATE_CONNECTED            = 2;
+    const WLANSTATE_REJECTED             = 3;
+    const WLANSTATE_INVALID              = -1;
     //--- (end of generated code: YWireless declaration)
 
     //--- (generated code: YWireless attributes)
@@ -141,6 +151,7 @@ class YWireless extends YFunction
     protected $_security                 = Y_SECURITY_INVALID;           // WLANSec
     protected $_message                  = Y_MESSAGE_INVALID;            // YFSText
     protected $_wlanConfig               = Y_WLANCONFIG_INVALID;         // WLANConfig
+    protected $_wlanState                = Y_WLANSTATE_INVALID;          // WLANState
     //--- (end of generated code: YWireless attributes)
 
     function __construct($str_func)
@@ -174,6 +185,9 @@ class YWireless extends YFunction
             return 1;
         case 'wlanConfig':
             $this->_wlanConfig = $val;
+            return 1;
+        case 'wlanState':
+            $this->_wlanState = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -295,6 +309,39 @@ class YWireless extends YFunction
     }
 
     /**
+     * Returns the current state of the wireless interface. The state Y_WLANSTATE_DOWN means that the
+     * network interface is
+     * not connected to a network. The state Y_WLANSTATE_SCANNING means that the network interface is
+     * scanning available
+     * frequencies. During this stage, the device is not reachable, and the network settings are not yet
+     * applied. The state
+     * Y_WLANSTATE_CONNECTED means that the network settings have been successfully applied ant that the
+     * device is reachable
+     * from the wireless network. If the device is configured to use ad-hoc or Soft AP mode, it means that
+     * the wireless network
+     * is up and that other devices can join the network. The state Y_WLANSTATE_REJECTED means that the
+     * network interface has
+     * not been able to join the requested network. The description of the error can be obtain with the
+     * get_message() method.
+     *
+     * @return a value among Y_WLANSTATE_DOWN, Y_WLANSTATE_SCANNING, Y_WLANSTATE_CONNECTED and
+     * Y_WLANSTATE_REJECTED corresponding to the current state of the wireless interface
+     *
+     * On failure, throws an exception or returns Y_WLANSTATE_INVALID.
+     */
+    public function get_wlanState()
+    {
+        // $res                    is a enumWLANSTATE;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_WLANSTATE_INVALID;
+            }
+        }
+        $res = $this->_wlanState;
+        return $res;
+    }
+
+    /**
      * Retrieves a wireless lan interface for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -326,6 +373,24 @@ class YWireless extends YFunction
             YFunction::_AddToCache('Wireless', $func, $obj);
         }
         return $obj;
+    }
+
+    /**
+     * Triggers a scan of the wireless frequency and builds the list of available networks.
+     * The scan forces a disconnection from the current network. At then end of the process, the
+     * the network interface attempts to reconnect to the previous network. During the scan, the wlanState
+     * switches to Y_WLANSTATE_DOWN, then to Y_WLANSTATE_SCANNING. When the scan is completed,
+     * get_wlanState() returns either Y_WLANSTATE_DOWN or Y_WLANSTATE_SCANNING. At this
+     * point, the list of detected network can be retrieved with the get_detectedWlans() method.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function startWlanScan()
+    {
+        // $config                 is a str;
+        $config = $this->get_wlanConfig();
+        // a full scan is triggered when a config is applied
+        return $this->set_wlanConfig($config);
     }
 
     /**
@@ -396,8 +461,8 @@ class YWireless extends YFunction
     /**
      * Returns a list of YWlanRecord objects that describe detected Wireless networks.
      * This list is not updated when the module is already connected to an acces point (infrastructure mode).
-     * To force an update of this list, adhocNetwork() must be called to disconnect
-     * the module from the current network. The returned list must be unallocated by the caller.
+     * To force an update of this list, startWlanScan() must be called.
+     * Note that an languages without garbage collections, the returned list must be freed by the caller.
      *
      * @return a list of YWlanRecord objects, containing the SSID, channel,
      *         link quality and the type of security of the wireless network.
@@ -409,7 +474,7 @@ class YWireless extends YFunction
         // $json                   is a bin;
         $wlanlist = Array();    // strArr;
         $res = Array();         // YWlanRecordArr;
-        
+
         $json = $this->_download('wlan.json?by=name');
         $wlanlist = $this->_json_get_array($json);
         while(sizeof($res) > 0) { array_pop($res); };
@@ -439,6 +504,9 @@ class YWireless extends YFunction
 
     public function setWlanConfig($newval)
     { return $this->set_wlanConfig($newval); }
+
+    public function wlanState()
+    { return $this->get_wlanState(); }
 
     /**
      * Continues the enumeration of wireless lan interfaces started using yFirstWireless().

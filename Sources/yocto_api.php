@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_api.php 27280 2017-04-25 15:43:05Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2567,7 +2567,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.27127";
+        return "1.10.27439";
     }
 
     /**
@@ -3845,7 +3845,7 @@ class YDataStream
             $this->_nRows = 0;
             return YAPI_SUCCESS;
         }
-        
+
         $udat = YAPI::_decodeWords($this->_parent->_json_get_string($sdata));
         while(sizeof($this->_values) > 0) { array_pop($this->_values); };
         $idx = 0;
@@ -3882,7 +3882,7 @@ class YDataStream
                 }
             }
         }
-        
+
         $this->_nRows = sizeof($this->_values);
         return YAPI_SUCCESS;
     }
@@ -4271,7 +4271,7 @@ class YDataSet
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
-        
+
         if ($progress != $this->_progress) {
             return $this->_progress;
         }
@@ -4307,7 +4307,7 @@ class YDataSet
         } else {
             $maxCol = 0;
         }
-        
+
         foreach($dataRows as $each) {
             if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
                 $this->_measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
@@ -4514,7 +4514,7 @@ class YDataSet
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
-        
+
         $startUtc = round($measure.get_startTimeUTC());
         $stream = null;
         foreach($this->_streams as $each) {
@@ -4546,7 +4546,7 @@ class YDataSet
         } else {
             $maxCol = 0;
         }
-        
+
         foreach($dataRows as $each) {
             if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
                 $measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
@@ -6145,7 +6145,7 @@ class YSensor extends YFunction
     public function startDataLogger()
     {
         // $res                    is a bin;
-        
+
         $res = $this->_download('api/dataLogger/recording?recording=1');
         if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to start datalogger',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
@@ -6159,7 +6159,7 @@ class YSensor extends YFunction
     public function stopDataLogger()
     {
         // $res                    is a bin;
-        
+
         $res = $this->_download('api/dataLogger/recording?recording=0');
         if (!(strlen($res)>0)) return $this->_throw( YAPI_IO_ERROR, 'unable to stop datalogger',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
@@ -6195,7 +6195,7 @@ class YSensor extends YFunction
     {
         // $funcid                 is a str;
         // $funit                  is a str;
-        
+
         $funcid = $this->get_functionId();
         $funit = $this->get_unit();
         return new YDataSet($this, $funcid, $funit, $startTime, $endTime);
@@ -6259,7 +6259,7 @@ class YSensor extends YFunction
     {
         // $rest_val               is a str;
         // $res                    is a int;
-        
+
         $rest_val = $this->_encodeCalibrationPoints($rawValues, $refValues);
         $res = $this->_setAttr('calibrationParam', $rest_val);
         return $res;
@@ -6737,7 +6737,7 @@ class YModule extends YFunction
      * @param functionIndex : the index of the function for which the information is desired, starting at
      * 0 for the first function.
      *
-     * @return a the type of the function
+     * @return a string corresponding to the type of the function
      *
      * On failure, throws an exception or returns an empty string.
      */
@@ -6749,11 +6749,12 @@ class YModule extends YFunction
 
     /**
      * Retrieves the base type of the <i>n</i>th function on the module.
+     * For instance, the base type of all measuring functions is "Sensor".
      *
      * @param functionIndex : the index of the function for which the information is desired, starting at
      * 0 for the first function.
      *
-     * @return a the base type of the function
+     * @return a string corresponding to the base type of the function
      *
      * On failure, throws an exception or returns an empty string.
      */
@@ -7355,7 +7356,7 @@ class YModule extends YFunction
     {
         // $serial                 is a str;
         // $settings               is a bin;
-        
+
         $serial = $this->get_serialNumber();
         $settings = $this->get_allSettings();
         if (strlen($settings) == 0) {
@@ -7403,7 +7404,7 @@ class YModule extends YFunction
         // $ext_settings           is a str;
         $filelist = Array();    // strArr;
         $templist = Array();    // strArr;
-        
+
         $settings = $this->_download('api.json');
         if (strlen($settings) == 0) {
             return $settings;
@@ -7459,7 +7460,7 @@ class YModule extends YFunction
         // $ofs                    is a int;
         // $size                   is a int;
         $url = 'api/' . $funcId . '.json?command=Z';
-        
+
         $this->_download($url);
         // add records in growing resistance value
         $values = $this->_json_get_array($jsonExtra);
@@ -7557,7 +7558,7 @@ class YModule extends YFunction
         // $count                  is a int;
         // $i                      is a int;
         // $fid                    is a str;
-        
+
         $count  = $this->functionCount();
         $i = 0;
         while ($i < $count) {
@@ -7583,7 +7584,7 @@ class YModule extends YFunction
         // $i                      is a int;
         // $ftype                  is a str;
         $res = Array();         // strArr;
-        
+
         $count = $this->functionCount();
         $i = 0;
         while ($i < $count) {
@@ -7894,7 +7895,7 @@ class YModule extends YFunction
             $old_jpath_len[] = strlen($jpath);
             $old_val_arr[] = $value;
         }
-        
+
         $actualSettings = $this->_download('api.json');
         $actualSettings = $this->_flattenJsonStruct($actualSettings);
         $new_dslist = $this->_json_get_array($actualSettings);
@@ -8145,7 +8146,7 @@ class YModule extends YFunction
     public function get_lastLogs()
     {
         // $content                is a bin;
-        
+
         $content = $this->_download('logs.txt');
         return $content;
     }

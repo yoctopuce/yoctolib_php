@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_cellular.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -833,7 +833,7 @@ class YCellular extends YFunction
     public function clearDataCounters()
     {
         // $retcode                is a int;
-        
+
         $retcode = $this->set_dataReceived(0);
         if ($retcode != YAPI_SUCCESS) {
             return $retcode;
@@ -931,7 +931,7 @@ class YCellular extends YFunction
         // $idx                    is a int;
         // $slen                   is a int;
         $res = Array();         // strArr;
-        
+
         $cops = $this->_AT('+COPS=?');
         $slen = strlen($cops);
         while(sizeof($res) > 0) { array_pop($res); };
@@ -978,7 +978,7 @@ class YCellular extends YFunction
         // $tad                    is a int;
         // $oper                   is a str;
         $res = Array();         // YCellRecordArr;
-        
+
         $moni = $this->_AT('+CCED=0;#MONI=7;#MONI');
         $mccs = substr($moni, 7, 3);
         if (substr($mccs, 0, 1) == '0') {

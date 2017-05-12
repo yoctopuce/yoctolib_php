@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_messagebox.php 27422 2017-05-11 10:01:51Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -157,7 +157,6 @@ class YSms
         // $isolatin               is a bin;
         // $isosize                is a int;
         // $i                      is a int;
-        
         if ($this->_alphab == 0) {
             // using GSM standard 7-bit alphabet
             return $this->_mbox->gsm2str($this->_udata);
@@ -173,7 +172,6 @@ class YSms
             }
             return $isolatin;
         }
-        
         // default: convert 8 bit to string as-is
         return $this->_udata;
     }
@@ -184,7 +182,6 @@ class YSms
         // $unisize                is a int;
         // $unival                 is a int;
         // $i                      is a int;
-        
         if ($this->_alphab == 0) {
             // using GSM standard 7-bit alphabet
             return $this->_mbox->gsm2unicode($this->_udata);
@@ -361,7 +358,6 @@ class YSms
         // $udatalen               is a int;
         // $i                      is a int;
         // $uni                    is a int;
-        
         if ($this->_alphab == 2) {
             return YAPI_SUCCESS;
         }
@@ -380,7 +376,6 @@ class YSms
         $this->_alphab = 2;
         $this->_udata = '';
         $this->addUnicodeData($ucs2);
-        
         return YAPI_SUCCESS;
     }
 
@@ -391,11 +386,9 @@ class YSms
         // $newdata                is a bin;
         // $newdatalen             is a int;
         // $i                      is a int;
-        
         if (strlen($val) == 0) {
             return YAPI_SUCCESS;
         }
-        
         if ($this->_alphab == 0) {
             // Try to append using GSM 7-bit alphabet
             $newdata = $this->_mbox->str2gsm($val);
@@ -440,7 +433,6 @@ class YSms
                 $i = $i + 1;
             }
         }
-        
         return $this->set_userData($udata);
     }
 
@@ -453,7 +445,6 @@ class YSms
         // $udata                  is a bin;
         // $udatalen               is a int;
         // $surrogate              is a int;
-        
         if ($this->_alphab != 2) {
             $this->convertToUnicode();
         }
@@ -492,7 +483,6 @@ class YSms
             $udatalen = $udatalen + 2;
             $i = $i + 1;
         }
-        
         return $this->set_userData($udata);
     }
 
@@ -518,7 +508,6 @@ class YSms
         if ($this->_npdu == 0) {
             return YAPI_INVALID_ARGUMENT;
         }
-        
         while(sizeof($sorted) > 0) { array_pop($sorted); };
         $partno = 0;
         while ($partno < $this->_npdu) {
@@ -1085,7 +1074,6 @@ class YSms
         // $iei                    is a int;
         // $ielen                  is a int;
         // $sig                    is a str;
-        
         $this->_aggSig = '';
         $this->_aggIdx = 0;
         $this->_aggCnt = 0;
@@ -1132,10 +1120,8 @@ class YSms
         // $carry                  is a int;
         // $nbits                  is a int;
         // $$thisb                 is a int;
-        
         $this->_pdu = $pdu;
         $this->_npdu = 1;
-        
         // parse meta-data
         $this->_smsc = $this->decodeAddress($pdu, 1, 2*(ord($pdu[0])-1));
         $rpos = 1+ord($pdu[0]);
@@ -1174,7 +1160,6 @@ class YSms
         $this->_mclass = (($dcs) & (16+3));
         $this->_stamp = $this->decodeTimeStamp($pdu, $rpos, $tslen);
         $rpos = $rpos + $tslen;
-        
         // parse user data (including udh)
         $nbits = 0;
         $carry = 0;
@@ -1237,7 +1222,6 @@ class YSms
             }
         }
         $this->parseUserDataHeader();
-        
         return YAPI_SUCCESS;
     }
 
@@ -1246,7 +1230,7 @@ class YSms
         // $i                      is a int;
         // $retcode                is a int;
         // $pdu                    is a YSms;
-        
+
         if ($this->_npdu == 0) {
             $this->generatePdu();
         }
@@ -1268,7 +1252,7 @@ class YSms
         // $i                      is a int;
         // $retcode                is a int;
         // $pdu                    is a YSms;
-        
+
         if ($this->_slot > 0) {
             return $this->_mbox->clearSIMSlot($this->_slot);
         }
@@ -1558,8 +1542,7 @@ class YMessageBox extends YFunction
         $arrPdu = Array();      // strArr;
         // $hexPdu                 is a str;
         // $sms                    is a YSms;
-        
-        
+
         $binPdu = $this->_download(sprintf('sms.json?pos=%d&len=1', $slot));
         $arrPdu = $this->_json_get_array($binPdu);
         $hexPdu = $this->_decode_json_string($arrPdu[0]);
@@ -1573,7 +1556,6 @@ class YMessageBox extends YFunction
     {
         // $i                      is a int;
         // $uni                    is a int;
-        
         while(sizeof($this->_gsm2unicode) > 0) { array_pop($this->_gsm2unicode); };
         // 00-07
         $this->_gsm2unicode[] = 64;
@@ -1651,7 +1633,6 @@ class YMessageBox extends YFunction
         }
         // Done
         $this->_gsm2unicodeReady = true;
-        
         return YAPI_SUCCESS;
     }
 
@@ -1662,7 +1643,6 @@ class YMessageBox extends YFunction
         // $reslen                 is a int;
         $res = Array();         // intArr;
         // $uni                    is a int;
-        
         if (!($this->_gsm2unicodeReady)) {
             $this->initGsm2Unicode();
         }
@@ -1748,7 +1728,6 @@ class YMessageBox extends YFunction
         // $resbin                 is a bin;
         // $resstr                 is a str;
         // $uni                    is a int;
-        
         if (!($this->_gsm2unicodeReady)) {
             $this->initGsm2Unicode();
         }
@@ -1842,7 +1821,6 @@ class YMessageBox extends YFunction
         // $extra                  is a int;
         // $res                    is a bin;
         // $wpos                   is a int;
-        
         if (!($this->_gsm2unicodeReady)) {
             $this->initGsm2Unicode();
         }
@@ -1929,8 +1907,7 @@ class YMessageBox extends YFunction
         $newAgg = Array();      // YSmsArr;
         $signatures = Array();  // strArr;
         // $sms                    is a YSms;
-        
-        
+
         $bitmapStr = $this->get_slotsBitmap();
         if ($bitmapStr == $this->_prevBitmapStr) {
             return YAPI_SUCCESS;
@@ -2034,7 +2011,6 @@ class YMessageBox extends YFunction
             $i = $i + 1;
         }
         $this->_messages = $newMsg;
-        
         return YAPI_SUCCESS;
     }
 
@@ -2054,7 +2030,7 @@ class YMessageBox extends YFunction
     public function clearPduCounters()
     {
         // $retcode                is a int;
-        
+
         $retcode = $this->set_pduReceived(0);
         if ($retcode != YAPI_SUCCESS) {
             return $retcode;
@@ -2081,7 +2057,7 @@ class YMessageBox extends YFunction
     public function sendTextMessage($recipient,$message)
     {
         // $sms                    is a YSms;
-        
+
         $sms = new YSms($this);
         $sms->set_recipient($recipient);
         $sms->addText($message);
@@ -2107,7 +2083,7 @@ class YMessageBox extends YFunction
     public function sendFlashMessage($recipient,$message)
     {
         // $sms                    is a YSms;
-        
+
         $sms = new YSms($this);
         $sms->set_recipient($recipient);
         $sms->set_msgClass(0);
@@ -2144,7 +2120,6 @@ class YMessageBox extends YFunction
     public function get_messages()
     {
         $this->checkNewMessages();
-        
         return $this->_messages;
     }
 

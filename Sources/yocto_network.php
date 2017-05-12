@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_network.php 27422 2017-05-11 10:01:51Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -1140,6 +1140,21 @@ class YNetwork extends YFunction
     }
 
     /**
+     * Changes the configuration of the network interface to enable the use of an
+     * IP address received from a DHCP server. Until an address is received from a DHCP
+     * server, the module uses an IP of the network 169.254.0.0/16 (APIPA).
+     * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
+     *
+     * @return YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function useDHCPauto()
+    {
+        return $this->set_ipConfig('DHCP:');
+    }
+
+    /**
      * Changes the configuration of the network interface to use a static IP address.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
@@ -1168,7 +1183,7 @@ class YNetwork extends YFunction
     public function ping($host)
     {
         // $content                is a bin;
-        
+
         $content = $this->_download(sprintf('ping.txt?host=%s',$host));
         return $content;
     }

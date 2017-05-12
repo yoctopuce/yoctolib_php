@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_refframe.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -360,7 +360,7 @@ class YRefFrame extends YFunction
         $iCalib = Array();      // intArr;
         // $caltyp                 is a int;
         // $res                    is a int;
-        
+
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
         $caltyp = intVal(($iCalib[0]) / (1000));
@@ -390,7 +390,7 @@ class YRefFrame extends YFunction
         $iCalib = Array();      // intArr;
         // $caltyp                 is a int;
         // $res                    is a int;
-        
+
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
         $caltyp = intVal(($iCalib[0]) / (1000));
@@ -731,7 +731,7 @@ class YRefFrame extends YFunction
                 return YAPI_SUCCESS;
             }
         }
-        
+
         $calibParam = $this->_download('api/refFrame/calibrationParam.txt');
         $iCalib = YAPI::_decodeFloats($calibParam);
         $cal3 = intVal(($iCalib[1]) / (1000));
@@ -917,7 +917,7 @@ class YRefFrame extends YFunction
         if ($this->_calibStage == 0) {
             return YAPI_SUCCESS;
         }
-        
+
         $this->_calibStage = 0;
         return $this->set_calibrationParam($this->_calibSavedParams);
     }

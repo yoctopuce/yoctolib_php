@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_spiport.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_spiport.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -639,7 +639,7 @@ class YSpiPort extends YFunction
         $this->_rxptr = 0;
         $this->_rxbuffptr = 0;
         $this->_rxbuff = '';
-        
+
         return $this->sendCommand('Z');
     }
 
@@ -732,7 +732,7 @@ class YSpiPort extends YFunction
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload('txdata', $buff);
         return $res;
     }
@@ -765,7 +765,7 @@ class YSpiPort extends YFunction
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
-        
+
         $res = $this->_upload('txdata', $buff);
         return $res;
     }
@@ -825,7 +825,7 @@ class YSpiPort extends YFunction
         // $mult                   is a int;
         // $endpos                 is a int;
         // $res                    is a int;
-        
+
         // first check if we have the requested character in the look-ahead buffer
         $bufflen = strlen($this->_rxbuff);
         if (($this->_rxptr >= $this->_rxbuffptr) && ($this->_rxptr < $this->_rxbuffptr+$bufflen)) {
@@ -833,7 +833,7 @@ class YSpiPort extends YFunction
             $this->_rxptr = $this->_rxptr + 1;
             return $res;
         }
-        
+
         // try to preload more than one byte to speed-up byte-per-byte access
         $currpos = $this->_rxptr;
         $reqlen = 1024;
@@ -860,8 +860,8 @@ class YSpiPort extends YFunction
         }
         // still mixed, need to process character by character
         $this->_rxptr = $currpos;
-        
-        
+
+
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=1', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -900,7 +900,7 @@ class YSpiPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        
+
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -937,7 +937,7 @@ class YSpiPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        
+
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -980,7 +980,7 @@ class YSpiPort extends YFunction
         if ($nChars > 65535) {
             $nChars = 65535;
         }
-        
+
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nChars));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -1023,7 +1023,7 @@ class YSpiPort extends YFunction
         if ($nBytes > 65535) {
             $nBytes = 65535;
         }
-        
+
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=%d', $this->_rxptr, $nBytes));
         $bufflen = strlen($buff) - 1;
         $endpos = 0;
@@ -1067,7 +1067,7 @@ class YSpiPort extends YFunction
         $msgarr = Array();      // strArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        
+
         $url = sprintf('rxmsg.json?pos=%d&len=1&maxw=1', $this->_rxptr);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
@@ -1114,7 +1114,7 @@ class YSpiPort extends YFunction
         // $msglen                 is a int;
         $res = Array();         // strArr;
         // $idx                    is a int;
-        
+
         $url = sprintf('rxmsg.json?pos=%d&maxw=%d&pat=%s', $this->_rxptr, $maxWait, $pattern);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
@@ -1169,7 +1169,7 @@ class YSpiPort extends YFunction
         // $buff                   is a bin;
         // $bufflen                is a int;
         // $res                    is a int;
-        
+
         $buff = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
         while (($bufflen > 0) && (ord($buff[$bufflen]) != 64)) {
@@ -1198,7 +1198,7 @@ class YSpiPort extends YFunction
         $msgarr = Array();      // strArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        
+
         $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $query);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);

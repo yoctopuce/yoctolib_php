@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 27106 2017-04-06 22:17:35Z seb $
+ * $Id: yocto_gyro.php 27280 2017-04-25 15:43:05Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -448,7 +448,7 @@ class YGyro extends YSensor
         // $sqz                    is a float;
         // $norm                   is a float;
         // $delta                  is a float;
-        
+
         if ($this->_loadQuaternion() != YAPI_SUCCESS) {
             return YAPI_DEVICE_NOT_FOUND;
         }
