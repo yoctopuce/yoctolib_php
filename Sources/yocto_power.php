@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 26826 2017-03-17 11:20:57Z mvuilleu $
+ * $Id: yocto_power.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -181,6 +181,10 @@ class YPower extends YSensor
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the electrical power sensor
      *
      * @return a YPower object allowing you to drive the electrical power sensor.
@@ -274,6 +278,10 @@ class YPower extends YSensor
  * a electrical power sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the electrical power sensor
  *

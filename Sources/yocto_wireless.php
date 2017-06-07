@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 27437 2017-05-12 13:13:55Z seb $
+ * $Id: yocto_wireless.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -360,6 +360,10 @@ class YWireless extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the wireless lan interface
      *
      * @return a YWireless object allowing you to drive the wireless lan interface.
@@ -561,6 +565,10 @@ class YWireless extends YFunction
  * a wireless lan interface by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the wireless lan interface
  *

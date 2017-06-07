@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 27280 2017-04-25 15:43:05Z seb $
+ * $Id: yocto_temperature.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -274,6 +274,10 @@ class YTemperature extends YSensor
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the temperature sensor
      *
      * @return a YTemperature object allowing you to drive the temperature sensor.
@@ -527,6 +531,10 @@ class YTemperature extends YSensor
  * a temperature sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the temperature sensor
  *

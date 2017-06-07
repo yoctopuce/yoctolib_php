@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_hubport.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YHubPort, the high-level API for HubPort functions
  *
@@ -205,6 +205,10 @@ class YHubPort extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the Yocto-hub port
      *
      * @return a YHubPort object allowing you to drive the Yocto-hub port.
@@ -286,6 +290,10 @@ class YHubPort extends YFunction
  * a Yocto-hub port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the Yocto-hub port
  *

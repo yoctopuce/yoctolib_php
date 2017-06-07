@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 27091 2017-04-06 20:57:37Z seb $
+ * $Id: yocto_display.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -1064,6 +1064,10 @@ class YDisplay extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the display
      *
      * @return a YDisplay object allowing you to drive the display.
@@ -1413,6 +1417,10 @@ class YDisplay extends YFunction
  * a display by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the display
  *

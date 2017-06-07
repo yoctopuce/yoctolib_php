@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_quadraturedecoder.php 26826 2017-03-17 11:20:57Z mvuilleu $
+ * $Id: yocto_quadraturedecoder.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -182,6 +182,10 @@ class YQuadratureDecoder extends YSensor
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the quadrature decoder
      *
      * @return a YQuadratureDecoder object allowing you to drive the quadrature decoder.
@@ -263,6 +267,10 @@ class YQuadratureDecoder extends YSensor
  * a quadrature decoder by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the quadrature decoder
  *

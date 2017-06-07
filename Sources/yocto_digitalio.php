@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_digitalio.php 26949 2017-03-28 15:36:15Z mvuilleu $
+ * $Id: yocto_digitalio.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -394,6 +394,10 @@ class YDigitalIO extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the digital IO port
      *
      * @return a YDigitalIO object allowing you to drive the digital IO port.
@@ -694,6 +698,10 @@ class YDigitalIO extends YFunction
  * a digital IO port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the digital IO port
  *

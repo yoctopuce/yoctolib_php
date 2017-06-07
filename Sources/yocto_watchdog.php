@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 26674 2017-02-28 13:44:41Z seb $
+ * $Id: yocto_watchdog.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -629,6 +629,10 @@ class YWatchdog extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the watchdog
      *
      * @return a YWatchdog object allowing you to drive the watchdog.
@@ -767,6 +771,10 @@ class YWatchdog extends YFunction
  * a watchdog by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the watchdog
  *

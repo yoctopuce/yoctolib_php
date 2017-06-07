@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 27280 2017-04-25 15:43:05Z seb $
+ * $Id: yocto_api.php 27741 2017-06-06 15:32:00Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -166,7 +166,8 @@ define('PUBVAL_YOCTO_FLOAT_E6', 10);   // 32-bit Yocto fixed-point format (e-6)
 
 define('YOCTO_PUBVAL_LEN',   16);
 define('YOCTO_PUBVAL_SIZE',   6);
-
+define('YOCTO_SERIAL_LEN', 20);
+define('YOCTO_BASE_SERIAL_LEN', 8);
 
 //
 // Class used to report exceptions within Yocto-API
@@ -272,23 +273,67 @@ class YTcpHub
         $this->writeProtected = false;
     }
 
-
-    function verfiyStreamAddr($fullTest=true, &$errmsg='')
+    /**
+     * @param mixed
+     * @param mixed
+     * @return mixed
+     */
+    static function decodeJZON($jzon, $ref)
     {
-        if($this->streamaddr == 'tcp://CALLBACK/') {
+        $res = array();
+        $ofs = 0;
+        if (is_array($ref)) {
+            foreach ($ref as $key => $value) {
+                if (key_exists($key, $jzon)) {
+                    $res[$key] = self::decodeJZON($jzon[$key], $value);
+                } else {
+                    $res[$key] = self::decodeJZON($jzon[$ofs], $value);
+                }
+                $ofs++;
+            }
+            return $res;
+        }
+        return $jzon;
+    }
+    /**
+     * @param array
+     * @return mixed
+     */
+    static function cleanJsonRef($ref)
+    {
+        $res = array();
+        foreach ($ref as $key => $value) {
+            if (is_array($value)) {
+                $res[$key] = self::cleanJsonRef($value);
+            } else if ($key =="serialNumber"){
+                $res[$key] = substr($value,0, YOCTO_BASE_SERIAL_LEN);
+            } else if ($key =="firmwareRelease") {
+                $res[$key] = $value;
+            } else {
+                $res[$key] = "";
+            }
+        }
+        return $res;
+    }
 
-            if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST'){
+
+
+    function verfiyStreamAddr($fullTest = true, &$errmsg = '')
+    {
+        if ($this->streamaddr == 'tcp://CALLBACK/') {
+
+            if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST') {
                 $errmsg = "invalid request method";
                 $this->callbackCache = Array();
                 return YAPI_IO_ERROR;
             }
 
-            if (!isset($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] != 'application/json'){
+            if (!isset($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] != 'application/json') {
                 $errmsg = "invalid content type";
                 $this->callbackCache = Array();
                 return YAPI_IO_ERROR;
             }
-            if (!isset($_SERVER['HTTP_USER_AGENT'])){
+            if (!isset($_SERVER['HTTP_USER_AGENT'])) {
                 $errmsg = "not agent provided";
                 $this->callbackCache = Array();
                 return YAPI_IO_ERROR;
@@ -304,22 +349,23 @@ class YTcpHub
             if ($fullTest) {
                 $data = file_get_contents('php://input', 'rb');
                 $this->callbackData = $data;
-                if($data == "") {
+                if ($data == "") {
                     $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
                     Print("\n!YoctoAPI:$errmsg\n");
                     $this->callbackCache = Array();
                     return YAPI_IO_ERROR;
                 } else {
-                    $this->callbackCache = json_decode(utf8_encode($data), true);
-                    if(is_null($this->callbackCache)) {
+                    $utf8_encode = utf8_encode($data);
+                    $this->callbackCache = json_decode($utf8_encode, true);
+                    if (is_null($this->callbackCache)) {
                         $errmsg = "invalid data:[\n$data\n]";
                         Print("\n!YoctoAPI:$errmsg\n");
                         $this->callbackCache = Array();
                         return YAPI_IO_ERROR;
                     }
-                    if($this->pwd != '') {
+                    if ($this->pwd != '') {
                         // callback data signed, verify signature
-                        if(!isset($this->callbackCache['sign'])) {
+                        if (!isset($this->callbackCache['sign'])) {
                             $errmsg = "missing signature from incoming YoctoHub (callback password required)";
                             Print("\n!YoctoAPI:$errmsg\n");
                             $this->callbackCache = Array();
@@ -327,10 +373,10 @@ class YTcpHub
                         }
                         $sign = $this->callbackCache['sign'];
                         $salt = $this->pwd;
-                        if(strlen($salt) != 32) $salt = md5($salt);
+                        if (strlen($salt) != 32) $salt = md5($salt);
                         $data = str_replace($sign, strtolower($salt), $data);
                         $check = strtolower(md5($data));
-                        if($check != $sign) {
+                        if ($check != $sign) {
                             //Print("Computed signature: $check\n");
                             //Print("Received signature: $sign\n");
                             $errmsg = "invalid signature from incoming YoctoHub (invalid callback password)";
@@ -338,6 +384,69 @@ class YTcpHub
                             $this->callbackCache = Array();
                             return YAPI_UNAUTHORIZED;
                         }
+                    }
+                    if (isset($this->callbackCache['serial']) && !is_null(YAPI::$_jzonCacheDir) && key_exists('serial', $this->callbackCache)) {
+                        $jzonCacheDir = YAPI::$_jzonCacheDir;
+                        $mergedCache = array();
+                        $upToDate = true;
+                        foreach ($this->callbackCache as $req => $value) {
+                            $pos = strpos($req, "/api.json");
+                            if ($pos !== False) {
+                                $fwpos = strpos($req, "?fw=", $pos);
+                                $isJZON = false;
+                                if ($fwpos !== False) {
+                                    if (key_exists('module', $value)) {
+                                        // device did not returned JZON (probably due to fw update)
+                                        $req = substr($req, 0, $fwpos);
+                                    } else {
+                                        $isJZON = true;
+                                    }
+                                }
+                                if ($isJZON) {
+                                    if ($pos == 0) {
+                                        $serial = $this->callbackCache['serial'];
+                                    } else {
+                                        // "/bySerial/" = 10 chars
+                                        $serial = substr($req, 10, $pos - 10);
+                                    }
+                                    $firm = substr($req, $fwpos + 4);
+                                    $base = substr($serial,0, YOCTO_BASE_SERIAL_LEN);
+                                    if (!is_file("{$jzonCacheDir}{$base}_{$firm}.json")) {
+                                        $errmsg = "No JZON reference file for {$serial}/{$firm}";
+                                        Print("\n!YoctoAPI:$errmsg\n");
+                                        $this->callbackCache = Array();
+                                        Print("\n@YoctoAPI:#!noref\n");
+                                        return YAPI_IO_ERROR;
+                                    }
+                                    $ref = file_get_contents("{$jzonCacheDir}{$base}_{$firm}.json");
+                                    $ref = json_decode($ref, true);
+                                    $decoded = self::decodeJZON($value, $ref);
+                                    if ($ref['module']['firmwareRelease'] != $decoded['module']['firmwareRelease']) {
+                                        $errmsg = "invalid JZON data";
+                                        Print("\n!YoctoAPI:$errmsg\n");
+                                        $this->callbackCache = Array();
+                                        Print("\n@YoctoAPI:#!invalid\n");
+                                        return YAPI_IO_ERROR;
+                                    }
+                                    $req = substr($req, 0, $fwpos);
+                                    $mergedCache[$req] = $decoded;
+                                    //Print("Use jzon data for{$serial}/{$firm}\n");
+                                } else {
+                                    $serial = $value['module']['serialNumber'];
+                                    $base = substr($serial,0, YOCTO_BASE_SERIAL_LEN);
+                                    $firm = $value['module']['firmwareRelease'];
+                                    $clean_struct = self::cleanJsonRef($value);
+                                    file_put_contents("{$jzonCacheDir}{$base}_{$firm}.json", json_encode($clean_struct));
+                                    $mergedCache[$req] = $value;
+                                    Print("\n@YoctoAPI:#{$serial}/{$firm}\n");
+                                    $upToDate=false;
+                                }
+                            }
+                        }
+                        if ($upToDate) {
+                            Print("\n@YoctoAPI:#=\n");
+                        }
+                        $this->callbackCache = $mergedCache;
                     }
                 }
             }
@@ -1439,6 +1548,12 @@ class YAPI
     protected static $_calibHandlers;
     protected static $_decExp;
 
+    /**
+     * @var string
+     */
+    static $_jzonCacheDir;
+
+
     // PUBLIC GLOBAL SETTINGS
 
     // Default cache validity (in [ms]) before reloading data from device. This saves a lots of trafic.
@@ -1466,6 +1581,7 @@ class YAPI
         self::$_removalCallback = null;
         self::$_data_events = Array();
         self::$_pendingRequests = Array();
+        self::$_jzonCacheDir = null;
 
         self::$_decExp = Array(
             1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0,
@@ -2567,7 +2683,63 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.27439";
+        return "1.10.27759";
+    }
+
+    /**
+     * Enables the HTTP callback cache. When enabled, this cache reduces the quantity of data sent to the
+     * PHP script by 50% to 70%. To enable this cache, the method ySetHTTPCallbackCacheDir()
+     * must be called before any call to yRegisterHub(). This method takes in parameter the path
+     * of the directory used for saving data between each callback. This folder must exist and the
+     * PHP script needs to have write access to it. It is recommended to use a folder that is not published
+     * on the Web server since the library will save some data of Yoctopuce devices into this folder.
+     *
+     * Note: This feature is supported by YoctoHub and VirtualHub since version XXXXx.
+     *
+     * @param str_directory : the path of the folder that will be used as cache.
+     *
+     * @return nothing.
+     *
+     * On failure, throws an exception.
+     */
+    public static function SetHTTPCallbackCacheDir($str_directory)
+    {
+        if (is_null(self::$_hubs)) self::_init();
+        if (!is_dir($str_directory)) {
+            throw new YAPI_Exception("Directory does not exist");
+        }
+        if (!is_dir($str_directory)) {
+            throw new YAPI_Exception("Directory does not exist");
+        }
+        if (!is_writable($str_directory)) {
+            throw new YAPI_Exception("Directory is not writable");
+        }
+
+        if (substr($str_directory, -1) != '/')
+            $str_directory .= '/';
+        self::$_jzonCacheDir = $str_directory;
+    }
+
+    /**
+     * Disables the HTTP callback cache. This method disables the HTTP callback cache, and
+     * can additionally cleanup the cache directory.
+     *
+     * @param bool_removeFiles : True to clear the content of the cache.
+     *
+     * @return nothing.
+     */
+    public static function ClearHTTPCallbackCacheDir($bool_removeFiles)
+    {
+        if (is_null(self::$_hubs) or is_null(self::$_jzonCacheDir)) return;
+
+        if ($bool_removeFile && is_dir(self::$_jzonCacheDir)) {
+            $files = glob(self::$_jzonCacheDir . "{,.}*.json", GLOB_BRACE); // get all file names
+            foreach ($files as $file) {
+                if (is_file($file))
+                    unlink($file);
+            }
+        }
+        self::$_jzonCacheDir = null;
     }
 
     /**
@@ -4824,6 +4996,10 @@ class YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the function
      *
      * @return a YFunction object allowing you to drive the function.
@@ -5231,7 +5407,7 @@ class YFunction
             $bin_content = call_user_func_array('pack', array_merge(array("C*"), $bin_content));
         }
         $httpreq = 'POST /upload.html';
-    	$body = "Content-Disposition: form-data; name=\"$str_path\"; filename=\"api\"\r\n".
+        $body = "Content-Disposition: form-data; name=\"$str_path\"; filename=\"api\"\r\n" .
                 "Content-Type: application/octet-stream\r\n".
                 "Content-Transfer-Encoding: binary\r\n\r\n".$bin_content;
         $yreq = YAPI::devRequest($devid, $httpreq, true, $body);
@@ -5958,6 +6134,10 @@ class YSensor extends YFunction
      * a sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
+     *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
      *
      * @param func : a string that uniquely characterizes the sensor
      *
@@ -7211,7 +7391,8 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns the value previously stored in this attribute.
+     * Stores a 32 bit value in the device RAM. This attribute is at programmer disposal,
+     * should he need to store a state variable.
      * On startup and after a device reboot, the value is always reset to zero.
      *
      * @param newval : an integer
@@ -7236,6 +7417,10 @@ class YModule extends YFunction
      * a module by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
+     *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
      *
      * @param func : a string containing either the serial number or
      *         the logical name of the desired module
@@ -8261,6 +8446,41 @@ class YModule extends YFunction
 };
 
 /**
+ * Enables the HTTP callback cache. When enabled, this cache reduces the quantity of data sent to the
+ * PHP script by 50% to 70%. To enable this cache, the method ySetHTTPCallbackCacheDir()
+ * must be called before any call to yRegisterHub(). This method takes in parameter the path
+ * of the directory used for saving data between each callback. This folder must exist and the
+ * PHP script needs to have write access to it. It is recommended to use a folder that is not published
+ * on the Web server since the library will save some data of Yoctopuce devices into this folder.
+ *
+ * Note: This feature is supported by YoctoHub and VirtualHub since version XXXXx.
+ *
+ * @param str_directory : the path of the folder that will be used as cache.
+ *
+ * @return nothing.
+ *
+ * On failure, throws an exception.
+ */
+function ySetHTTPCallbackCacheDir($str_directory)
+{
+    YAPI::SetHTTPCallbackCacheDir($str_directory);
+}
+
+/**
+ * Disables the HTTP callback cache. This method disables the HTTP callback cache, and
+ * can additionally cleanup the cache directory.
+ *
+ * @param bool_removeFiles : True to clear the content of the cache.
+ *
+ * @return nothing.
+ */
+function yClearHTTPCallbackCacheDir($bool_removeFiles)
+{
+    YAPI::ClearHTTPCallbackCacheDir($bool_removeFiles);
+}
+
+
+/**
  * Returns the version identifier for the Yoctopuce library in use.
  * The version is a string in the form "Major.Minor.Build",
  * for instance "1.01.5535". For languages using an external
@@ -8611,7 +8831,6 @@ for($yHdlrIdx = 1; $yHdlrIdx <= 20; $yHdlrIdx++) {
 yRegisterCalibrationHandler(YOCTO_CALIB_TYPE_OFS, 'yLinearCalibrationHandler');
 
 
-
 //--- (generated code: Function functions)
 
 /**
@@ -8632,6 +8851,10 @@ yRegisterCalibrationHandler(YOCTO_CALIB_TYPE_OFS, 'yLinearCalibrationHandler');
  * a function by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the function
  *
@@ -8674,6 +8897,10 @@ function yFirstFunction()
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
+ *
  * @param func : a string that uniquely characterizes the sensor
  *
  * @return a YSensor object allowing you to drive the sensor.
@@ -8711,6 +8938,10 @@ function yFirstSensor()
  * a module by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string containing either the serial number or
  *         the logical name of the desired module

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 27280 2017-04-25 15:43:05Z seb $
+ * $Id: yocto_currentloopoutput.php 27709 2017-06-01 12:37:26Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -235,6 +235,10 @@ class YCurrentLoopOutput extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     * If a call to this object's is_online() method returns FALSE although
+     * you are certain that the matching device is plugged, make sure that you did
+     * call registerHub() at application initialization time.
+     *
      * @param func : a string that uniquely characterizes the 4-20mA output
      *
      * @return a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
@@ -349,6 +353,10 @@ class YCurrentLoopOutput extends YFunction
  * a 4-20mA output by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
+ *
+ * If a call to this object's is_online() method returns FALSE although
+ * you are certain that the matching device is plugged, make sure that you did
+ * call registerHub() at application initialization time.
  *
  * @param func : a string that uniquely characterizes the 4-20mA output
  *
