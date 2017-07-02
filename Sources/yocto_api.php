@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 27741 2017-06-06 15:32:00Z seb $
+ * $Id: yocto_api.php 27777 2017-06-09 13:32:59Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2683,7 +2683,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.27759";
+        return "1.10.27961";
     }
 
     /**
@@ -2694,7 +2694,7 @@ class YAPI
      * PHP script needs to have write access to it. It is recommended to use a folder that is not published
      * on the Web server since the library will save some data of Yoctopuce devices into this folder.
      *
-     * Note: This feature is supported by YoctoHub and VirtualHub since version XXXXx.
+     * Note: This feature is supported by YoctoHub and VirtualHub since version 27750.
      *
      * @param str_directory : the path of the folder that will be used as cache.
      *
@@ -8453,7 +8453,7 @@ class YModule extends YFunction
  * PHP script needs to have write access to it. It is recommended to use a folder that is not published
  * on the Web server since the library will save some data of Yoctopuce devices into this folder.
  *
- * Note: This feature is supported by YoctoHub and VirtualHub since version XXXXx.
+ * Note: This feature is supported by YoctoHub and VirtualHub since version 27750.
  *
  * @param str_directory : the path of the folder that will be used as cache.
  *

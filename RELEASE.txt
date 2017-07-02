@@ -1,1 +1,1 @@
-- Add HTTP Callback cache (reduce the quantity of data uploaded).
+- Fix some functions documentation.

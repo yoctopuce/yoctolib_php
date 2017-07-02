@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_poweroutput.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_poweroutput.php 27926 2017-06-27 13:25:52Z seb $
  *
  * Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -88,12 +88,10 @@ class YPowerOutput extends YFunction
     }
 
     /**
-     * Returns the voltage on the power ouput featured by
-     * the module.
+     * Returns the voltage on the power output featured by the module.
      *
      * @return a value among Y_VOLTAGE_OFF, Y_VOLTAGE_OUT3V3 and Y_VOLTAGE_OUT5V corresponding to the
-     * voltage on the power ouput featured by
-     *         the module
+     * voltage on the power output featured by the module
      *
      * On failure, throws an exception or returns Y_VOLTAGE_INVALID.
      */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_currentloopoutput.php 27926 2017-06-27 13:25:52Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -259,7 +259,7 @@ class YCurrentLoopOutput extends YFunction
      * change cancels any ongoing transition process.
      *
      * @param mA_target   : new current value at the end of the transition
-     *         (floating-point number, representing the transition duration in mA)
+     *         (floating-point number, representing the end current in mA)
      * @param ms_duration : total duration of the transition, in milliseconds
      *
      * @return YAPI_SUCCESS when the call succeeds.
