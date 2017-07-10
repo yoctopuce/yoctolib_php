@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 27777 2017-06-09 13:32:59Z mvuilleu $
+ * $Id: yocto_api.php 28024 2017-07-10 08:50:02Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2683,7 +2683,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.27961";
+        return "1.10.28028";
     }
 
     /**
@@ -4608,6 +4608,12 @@ class YDataSet
         // $stream                 is a YDataStream;
         if ($this->_progress < 0) {
             $url = sprintf('logger.json?id=%s',$this->_functionId);
+            if ($this->_startTime != 0) {
+                $url = sprintf('%s&from=%u',$url,$this->_startTime);
+            }
+            if ($this->_endTime != 0) {
+                $url = sprintf('%s&to=%u',$url,$this->_endTime);
+            }
         } else {
             if ($this->_progress >= sizeof($this->_streams)) {
                 return 100;
