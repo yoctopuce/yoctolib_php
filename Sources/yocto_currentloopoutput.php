@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 27926 2017-06-27 13:25:52Z seb $
+ * $Id: yocto_currentloopoutput.php 28293 2017-08-03 09:01:57Z mvuilleu $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -273,7 +273,7 @@ class YCurrentLoopOutput extends YFunction
         if ($mA_target > 21.0) {
             $mA_target = 21.0;
         }
-        $newval = sprintf('%d:%d', round($mA_target*1000), $ms_duration);
+        $newval = sprintf('%d:%d', round($mA_target*65536), $ms_duration);
 
         return $this->set_currentTransition($newval);
     }
