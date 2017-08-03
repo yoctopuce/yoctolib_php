@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_quadraturedecoder.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_quadraturedecoder.php 28159 2017-07-27 09:37:52Z seb $
  *
  * Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -109,9 +109,9 @@ class YQuadratureDecoder extends YSensor
     }
 
     /**
-     * Returns the PWM frequency in Hz.
+     * Returns the increments frequency, in Hz.
      *
-     * @return a floating point number corresponding to the PWM frequency in Hz
+     * @return a floating point number corresponding to the increments frequency, in Hz
      *
      * On failure, throws an exception or returns Y_SPEED_INVALID.
      */

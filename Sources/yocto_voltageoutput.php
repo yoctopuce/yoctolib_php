@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 27548 2017-05-19 06:07:04Z mvuilleu $
+ * $Id: pic24config.php 28204 2017-07-28 13:25:31Z mvuilleu $
  *
  * Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *

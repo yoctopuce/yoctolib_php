@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_temperature.php 28142 2017-07-25 20:24:23Z mvuilleu $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -55,6 +55,7 @@ if(!defined('Y_SENSORTYPE_PT100_2WIRES'))    define('Y_SENSORTYPE_PT100_2WIRES',
 if(!defined('Y_SENSORTYPE_RES_OHM'))         define('Y_SENSORTYPE_RES_OHM',        11);
 if(!defined('Y_SENSORTYPE_RES_NTC'))         define('Y_SENSORTYPE_RES_NTC',        12);
 if(!defined('Y_SENSORTYPE_RES_LINEAR'))      define('Y_SENSORTYPE_RES_LINEAR',     13);
+if(!defined('Y_SENSORTYPE_RES_INTERNAL'))    define('Y_SENSORTYPE_RES_INTERNAL',   14);
 if(!defined('Y_SENSORTYPE_INVALID'))         define('Y_SENSORTYPE_INVALID',        -1);
 if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
@@ -87,6 +88,7 @@ class YTemperature extends YSensor
     const SENSORTYPE_RES_OHM             = 11;
     const SENSORTYPE_RES_NTC             = 12;
     const SENSORTYPE_RES_LINEAR          = 13;
+    const SENSORTYPE_RES_INTERNAL        = 14;
     const SENSORTYPE_INVALID             = -1;
     const SIGNALVALUE_INVALID            = YAPI_INVALID_DOUBLE;
     const SIGNALUNIT_INVALID             = YAPI_INVALID_STRING;
@@ -159,8 +161,8 @@ class YTemperature extends YSensor
      * @return a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
      * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
-     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC and Y_SENSORTYPE_RES_LINEAR
-     * corresponding to the temperature sensor type
+     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR and
+     * Y_SENSORTYPE_RES_INTERNAL corresponding to the temperature sensor type
      *
      * On failure, throws an exception or returns Y_SENSORTYPE_INVALID.
      */
@@ -186,7 +188,8 @@ class YTemperature extends YSensor
      * @param newval : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
      * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
-     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC and Y_SENSORTYPE_RES_LINEAR
+     * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR and
+     * Y_SENSORTYPE_RES_INTERNAL
      *
      * @return YAPI_SUCCESS if the call succeeds.
      *
