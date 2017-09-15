@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 28142 2017-07-25 20:24:23Z mvuilleu $
+ * $Id: yocto_temperature.php 28559 2017-09-15 15:01:38Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -143,9 +143,9 @@ class YTemperature extends YSensor
      * WARNING: if a specific calibration is defined for the temperature function, a
      * unit system change will probably break it.
      *
-     * @param newval : a string corresponding to the measuring unit for the measured temperature
+     * @param string $newval : a string corresponding to the measuring unit for the measured temperature
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -158,7 +158,7 @@ class YTemperature extends YSensor
     /**
      * Returns the temperature sensor type.
      *
-     * @return a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
+     * @return integer : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
      * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
      * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR and
@@ -179,19 +179,19 @@ class YTemperature extends YSensor
     }
 
     /**
-     * Modifies the temperature sensor type.  This function is used
+     * Changes the temperature sensor type.  This function is used
      * to define the type of thermocouple (K,E...) used with the device.
      * It has no effect if module is using a digital sensor or a thermistor.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param newval : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K, Y_SENSORTYPE_TYPE_E,
-     * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
-     * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
+     * @param integer $newval : a value among Y_SENSORTYPE_DIGITAL, Y_SENSORTYPE_TYPE_K,
+     * Y_SENSORTYPE_TYPE_E, Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R,
+     * Y_SENSORTYPE_TYPE_S, Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
      * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR and
-     * Y_SENSORTYPE_RES_INTERNAL
+     * Y_SENSORTYPE_RES_INTERNAL corresponding to the temperature sensor type
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -204,8 +204,8 @@ class YTemperature extends YSensor
     /**
      * Returns the current value of the electrical signal measured by the sensor.
      *
-     * @return a floating point number corresponding to the current value of the electrical signal
-     * measured by the sensor
+     * @return double : a floating point number corresponding to the current value of the electrical
+     * signal measured by the sensor
      *
      * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
      */
@@ -224,7 +224,7 @@ class YTemperature extends YSensor
     /**
      * Returns the measuring unit of the electrical signal used by the sensor.
      *
-     * @return a string corresponding to the measuring unit of the electrical signal used by the sensor
+     * @return string : a string corresponding to the measuring unit of the electrical signal used by the sensor
      *
      * On failure, throws an exception or returns Y_SIGNALUNIT_INVALID.
      */
@@ -281,9 +281,9 @@ class YTemperature extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the temperature sensor
+     * @param string $func : a string that uniquely characterizes the temperature sensor
      *
-     * @return a YTemperature object allowing you to drive the temperature sensor.
+     * @return YTemperature : a YTemperature object allowing you to drive the temperature sensor.
      */
     public static function FindTemperature($func)
     {
@@ -302,10 +302,10 @@ class YTemperature extends YSensor
      * table using set_thermistorResponseTable. This function can only be used with a
      * temperature sensor based on thermistors.
      *
-     * @param res25 : thermistor resistance at 25 degrees Celsius
-     * @param beta : Beta value
+     * @param double $res25 : thermistor resistance at 25 degrees Celsius
+     * @param double $beta : Beta value
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -333,14 +333,14 @@ class YTemperature extends YSensor
      * the measured resistance. This function can only be used with a temperature
      * sensor based on thermistors.
      *
-     * @param tempValues : array of floating point numbers, corresponding to all
+     * @param double[] $tempValues : array of floating point numbers, corresponding to all
      *         temperatures (in degrees Celcius) for which the resistance of the
      *         thermistor is specified.
-     * @param resValues : array of floating point numbers, corresponding to the resistance
+     * @param double[] $resValues : array of floating point numbers, corresponding to the resistance
      *         values (in Ohms) for each of the temperature included in the first
      *         argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -391,14 +391,14 @@ class YTemperature extends YSensor
      * set_thermistorResponseTable function. This function can only be used with a
      * temperature sensor based on thermistors.
      *
-     * @param tempValues : array of floating point numbers, that is filled by the function
+     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all temperatures (in degrees Celcius) for which the resistance
      *         of the thermistor is specified.
-     * @param resValues : array of floating point numbers, that is filled by the function
+     * @param double[] $resValues : array of floating point numbers, that is filled by the function
      *         with the value (in Ohms) for each of the temperature included in the
      *         first argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -483,7 +483,7 @@ class YTemperature extends YSensor
     /**
      * Continues the enumeration of temperature sensors started using yFirstTemperature().
      *
-     * @return a pointer to a YTemperature object, corresponding to
+     * @return YTemperature : a pointer to a YTemperature object, corresponding to
      *         a temperature sensor currently online, or a null pointer
      *         if there are no more temperature sensors to enumerate.
      */
@@ -500,7 +500,7 @@ class YTemperature extends YSensor
      * Use the method YTemperature.nextTemperature() to iterate on
      * next temperature sensors.
      *
-     * @return a pointer to a YTemperature object, corresponding to
+     * @return YTemperature : a pointer to a YTemperature object, corresponding to
      *         the first temperature sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -539,9 +539,9 @@ class YTemperature extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the temperature sensor
+ * @param string $func : a string that uniquely characterizes the temperature sensor
  *
- * @return a YTemperature object allowing you to drive the temperature sensor.
+ * @return YTemperature : a YTemperature object allowing you to drive the temperature sensor.
  */
 function yFindTemperature($func)
 {
@@ -553,7 +553,7 @@ function yFindTemperature($func)
  * Use the method YTemperature.nextTemperature() to iterate on
  * next temperature sensors.
  *
- * @return a pointer to a YTemperature object, corresponding to
+ * @return YTemperature : a pointer to a YTemperature object, corresponding to
  *         the first temperature sensor currently online, or a null pointer
  *         if there are none.
  */

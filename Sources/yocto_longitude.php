@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_longitude.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_longitude.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YLongitude, the high-level API for Longitude functions
  *
@@ -93,9 +93,9 @@ class YLongitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the longitude sensor
+     * @param string $func : a string that uniquely characterizes the longitude sensor
      *
-     * @return a YLongitude object allowing you to drive the longitude sensor.
+     * @return YLongitude : a YLongitude object allowing you to drive the longitude sensor.
      */
     public static function FindLongitude($func)
     {
@@ -111,7 +111,7 @@ class YLongitude extends YSensor
     /**
      * Continues the enumeration of longitude sensors started using yFirstLongitude().
      *
-     * @return a pointer to a YLongitude object, corresponding to
+     * @return YLongitude : a pointer to a YLongitude object, corresponding to
      *         a longitude sensor currently online, or a null pointer
      *         if there are no more longitude sensors to enumerate.
      */
@@ -128,7 +128,7 @@ class YLongitude extends YSensor
      * Use the method YLongitude.nextLongitude() to iterate on
      * next longitude sensors.
      *
-     * @return a pointer to a YLongitude object, corresponding to
+     * @return YLongitude : a pointer to a YLongitude object, corresponding to
      *         the first longitude sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -167,9 +167,9 @@ class YLongitude extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the longitude sensor
+ * @param string $func : a string that uniquely characterizes the longitude sensor
  *
- * @return a YLongitude object allowing you to drive the longitude sensor.
+ * @return YLongitude : a YLongitude object allowing you to drive the longitude sensor.
  */
 function yFindLongitude($func)
 {
@@ -181,7 +181,7 @@ function yFindLongitude($func)
  * Use the method YLongitude.nextLongitude() to iterate on
  * next longitude sensors.
  *
- * @return a pointer to a YLongitude object, corresponding to
+ * @return YLongitude : a pointer to a YLongitude object, corresponding to
  *         the first longitude sensor currently online, or a null pointer
  *         if there are none.
  */

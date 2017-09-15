@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioin.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_audioin.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -111,7 +111,7 @@ class YAudioIn extends YFunction
     /**
      * Returns audio input gain, in per cents.
      *
-     * @return an integer corresponding to audio input gain, in per cents
+     * @return integer : an integer corresponding to audio input gain, in per cents
      *
      * On failure, throws an exception or returns Y_VOLUME_INVALID.
      */
@@ -130,9 +130,9 @@ class YAudioIn extends YFunction
     /**
      * Changes audio input gain, in per cents.
      *
-     * @param newval : an integer corresponding to audio input gain, in per cents
+     * @param integer $newval : an integer corresponding to audio input gain, in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -145,7 +145,7 @@ class YAudioIn extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
      * On failure, throws an exception or returns Y_MUTE_INVALID.
      */
@@ -165,9 +165,9 @@ class YAudioIn extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -183,7 +183,7 @@ class YAudioIn extends YFunction
      * completely mute the sound, use set_mute()
      * instead of the set_volume().
      *
-     * @return a string corresponding to the supported volume range
+     * @return string : a string corresponding to the supported volume range
      *
      * On failure, throws an exception or returns Y_VOLUMERANGE_INVALID.
      */
@@ -202,7 +202,7 @@ class YAudioIn extends YFunction
     /**
      * Returns the detected input signal level.
      *
-     * @return an integer corresponding to the detected input signal level
+     * @return integer : an integer corresponding to the detected input signal level
      *
      * On failure, throws an exception or returns Y_SIGNAL_INVALID.
      */
@@ -221,7 +221,7 @@ class YAudioIn extends YFunction
     /**
      * Returns the number of seconds elapsed without detecting a signal.
      *
-     * @return an integer corresponding to the number of seconds elapsed without detecting a signal
+     * @return integer : an integer corresponding to the number of seconds elapsed without detecting a signal
      *
      * On failure, throws an exception or returns Y_NOSIGNALFOR_INVALID.
      */
@@ -260,9 +260,9 @@ class YAudioIn extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the audio input
+     * @param string $func : a string that uniquely characterizes the audio input
      *
-     * @return a YAudioIn object allowing you to drive the audio input.
+     * @return YAudioIn : a YAudioIn object allowing you to drive the audio input.
      */
     public static function FindAudioIn($func)
     {
@@ -299,7 +299,7 @@ class YAudioIn extends YFunction
     /**
      * Continues the enumeration of audio inputs started using yFirstAudioIn().
      *
-     * @return a pointer to a YAudioIn object, corresponding to
+     * @return YAudioIn : a pointer to a YAudioIn object, corresponding to
      *         an audio input currently online, or a null pointer
      *         if there are no more audio inputs to enumerate.
      */
@@ -316,7 +316,7 @@ class YAudioIn extends YFunction
      * Use the method YAudioIn.nextAudioIn() to iterate on
      * next audio inputs.
      *
-     * @return a pointer to a YAudioIn object, corresponding to
+     * @return YAudioIn : a pointer to a YAudioIn object, corresponding to
      *         the first audio input currently online, or a null pointer
      *         if there are none.
      */
@@ -355,9 +355,9 @@ class YAudioIn extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the audio input
+ * @param string $func : a string that uniquely characterizes the audio input
  *
- * @return a YAudioIn object allowing you to drive the audio input.
+ * @return YAudioIn : a YAudioIn object allowing you to drive the audio input.
  */
 function yFindAudioIn($func)
 {
@@ -369,7 +369,7 @@ function yFindAudioIn($func)
  * Use the method YAudioIn.nextAudioIn() to iterate on
  * next audio inputs.
  *
- * @return a pointer to a YAudioIn object, corresponding to
+ * @return YAudioIn : a pointer to a YAudioIn object, corresponding to
  *         the first audio input currently online, or a null pointer
  *         if there are none.
  */

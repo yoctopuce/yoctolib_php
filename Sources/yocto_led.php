@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_led.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -113,7 +113,7 @@ class YLed extends YFunction
     /**
      * Returns the current LED state.
      *
-     * @return either Y_POWER_OFF or Y_POWER_ON, according to the current LED state
+     * @return integer : either Y_POWER_OFF or Y_POWER_ON, according to the current LED state
      *
      * On failure, throws an exception or returns Y_POWER_INVALID.
      */
@@ -132,9 +132,9 @@ class YLed extends YFunction
     /**
      * Changes the state of the LED.
      *
-     * @param newval : either Y_POWER_OFF or Y_POWER_ON, according to the state of the LED
+     * @param integer $newval : either Y_POWER_OFF or Y_POWER_ON, according to the state of the LED
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -147,7 +147,7 @@ class YLed extends YFunction
     /**
      * Returns the current LED intensity (in per cent).
      *
-     * @return an integer corresponding to the current LED intensity (in per cent)
+     * @return integer : an integer corresponding to the current LED intensity (in per cent)
      *
      * On failure, throws an exception or returns Y_LUMINOSITY_INVALID.
      */
@@ -166,9 +166,9 @@ class YLed extends YFunction
     /**
      * Changes the current LED intensity (in per cent).
      *
-     * @param newval : an integer corresponding to the current LED intensity (in per cent)
+     * @param integer $newval : an integer corresponding to the current LED intensity (in per cent)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -181,8 +181,8 @@ class YLed extends YFunction
     /**
      * Returns the current LED signaling mode.
      *
-     * @return a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE, Y_BLINKING_RUN,
-     * Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current LED signaling mode
+     * @return integer : a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE,
+     * Y_BLINKING_RUN, Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current LED signaling mode
      *
      * On failure, throws an exception or returns Y_BLINKING_INVALID.
      */
@@ -201,10 +201,10 @@ class YLed extends YFunction
     /**
      * Changes the current LED signaling mode.
      *
-     * @param newval : a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE, Y_BLINKING_RUN,
-     * Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current LED signaling mode
+     * @param integer $newval : a value among Y_BLINKING_STILL, Y_BLINKING_RELAX, Y_BLINKING_AWARE,
+     * Y_BLINKING_RUN, Y_BLINKING_CALL and Y_BLINKING_PANIC corresponding to the current LED signaling mode
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -237,9 +237,9 @@ class YLed extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the LED
+     * @param string $func : a string that uniquely characterizes the LED
      *
-     * @return a YLed object allowing you to drive the LED.
+     * @return YLed : a YLed object allowing you to drive the LED.
      */
     public static function FindLed($func)
     {
@@ -273,7 +273,7 @@ class YLed extends YFunction
     /**
      * Continues the enumeration of LEDs started using yFirstLed().
      *
-     * @return a pointer to a YLed object, corresponding to
+     * @return YLed : a pointer to a YLed object, corresponding to
      *         a LED currently online, or a null pointer
      *         if there are no more LEDs to enumerate.
      */
@@ -290,7 +290,7 @@ class YLed extends YFunction
      * Use the method YLed.nextLed() to iterate on
      * next LEDs.
      *
-     * @return a pointer to a YLed object, corresponding to
+     * @return YLed : a pointer to a YLed object, corresponding to
      *         the first LED currently online, or a null pointer
      *         if there are none.
      */
@@ -329,9 +329,9 @@ class YLed extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the LED
+ * @param string $func : a string that uniquely characterizes the LED
  *
- * @return a YLed object allowing you to drive the LED.
+ * @return YLed : a YLed object allowing you to drive the LED.
  */
 function yFindLed($func)
 {
@@ -343,7 +343,7 @@ function yFindLed($func)
  * Use the method YLed.nextLed() to iterate on
  * next LEDs.
  *
- * @return a pointer to a YLed object, corresponding to
+ * @return YLed : a pointer to a YLed object, corresponding to
  *         the first LED currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_pwmoutput.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -133,7 +133,7 @@ class YPwmOutput extends YFunction
     /**
      * Returns the state of the PWMs.
      *
-     * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the PWMs
+     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the PWMs
      *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
@@ -152,9 +152,9 @@ class YPwmOutput extends YFunction
     /**
      * Stops or starts the PWM.
      *
-     * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
+     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -168,9 +168,9 @@ class YPwmOutput extends YFunction
      * Changes the PWM frequency. The duty cycle is kept unchanged thanks to an
      * automatic pulse width change.
      *
-     * @param newval : a floating point number corresponding to the PWM frequency
+     * @param double $newval : a floating point number corresponding to the PWM frequency
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -183,7 +183,7 @@ class YPwmOutput extends YFunction
     /**
      * Returns the PWM frequency in Hz.
      *
-     * @return a floating point number corresponding to the PWM frequency in Hz
+     * @return double : a floating point number corresponding to the PWM frequency in Hz
      *
      * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
      */
@@ -202,9 +202,9 @@ class YPwmOutput extends YFunction
     /**
      * Changes the PWM period in milliseconds.
      *
-     * @param newval : a floating point number corresponding to the PWM period in milliseconds
+     * @param double $newval : a floating point number corresponding to the PWM period in milliseconds
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -217,7 +217,7 @@ class YPwmOutput extends YFunction
     /**
      * Returns the PWM period in milliseconds.
      *
-     * @return a floating point number corresponding to the PWM period in milliseconds
+     * @return double : a floating point number corresponding to the PWM period in milliseconds
      *
      * On failure, throws an exception or returns Y_PERIOD_INVALID.
      */
@@ -236,9 +236,9 @@ class YPwmOutput extends YFunction
     /**
      * Changes the PWM duty cycle, in per cents.
      *
-     * @param newval : a floating point number corresponding to the PWM duty cycle, in per cents
+     * @param double $newval : a floating point number corresponding to the PWM duty cycle, in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -251,7 +251,7 @@ class YPwmOutput extends YFunction
     /**
      * Returns the PWM duty cycle, in per cents.
      *
-     * @return a floating point number corresponding to the PWM duty cycle, in per cents
+     * @return double : a floating point number corresponding to the PWM duty cycle, in per cents
      *
      * On failure, throws an exception or returns Y_DUTYCYCLE_INVALID.
      */
@@ -271,9 +271,9 @@ class YPwmOutput extends YFunction
      * Changes the PWM pulse length, in milliseconds. A pulse length cannot be longer than period,
      * otherwise it is truncated.
      *
-     * @param newval : a floating point number corresponding to the PWM pulse length, in milliseconds
+     * @param double $newval : a floating point number corresponding to the PWM pulse length, in milliseconds
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -286,8 +286,8 @@ class YPwmOutput extends YFunction
     /**
      * Returns the PWM pulse length in milliseconds, as a floating point number.
      *
-     * @return a floating point number corresponding to the PWM pulse length in milliseconds, as a
-     * floating point number
+     * @return double : a floating point number corresponding to the PWM pulse length in milliseconds, as
+     * a floating point number
      *
      * On failure, throws an exception or returns Y_PULSEDURATION_INVALID.
      */
@@ -324,8 +324,8 @@ class YPwmOutput extends YFunction
     /**
      * Returns the state of the PWM at device power on.
      *
-     * @return either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the state of the
-     * PWM at device power on
+     * @return integer : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the
+     * state of the PWM at device power on
      *
      * On failure, throws an exception or returns Y_ENABLEDATPOWERON_INVALID.
      */
@@ -345,10 +345,10 @@ class YPwmOutput extends YFunction
      * Changes the state of the PWM at device power on. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the state
-     * of the PWM at device power on
+     * @param integer $newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to
+     * the state of the PWM at device power on
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -362,9 +362,9 @@ class YPwmOutput extends YFunction
      * Changes the PWM duty cycle at device power on. Remember to call the matching
      * module saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param newval : a floating point number corresponding to the PWM duty cycle at device power on
+     * @param double $newval : a floating point number corresponding to the PWM duty cycle at device power on
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -377,8 +377,8 @@ class YPwmOutput extends YFunction
     /**
      * Returns the PWMs duty cycle at device power on as a floating point number between 0 and 100.
      *
-     * @return a floating point number corresponding to the PWMs duty cycle at device power on as a
-     * floating point number between 0 and 100
+     * @return double : a floating point number corresponding to the PWMs duty cycle at device power on as
+     * a floating point number between 0 and 100
      *
      * On failure, throws an exception or returns Y_DUTYCYCLEATPOWERON_INVALID.
      */
@@ -417,9 +417,9 @@ class YPwmOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the PWM
+     * @param string $func : a string that uniquely characterizes the PWM
      *
-     * @return a YPwmOutput object allowing you to drive the PWM.
+     * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
      */
     public static function FindPwmOutput($func)
     {
@@ -438,9 +438,9 @@ class YPwmOutput extends YFunction
      *
      * @param ms_target   : new pulse duration at the end of the transition
      *         (floating-point number, representing the pulse duration in milliseconds)
-     * @param ms_duration : total duration of the transition, in milliseconds
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -459,9 +459,9 @@ class YPwmOutput extends YFunction
      *
      * @param target      : new duty cycle at the end of the transition
      *         (floating-point number, between 0 and 1)
-     * @param ms_duration : total duration of the transition, in milliseconds
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -529,7 +529,7 @@ class YPwmOutput extends YFunction
     /**
      * Continues the enumeration of PWMs started using yFirstPwmOutput().
      *
-     * @return a pointer to a YPwmOutput object, corresponding to
+     * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
      *         a PWM currently online, or a null pointer
      *         if there are no more PWMs to enumerate.
      */
@@ -546,7 +546,7 @@ class YPwmOutput extends YFunction
      * Use the method YPwmOutput.nextPwmOutput() to iterate on
      * next PWMs.
      *
-     * @return a pointer to a YPwmOutput object, corresponding to
+     * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
      *         the first PWM currently online, or a null pointer
      *         if there are none.
      */
@@ -585,9 +585,9 @@ class YPwmOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the PWM
+ * @param string $func : a string that uniquely characterizes the PWM
  *
- * @return a YPwmOutput object allowing you to drive the PWM.
+ * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
  */
 function yFindPwmOutput($func)
 {
@@ -599,7 +599,7 @@ function yFindPwmOutput($func)
  * Use the method YPwmOutput.nextPwmOutput() to iterate on
  * next PWMs.
  *
- * @return a pointer to a YPwmOutput object, corresponding to
+ * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
  *         the first PWM currently online, or a null pointer
  *         if there are none.
  */

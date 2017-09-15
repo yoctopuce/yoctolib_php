@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_lightsensor.php 28559 2017-09-15 15:01:38Z seb $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -106,12 +106,12 @@ class YLightSensor extends YSensor
      * Changes the sensor-specific calibration parameter so that the current value
      * matches a desired target (linear scaling).
      *
-     * @param calibratedVal : the desired target value.
+     * @param double $calibratedVal : the desired target value.
      *
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -124,8 +124,9 @@ class YLightSensor extends YSensor
     /**
      * Returns the type of light measure.
      *
-     * @return a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM, Y_MEASURETYPE_INFRARED,
-     * Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the type of light measure
+     * @return integer : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
+     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the
+     * type of light measure
      *
      * On failure, throws an exception or returns Y_MEASURETYPE_INVALID.
      */
@@ -142,16 +143,17 @@ class YLightSensor extends YSensor
     }
 
     /**
-     * Modifies the light sensor type used in the device. The measure can either
+     * Changes the light sensor type used in the device. The measure can either
      * approximate the response of the human eye, focus on a specific light
      * spectrum, depending on the capabilities of the light-sensitive cell.
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param newval : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
-     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY
+     * @param integer $newval : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
+     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the
+     * light sensor type used in the device
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -184,9 +186,9 @@ class YLightSensor extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the light sensor
+     * @param string $func : a string that uniquely characterizes the light sensor
      *
-     * @return a YLightSensor object allowing you to drive the light sensor.
+     * @return YLightSensor : a YLightSensor object allowing you to drive the light sensor.
      */
     public static function FindLightSensor($func)
     {
@@ -211,7 +213,7 @@ class YLightSensor extends YSensor
     /**
      * Continues the enumeration of light sensors started using yFirstLightSensor().
      *
-     * @return a pointer to a YLightSensor object, corresponding to
+     * @return YLightSensor : a pointer to a YLightSensor object, corresponding to
      *         a light sensor currently online, or a null pointer
      *         if there are no more light sensors to enumerate.
      */
@@ -228,7 +230,7 @@ class YLightSensor extends YSensor
      * Use the method YLightSensor.nextLightSensor() to iterate on
      * next light sensors.
      *
-     * @return a pointer to a YLightSensor object, corresponding to
+     * @return YLightSensor : a pointer to a YLightSensor object, corresponding to
      *         the first light sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -267,9 +269,9 @@ class YLightSensor extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the light sensor
+ * @param string $func : a string that uniquely characterizes the light sensor
  *
- * @return a YLightSensor object allowing you to drive the light sensor.
+ * @return YLightSensor : a YLightSensor object allowing you to drive the light sensor.
  */
 function yFindLightSensor($func)
 {
@@ -281,7 +283,7 @@ function yFindLightSensor($func)
  * Use the method YLightSensor.nextLightSensor() to iterate on
  * next light sensors.
  *
- * @return a pointer to a YLightSensor object, corresponding to
+ * @return YLightSensor : a pointer to a YLightSensor object, corresponding to
  *         the first light sensor currently online, or a null pointer
  *         if there are none.
  */

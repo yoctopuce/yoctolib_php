@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_accelerometer.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_accelerometer.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -119,7 +119,7 @@ class YAccelerometer extends YSensor
     /**
      * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
      *
-     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -139,9 +139,10 @@ class YAccelerometer extends YSensor
      * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
      * frequency is lower, the device performs averaging.
      *
-     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
+     * (Yocto-3D-V2 only)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -154,7 +155,8 @@ class YAccelerometer extends YSensor
     /**
      * Returns the X component of the acceleration, as a floating point number.
      *
-     * @return a floating point number corresponding to the X component of the acceleration, as a floating point number
+     * @return double : a floating point number corresponding to the X component of the acceleration, as a
+     * floating point number
      *
      * On failure, throws an exception or returns Y_XVALUE_INVALID.
      */
@@ -173,7 +175,8 @@ class YAccelerometer extends YSensor
     /**
      * Returns the Y component of the acceleration, as a floating point number.
      *
-     * @return a floating point number corresponding to the Y component of the acceleration, as a floating point number
+     * @return double : a floating point number corresponding to the Y component of the acceleration, as a
+     * floating point number
      *
      * On failure, throws an exception or returns Y_YVALUE_INVALID.
      */
@@ -192,7 +195,8 @@ class YAccelerometer extends YSensor
     /**
      * Returns the Z component of the acceleration, as a floating point number.
      *
-     * @return a floating point number corresponding to the Z component of the acceleration, as a floating point number
+     * @return double : a floating point number corresponding to the Z component of the acceleration, as a
+     * floating point number
      *
      * On failure, throws an exception or returns Y_ZVALUE_INVALID.
      */
@@ -249,9 +253,9 @@ class YAccelerometer extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the accelerometer
+     * @param string $func : a string that uniquely characterizes the accelerometer
      *
-     * @return a YAccelerometer object allowing you to drive the accelerometer.
+     * @return YAccelerometer : a YAccelerometer object allowing you to drive the accelerometer.
      */
     public static function FindAccelerometer($func)
     {
@@ -288,7 +292,7 @@ class YAccelerometer extends YSensor
     /**
      * Continues the enumeration of accelerometers started using yFirstAccelerometer().
      *
-     * @return a pointer to a YAccelerometer object, corresponding to
+     * @return YAccelerometer : a pointer to a YAccelerometer object, corresponding to
      *         an accelerometer currently online, or a null pointer
      *         if there are no more accelerometers to enumerate.
      */
@@ -305,7 +309,7 @@ class YAccelerometer extends YSensor
      * Use the method YAccelerometer.nextAccelerometer() to iterate on
      * next accelerometers.
      *
-     * @return a pointer to a YAccelerometer object, corresponding to
+     * @return YAccelerometer : a pointer to a YAccelerometer object, corresponding to
      *         the first accelerometer currently online, or a null pointer
      *         if there are none.
      */
@@ -344,9 +348,9 @@ class YAccelerometer extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the accelerometer
+ * @param string $func : a string that uniquely characterizes the accelerometer
  *
- * @return a YAccelerometer object allowing you to drive the accelerometer.
+ * @return YAccelerometer : a YAccelerometer object allowing you to drive the accelerometer.
  */
 function yFindAccelerometer($func)
 {
@@ -358,7 +362,7 @@ function yFindAccelerometer($func)
  * Use the method YAccelerometer.nextAccelerometer() to iterate on
  * next accelerometers.
  *
- * @return a pointer to a YAccelerometer object, corresponding to
+ * @return YAccelerometer : a pointer to a YAccelerometer object, corresponding to
  *         the first accelerometer currently online, or a null pointer
  *         if there are none.
  */

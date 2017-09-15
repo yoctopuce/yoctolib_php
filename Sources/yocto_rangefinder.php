@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_rangefinder.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_rangefinder.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -117,9 +117,9 @@ class YRangeFinder extends YSensor
      * WARNING: if a specific calibration is defined for the rangeFinder function, a
      * unit system change will probably break it.
      *
-     * @param newval : a string corresponding to the measuring unit for the measured range
+     * @param string $newval : a string corresponding to the measuring unit for the measured range
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -133,7 +133,7 @@ class YRangeFinder extends YSensor
      * Returns the range finder running mode. The rangefinder running mode
      * allows you to put priority on precision, speed or maximum range.
      *
-     * @return a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
+     * @return integer : a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
      * Y_RANGEFINDERMODE_HIGH_ACCURACY and Y_RANGEFINDERMODE_HIGH_SPEED corresponding to the range finder running mode
      *
      * On failure, throws an exception or returns Y_RANGEFINDERMODE_INVALID.
@@ -154,12 +154,12 @@ class YRangeFinder extends YSensor
      * Changes the rangefinder running mode, allowing you to put priority on
      * precision, speed or maximum range.
      *
-     * @param newval : a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
+     * @param integer $newval : a value among Y_RANGEFINDERMODE_DEFAULT, Y_RANGEFINDERMODE_LONG_RANGE,
      * Y_RANGEFINDERMODE_HIGH_ACCURACY and Y_RANGEFINDERMODE_HIGH_SPEED corresponding to the rangefinder
      * running mode, allowing you to put priority on
      *         precision, speed or maximum range
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -190,7 +190,8 @@ class YRangeFinder extends YSensor
     /**
      * Returns the current sensor temperature, as a floating point number.
      *
-     * @return a floating point number corresponding to the current sensor temperature, as a floating point number
+     * @return double : a floating point number corresponding to the current sensor temperature, as a
+     * floating point number
      *
      * On failure, throws an exception or returns Y_CURRENTTEMPERATURE_INVALID.
      */
@@ -247,9 +248,9 @@ class YRangeFinder extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the range finder
+     * @param string $func : a string that uniquely characterizes the range finder
      *
-     * @return a YRangeFinder object allowing you to drive the range finder.
+     * @return YRangeFinder : a YRangeFinder object allowing you to drive the range finder.
      */
     public static function FindRangeFinder($func)
     {
@@ -267,7 +268,7 @@ class YRangeFinder extends YSensor
      * This function can be used to determine if a new calibration for ambient temperature
      * is required.
      *
-     * @return a temperature, as a floating point number.
+     * @return double : a temperature, as a floating point number.
      *         On failure, throws an exception or return YAPI_INVALID_DOUBLE.
      */
     public function get_hardwareCalibrationTemperature()
@@ -286,7 +287,7 @@ class YRangeFinder extends YSensor
      * automatically at device startup, but it is recommended to start it again when the
      * temperature delta since the latest calibration exceeds 8°C.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function triggerTemperatureCalibration()
@@ -300,7 +301,7 @@ class YRangeFinder extends YSensor
      * of a cover glass. Make sure to read the chapter about hardware calibration for details
      * on the calibration procedure for proper results.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function triggerSpadCalibration()
@@ -314,10 +315,10 @@ class YRangeFinder extends YSensor
      * of a cover glass. Make sure to read the chapter about hardware calibration for details
      * on the calibration procedure for proper results.
      *
-     * @param targetDist : true distance of the calibration target, in mm or inches, depending
+     * @param double $targetDist : true distance of the calibration target, in mm or inches, depending
      *         on the unit selected in the device
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function triggerOffsetCalibration($targetDist)
@@ -337,10 +338,10 @@ class YRangeFinder extends YSensor
      * of a cover glass. Make sure to read the chapter about hardware calibration for details
      * on the calibration procedure for proper results.
      *
-     * @param targetDist : true distance of the calibration target, in mm or inches, depending
+     * @param double $targetDist : true distance of the calibration target, in mm or inches, depending
      *         on the unit selected in the device
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function triggerXTalkCalibration($targetDist)
@@ -359,7 +360,7 @@ class YRangeFinder extends YSensor
      * for cover glass, and restores factory settings.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function cancelCoverGlassCalibrations()
@@ -394,7 +395,7 @@ class YRangeFinder extends YSensor
     /**
      * Continues the enumeration of range finders started using yFirstRangeFinder().
      *
-     * @return a pointer to a YRangeFinder object, corresponding to
+     * @return YRangeFinder : a pointer to a YRangeFinder object, corresponding to
      *         a range finder currently online, or a null pointer
      *         if there are no more range finders to enumerate.
      */
@@ -411,7 +412,7 @@ class YRangeFinder extends YSensor
      * Use the method YRangeFinder.nextRangeFinder() to iterate on
      * next range finders.
      *
-     * @return a pointer to a YRangeFinder object, corresponding to
+     * @return YRangeFinder : a pointer to a YRangeFinder object, corresponding to
      *         the first range finder currently online, or a null pointer
      *         if there are none.
      */
@@ -450,9 +451,9 @@ class YRangeFinder extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the range finder
+ * @param string $func : a string that uniquely characterizes the range finder
  *
- * @return a YRangeFinder object allowing you to drive the range finder.
+ * @return YRangeFinder : a YRangeFinder object allowing you to drive the range finder.
  */
 function yFindRangeFinder($func)
 {
@@ -464,7 +465,7 @@ function yFindRangeFinder($func)
  * Use the method YRangeFinder.nextRangeFinder() to iterate on
  * next range finders.
  *
- * @return a pointer to a YRangeFinder object, corresponding to
+ * @return YRangeFinder : a pointer to a YRangeFinder object, corresponding to
  *         the first range finder currently online, or a null pointer
  *         if there are none.
  */

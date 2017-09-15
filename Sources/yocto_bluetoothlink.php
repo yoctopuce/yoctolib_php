@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_bluetoothlink.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_bluetoothlink.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YBluetoothLink, the high-level API for BluetoothLink functions
  *
@@ -154,8 +154,8 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the MAC-48 address of the bluetooth interface, which is unique on the bluetooth network.
      *
-     * @return a string corresponding to the MAC-48 address of the bluetooth interface, which is unique on
-     * the bluetooth network
+     * @return string : a string corresponding to the MAC-48 address of the bluetooth interface, which is
+     * unique on the bluetooth network
      *
      * On failure, throws an exception or returns Y_OWNADDRESS_INVALID.
      */
@@ -176,7 +176,8 @@ class YBluetoothLink extends YFunction
      * the SIM card, or an empty string if none has been configured or if the code provided
      * was rejected by the SIM card.
      *
-     * @return a string corresponding to an opaque string if a PIN code has been configured in the device to access
+     * @return string : a string corresponding to an opaque string if a PIN code has been configured in
+     * the device to access
      *         the SIM card, or an empty string if none has been configured or if the code provided
      *         was rejected by the SIM card
      *
@@ -199,9 +200,9 @@ class YBluetoothLink extends YFunction
      * Remember to call the saveToFlash() method of the module to save the
      * new value in the device flash.
      *
-     * @param newval : a string corresponding to the PIN code used by the module for bluetooth pairing
+     * @param string $newval : a string corresponding to the PIN code used by the module for bluetooth pairing
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -214,7 +215,7 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the MAC-48 address of the remote device to connect to.
      *
-     * @return a string corresponding to the MAC-48 address of the remote device to connect to
+     * @return string : a string corresponding to the MAC-48 address of the remote device to connect to
      *
      * On failure, throws an exception or returns Y_REMOTEADDRESS_INVALID.
      */
@@ -233,9 +234,9 @@ class YBluetoothLink extends YFunction
     /**
      * Changes the MAC-48 address defining which remote device to connect to.
      *
-     * @param newval : a string corresponding to the MAC-48 address defining which remote device to connect to
+     * @param string $newval : a string corresponding to the MAC-48 address defining which remote device to connect to
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -248,7 +249,8 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the bluetooth name the remote device, if found on the bluetooth network.
      *
-     * @return a string corresponding to the bluetooth name the remote device, if found on the bluetooth network
+     * @return string : a string corresponding to the bluetooth name the remote device, if found on the
+     * bluetooth network
      *
      * On failure, throws an exception or returns Y_REMOTENAME_INVALID.
      */
@@ -267,7 +269,7 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
      * On failure, throws an exception or returns Y_MUTE_INVALID.
      */
@@ -287,9 +289,9 @@ class YBluetoothLink extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -302,7 +304,7 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the audio pre-amplifier volume, in per cents.
      *
-     * @return an integer corresponding to the audio pre-amplifier volume, in per cents
+     * @return integer : an integer corresponding to the audio pre-amplifier volume, in per cents
      *
      * On failure, throws an exception or returns Y_PREAMPLIFIER_INVALID.
      */
@@ -321,9 +323,9 @@ class YBluetoothLink extends YFunction
     /**
      * Changes the audio pre-amplifier volume, in per cents.
      *
-     * @param newval : an integer corresponding to the audio pre-amplifier volume, in per cents
+     * @param integer $newval : an integer corresponding to the audio pre-amplifier volume, in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -336,7 +338,7 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the connected headset volume, in per cents.
      *
-     * @return an integer corresponding to the connected headset volume, in per cents
+     * @return integer : an integer corresponding to the connected headset volume, in per cents
      *
      * On failure, throws an exception or returns Y_VOLUME_INVALID.
      */
@@ -355,9 +357,9 @@ class YBluetoothLink extends YFunction
     /**
      * Changes the connected headset volume, in per cents.
      *
-     * @param newval : an integer corresponding to the connected headset volume, in per cents
+     * @param integer $newval : an integer corresponding to the connected headset volume, in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -370,8 +372,8 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the bluetooth link state.
      *
-     * @return a value among Y_LINKSTATE_DOWN, Y_LINKSTATE_FREE, Y_LINKSTATE_SEARCH, Y_LINKSTATE_EXISTS,
-     * Y_LINKSTATE_LINKED and Y_LINKSTATE_PLAY corresponding to the bluetooth link state
+     * @return integer : a value among Y_LINKSTATE_DOWN, Y_LINKSTATE_FREE, Y_LINKSTATE_SEARCH,
+     * Y_LINKSTATE_EXISTS, Y_LINKSTATE_LINKED and Y_LINKSTATE_PLAY corresponding to the bluetooth link state
      *
      * On failure, throws an exception or returns Y_LINKSTATE_INVALID.
      */
@@ -390,8 +392,8 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the bluetooth receiver signal strength, in pourcents, or 0 if no connection is established.
      *
-     * @return an integer corresponding to the bluetooth receiver signal strength, in pourcents, or 0 if
-     * no connection is established
+     * @return integer : an integer corresponding to the bluetooth receiver signal strength, in pourcents,
+     * or 0 if no connection is established
      *
      * On failure, throws an exception or returns Y_LINKQUALITY_INVALID.
      */
@@ -448,9 +450,9 @@ class YBluetoothLink extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the cellular interface
+     * @param string $func : a string that uniquely characterizes the cellular interface
      *
-     * @return a YBluetoothLink object allowing you to drive the cellular interface.
+     * @return YBluetoothLink : a YBluetoothLink object allowing you to drive the cellular interface.
      */
     public static function FindBluetoothLink($func)
     {
@@ -466,7 +468,7 @@ class YBluetoothLink extends YFunction
     /**
      * Attempt to connect to the previously selected remote device.
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -478,7 +480,7 @@ class YBluetoothLink extends YFunction
     /**
      * Disconnect from the previously selected remote device.
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -538,7 +540,7 @@ class YBluetoothLink extends YFunction
     /**
      * Continues the enumeration of cellular interfaces started using yFirstBluetoothLink().
      *
-     * @return a pointer to a YBluetoothLink object, corresponding to
+     * @return YBluetoothLink : a pointer to a YBluetoothLink object, corresponding to
      *         a cellular interface currently online, or a null pointer
      *         if there are no more cellular interfaces to enumerate.
      */
@@ -555,7 +557,7 @@ class YBluetoothLink extends YFunction
      * Use the method YBluetoothLink.nextBluetoothLink() to iterate on
      * next cellular interfaces.
      *
-     * @return a pointer to a YBluetoothLink object, corresponding to
+     * @return YBluetoothLink : a pointer to a YBluetoothLink object, corresponding to
      *         the first cellular interface currently online, or a null pointer
      *         if there are none.
      */
@@ -594,9 +596,9 @@ class YBluetoothLink extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the cellular interface
+ * @param string $func : a string that uniquely characterizes the cellular interface
  *
- * @return a YBluetoothLink object allowing you to drive the cellular interface.
+ * @return YBluetoothLink : a YBluetoothLink object allowing you to drive the cellular interface.
  */
 function yFindBluetoothLink($func)
 {
@@ -608,7 +610,7 @@ function yFindBluetoothLink($func)
  * Use the method YBluetoothLink.nextBluetoothLink() to iterate on
  * next cellular interfaces.
  *
- * @return a pointer to a YBluetoothLink object, corresponding to
+ * @return YBluetoothLink : a pointer to a YBluetoothLink object, corresponding to
  *         the first cellular interface currently online, or a null pointer
  *         if there are none.
  */

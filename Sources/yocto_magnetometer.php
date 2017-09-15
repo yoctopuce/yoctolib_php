@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_magnetometer.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_magnetometer.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -109,7 +109,7 @@ class YMagnetometer extends YSensor
     /**
      * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
      *
-     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -129,9 +129,10 @@ class YMagnetometer extends YSensor
      * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
      * frequency is lower, the device performs averaging.
      *
-     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
+     * (Yocto-3D-V2 only)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -144,8 +145,8 @@ class YMagnetometer extends YSensor
     /**
      * Returns the X component of the magnetic field, as a floating point number.
      *
-     * @return a floating point number corresponding to the X component of the magnetic field, as a
-     * floating point number
+     * @return double : a floating point number corresponding to the X component of the magnetic field, as
+     * a floating point number
      *
      * On failure, throws an exception or returns Y_XVALUE_INVALID.
      */
@@ -164,8 +165,8 @@ class YMagnetometer extends YSensor
     /**
      * Returns the Y component of the magnetic field, as a floating point number.
      *
-     * @return a floating point number corresponding to the Y component of the magnetic field, as a
-     * floating point number
+     * @return double : a floating point number corresponding to the Y component of the magnetic field, as
+     * a floating point number
      *
      * On failure, throws an exception or returns Y_YVALUE_INVALID.
      */
@@ -184,8 +185,8 @@ class YMagnetometer extends YSensor
     /**
      * Returns the Z component of the magnetic field, as a floating point number.
      *
-     * @return a floating point number corresponding to the Z component of the magnetic field, as a
-     * floating point number
+     * @return double : a floating point number corresponding to the Z component of the magnetic field, as
+     * a floating point number
      *
      * On failure, throws an exception or returns Y_ZVALUE_INVALID.
      */
@@ -224,9 +225,9 @@ class YMagnetometer extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the magnetometer
+     * @param string $func : a string that uniquely characterizes the magnetometer
      *
-     * @return a YMagnetometer object allowing you to drive the magnetometer.
+     * @return YMagnetometer : a YMagnetometer object allowing you to drive the magnetometer.
      */
     public static function FindMagnetometer($func)
     {
@@ -257,7 +258,7 @@ class YMagnetometer extends YSensor
     /**
      * Continues the enumeration of magnetometers started using yFirstMagnetometer().
      *
-     * @return a pointer to a YMagnetometer object, corresponding to
+     * @return YMagnetometer : a pointer to a YMagnetometer object, corresponding to
      *         a magnetometer currently online, or a null pointer
      *         if there are no more magnetometers to enumerate.
      */
@@ -274,7 +275,7 @@ class YMagnetometer extends YSensor
      * Use the method YMagnetometer.nextMagnetometer() to iterate on
      * next magnetometers.
      *
-     * @return a pointer to a YMagnetometer object, corresponding to
+     * @return YMagnetometer : a pointer to a YMagnetometer object, corresponding to
      *         the first magnetometer currently online, or a null pointer
      *         if there are none.
      */
@@ -313,9 +314,9 @@ class YMagnetometer extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the magnetometer
+ * @param string $func : a string that uniquely characterizes the magnetometer
  *
- * @return a YMagnetometer object allowing you to drive the magnetometer.
+ * @return YMagnetometer : a YMagnetometer object allowing you to drive the magnetometer.
  */
 function yFindMagnetometer($func)
 {
@@ -327,7 +328,7 @@ function yFindMagnetometer($func)
  * Use the method YMagnetometer.nextMagnetometer() to iterate on
  * next magnetometers.
  *
- * @return a pointer to a YMagnetometer object, corresponding to
+ * @return YMagnetometer : a pointer to a YMagnetometer object, corresponding to
  *         the first magnetometer currently online, or a null pointer
  *         if there are none.
  */

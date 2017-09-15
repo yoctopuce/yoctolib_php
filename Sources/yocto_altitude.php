@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_altitude.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_altitude.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -94,9 +94,9 @@ class YAltitude extends YSensor
      * Changes the current estimated altitude. This allows to compensate for
      * ambient pressure variations and to work in relative mode.
      *
-     * @param newval : a floating point number corresponding to the current estimated altitude
+     * @param double $newval : a floating point number corresponding to the current estimated altitude
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -111,11 +111,11 @@ class YAltitude extends YSensor
      * the altitude (QNH). This enables you to compensate for atmospheric pressure
      * changes due to weather conditions.
      *
-     * @param newval : a floating point number corresponding to the barometric pressure adjusted to sea
-     * level used to compute
+     * @param double $newval : a floating point number corresponding to the barometric pressure adjusted
+     * to sea level used to compute
      *         the altitude (QNH)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -129,7 +129,8 @@ class YAltitude extends YSensor
      * Returns the barometric pressure adjusted to sea level used to compute
      * the altitude (QNH).
      *
-     * @return a floating point number corresponding to the barometric pressure adjusted to sea level used to compute
+     * @return double : a floating point number corresponding to the barometric pressure adjusted to sea
+     * level used to compute
      *         the altitude (QNH)
      *
      * On failure, throws an exception or returns Y_QNH_INVALID.
@@ -150,7 +151,7 @@ class YAltitude extends YSensor
      * Returns the technology used by the sesnor to compute
      * altitude. Possibles values are  "barometric" and "gps"
      *
-     * @return a string corresponding to the technology used by the sesnor to compute
+     * @return string : a string corresponding to the technology used by the sesnor to compute
      *         altitude
      *
      * On failure, throws an exception or returns Y_TECHNOLOGY_INVALID.
@@ -190,9 +191,9 @@ class YAltitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the altimeter
+     * @param string $func : a string that uniquely characterizes the altimeter
      *
-     * @return a YAltitude object allowing you to drive the altimeter.
+     * @return YAltitude : a YAltitude object allowing you to drive the altimeter.
      */
     public static function FindAltitude($func)
     {
@@ -220,7 +221,7 @@ class YAltitude extends YSensor
     /**
      * Continues the enumeration of altimeters started using yFirstAltitude().
      *
-     * @return a pointer to a YAltitude object, corresponding to
+     * @return YAltitude : a pointer to a YAltitude object, corresponding to
      *         an altimeter currently online, or a null pointer
      *         if there are no more altimeters to enumerate.
      */
@@ -237,7 +238,7 @@ class YAltitude extends YSensor
      * Use the method YAltitude.nextAltitude() to iterate on
      * next altimeters.
      *
-     * @return a pointer to a YAltitude object, corresponding to
+     * @return YAltitude : a pointer to a YAltitude object, corresponding to
      *         the first altimeter currently online, or a null pointer
      *         if there are none.
      */
@@ -276,9 +277,9 @@ class YAltitude extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the altimeter
+ * @param string $func : a string that uniquely characterizes the altimeter
  *
- * @return a YAltitude object allowing you to drive the altimeter.
+ * @return YAltitude : a YAltitude object allowing you to drive the altimeter.
  */
 function yFindAltitude($func)
 {
@@ -290,7 +291,7 @@ function yFindAltitude($func)
  * Use the method YAltitude.nextAltitude() to iterate on
  * next altimeters.
  *
- * @return a pointer to a YAltitude object, corresponding to
+ * @return YAltitude : a pointer to a YAltitude object, corresponding to
  *         the first altimeter currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmpowersource.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_pwmpowersource.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -92,7 +92,7 @@ class YPwmPowerSource extends YFunction
     /**
      * Returns the selected power source for the PWM on the same device.
      *
-     * @return a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V and
+     * @return integer : a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V and
      * Y_POWERMODE_OPNDRN corresponding to the selected power source for the PWM on the same device
      *
      * On failure, throws an exception or returns Y_POWERMODE_INVALID.
@@ -118,10 +118,10 @@ class YPwmPowerSource extends YFunction
      * If you want the change to be kept after a device reboot, make sure  to call the matching
      * module saveToFlash().
      *
-     * @param newval : a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V and
-     * Y_POWERMODE_OPNDRN corresponding to  the PWM power source
+     * @param integer $newval : a value among Y_POWERMODE_USB_5V, Y_POWERMODE_USB_3V, Y_POWERMODE_EXT_V
+     * and Y_POWERMODE_OPNDRN corresponding to  the PWM power source
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -154,9 +154,9 @@ class YPwmPowerSource extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the voltage source
+     * @param string $func : a string that uniquely characterizes the voltage source
      *
-     * @return a YPwmPowerSource object allowing you to drive the voltage source.
+     * @return YPwmPowerSource : a YPwmPowerSource object allowing you to drive the voltage source.
      */
     public static function FindPwmPowerSource($func)
     {
@@ -178,7 +178,7 @@ class YPwmPowerSource extends YFunction
     /**
      * Continues the enumeration of Voltage sources started using yFirstPwmPowerSource().
      *
-     * @return a pointer to a YPwmPowerSource object, corresponding to
+     * @return YPwmPowerSource : a pointer to a YPwmPowerSource object, corresponding to
      *         a voltage source currently online, or a null pointer
      *         if there are no more Voltage sources to enumerate.
      */
@@ -195,7 +195,7 @@ class YPwmPowerSource extends YFunction
      * Use the method YPwmPowerSource.nextPwmPowerSource() to iterate on
      * next Voltage sources.
      *
-     * @return a pointer to a YPwmPowerSource object, corresponding to
+     * @return YPwmPowerSource : a pointer to a YPwmPowerSource object, corresponding to
      *         the first source currently online, or a null pointer
      *         if there are none.
      */
@@ -234,9 +234,9 @@ class YPwmPowerSource extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the voltage source
+ * @param string $func : a string that uniquely characterizes the voltage source
  *
- * @return a YPwmPowerSource object allowing you to drive the voltage source.
+ * @return YPwmPowerSource : a YPwmPowerSource object allowing you to drive the voltage source.
  */
 function yFindPwmPowerSource($func)
 {
@@ -248,7 +248,7 @@ function yFindPwmPowerSource($func)
  * Use the method YPwmPowerSource.nextPwmPowerSource() to iterate on
  * next Voltage sources.
  *
- * @return a pointer to a YPwmPowerSource object, corresponding to
+ * @return YPwmPowerSource : a pointer to a YPwmPowerSource object, corresponding to
  *         the first source currently online, or a null pointer
  *         if there are none.
  */

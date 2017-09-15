@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voltage.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_voltage.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YVoltage, the high-level API for Voltage functions
  *
@@ -127,9 +127,9 @@ class YVoltage extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the voltage sensor
+     * @param string $func : a string that uniquely characterizes the voltage sensor
      *
-     * @return a YVoltage object allowing you to drive the voltage sensor.
+     * @return YVoltage : a YVoltage object allowing you to drive the voltage sensor.
      */
     public static function FindVoltage($func)
     {
@@ -151,7 +151,7 @@ class YVoltage extends YSensor
     /**
      * Continues the enumeration of voltage sensors started using yFirstVoltage().
      *
-     * @return a pointer to a YVoltage object, corresponding to
+     * @return YVoltage : a pointer to a YVoltage object, corresponding to
      *         a voltage sensor currently online, or a null pointer
      *         if there are no more voltage sensors to enumerate.
      */
@@ -168,7 +168,7 @@ class YVoltage extends YSensor
      * Use the method YVoltage.nextVoltage() to iterate on
      * next voltage sensors.
      *
-     * @return a pointer to a YVoltage object, corresponding to
+     * @return YVoltage : a pointer to a YVoltage object, corresponding to
      *         the first voltage sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -207,9 +207,9 @@ class YVoltage extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the voltage sensor
+ * @param string $func : a string that uniquely characterizes the voltage sensor
  *
- * @return a YVoltage object allowing you to drive the voltage sensor.
+ * @return YVoltage : a YVoltage object allowing you to drive the voltage sensor.
  */
 function yFindVoltage($func)
 {
@@ -221,7 +221,7 @@ function yFindVoltage($func)
  * Use the method YVoltage.nextVoltage() to iterate on
  * next voltage sensors.
  *
- * @return a pointer to a YVoltage object, corresponding to
+ * @return YVoltage : a pointer to a YVoltage object, corresponding to
  *         the first voltage sensor currently online, or a null pointer
  *         if there are none.
  */

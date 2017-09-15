@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_messagebox.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -1357,7 +1357,7 @@ class YMessageBox extends YFunction
     /**
      * Returns the number of message storage slots currently in use.
      *
-     * @return an integer corresponding to the number of message storage slots currently in use
+     * @return integer : an integer corresponding to the number of message storage slots currently in use
      *
      * On failure, throws an exception or returns Y_SLOTSINUSE_INVALID.
      */
@@ -1376,7 +1376,7 @@ class YMessageBox extends YFunction
     /**
      * Returns the total number of message storage slots on the SIM card.
      *
-     * @return an integer corresponding to the total number of message storage slots on the SIM card
+     * @return integer : an integer corresponding to the total number of message storage slots on the SIM card
      *
      * On failure, throws an exception or returns Y_SLOTSCOUNT_INVALID.
      */
@@ -1407,7 +1407,7 @@ class YMessageBox extends YFunction
     /**
      * Returns the number of SMS units sent so far.
      *
-     * @return an integer corresponding to the number of SMS units sent so far
+     * @return integer : an integer corresponding to the number of SMS units sent so far
      *
      * On failure, throws an exception or returns Y_PDUSENT_INVALID.
      */
@@ -1426,9 +1426,9 @@ class YMessageBox extends YFunction
     /**
      * Changes the value of the outgoing SMS units counter.
      *
-     * @param newval : an integer corresponding to the value of the outgoing SMS units counter
+     * @param integer $newval : an integer corresponding to the value of the outgoing SMS units counter
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1441,7 +1441,7 @@ class YMessageBox extends YFunction
     /**
      * Returns the number of SMS units received so far.
      *
-     * @return an integer corresponding to the number of SMS units received so far
+     * @return integer : an integer corresponding to the number of SMS units received so far
      *
      * On failure, throws an exception or returns Y_PDURECEIVED_INVALID.
      */
@@ -1460,9 +1460,9 @@ class YMessageBox extends YFunction
     /**
      * Changes the value of the incoming SMS units counter.
      *
-     * @param newval : an integer corresponding to the value of the incoming SMS units counter
+     * @param integer $newval : an integer corresponding to the value of the incoming SMS units counter
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1513,9 +1513,9 @@ class YMessageBox extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the MessageBox interface
+     * @param string $func : a string that uniquely characterizes the MessageBox interface
      *
-     * @return a YMessageBox object allowing you to drive the MessageBox interface.
+     * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
      */
     public static function FindMessageBox($func)
     {
@@ -2027,7 +2027,7 @@ class YMessageBox extends YFunction
     /**
      * Clear the SMS units counters.
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2050,11 +2050,11 @@ class YMessageBox extends YFunction
      * characters and emoticons, use newMessage to create a new message and define
      * the content of using methods addText and addUnicodeData.
      *
-     * @param recipient : a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
-     * @param message : the text to be sent in the message
+     * @param string $message : the text to be sent in the message
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2076,11 +2076,11 @@ class YMessageBox extends YFunction
      * characters and emoticons, use newMessage to create a new message and define
      * the content of using methods addText et addUnicodeData.
      *
-     * @param recipient : a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
-     * @param message : the text to be sent in the message
+     * @param string $message : the text to be sent in the message
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2098,10 +2098,10 @@ class YMessageBox extends YFunction
     /**
      * Creates a new empty SMS message, to be configured and sent later on.
      *
-     * @param recipient : a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return YSms : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2117,7 +2117,7 @@ class YMessageBox extends YFunction
      * Returns the list of messages received and not deleted. This function
      * will automatically decode concatenated SMS.
      *
-     * @return an YSms object list.
+     * @return YSms[] : an YSms object list.
      *
      * On failure, throws an exception or returns an empty list.
      */
@@ -2157,7 +2157,7 @@ class YMessageBox extends YFunction
     /**
      * Continues the enumeration of MessageBox interfaces started using yFirstMessageBox().
      *
-     * @return a pointer to a YMessageBox object, corresponding to
+     * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
      *         a MessageBox interface currently online, or a null pointer
      *         if there are no more MessageBox interfaces to enumerate.
      */
@@ -2174,7 +2174,7 @@ class YMessageBox extends YFunction
      * Use the method YMessageBox.nextMessageBox() to iterate on
      * next MessageBox interfaces.
      *
-     * @return a pointer to a YMessageBox object, corresponding to
+     * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
      *         the first MessageBox interface currently online, or a null pointer
      *         if there are none.
      */
@@ -2213,9 +2213,9 @@ class YMessageBox extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the MessageBox interface
+ * @param string $func : a string that uniquely characterizes the MessageBox interface
  *
- * @return a YMessageBox object allowing you to drive the MessageBox interface.
+ * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
  */
 function yFindMessageBox($func)
 {
@@ -2227,7 +2227,7 @@ function yFindMessageBox($func)
  * Use the method YMessageBox.nextMessageBox() to iterate on
  * next MessageBox interfaces.
  *
- * @return a pointer to a YMessageBox object, corresponding to
+ * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
  *         the first MessageBox interface currently online, or a null pointer
  *         if there are none.
  */

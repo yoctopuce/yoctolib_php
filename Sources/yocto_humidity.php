@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_humidity.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_humidity.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YHumidity, the high-level API for Humidity functions
  *
@@ -97,9 +97,9 @@ class YHumidity extends YSensor
      * Remember to call the saveToFlash() method of the module if the modification
      * must be kept.
      *
-     * @param newval : a string corresponding to the primary unit for measuring humidity
+     * @param string $newval : a string corresponding to the primary unit for measuring humidity
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -112,7 +112,7 @@ class YHumidity extends YSensor
     /**
      * Returns the current relative humidity, in per cents.
      *
-     * @return a floating point number corresponding to the current relative humidity, in per cents
+     * @return double : a floating point number corresponding to the current relative humidity, in per cents
      *
      * On failure, throws an exception or returns Y_RELHUM_INVALID.
      */
@@ -131,7 +131,8 @@ class YHumidity extends YSensor
     /**
      * Returns the current absolute humidity, in grams per cubic meter of air.
      *
-     * @return a floating point number corresponding to the current absolute humidity, in grams per cubic meter of air
+     * @return double : a floating point number corresponding to the current absolute humidity, in grams
+     * per cubic meter of air
      *
      * On failure, throws an exception or returns Y_ABSHUM_INVALID.
      */
@@ -170,9 +171,9 @@ class YHumidity extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the humidity sensor
+     * @param string $func : a string that uniquely characterizes the humidity sensor
      *
-     * @return a YHumidity object allowing you to drive the humidity sensor.
+     * @return YHumidity : a YHumidity object allowing you to drive the humidity sensor.
      */
     public static function FindHumidity($func)
     {
@@ -197,7 +198,7 @@ class YHumidity extends YSensor
     /**
      * Continues the enumeration of humidity sensors started using yFirstHumidity().
      *
-     * @return a pointer to a YHumidity object, corresponding to
+     * @return YHumidity : a pointer to a YHumidity object, corresponding to
      *         a humidity sensor currently online, or a null pointer
      *         if there are no more humidity sensors to enumerate.
      */
@@ -214,7 +215,7 @@ class YHumidity extends YSensor
      * Use the method YHumidity.nextHumidity() to iterate on
      * next humidity sensors.
      *
-     * @return a pointer to a YHumidity object, corresponding to
+     * @return YHumidity : a pointer to a YHumidity object, corresponding to
      *         the first humidity sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -253,9 +254,9 @@ class YHumidity extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the humidity sensor
+ * @param string $func : a string that uniquely characterizes the humidity sensor
  *
- * @return a YHumidity object allowing you to drive the humidity sensor.
+ * @return YHumidity : a YHumidity object allowing you to drive the humidity sensor.
  */
 function yFindHumidity($func)
 {
@@ -267,7 +268,7 @@ function yFindHumidity($func)
  * Use the method YHumidity.nextHumidity() to iterate on
  * next humidity sensors.
  *
- * @return a pointer to a YHumidity object, corresponding to
+ * @return YHumidity : a pointer to a YHumidity object, corresponding to
  *         the first humidity sensor currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_carbondioxide.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_carbondioxide.php 28559 2017-09-15 15:01:38Z seb $
  *
  * Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -93,7 +93,7 @@ class YCarbonDioxide extends YSensor
      * Returns the Automatic Baseline Calibration period, in hours. A negative value
      * means that automatic baseline calibration is disabled.
      *
-     * @return an integer corresponding to the Automatic Baseline Calibration period, in hours
+     * @return integer : an integer corresponding to the Automatic Baseline Calibration period, in hours
      *
      * On failure, throws an exception or returns Y_ABCPERIOD_INVALID.
      */
@@ -110,15 +110,15 @@ class YCarbonDioxide extends YSensor
     }
 
     /**
-     * Modifies Automatic Baseline Calibration period, in hours. If you need
+     * Changes Automatic Baseline Calibration period, in hours. If you need
      * to disable automatic baseline calibration (for instance when using the
      * sensor in an environment that is constantly above 400ppm CO2), set the
      * period to -1. Remember to call the saveToFlash() method of the
      * module if the modification must be kept.
      *
-     * @param newval : an integer
+     * @param integer $newval : an integer corresponding to Automatic Baseline Calibration period, in hours
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -169,9 +169,9 @@ class YCarbonDioxide extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the CO2 sensor
+     * @param string $func : a string that uniquely characterizes the CO2 sensor
      *
-     * @return a YCarbonDioxide object allowing you to drive the CO2 sensor.
+     * @return YCarbonDioxide : a YCarbonDioxide object allowing you to drive the CO2 sensor.
      */
     public static function FindCarbonDioxide($func)
     {
@@ -194,7 +194,7 @@ class YCarbonDioxide extends YSensor
      * time. Before starting a baseline calibration, make sure to put the sensor
      * in a standard environment (e.g. outside in fresh air) at around 400ppm.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -220,7 +220,7 @@ class YCarbonDioxide extends YSensor
      * connected to the sensor. Please contact support@yoctopuce.com for more details
      * on the zero calibration procedure.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -249,7 +249,7 @@ class YCarbonDioxide extends YSensor
     /**
      * Continues the enumeration of CO2 sensors started using yFirstCarbonDioxide().
      *
-     * @return a pointer to a YCarbonDioxide object, corresponding to
+     * @return YCarbonDioxide : a pointer to a YCarbonDioxide object, corresponding to
      *         a CO2 sensor currently online, or a null pointer
      *         if there are no more CO2 sensors to enumerate.
      */
@@ -266,7 +266,7 @@ class YCarbonDioxide extends YSensor
      * Use the method YCarbonDioxide.nextCarbonDioxide() to iterate on
      * next CO2 sensors.
      *
-     * @return a pointer to a YCarbonDioxide object, corresponding to
+     * @return YCarbonDioxide : a pointer to a YCarbonDioxide object, corresponding to
      *         the first CO2 sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -305,9 +305,9 @@ class YCarbonDioxide extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the CO2 sensor
+ * @param string $func : a string that uniquely characterizes the CO2 sensor
  *
- * @return a YCarbonDioxide object allowing you to drive the CO2 sensor.
+ * @return YCarbonDioxide : a YCarbonDioxide object allowing you to drive the CO2 sensor.
  */
 function yFindCarbonDioxide($func)
 {
@@ -319,7 +319,7 @@ function yFindCarbonDioxide($func)
  * Use the method YCarbonDioxide.nextCarbonDioxide() to iterate on
  * next CO2 sensors.
  *
- * @return a pointer to a YCarbonDioxide object, corresponding to
+ * @return YCarbonDioxide : a pointer to a YCarbonDioxide object, corresponding to
  *         the first CO2 sensor currently online, or a null pointer
  *         if there are none.
  */

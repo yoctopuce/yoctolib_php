@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_power.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -99,7 +99,8 @@ class YPower extends YSensor
      * Returns the power factor (the ratio between the real power consumed,
      * measured in W, and the apparent power provided, measured in VA).
      *
-     * @return a floating point number corresponding to the power factor (the ratio between the real power consumed,
+     * @return double : a floating point number corresponding to the power factor (the ratio between the
+     * real power consumed,
      *         measured in W, and the apparent power provided, measured in VA)
      *
      * On failure, throws an exception or returns Y_COSPHI_INVALID.
@@ -126,8 +127,8 @@ class YPower extends YSensor
      * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time.
      * Note that this counter is reset at each start of the device.
      *
-     * @return a floating point number corresponding to the energy counter, maintained by the wattmeter by
-     * integrating the power consumption over time
+     * @return double : a floating point number corresponding to the energy counter, maintained by the
+     * wattmeter by integrating the power consumption over time
      *
      * On failure, throws an exception or returns Y_METER_INVALID.
      */
@@ -146,7 +147,7 @@ class YPower extends YSensor
     /**
      * Returns the elapsed time since last energy counter reset, in seconds.
      *
-     * @return an integer corresponding to the elapsed time since last energy counter reset, in seconds
+     * @return integer : an integer corresponding to the elapsed time since last energy counter reset, in seconds
      *
      * On failure, throws an exception or returns Y_METERTIMER_INVALID.
      */
@@ -185,9 +186,9 @@ class YPower extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the electrical power sensor
+     * @param string $func : a string that uniquely characterizes the electrical power sensor
      *
-     * @return a YPower object allowing you to drive the electrical power sensor.
+     * @return YPower : a YPower object allowing you to drive the electrical power sensor.
      */
     public static function FindPower($func)
     {
@@ -203,7 +204,7 @@ class YPower extends YSensor
     /**
      * Resets the energy counter.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -227,7 +228,7 @@ class YPower extends YSensor
     /**
      * Continues the enumeration of electrical power sensors started using yFirstPower().
      *
-     * @return a pointer to a YPower object, corresponding to
+     * @return YPower : a pointer to a YPower object, corresponding to
      *         a electrical power sensor currently online, or a null pointer
      *         if there are no more electrical power sensors to enumerate.
      */
@@ -244,7 +245,7 @@ class YPower extends YSensor
      * Use the method YPower.nextPower() to iterate on
      * next electrical power sensors.
      *
-     * @return a pointer to a YPower object, corresponding to
+     * @return YPower : a pointer to a YPower object, corresponding to
      *         the first electrical power sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -283,9 +284,9 @@ class YPower extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the electrical power sensor
+ * @param string $func : a string that uniquely characterizes the electrical power sensor
  *
- * @return a YPower object allowing you to drive the electrical power sensor.
+ * @return YPower : a YPower object allowing you to drive the electrical power sensor.
  */
 function yFindPower($func)
 {
@@ -297,7 +298,7 @@ function yFindPower($func)
  * Use the method YPower.nextPower() to iterate on
  * next electrical power sensors.
  *
- * @return a pointer to a YPower object, corresponding to
+ * @return YPower : a pointer to a YPower object, corresponding to
  *         the first electrical power sensor currently online, or a null pointer
  *         if there are none.
  */

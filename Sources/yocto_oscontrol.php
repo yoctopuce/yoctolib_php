@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_oscontrol.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_oscontrol.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YOsControl, the high-level API for OsControl functions
  *
@@ -86,7 +86,8 @@ class YOsControl extends YFunction
      * Returns the remaining number of seconds before the OS shutdown, or zero when no
      * shutdown has been scheduled.
      *
-     * @return an integer corresponding to the remaining number of seconds before the OS shutdown, or zero when no
+     * @return integer : an integer corresponding to the remaining number of seconds before the OS
+     * shutdown, or zero when no
      *         shutdown has been scheduled
      *
      * On failure, throws an exception or returns Y_SHUTDOWNCOUNTDOWN_INVALID.
@@ -132,9 +133,9 @@ class YOsControl extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the OS control
+     * @param string $func : a string that uniquely characterizes the OS control
      *
-     * @return a YOsControl object allowing you to drive the OS control.
+     * @return YOsControl : a YOsControl object allowing you to drive the OS control.
      */
     public static function FindOsControl($func)
     {
@@ -150,9 +151,9 @@ class YOsControl extends YFunction
     /**
      * Schedules an OS shutdown after a given number of seconds.
      *
-     * @param secBeforeShutDown : number of seconds before shutdown
+     * @param integer $secBeforeShutDown : number of seconds before shutdown
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -170,7 +171,7 @@ class YOsControl extends YFunction
     /**
      * Continues the enumeration of OS control started using yFirstOsControl().
      *
-     * @return a pointer to a YOsControl object, corresponding to
+     * @return YOsControl : a pointer to a YOsControl object, corresponding to
      *         OS control currently online, or a null pointer
      *         if there are no more OS control to enumerate.
      */
@@ -187,7 +188,7 @@ class YOsControl extends YFunction
      * Use the method YOsControl.nextOsControl() to iterate on
      * next OS control.
      *
-     * @return a pointer to a YOsControl object, corresponding to
+     * @return YOsControl : a pointer to a YOsControl object, corresponding to
      *         the first OS control currently online, or a null pointer
      *         if there are none.
      */
@@ -226,9 +227,9 @@ class YOsControl extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the OS control
+ * @param string $func : a string that uniquely characterizes the OS control
  *
- * @return a YOsControl object allowing you to drive the OS control.
+ * @return YOsControl : a YOsControl object allowing you to drive the OS control.
  */
 function yFindOsControl($func)
 {
@@ -240,7 +241,7 @@ function yFindOsControl($func)
  * Use the method YOsControl.nextOsControl() to iterate on
  * next OS control.
  *
- * @return a pointer to a YOsControl object, corresponding to
+ * @return YOsControl : a pointer to a YOsControl object, corresponding to
  *         the first OS control currently online, or a null pointer
  *         if there are none.
  */

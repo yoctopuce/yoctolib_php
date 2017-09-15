@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_servo.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_servo.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YServo, the high-level API for Servo functions
  *
@@ -130,7 +130,7 @@ class YServo extends YFunction
     /**
      * Returns the current servo position.
      *
-     * @return an integer corresponding to the current servo position
+     * @return integer : an integer corresponding to the current servo position
      *
      * On failure, throws an exception or returns Y_POSITION_INVALID.
      */
@@ -149,9 +149,9 @@ class YServo extends YFunction
     /**
      * Changes immediately the servo driving position.
      *
-     * @param newval : an integer corresponding to immediately the servo driving position
+     * @param integer $newval : an integer corresponding to immediately the servo driving position
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -164,7 +164,7 @@ class YServo extends YFunction
     /**
      * Returns the state of the servos.
      *
-     * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the servos
+     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the servos
      *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
@@ -183,9 +183,9 @@ class YServo extends YFunction
     /**
      * Stops or starts the servo.
      *
-     * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
+     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -198,7 +198,7 @@ class YServo extends YFunction
     /**
      * Returns the current range of use of the servo.
      *
-     * @return an integer corresponding to the current range of use of the servo
+     * @return integer : an integer corresponding to the current range of use of the servo
      *
      * On failure, throws an exception or returns Y_RANGE_INVALID.
      */
@@ -223,9 +223,9 @@ class YServo extends YFunction
      * is likely to damage the servo. Remember to call the matching module
      * saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param newval : an integer corresponding to the range of use of the servo, specified in per cents
+     * @param integer $newval : an integer corresponding to the range of use of the servo, specified in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -238,7 +238,7 @@ class YServo extends YFunction
     /**
      * Returns the duration in microseconds of a neutral pulse for the servo.
      *
-     * @return an integer corresponding to the duration in microseconds of a neutral pulse for the servo
+     * @return integer : an integer corresponding to the duration in microseconds of a neutral pulse for the servo
      *
      * On failure, throws an exception or returns Y_NEUTRAL_INVALID.
      */
@@ -262,10 +262,10 @@ class YServo extends YFunction
      * likely to damage the servo. Remember to call the matching module
      * saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param newval : an integer corresponding to the duration of the pulse corresponding to the neutral
-     * position of the servo
+     * @param integer $newval : an integer corresponding to the duration of the pulse corresponding to the
+     * neutral position of the servo
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -297,9 +297,9 @@ class YServo extends YFunction
      * Performs a smooth move at constant speed toward a given position.
      *
      * @param target      : new position at the end of the move
-     * @param ms_duration : total duration of the move, in milliseconds
+     * @param integer $ms_duration : total duration of the move, in milliseconds
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -312,7 +312,7 @@ class YServo extends YFunction
     /**
      * Returns the servo position at device power up.
      *
-     * @return an integer corresponding to the servo position at device power up
+     * @return integer : an integer corresponding to the servo position at device power up
      *
      * On failure, throws an exception or returns Y_POSITIONATPOWERON_INVALID.
      */
@@ -332,9 +332,9 @@ class YServo extends YFunction
      * Configure the servo position at device power up. Remember to call the matching
      * module saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param newval : an integer
+     * @param integer $newval : an integer
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -347,8 +347,8 @@ class YServo extends YFunction
     /**
      * Returns the servo signal generator state at power up.
      *
-     * @return either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the servo signal
-     * generator state at power up
+     * @return integer : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the
+     * servo signal generator state at power up
      *
      * On failure, throws an exception or returns Y_ENABLEDATPOWERON_INVALID.
      */
@@ -368,9 +368,9 @@ class YServo extends YFunction
      * Configure the servo signal generator state at power up. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE
+     * @param integer $newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -403,9 +403,9 @@ class YServo extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the servo
+     * @param string $func : a string that uniquely characterizes the servo
      *
-     * @return a YServo object allowing you to drive the servo.
+     * @return YServo : a YServo object allowing you to drive the servo.
      */
     public static function FindServo($func)
     {
@@ -460,7 +460,7 @@ class YServo extends YFunction
     /**
      * Continues the enumeration of servos started using yFirstServo().
      *
-     * @return a pointer to a YServo object, corresponding to
+     * @return YServo : a pointer to a YServo object, corresponding to
      *         a servo currently online, or a null pointer
      *         if there are no more servos to enumerate.
      */
@@ -477,7 +477,7 @@ class YServo extends YFunction
      * Use the method YServo.nextServo() to iterate on
      * next servos.
      *
-     * @return a pointer to a YServo object, corresponding to
+     * @return YServo : a pointer to a YServo object, corresponding to
      *         the first servo currently online, or a null pointer
      *         if there are none.
      */
@@ -516,9 +516,9 @@ class YServo extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the servo
+ * @param string $func : a string that uniquely characterizes the servo
  *
- * @return a YServo object allowing you to drive the servo.
+ * @return YServo : a YServo object allowing you to drive the servo.
  */
 function yFindServo($func)
 {
@@ -530,7 +530,7 @@ function yFindServo($func)
  * Use the method YServo.nextServo() to iterate on
  * next servos.
  *
- * @return a pointer to a YServo object, corresponding to
+ * @return YServo : a pointer to a YServo object, corresponding to
  *         the first servo currently online, or a null pointer
  *         if there are none.
  */

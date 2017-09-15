@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_genericsensor.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -127,9 +127,9 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param newval : a string corresponding to the measuring unit for the measured value
+     * @param string $newval : a string corresponding to the measuring unit for the measured value
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -142,8 +142,8 @@ class YGenericSensor extends YSensor
     /**
      * Returns the current value of the electrical signal measured by the sensor.
      *
-     * @return a floating point number corresponding to the current value of the electrical signal
-     * measured by the sensor
+     * @return double : a floating point number corresponding to the current value of the electrical
+     * signal measured by the sensor
      *
      * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
      */
@@ -162,7 +162,7 @@ class YGenericSensor extends YSensor
     /**
      * Returns the measuring unit of the electrical signal used by the sensor.
      *
-     * @return a string corresponding to the measuring unit of the electrical signal used by the sensor
+     * @return string : a string corresponding to the measuring unit of the electrical signal used by the sensor
      *
      * On failure, throws an exception or returns Y_SIGNALUNIT_INVALID.
      */
@@ -181,7 +181,7 @@ class YGenericSensor extends YSensor
     /**
      * Returns the electric signal range used by the sensor.
      *
-     * @return a string corresponding to the electric signal range used by the sensor
+     * @return string : a string corresponding to the electric signal range used by the sensor
      *
      * On failure, throws an exception or returns Y_SIGNALRANGE_INVALID.
      */
@@ -200,9 +200,9 @@ class YGenericSensor extends YSensor
     /**
      * Changes the electric signal range used by the sensor. Default value is "-999999.999...999999.999".
      *
-     * @param newval : a string corresponding to the electric signal range used by the sensor
+     * @param string $newval : a string corresponding to the electric signal range used by the sensor
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -215,7 +215,7 @@ class YGenericSensor extends YSensor
     /**
      * Returns the physical value range measured by the sensor.
      *
-     * @return a string corresponding to the physical value range measured by the sensor
+     * @return string : a string corresponding to the physical value range measured by the sensor
      *
      * On failure, throws an exception or returns Y_VALUERANGE_INVALID.
      */
@@ -235,9 +235,9 @@ class YGenericSensor extends YSensor
      * Changes the physical value range measured by the sensor. As a side effect, the range modification may
      * automatically modify the display resolution. Default value is "-999999.999...999999.999".
      *
-     * @param newval : a string corresponding to the physical value range measured by the sensor
+     * @param string $newval : a string corresponding to the physical value range measured by the sensor
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -252,9 +252,10 @@ class YGenericSensor extends YSensor
      * If your electric signal reads positif when it should be zero, setup
      * a positive signalBias of the same value to fix the zero shift.
      *
-     * @param newval : a floating point number corresponding to the electric signal bias for zero shift adjustment
+     * @param double $newval : a floating point number corresponding to the electric signal bias for zero
+     * shift adjustment
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -269,7 +270,7 @@ class YGenericSensor extends YSensor
      * A positive bias means that the signal is over-reporting the measure,
      * while a negative bias means that the signal is underreporting the measure.
      *
-     * @return a floating point number corresponding to the electric signal bias for zero shift adjustment
+     * @return double : a floating point number corresponding to the electric signal bias for zero shift adjustment
      *
      * On failure, throws an exception or returns Y_SIGNALBIAS_INVALID.
      */
@@ -293,7 +294,7 @@ class YGenericSensor extends YSensor
      * The LOW_NOISE_FILTERED method combines a reduced frequency with the median filter
      * to get measures as stable as possible when working on a noisy signal.
      *
-     * @return a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
+     * @return integer : a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
      * Y_SIGNALSAMPLING_LOW_NOISE and Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric
      * signal sampling method to use
      *
@@ -319,11 +320,11 @@ class YGenericSensor extends YSensor
      * The LOW_NOISE_FILTERED method combines a reduced frequency with the median filter
      * to get measures as stable as possible when working on a noisy signal.
      *
-     * @param newval : a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
-     * Y_SIGNALSAMPLING_LOW_NOISE and Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric
-     * signal sampling method to use
+     * @param integer $newval : a value among Y_SIGNALSAMPLING_HIGH_RATE,
+     * Y_SIGNALSAMPLING_HIGH_RATE_FILTERED, Y_SIGNALSAMPLING_LOW_NOISE and
+     * Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric signal sampling method to use
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -356,9 +357,9 @@ class YGenericSensor extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the generic sensor
+     * @param string $func : a string that uniquely characterizes the generic sensor
      *
-     * @return a YGenericSensor object allowing you to drive the generic sensor.
+     * @return YGenericSensor : a YGenericSensor object allowing you to drive the generic sensor.
      */
     public static function FindGenericSensor($func)
     {
@@ -375,7 +376,7 @@ class YGenericSensor extends YSensor
      * Adjusts the signal bias so that the current signal value is need
      * precisely as zero.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -424,7 +425,7 @@ class YGenericSensor extends YSensor
     /**
      * Continues the enumeration of generic sensors started using yFirstGenericSensor().
      *
-     * @return a pointer to a YGenericSensor object, corresponding to
+     * @return YGenericSensor : a pointer to a YGenericSensor object, corresponding to
      *         a generic sensor currently online, or a null pointer
      *         if there are no more generic sensors to enumerate.
      */
@@ -441,7 +442,7 @@ class YGenericSensor extends YSensor
      * Use the method YGenericSensor.nextGenericSensor() to iterate on
      * next generic sensors.
      *
-     * @return a pointer to a YGenericSensor object, corresponding to
+     * @return YGenericSensor : a pointer to a YGenericSensor object, corresponding to
      *         the first generic sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -480,9 +481,9 @@ class YGenericSensor extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the generic sensor
+ * @param string $func : a string that uniquely characterizes the generic sensor
  *
- * @return a YGenericSensor object allowing you to drive the generic sensor.
+ * @return YGenericSensor : a YGenericSensor object allowing you to drive the generic sensor.
  */
 function yFindGenericSensor($func)
 {
@@ -494,7 +495,7 @@ function yFindGenericSensor($func)
  * Use the method YGenericSensor.nextGenericSensor() to iterate on
  * next generic sensors.
  *
- * @return a pointer to a YGenericSensor object, corresponding to
+ * @return YGenericSensor : a pointer to a YGenericSensor object, corresponding to
  *         the first generic sensor currently online, or a null pointer
  *         if there are none.
  */

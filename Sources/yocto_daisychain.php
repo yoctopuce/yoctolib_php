@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_daisychain.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_daisychain.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YDaisyChain, the high-level API for DaisyChain functions
  *
@@ -107,9 +107,9 @@ class YDaisyChain extends YFunction
     /**
      * Returns the state of the daisy-link between modules.
      *
-     * @return a value among Y_DAISYSTATE_READY, Y_DAISYSTATE_IS_CHILD, Y_DAISYSTATE_FIRMWARE_MISMATCH,
-     * Y_DAISYSTATE_CHILD_MISSING and Y_DAISYSTATE_CHILD_LOST corresponding to the state of the daisy-link
-     * between modules
+     * @return integer : a value among Y_DAISYSTATE_READY, Y_DAISYSTATE_IS_CHILD,
+     * Y_DAISYSTATE_FIRMWARE_MISMATCH, Y_DAISYSTATE_CHILD_MISSING and Y_DAISYSTATE_CHILD_LOST
+     * corresponding to the state of the daisy-link between modules
      *
      * On failure, throws an exception or returns Y_DAISYSTATE_INVALID.
      */
@@ -128,7 +128,7 @@ class YDaisyChain extends YFunction
     /**
      * Returns the number of child nodes currently detected.
      *
-     * @return an integer corresponding to the number of child nodes currently detected
+     * @return integer : an integer corresponding to the number of child nodes currently detected
      *
      * On failure, throws an exception or returns Y_CHILDCOUNT_INVALID.
      */
@@ -147,7 +147,7 @@ class YDaisyChain extends YFunction
     /**
      * Returns the number of child nodes expected in normal conditions.
      *
-     * @return an integer corresponding to the number of child nodes expected in normal conditions
+     * @return integer : an integer corresponding to the number of child nodes expected in normal conditions
      *
      * On failure, throws an exception or returns Y_REQUIREDCHILDCOUNT_INVALID.
      */
@@ -169,9 +169,9 @@ class YDaisyChain extends YFunction
      * child nodes is checked on startup and the status will change to error if
      * the count does not match.
      *
-     * @param newval : an integer corresponding to the number of child nodes expected in normal conditions
+     * @param integer $newval : an integer corresponding to the number of child nodes expected in normal conditions
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -204,9 +204,9 @@ class YDaisyChain extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the module chain
+     * @param string $func : a string that uniquely characterizes the module chain
      *
-     * @return a YDaisyChain object allowing you to drive the module chain.
+     * @return YDaisyChain : a YDaisyChain object allowing you to drive the module chain.
      */
     public static function FindDaisyChain($func)
     {
@@ -234,7 +234,7 @@ class YDaisyChain extends YFunction
     /**
      * Continues the enumeration of module chains started using yFirstDaisyChain().
      *
-     * @return a pointer to a YDaisyChain object, corresponding to
+     * @return YDaisyChain : a pointer to a YDaisyChain object, corresponding to
      *         a module chain currently online, or a null pointer
      *         if there are no more module chains to enumerate.
      */
@@ -251,7 +251,7 @@ class YDaisyChain extends YFunction
      * Use the method YDaisyChain.nextDaisyChain() to iterate on
      * next module chains.
      *
-     * @return a pointer to a YDaisyChain object, corresponding to
+     * @return YDaisyChain : a pointer to a YDaisyChain object, corresponding to
      *         the first module chain currently online, or a null pointer
      *         if there are none.
      */
@@ -290,9 +290,9 @@ class YDaisyChain extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the module chain
+ * @param string $func : a string that uniquely characterizes the module chain
  *
- * @return a YDaisyChain object allowing you to drive the module chain.
+ * @return YDaisyChain : a YDaisyChain object allowing you to drive the module chain.
  */
 function yFindDaisyChain($func)
 {
@@ -304,7 +304,7 @@ function yFindDaisyChain($func)
  * Use the method YDaisyChain.nextDaisyChain() to iterate on
  * next module chains.
  *
- * @return a pointer to a YDaisyChain object, corresponding to
+ * @return YDaisyChain : a pointer to a YDaisyChain object, corresponding to
  *         the first module chain currently online, or a null pointer
  *         if there are none.
  */

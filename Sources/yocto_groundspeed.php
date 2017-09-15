@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_groundspeed.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_groundspeed.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *
@@ -93,9 +93,9 @@ class YGroundSpeed extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the ground speed sensor
+     * @param string $func : a string that uniquely characterizes the ground speed sensor
      *
-     * @return a YGroundSpeed object allowing you to drive the ground speed sensor.
+     * @return YGroundSpeed : a YGroundSpeed object allowing you to drive the ground speed sensor.
      */
     public static function FindGroundSpeed($func)
     {
@@ -111,7 +111,7 @@ class YGroundSpeed extends YSensor
     /**
      * Continues the enumeration of ground speed sensors started using yFirstGroundSpeed().
      *
-     * @return a pointer to a YGroundSpeed object, corresponding to
+     * @return YGroundSpeed : a pointer to a YGroundSpeed object, corresponding to
      *         a ground speed sensor currently online, or a null pointer
      *         if there are no more ground speed sensors to enumerate.
      */
@@ -128,7 +128,7 @@ class YGroundSpeed extends YSensor
      * Use the method YGroundSpeed.nextGroundSpeed() to iterate on
      * next ground speed sensors.
      *
-     * @return a pointer to a YGroundSpeed object, corresponding to
+     * @return YGroundSpeed : a pointer to a YGroundSpeed object, corresponding to
      *         the first ground speed sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -167,9 +167,9 @@ class YGroundSpeed extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the ground speed sensor
+ * @param string $func : a string that uniquely characterizes the ground speed sensor
  *
- * @return a YGroundSpeed object allowing you to drive the ground speed sensor.
+ * @return YGroundSpeed : a YGroundSpeed object allowing you to drive the ground speed sensor.
  */
 function yFindGroundSpeed($func)
 {
@@ -181,7 +181,7 @@ function yFindGroundSpeed($func)
  * Use the method YGroundSpeed.nextGroundSpeed() to iterate on
  * next ground speed sensors.
  *
- * @return a pointer to a YGroundSpeed object, corresponding to
+ * @return YGroundSpeed : a pointer to a YGroundSpeed object, corresponding to
  *         the first ground speed sensor currently online, or a null pointer
  *         if there are none.
  */

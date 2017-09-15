@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioout.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_audioout.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -111,7 +111,7 @@ class YAudioOut extends YFunction
     /**
      * Returns audio output volume, in per cents.
      *
-     * @return an integer corresponding to audio output volume, in per cents
+     * @return integer : an integer corresponding to audio output volume, in per cents
      *
      * On failure, throws an exception or returns Y_VOLUME_INVALID.
      */
@@ -130,9 +130,9 @@ class YAudioOut extends YFunction
     /**
      * Changes audio output volume, in per cents.
      *
-     * @param newval : an integer corresponding to audio output volume, in per cents
+     * @param integer $newval : an integer corresponding to audio output volume, in per cents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -145,7 +145,7 @@ class YAudioOut extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
      * On failure, throws an exception or returns Y_MUTE_INVALID.
      */
@@ -165,9 +165,9 @@ class YAudioOut extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -183,7 +183,7 @@ class YAudioOut extends YFunction
      * completely mute the sound, use set_mute()
      * instead of the set_volume().
      *
-     * @return a string corresponding to the supported volume range
+     * @return string : a string corresponding to the supported volume range
      *
      * On failure, throws an exception or returns Y_VOLUMERANGE_INVALID.
      */
@@ -202,7 +202,7 @@ class YAudioOut extends YFunction
     /**
      * Returns the detected output current level.
      *
-     * @return an integer corresponding to the detected output current level
+     * @return integer : an integer corresponding to the detected output current level
      *
      * On failure, throws an exception or returns Y_SIGNAL_INVALID.
      */
@@ -221,7 +221,7 @@ class YAudioOut extends YFunction
     /**
      * Returns the number of seconds elapsed without detecting a signal.
      *
-     * @return an integer corresponding to the number of seconds elapsed without detecting a signal
+     * @return integer : an integer corresponding to the number of seconds elapsed without detecting a signal
      *
      * On failure, throws an exception or returns Y_NOSIGNALFOR_INVALID.
      */
@@ -260,9 +260,9 @@ class YAudioOut extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the audio output
+     * @param string $func : a string that uniquely characterizes the audio output
      *
-     * @return a YAudioOut object allowing you to drive the audio output.
+     * @return YAudioOut : a YAudioOut object allowing you to drive the audio output.
      */
     public static function FindAudioOut($func)
     {
@@ -299,7 +299,7 @@ class YAudioOut extends YFunction
     /**
      * Continues the enumeration of audio outputs started using yFirstAudioOut().
      *
-     * @return a pointer to a YAudioOut object, corresponding to
+     * @return YAudioOut : a pointer to a YAudioOut object, corresponding to
      *         an audio output currently online, or a null pointer
      *         if there are no more audio outputs to enumerate.
      */
@@ -316,7 +316,7 @@ class YAudioOut extends YFunction
      * Use the method YAudioOut.nextAudioOut() to iterate on
      * next audio outputs.
      *
-     * @return a pointer to a YAudioOut object, corresponding to
+     * @return YAudioOut : a pointer to a YAudioOut object, corresponding to
      *         the first audio output currently online, or a null pointer
      *         if there are none.
      */
@@ -355,9 +355,9 @@ class YAudioOut extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the audio output
+ * @param string $func : a string that uniquely characterizes the audio output
  *
- * @return a YAudioOut object allowing you to drive the audio output.
+ * @return YAudioOut : a YAudioOut object allowing you to drive the audio output.
  */
 function yFindAudioOut($func)
 {
@@ -369,7 +369,7 @@ function yFindAudioOut($func)
  * Use the method YAudioOut.nextAudioOut() to iterate on
  * next audio outputs.
  *
- * @return a pointer to a YAudioOut object, corresponding to
+ * @return YAudioOut : a pointer to a YAudioOut object, corresponding to
  *         the first audio output currently online, or a null pointer
  *         if there are none.
  */

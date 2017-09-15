@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: pic24config.php 28204 2017-07-28 13:25:31Z mvuilleu $
+ * $Id: yocto_voltageoutput.php 28491 2017-09-12 13:25:28Z seb $
  *
  * Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -93,11 +93,11 @@ class YVoltageOutput extends YFunction
     }
 
     /**
-     * Changes the output voltage. Valid range is from 0 to 10V.
+     * Changes the output voltage, in V. Valid range is from 0 to 10V.
      *
-     * @param newval : a floating point number corresponding to the output voltage
+     * @param double $newval : a floating point number corresponding to the output voltage, in V
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -108,9 +108,9 @@ class YVoltageOutput extends YFunction
     }
 
     /**
-     * Returns the loop current set point in mA.
+     * Returns the output voltage set point, in V.
      *
-     * @return a floating point number corresponding to the loop current set point in mA
+     * @return double : a floating point number corresponding to the output voltage set point, in V
      *
      * On failure, throws an exception or returns Y_CURRENTVOLTAGE_INVALID.
      */
@@ -148,9 +148,9 @@ class YVoltageOutput extends YFunction
      * Changes the output voltage at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param newval : a floating point number corresponding to the output voltage at device start up
+     * @param double $newval : a floating point number corresponding to the output voltage at device start up
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -163,7 +163,7 @@ class YVoltageOutput extends YFunction
     /**
      * Returns the selected voltage output at device startup, in V.
      *
-     * @return a floating point number corresponding to the selected voltage output at device startup, in V
+     * @return double : a floating point number corresponding to the selected voltage output at device startup, in V
      *
      * On failure, throws an exception or returns Y_VOLTAGEATSTARTUP_INVALID.
      */
@@ -202,9 +202,9 @@ class YVoltageOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the voltage output
+     * @param string $func : a string that uniquely characterizes the voltage output
      *
-     * @return a YVoltageOutput object allowing you to drive the voltage output.
+     * @return YVoltageOutput : a YVoltageOutput object allowing you to drive the voltage output.
      */
     public static function FindVoltageOutput($func)
     {
@@ -223,9 +223,9 @@ class YVoltageOutput extends YFunction
      *
      * @param V_target   : new output voltage value at the end of the transition
      *         (floating-point number, representing the end voltage in V)
-     * @param ms_duration : total duration of the transition, in milliseconds
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      */
     public function voltageMove($V_target,$ms_duration)
     {
@@ -262,7 +262,7 @@ class YVoltageOutput extends YFunction
     /**
      * Continues the enumeration of voltage outputs started using yFirstVoltageOutput().
      *
-     * @return a pointer to a YVoltageOutput object, corresponding to
+     * @return YVoltageOutput : a pointer to a YVoltageOutput object, corresponding to
      *         a voltage output currently online, or a null pointer
      *         if there are no more voltage outputs to enumerate.
      */
@@ -279,7 +279,7 @@ class YVoltageOutput extends YFunction
      * Use the method YVoltageOutput.nextVoltageOutput() to iterate on
      * next voltage outputs.
      *
-     * @return a pointer to a YVoltageOutput object, corresponding to
+     * @return YVoltageOutput : a pointer to a YVoltageOutput object, corresponding to
      *         the first voltage output currently online, or a null pointer
      *         if there are none.
      */
@@ -318,9 +318,9 @@ class YVoltageOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the voltage output
+ * @param string $func : a string that uniquely characterizes the voltage output
  *
- * @return a YVoltageOutput object allowing you to drive the voltage output.
+ * @return YVoltageOutput : a YVoltageOutput object allowing you to drive the voltage output.
  */
 function yFindVoltageOutput($func)
 {
@@ -332,7 +332,7 @@ function yFindVoltageOutput($func)
  * Use the method YVoltageOutput.nextVoltageOutput() to iterate on
  * next voltage outputs.
  *
- * @return a pointer to a YVoltageOutput object, corresponding to
+ * @return YVoltageOutput : a pointer to a YVoltageOutput object, corresponding to
  *         the first voltage output currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_multiaxiscontroller.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -107,7 +107,7 @@ class YMultiAxisController extends YFunction
     /**
      * Returns the number of synchronized controllers.
      *
-     * @return an integer corresponding to the number of synchronized controllers
+     * @return integer : an integer corresponding to the number of synchronized controllers
      *
      * On failure, throws an exception or returns Y_NAXIS_INVALID.
      */
@@ -126,9 +126,9 @@ class YMultiAxisController extends YFunction
     /**
      * Changes the number of synchronized controllers.
      *
-     * @param newval : an integer corresponding to the number of synchronized controllers
+     * @param integer $newval : an integer corresponding to the number of synchronized controllers
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -141,7 +141,7 @@ class YMultiAxisController extends YFunction
     /**
      * Returns the stepper motor set overall state.
      *
-     * @return a value among Y_GLOBALSTATE_ABSENT, Y_GLOBALSTATE_ALERT, Y_GLOBALSTATE_HI_Z,
+     * @return integer : a value among Y_GLOBALSTATE_ABSENT, Y_GLOBALSTATE_ALERT, Y_GLOBALSTATE_HI_Z,
      * Y_GLOBALSTATE_STOP, Y_GLOBALSTATE_RUN and Y_GLOBALSTATE_BATCH corresponding to the stepper motor
      * set overall state
      *
@@ -200,9 +200,9 @@ class YMultiAxisController extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the multi-axis controller
+     * @param string $func : a string that uniquely characterizes the multi-axis controller
      *
-     * @return a YMultiAxisController object allowing you to drive the multi-axis controller.
+     * @return YMultiAxisController : a YMultiAxisController object allowing you to drive the multi-axis controller.
      */
     public static function FindMultiAxisController($func)
     {
@@ -223,7 +223,7 @@ class YMultiAxisController extends YFunction
     /**
      * Reinitialize all controllers and clear all alert flags.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function reset()
@@ -234,9 +234,9 @@ class YMultiAxisController extends YFunction
     /**
      * Starts all motors backward at the specified speeds, to search for the motor home position.
      *
-     * @param speed : desired speed for all axis, in steps per second.
+     * @param double[] $speed : desired speed for all axis, in steps per second.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function findHomePosition($speed)
@@ -260,9 +260,9 @@ class YMultiAxisController extends YFunction
      * acceleration and max speed parameters configured for all motors.
      * The final position will be reached on all axis at the same time.
      *
-     * @param absPos : absolute position, measured in steps from each origin.
+     * @param double[] $absPos : absolute position, measured in steps from each origin.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function moveTo($absPos)
@@ -286,9 +286,9 @@ class YMultiAxisController extends YFunction
      * acceleration and max speed parameters configured for all motors.
      * The final position will be reached on all axis at the same time.
      *
-     * @param relPos : relative position, measured in steps from the current position.
+     * @param double[] $relPos : relative position, measured in steps from the current position.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function moveRel($relPos)
@@ -309,9 +309,9 @@ class YMultiAxisController extends YFunction
     /**
      * Keep the motor in the same state for the specified amount of time, before processing next command.
      *
-     * @param waitMs : wait time, specified in milliseconds.
+     * @param integer $waitMs : wait time, specified in milliseconds.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function pause($waitMs)
@@ -322,7 +322,7 @@ class YMultiAxisController extends YFunction
     /**
      * Stops the motor with an emergency alert, without taking any additional precaution.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function emergencyStop()
@@ -333,7 +333,7 @@ class YMultiAxisController extends YFunction
     /**
      * Stops the motor smoothly as soon as possible, without waiting for ongoing move completion.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function abortAndBrake()
@@ -344,7 +344,7 @@ class YMultiAxisController extends YFunction
     /**
      * Turn the controller into Hi-Z mode immediately, without waiting for ongoing move completion.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function abortAndHiZ()
@@ -370,7 +370,7 @@ class YMultiAxisController extends YFunction
     /**
      * Continues the enumeration of multi-axis controllers started using yFirstMultiAxisController().
      *
-     * @return a pointer to a YMultiAxisController object, corresponding to
+     * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to
      *         a multi-axis controller currently online, or a null pointer
      *         if there are no more multi-axis controllers to enumerate.
      */
@@ -387,7 +387,7 @@ class YMultiAxisController extends YFunction
      * Use the method YMultiAxisController.nextMultiAxisController() to iterate on
      * next multi-axis controllers.
      *
-     * @return a pointer to a YMultiAxisController object, corresponding to
+     * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to
      *         the first multi-axis controller currently online, or a null pointer
      *         if there are none.
      */
@@ -426,9 +426,9 @@ class YMultiAxisController extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the multi-axis controller
+ * @param string $func : a string that uniquely characterizes the multi-axis controller
  *
- * @return a YMultiAxisController object allowing you to drive the multi-axis controller.
+ * @return YMultiAxisController : a YMultiAxisController object allowing you to drive the multi-axis controller.
  */
 function yFindMultiAxisController($func)
 {
@@ -440,7 +440,7 @@ function yFindMultiAxisController($func)
  * Use the method YMultiAxisController.nextMultiAxisController() to iterate on
  * next multi-axis controllers.
  *
- * @return a pointer to a YMultiAxisController object, corresponding to
+ * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to
  *         the first multi-axis controller currently online, or a null pointer
  *         if there are none.
  */

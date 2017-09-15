@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_quadraturedecoder.php 28159 2017-07-27 09:37:52Z seb $
+ * $Id: yocto_quadraturedecoder.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -96,9 +96,10 @@ class YQuadratureDecoder extends YSensor
      * Changes the current expected position of the quadrature decoder.
      * Invoking this function implicitely activates the quadrature decoder.
      *
-     * @param newval : a floating point number corresponding to the current expected position of the quadrature decoder
+     * @param double $newval : a floating point number corresponding to the current expected position of
+     * the quadrature decoder
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -111,7 +112,7 @@ class YQuadratureDecoder extends YSensor
     /**
      * Returns the increments frequency, in Hz.
      *
-     * @return a floating point number corresponding to the increments frequency, in Hz
+     * @return double : a floating point number corresponding to the increments frequency, in Hz
      *
      * On failure, throws an exception or returns Y_SPEED_INVALID.
      */
@@ -130,8 +131,8 @@ class YQuadratureDecoder extends YSensor
     /**
      * Returns the current activation state of the quadrature decoder.
      *
-     * @return either Y_DECODING_OFF or Y_DECODING_ON, according to the current activation state of the
-     * quadrature decoder
+     * @return integer : either Y_DECODING_OFF or Y_DECODING_ON, according to the current activation state
+     * of the quadrature decoder
      *
      * On failure, throws an exception or returns Y_DECODING_INVALID.
      */
@@ -150,10 +151,10 @@ class YQuadratureDecoder extends YSensor
     /**
      * Changes the activation state of the quadrature decoder.
      *
-     * @param newval : either Y_DECODING_OFF or Y_DECODING_ON, according to the activation state of the
-     * quadrature decoder
+     * @param integer $newval : either Y_DECODING_OFF or Y_DECODING_ON, according to the activation state
+     * of the quadrature decoder
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -186,9 +187,9 @@ class YQuadratureDecoder extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the quadrature decoder
+     * @param string $func : a string that uniquely characterizes the quadrature decoder
      *
-     * @return a YQuadratureDecoder object allowing you to drive the quadrature decoder.
+     * @return YQuadratureDecoder : a YQuadratureDecoder object allowing you to drive the quadrature decoder.
      */
     public static function FindQuadratureDecoder($func)
     {
@@ -216,7 +217,7 @@ class YQuadratureDecoder extends YSensor
     /**
      * Continues the enumeration of quadrature decoders started using yFirstQuadratureDecoder().
      *
-     * @return a pointer to a YQuadratureDecoder object, corresponding to
+     * @return YQuadratureDecoder : a pointer to a YQuadratureDecoder object, corresponding to
      *         a quadrature decoder currently online, or a null pointer
      *         if there are no more quadrature decoders to enumerate.
      */
@@ -233,7 +234,7 @@ class YQuadratureDecoder extends YSensor
      * Use the method YQuadratureDecoder.nextQuadratureDecoder() to iterate on
      * next quadrature decoders.
      *
-     * @return a pointer to a YQuadratureDecoder object, corresponding to
+     * @return YQuadratureDecoder : a pointer to a YQuadratureDecoder object, corresponding to
      *         the first quadrature decoder currently online, or a null pointer
      *         if there are none.
      */
@@ -272,9 +273,9 @@ class YQuadratureDecoder extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the quadrature decoder
+ * @param string $func : a string that uniquely characterizes the quadrature decoder
  *
- * @return a YQuadratureDecoder object allowing you to drive the quadrature decoder.
+ * @return YQuadratureDecoder : a YQuadratureDecoder object allowing you to drive the quadrature decoder.
  */
 function yFindQuadratureDecoder($func)
 {
@@ -286,7 +287,7 @@ function yFindQuadratureDecoder($func)
  * Use the method YQuadratureDecoder.nextQuadratureDecoder() to iterate on
  * next quadrature decoders.
  *
- * @return a pointer to a YQuadratureDecoder object, corresponding to
+ * @return YQuadratureDecoder : a pointer to a YQuadratureDecoder object, corresponding to
  *         the first quadrature decoder currently online, or a null pointer
  *         if there are none.
  */

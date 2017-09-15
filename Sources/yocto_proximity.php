@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_proximity.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_proximity.php 28559 2017-09-15 15:01:38Z seb $
  *
  * Implements YProximity, the high-level API for Proximity functions
  *
@@ -139,7 +139,8 @@ class YProximity extends YSensor
     /**
      * Returns the current value of signal measured by the proximity sensor.
      *
-     * @return a floating point number corresponding to the current value of signal measured by the proximity sensor
+     * @return double : a floating point number corresponding to the current value of signal measured by
+     * the proximity sensor
      *
      * On failure, throws an exception or returns Y_SIGNALVALUE_INVALID.
      */
@@ -159,8 +160,8 @@ class YProximity extends YSensor
      * Returns the threshold used to determine the logical state of the proximity sensor, when considered
      * as a binary input (on/off).
      *
-     * @return an integer corresponding to the threshold used to determine the logical state of the
-     * proximity sensor, when considered
+     * @return integer : an integer corresponding to the threshold used to determine the logical state of
+     * the proximity sensor, when considered
      *         as a binary input (on/off)
      *
      * On failure, throws an exception or returns Y_DETECTIONTHRESHOLD_INVALID.
@@ -181,11 +182,11 @@ class YProximity extends YSensor
      * Changes the threshold used to determine the logical state of the proximity sensor, when considered
      * as a binary input (on/off).
      *
-     * @param newval : an integer corresponding to the threshold used to determine the logical state of
-     * the proximity sensor, when considered
+     * @param integer $newval : an integer corresponding to the threshold used to determine the logical
+     * state of the proximity sensor, when considered
      *         as a binary input (on/off)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -199,8 +200,8 @@ class YProximity extends YSensor
      * Returns true if the input (considered as binary) is active (detection value is smaller than the
      * specified threshold), and false otherwise.
      *
-     * @return either Y_ISPRESENT_FALSE or Y_ISPRESENT_TRUE, according to true if the input (considered as
-     * binary) is active (detection value is smaller than the specified threshold), and false otherwise
+     * @return integer : either Y_ISPRESENT_FALSE or Y_ISPRESENT_TRUE, according to true if the input
+     * (considered as binary) is active (detection value is smaller than the specified threshold), and false otherwise
      *
      * On failure, throws an exception or returns Y_ISPRESENT_INVALID.
      */
@@ -220,8 +221,8 @@ class YProximity extends YSensor
      * Returns the number of elapsed milliseconds between the module power on and the last observed
      * detection (the input contact transitioned from absent to present).
      *
-     * @return an integer corresponding to the number of elapsed milliseconds between the module power on
-     * and the last observed
+     * @return integer : an integer corresponding to the number of elapsed milliseconds between the module
+     * power on and the last observed
      *         detection (the input contact transitioned from absent to present)
      *
      * On failure, throws an exception or returns Y_LASTTIMEAPPROACHED_INVALID.
@@ -242,8 +243,8 @@ class YProximity extends YSensor
      * Returns the number of elapsed milliseconds between the module power on and the last observed
      * detection (the input contact transitioned from present to absent).
      *
-     * @return an integer corresponding to the number of elapsed milliseconds between the module power on
-     * and the last observed
+     * @return integer : an integer corresponding to the number of elapsed milliseconds between the module
+     * power on and the last observed
      *         detection (the input contact transitioned from present to absent)
      *
      * On failure, throws an exception or returns Y_LASTTIMEREMOVED_INVALID.
@@ -265,7 +266,7 @@ class YProximity extends YSensor
      * of overflow (>=2^32), the counter will wrap. To reset the counter, just
      * call the resetCounter() method.
      *
-     * @return an integer corresponding to the pulse counter value
+     * @return integer : an integer corresponding to the pulse counter value
      *
      * On failure, throws an exception or returns Y_PULSECOUNTER_INVALID.
      */
@@ -290,7 +291,7 @@ class YProximity extends YSensor
     /**
      * Returns the timer of the pulse counter (ms).
      *
-     * @return an integer corresponding to the timer of the pulse counter (ms)
+     * @return integer : an integer corresponding to the timer of the pulse counter (ms)
      *
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
      */
@@ -310,7 +311,7 @@ class YProximity extends YSensor
      * Returns the parameter (sensor value, presence or pulse count) returned by the get_currentValue
      * function and callbacks.
      *
-     * @return a value among Y_PROXIMITYREPORTMODE_NUMERIC, Y_PROXIMITYREPORTMODE_PRESENCE and
+     * @return integer : a value among Y_PROXIMITYREPORTMODE_NUMERIC, Y_PROXIMITYREPORTMODE_PRESENCE and
      * Y_PROXIMITYREPORTMODE_PULSECOUNT corresponding to the parameter (sensor value, presence or pulse
      * count) returned by the get_currentValue function and callbacks
      *
@@ -329,15 +330,16 @@ class YProximity extends YSensor
     }
 
     /**
-     * Modifies the  parameter  type (sensor value, presence or pulse count) returned by the
+     * Changes the  parameter  type (sensor value, presence or pulse count) returned by the
      * get_currentValue function and callbacks.
      * The edge count value is limited to the 6 lowest digits. For values greater than one million, use
      * get_pulseCounter().
      *
-     * @param newval : a value among Y_PROXIMITYREPORTMODE_NUMERIC, Y_PROXIMITYREPORTMODE_PRESENCE and
-     * Y_PROXIMITYREPORTMODE_PULSECOUNT
+     * @param integer $newval : a value among Y_PROXIMITYREPORTMODE_NUMERIC,
+     * Y_PROXIMITYREPORTMODE_PRESENCE and Y_PROXIMITYREPORTMODE_PULSECOUNT corresponding to the  parameter
+     *  type (sensor value, presence or pulse count) returned by the get_currentValue function and callbacks
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -370,9 +372,9 @@ class YProximity extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the proximity sensor
+     * @param string $func : a string that uniquely characterizes the proximity sensor
      *
-     * @return a YProximity object allowing you to drive the proximity sensor.
+     * @return YProximity : a YProximity object allowing you to drive the proximity sensor.
      */
     public static function FindProximity($func)
     {
@@ -388,7 +390,7 @@ class YProximity extends YSensor
     /**
      * Resets the pulse counter value as well as its timer.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -433,7 +435,7 @@ class YProximity extends YSensor
     /**
      * Continues the enumeration of proximity sensors started using yFirstProximity().
      *
-     * @return a pointer to a YProximity object, corresponding to
+     * @return YProximity : a pointer to a YProximity object, corresponding to
      *         a proximity sensor currently online, or a null pointer
      *         if there are no more proximity sensors to enumerate.
      */
@@ -450,7 +452,7 @@ class YProximity extends YSensor
      * Use the method YProximity.nextProximity() to iterate on
      * next proximity sensors.
      *
-     * @return a pointer to a YProximity object, corresponding to
+     * @return YProximity : a pointer to a YProximity object, corresponding to
      *         the first proximity sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -489,9 +491,9 @@ class YProximity extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the proximity sensor
+ * @param string $func : a string that uniquely characterizes the proximity sensor
  *
- * @return a YProximity object allowing you to drive the proximity sensor.
+ * @return YProximity : a YProximity object allowing you to drive the proximity sensor.
  */
 function yFindProximity($func)
 {
@@ -503,7 +505,7 @@ function yFindProximity($func)
  * Use the method YProximity.nextProximity() to iterate on
  * next proximity sensors.
  *
- * @return a pointer to a YProximity object, corresponding to
+ * @return YProximity : a pointer to a YProximity object, corresponding to
  *         the first proximity sensor currently online, or a null pointer
  *         if there are none.
  */

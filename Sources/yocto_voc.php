@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voc.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_voc.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YVoc, the high-level API for Voc functions
  *
@@ -92,9 +92,9 @@ class YVoc extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the Volatile Organic Compound sensor
+     * @param string $func : a string that uniquely characterizes the Volatile Organic Compound sensor
      *
-     * @return a YVoc object allowing you to drive the Volatile Organic Compound sensor.
+     * @return YVoc : a YVoc object allowing you to drive the Volatile Organic Compound sensor.
      */
     public static function FindVoc($func)
     {
@@ -110,7 +110,7 @@ class YVoc extends YSensor
     /**
      * Continues the enumeration of Volatile Organic Compound sensors started using yFirstVoc().
      *
-     * @return a pointer to a YVoc object, corresponding to
+     * @return YVoc : a pointer to a YVoc object, corresponding to
      *         a Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are no more Volatile Organic Compound sensors to enumerate.
      */
@@ -127,7 +127,7 @@ class YVoc extends YSensor
      * Use the method YVoc.nextVoc() to iterate on
      * next Volatile Organic Compound sensors.
      *
-     * @return a pointer to a YVoc object, corresponding to
+     * @return YVoc : a pointer to a YVoc object, corresponding to
      *         the first Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -166,9 +166,9 @@ class YVoc extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the Volatile Organic Compound sensor
+ * @param string $func : a string that uniquely characterizes the Volatile Organic Compound sensor
  *
- * @return a YVoc object allowing you to drive the Volatile Organic Compound sensor.
+ * @return YVoc : a YVoc object allowing you to drive the Volatile Organic Compound sensor.
  */
 function yFindVoc($func)
 {
@@ -180,7 +180,7 @@ function yFindVoc($func)
  * Use the method YVoc.nextVoc() to iterate on
  * next Volatile Organic Compound sensors.
  *
- * @return a pointer to a YVoc object, corresponding to
+ * @return YVoc : a pointer to a YVoc object, corresponding to
  *         the first Volatile Organic Compound sensor currently online, or a null pointer
  *         if there are none.
  */

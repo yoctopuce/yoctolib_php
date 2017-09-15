@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gps.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_gps.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YGps, the high-level API for Gps functions
  *
@@ -169,8 +169,8 @@ class YGps extends YFunction
     /**
      * Returns TRUE if the receiver has found enough satellites to work.
      *
-     * @return either Y_ISFIXED_FALSE or Y_ISFIXED_TRUE, according to TRUE if the receiver has found
-     * enough satellites to work
+     * @return integer : either Y_ISFIXED_FALSE or Y_ISFIXED_TRUE, according to TRUE if the receiver has
+     * found enough satellites to work
      *
      * On failure, throws an exception or returns Y_ISFIXED_INVALID.
      */
@@ -189,7 +189,7 @@ class YGps extends YFunction
     /**
      * Returns the count of visible satellites.
      *
-     * @return an integer corresponding to the count of visible satellites
+     * @return integer : an integer corresponding to the count of visible satellites
      *
      * On failure, throws an exception or returns Y_SATCOUNT_INVALID.
      */
@@ -208,7 +208,7 @@ class YGps extends YFunction
     /**
      * Returns the representation system used for positioning data.
      *
-     * @return a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and Y_COORDSYSTEM_GPS_D
+     * @return integer : a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and Y_COORDSYSTEM_GPS_D
      * corresponding to the representation system used for positioning data
      *
      * On failure, throws an exception or returns Y_COORDSYSTEM_INVALID.
@@ -228,10 +228,10 @@ class YGps extends YFunction
     /**
      * Changes the representation system used for positioning data.
      *
-     * @param newval : a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and Y_COORDSYSTEM_GPS_D
-     * corresponding to the representation system used for positioning data
+     * @param integer $newval : a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and
+     * Y_COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -244,7 +244,7 @@ class YGps extends YFunction
     /**
      * Returns the current latitude.
      *
-     * @return a string corresponding to the current latitude
+     * @return string : a string corresponding to the current latitude
      *
      * On failure, throws an exception or returns Y_LATITUDE_INVALID.
      */
@@ -263,7 +263,7 @@ class YGps extends YFunction
     /**
      * Returns the current longitude.
      *
-     * @return a string corresponding to the current longitude
+     * @return string : a string corresponding to the current longitude
      *
      * On failure, throws an exception or returns Y_LONGITUDE_INVALID.
      */
@@ -283,7 +283,7 @@ class YGps extends YFunction
      * Returns the current horizontal dilution of precision,
      * the smaller that number is, the better .
      *
-     * @return a floating point number corresponding to the current horizontal dilution of precision,
+     * @return double : a floating point number corresponding to the current horizontal dilution of precision,
      *         the smaller that number is, the better
      *
      * On failure, throws an exception or returns Y_DILUTION_INVALID.
@@ -304,7 +304,7 @@ class YGps extends YFunction
      * Returns the current altitude. Beware:  GPS technology
      * is very inaccurate regarding altitude.
      *
-     * @return a floating point number corresponding to the current altitude
+     * @return double : a floating point number corresponding to the current altitude
      *
      * On failure, throws an exception or returns Y_ALTITUDE_INVALID.
      */
@@ -323,7 +323,7 @@ class YGps extends YFunction
     /**
      * Returns the current ground speed in Km/h.
      *
-     * @return a floating point number corresponding to the current ground speed in Km/h
+     * @return double : a floating point number corresponding to the current ground speed in Km/h
      *
      * On failure, throws an exception or returns Y_GROUNDSPEED_INVALID.
      */
@@ -343,7 +343,7 @@ class YGps extends YFunction
      * Returns the current move bearing in degrees, zero
      * is the true (geographic) north.
      *
-     * @return a floating point number corresponding to the current move bearing in degrees, zero
+     * @return double : a floating point number corresponding to the current move bearing in degrees, zero
      *         is the true (geographic) north
      *
      * On failure, throws an exception or returns Y_DIRECTION_INVALID.
@@ -364,7 +364,7 @@ class YGps extends YFunction
      * Returns the current time in Unix format (number of
      * seconds elapsed since Jan 1st, 1970).
      *
-     * @return an integer corresponding to the current time in Unix format (number of
+     * @return integer : an integer corresponding to the current time in Unix format (number of
      *         seconds elapsed since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns Y_UNIXTIME_INVALID.
@@ -384,7 +384,7 @@ class YGps extends YFunction
     /**
      * Returns the current time in the form "YYYY/MM/DD hh:mm:ss".
      *
-     * @return a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
+     * @return string : a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
      * On failure, throws an exception or returns Y_DATETIME_INVALID.
      */
@@ -403,7 +403,8 @@ class YGps extends YFunction
     /**
      * Returns the number of seconds between current time and UTC time (time zone).
      *
-     * @return an integer corresponding to the number of seconds between current time and UTC time (time zone)
+     * @return integer : an integer corresponding to the number of seconds between current time and UTC
+     * time (time zone)
      *
      * On failure, throws an exception or returns Y_UTCOFFSET_INVALID.
      */
@@ -424,9 +425,10 @@ class YGps extends YFunction
      * The timezone is automatically rounded to the nearest multiple of 15 minutes.
      * If current UTC time is known, the current time is automatically be updated according to the selected time zone.
      *
-     * @param newval : an integer corresponding to the number of seconds between current time and UTC time (time zone)
+     * @param integer $newval : an integer corresponding to the number of seconds between current time and
+     * UTC time (time zone)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -477,9 +479,9 @@ class YGps extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the GPS
+     * @param string $func : a string that uniquely characterizes the GPS
      *
-     * @return a YGps object allowing you to drive the GPS.
+     * @return YGps : a YGps object allowing you to drive the GPS.
      */
     public static function FindGps($func)
     {
@@ -543,7 +545,7 @@ class YGps extends YFunction
     /**
      * Continues the enumeration of GPS started using yFirstGps().
      *
-     * @return a pointer to a YGps object, corresponding to
+     * @return YGps : a pointer to a YGps object, corresponding to
      *         a GPS currently online, or a null pointer
      *         if there are no more GPS to enumerate.
      */
@@ -560,7 +562,7 @@ class YGps extends YFunction
      * Use the method YGps.nextGps() to iterate on
      * next GPS.
      *
-     * @return a pointer to a YGps object, corresponding to
+     * @return YGps : a pointer to a YGps object, corresponding to
      *         the first GPS currently online, or a null pointer
      *         if there are none.
      */
@@ -599,9 +601,9 @@ class YGps extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the GPS
+ * @param string $func : a string that uniquely characterizes the GPS
  *
- * @return a YGps object allowing you to drive the GPS.
+ * @return YGps : a YGps object allowing you to drive the GPS.
  */
 function yFindGps($func)
 {
@@ -613,7 +615,7 @@ function yFindGps($func)
  * Use the method YGps.nextGps() to iterate on
  * next GPS.
  *
- * @return a pointer to a YGps object, corresponding to
+ * @return YGps : a pointer to a YGps object, corresponding to
  *         the first GPS currently online, or a null pointer
  *         if there are none.
  */

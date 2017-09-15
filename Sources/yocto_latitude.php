@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_latitude.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_latitude.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YLatitude, the high-level API for Latitude functions
  *
@@ -93,9 +93,9 @@ class YLatitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the latitude sensor
+     * @param string $func : a string that uniquely characterizes the latitude sensor
      *
-     * @return a YLatitude object allowing you to drive the latitude sensor.
+     * @return YLatitude : a YLatitude object allowing you to drive the latitude sensor.
      */
     public static function FindLatitude($func)
     {
@@ -111,7 +111,7 @@ class YLatitude extends YSensor
     /**
      * Continues the enumeration of latitude sensors started using yFirstLatitude().
      *
-     * @return a pointer to a YLatitude object, corresponding to
+     * @return YLatitude : a pointer to a YLatitude object, corresponding to
      *         a latitude sensor currently online, or a null pointer
      *         if there are no more latitude sensors to enumerate.
      */
@@ -128,7 +128,7 @@ class YLatitude extends YSensor
      * Use the method YLatitude.nextLatitude() to iterate on
      * next latitude sensors.
      *
-     * @return a pointer to a YLatitude object, corresponding to
+     * @return YLatitude : a pointer to a YLatitude object, corresponding to
      *         the first latitude sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -167,9 +167,9 @@ class YLatitude extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the latitude sensor
+ * @param string $func : a string that uniquely characterizes the latitude sensor
  *
- * @return a YLatitude object allowing you to drive the latitude sensor.
+ * @return YLatitude : a YLatitude object allowing you to drive the latitude sensor.
  */
 function yFindLatitude($func)
 {
@@ -181,7 +181,7 @@ function yFindLatitude($func)
  * Use the method YLatitude.nextLatitude() to iterate on
  * next latitude sensors.
  *
- * @return a pointer to a YLatitude object, corresponding to
+ * @return YLatitude : a pointer to a YLatitude object, corresponding to
  *         the first latitude sensor currently online, or a null pointer
  *         if there are none.
  */

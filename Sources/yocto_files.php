@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_files.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -149,7 +149,7 @@ class YFiles extends YFunction
     /**
      * Returns the number of files currently loaded in the filesystem.
      *
-     * @return an integer corresponding to the number of files currently loaded in the filesystem
+     * @return integer : an integer corresponding to the number of files currently loaded in the filesystem
      *
      * On failure, throws an exception or returns Y_FILESCOUNT_INVALID.
      */
@@ -168,7 +168,7 @@ class YFiles extends YFunction
     /**
      * Returns the free space for uploading new files to the filesystem, in bytes.
      *
-     * @return an integer corresponding to the free space for uploading new files to the filesystem, in bytes
+     * @return integer : an integer corresponding to the free space for uploading new files to the filesystem, in bytes
      *
      * On failure, throws an exception or returns Y_FREESPACE_INVALID.
      */
@@ -207,9 +207,9 @@ class YFiles extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the filesystem
+     * @param string $func : a string that uniquely characterizes the filesystem
      *
-     * @return a YFiles object allowing you to drive the filesystem.
+     * @return YFiles : a YFiles object allowing you to drive the filesystem.
      */
     public static function FindFiles($func)
     {
@@ -234,7 +234,7 @@ class YFiles extends YFunction
      * Reinitialize the filesystem to its clean, unfragmented, empty state.
      * All files previously uploaded are permanently lost.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -252,11 +252,11 @@ class YFiles extends YFunction
      * Returns a list of YFileRecord objects that describe files currently loaded
      * in the filesystem.
      *
-     * @param pattern : an optional filter pattern, using star and question marks
+     * @param string $pattern : an optional filter pattern, using star and question marks
      *         as wildcards. When an empty pattern is provided, all file records
      *         are returned.
      *
-     * @return a list of YFileRecord objects, containing the file path
+     * @return YFileRecord[] : a list of YFileRecord objects, containing the file path
      *         and name, byte size and 32-bit CRC of the file content.
      *
      * On failure, throws an exception or returns an empty list.
@@ -278,9 +278,9 @@ class YFiles extends YFunction
     /**
      * Test if a file exist on the filesystem of the module.
      *
-     * @param filename : the file name to test.
+     * @param string $filename : the file name to test.
      *
-     * @return a true if the file existe, false ortherwise.
+     * @return boolean : a true if the file existe, false ortherwise.
      *
      * On failure, throws an exception.
      */
@@ -302,9 +302,9 @@ class YFiles extends YFunction
     /**
      * Downloads the requested file and returns a binary buffer with its content.
      *
-     * @param pathname : path and name of the file to download
+     * @param string $pathname : path and name of the file to download
      *
-     * @return a binary buffer with the file content
+     * @return string : a binary buffer with the file content
      *
      * On failure, throws an exception or returns an empty content.
      */
@@ -317,10 +317,10 @@ class YFiles extends YFunction
      * Uploads a file to the filesystem, to the specified full path name.
      * If a file already exists with the same path name, its content is overwritten.
      *
-     * @param pathname : path and name of the new file to create
-     * @param content : binary buffer with the content to set
+     * @param string $pathname : path and name of the new file to create
+     * @param string $content : binary buffer with the content to set
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -337,9 +337,9 @@ class YFiles extends YFunction
      * If you need to ensure that no space is taken by previously deleted files,
      * you can use format_fs to fully reinitialize the filesystem.
      *
-     * @param pathname : path and name of the file to remove.
+     * @param string $pathname : path and name of the file to remove.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -362,7 +362,7 @@ class YFiles extends YFunction
     /**
      * Continues the enumeration of filesystems started using yFirstFiles().
      *
-     * @return a pointer to a YFiles object, corresponding to
+     * @return YFiles : a pointer to a YFiles object, corresponding to
      *         a filesystem currently online, or a null pointer
      *         if there are no more filesystems to enumerate.
      */
@@ -379,7 +379,7 @@ class YFiles extends YFunction
      * Use the method YFiles.nextFiles() to iterate on
      * next filesystems.
      *
-     * @return a pointer to a YFiles object, corresponding to
+     * @return YFiles : a pointer to a YFiles object, corresponding to
      *         the first filesystem currently online, or a null pointer
      *         if there are none.
      */
@@ -417,9 +417,9 @@ class YFiles extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the filesystem
+ * @param string $func : a string that uniquely characterizes the filesystem
  *
- * @return a YFiles object allowing you to drive the filesystem.
+ * @return YFiles : a YFiles object allowing you to drive the filesystem.
  */
 function yFindFiles($func)
 {
@@ -431,7 +431,7 @@ function yFindFiles($func)
  * Use the method YFiles.nextFiles() to iterate on
  * next filesystems.
  *
- * @return a pointer to a YFiles object, corresponding to
+ * @return YFiles : a pointer to a YFiles object, corresponding to
  *         the first filesystem currently online, or a null pointer
  *         if there are none.
  */

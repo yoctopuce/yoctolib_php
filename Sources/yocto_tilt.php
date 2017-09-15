@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_tilt.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_tilt.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YTilt, the high-level API for Tilt functions
  *
@@ -103,7 +103,7 @@ class YTilt extends YSensor
     /**
      * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
      *
-     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -123,9 +123,10 @@ class YTilt extends YSensor
      * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
      * frequency is lower, the device performs averaging.
      *
-     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
+     * (Yocto-3D-V2 only)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -170,9 +171,9 @@ class YTilt extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the tilt sensor
+     * @param string $func : a string that uniquely characterizes the tilt sensor
      *
-     * @return a YTilt object allowing you to drive the tilt sensor.
+     * @return YTilt : a YTilt object allowing you to drive the tilt sensor.
      */
     public static function FindTilt($func)
     {
@@ -197,7 +198,7 @@ class YTilt extends YSensor
     /**
      * Continues the enumeration of tilt sensors started using yFirstTilt().
      *
-     * @return a pointer to a YTilt object, corresponding to
+     * @return YTilt : a pointer to a YTilt object, corresponding to
      *         a tilt sensor currently online, or a null pointer
      *         if there are no more tilt sensors to enumerate.
      */
@@ -214,7 +215,7 @@ class YTilt extends YSensor
      * Use the method YTilt.nextTilt() to iterate on
      * next tilt sensors.
      *
-     * @return a pointer to a YTilt object, corresponding to
+     * @return YTilt : a pointer to a YTilt object, corresponding to
      *         the first tilt sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -253,9 +254,9 @@ class YTilt extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the tilt sensor
+ * @param string $func : a string that uniquely characterizes the tilt sensor
  *
- * @return a YTilt object allowing you to drive the tilt sensor.
+ * @return YTilt : a YTilt object allowing you to drive the tilt sensor.
  */
 function yFindTilt($func)
 {
@@ -267,7 +268,7 @@ function yFindTilt($func)
  * Use the method YTilt.nextTilt() to iterate on
  * next tilt sensors.
  *
- * @return a pointer to a YTilt object, corresponding to
+ * @return YTilt : a pointer to a YTilt object, corresponding to
  *         the first tilt sensor currently online, or a null pointer
  *         if there are none.
  */

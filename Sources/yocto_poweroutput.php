@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_poweroutput.php 27926 2017-06-27 13:25:52Z seb $
+ * $Id: yocto_poweroutput.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -90,8 +90,8 @@ class YPowerOutput extends YFunction
     /**
      * Returns the voltage on the power output featured by the module.
      *
-     * @return a value among Y_VOLTAGE_OFF, Y_VOLTAGE_OUT3V3 and Y_VOLTAGE_OUT5V corresponding to the
-     * voltage on the power output featured by the module
+     * @return integer : a value among Y_VOLTAGE_OFF, Y_VOLTAGE_OUT3V3 and Y_VOLTAGE_OUT5V corresponding
+     * to the voltage on the power output featured by the module
      *
      * On failure, throws an exception or returns Y_VOLTAGE_INVALID.
      */
@@ -112,11 +112,11 @@ class YPowerOutput extends YFunction
      * module. Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param newval : a value among Y_VOLTAGE_OFF, Y_VOLTAGE_OUT3V3 and Y_VOLTAGE_OUT5V corresponding to
-     * the voltage on the power output provided by the
+     * @param integer $newval : a value among Y_VOLTAGE_OFF, Y_VOLTAGE_OUT3V3 and Y_VOLTAGE_OUT5V
+     * corresponding to the voltage on the power output provided by the
      *         module
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -149,9 +149,9 @@ class YPowerOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the power ouput control
+     * @param string $func : a string that uniquely characterizes the power ouput control
      *
-     * @return a YPowerOutput object allowing you to drive the power ouput control.
+     * @return YPowerOutput : a YPowerOutput object allowing you to drive the power ouput control.
      */
     public static function FindPowerOutput($func)
     {
@@ -173,7 +173,7 @@ class YPowerOutput extends YFunction
     /**
      * Continues the enumeration of dual power ouput controls started using yFirstPowerOutput().
      *
-     * @return a pointer to a YPowerOutput object, corresponding to
+     * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
      *         a dual power  ouput control currently online, or a null pointer
      *         if there are no more dual power ouput controls to enumerate.
      */
@@ -190,7 +190,7 @@ class YPowerOutput extends YFunction
      * Use the method YPowerOutput.nextPowerOutput() to iterate on
      * next dual power ouput controls.
      *
-     * @return a pointer to a YPowerOutput object, corresponding to
+     * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
      *         the first dual power ouput control currently online, or a null pointer
      *         if there are none.
      */
@@ -229,9 +229,9 @@ class YPowerOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the power ouput control
+ * @param string $func : a string that uniquely characterizes the power ouput control
  *
- * @return a YPowerOutput object allowing you to drive the power ouput control.
+ * @return YPowerOutput : a YPowerOutput object allowing you to drive the power ouput control.
  */
 function yFindPowerOutput($func)
 {
@@ -243,7 +243,7 @@ function yFindPowerOutput($func)
  * Use the method YPowerOutput.nextPowerOutput() to iterate on
  * next dual power ouput controls.
  *
- * @return a pointer to a YPowerOutput object, corresponding to
+ * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
  *         the first dual power ouput control currently online, or a null pointer
  *         if there are none.
  */

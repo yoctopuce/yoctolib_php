@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_segmenteddisplay.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_segmenteddisplay.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -97,7 +97,7 @@ class YSegmentedDisplay extends YFunction
     /**
      * Returns the text currently displayed on the screen.
      *
-     * @return a string corresponding to the text currently displayed on the screen
+     * @return string : a string corresponding to the text currently displayed on the screen
      *
      * On failure, throws an exception or returns Y_DISPLAYEDTEXT_INVALID.
      */
@@ -116,9 +116,9 @@ class YSegmentedDisplay extends YFunction
     /**
      * Changes the text currently displayed on the screen.
      *
-     * @param newval : a string corresponding to the text currently displayed on the screen
+     * @param string $newval : a string corresponding to the text currently displayed on the screen
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -169,9 +169,9 @@ class YSegmentedDisplay extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the segmented displays
+     * @param string $func : a string that uniquely characterizes the segmented displays
      *
-     * @return a YSegmentedDisplay object allowing you to drive the segmented displays.
+     * @return YSegmentedDisplay : a YSegmentedDisplay object allowing you to drive the segmented displays.
      */
     public static function FindSegmentedDisplay($func)
     {
@@ -199,7 +199,7 @@ class YSegmentedDisplay extends YFunction
     /**
      * Continues the enumeration of segmented displays started using yFirstSegmentedDisplay().
      *
-     * @return a pointer to a YSegmentedDisplay object, corresponding to
+     * @return YSegmentedDisplay : a pointer to a YSegmentedDisplay object, corresponding to
      *         a segmented display currently online, or a null pointer
      *         if there are no more segmented displays to enumerate.
      */
@@ -216,7 +216,7 @@ class YSegmentedDisplay extends YFunction
      * Use the method YSegmentedDisplay.nextSegmentedDisplay() to iterate on
      * next segmented displays.
      *
-     * @return a pointer to a YSegmentedDisplay object, corresponding to
+     * @return YSegmentedDisplay : a pointer to a YSegmentedDisplay object, corresponding to
      *         the first segmented displays currently online, or a null pointer
      *         if there are none.
      */
@@ -255,9 +255,9 @@ class YSegmentedDisplay extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the segmented displays
+ * @param string $func : a string that uniquely characterizes the segmented displays
  *
- * @return a YSegmentedDisplay object allowing you to drive the segmented displays.
+ * @return YSegmentedDisplay : a YSegmentedDisplay object allowing you to drive the segmented displays.
  */
 function yFindSegmentedDisplay($func)
 {
@@ -269,7 +269,7 @@ function yFindSegmentedDisplay($func)
  * Use the method YSegmentedDisplay.nextSegmentedDisplay() to iterate on
  * next segmented displays.
  *
- * @return a pointer to a YSegmentedDisplay object, corresponding to
+ * @return YSegmentedDisplay : a pointer to a YSegmentedDisplay object, corresponding to
  *         the first segmented displays currently online, or a null pointer
  *         if there are none.
  */

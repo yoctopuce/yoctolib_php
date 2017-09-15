@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_gyro.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -92,9 +92,9 @@ class YQt extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the quaternion component
+     * @param string $func : a string that uniquely characterizes the quaternion component
      *
-     * @return a YQt object allowing you to drive the quaternion component.
+     * @return YQt : a YQt object allowing you to drive the quaternion component.
      */
     public static function FindQt($func)
     {
@@ -110,7 +110,7 @@ class YQt extends YSensor
     /**
      * Continues the enumeration of quaternion components started using yFirstQt().
      *
-     * @return a pointer to a YQt object, corresponding to
+     * @return YQt : a pointer to a YQt object, corresponding to
      *         a quaternion component currently online, or a null pointer
      *         if there are no more quaternion components to enumerate.
      */
@@ -127,7 +127,7 @@ class YQt extends YSensor
      * Use the method YQt.nextQt() to iterate on
      * next quaternion components.
      *
-     * @return a pointer to a YQt object, corresponding to
+     * @return YQt : a pointer to a YQt object, corresponding to
      *         the first quaternion component currently online, or a null pointer
      *         if there are none.
      */
@@ -166,9 +166,9 @@ class YQt extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the quaternion component
+ * @param string $func : a string that uniquely characterizes the quaternion component
  *
- * @return a YQt object allowing you to drive the quaternion component.
+ * @return YQt : a YQt object allowing you to drive the quaternion component.
  */
 function yFindQt($func)
 {
@@ -180,7 +180,7 @@ function yFindQt($func)
  * Use the method YQt.nextQt() to iterate on
  * next quaternion components.
  *
- * @return a pointer to a YQt object, corresponding to
+ * @return YQt : a pointer to a YQt object, corresponding to
  *         the first quaternion component currently online, or a null pointer
  *         if there are none.
  */
@@ -285,7 +285,7 @@ class YGyro extends YSensor
     /**
      * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
      *
-     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -305,9 +305,10 @@ class YGyro extends YSensor
      * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
      * frequency is lower, the device performs averaging.
      *
-     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
+     * (Yocto-3D-V2 only)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -320,8 +321,8 @@ class YGyro extends YSensor
     /**
      * Returns the angular velocity around the X axis of the device, as a floating point number.
      *
-     * @return a floating point number corresponding to the angular velocity around the X axis of the
-     * device, as a floating point number
+     * @return double : a floating point number corresponding to the angular velocity around the X axis of
+     * the device, as a floating point number
      *
      * On failure, throws an exception or returns Y_XVALUE_INVALID.
      */
@@ -340,8 +341,8 @@ class YGyro extends YSensor
     /**
      * Returns the angular velocity around the Y axis of the device, as a floating point number.
      *
-     * @return a floating point number corresponding to the angular velocity around the Y axis of the
-     * device, as a floating point number
+     * @return double : a floating point number corresponding to the angular velocity around the Y axis of
+     * the device, as a floating point number
      *
      * On failure, throws an exception or returns Y_YVALUE_INVALID.
      */
@@ -360,8 +361,8 @@ class YGyro extends YSensor
     /**
      * Returns the angular velocity around the Z axis of the device, as a floating point number.
      *
-     * @return a floating point number corresponding to the angular velocity around the Z axis of the
-     * device, as a floating point number
+     * @return double : a floating point number corresponding to the angular velocity around the Z axis of
+     * the device, as a floating point number
      *
      * On failure, throws an exception or returns Y_ZVALUE_INVALID.
      */
@@ -400,9 +401,9 @@ class YGyro extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the gyroscope
+     * @param string $func : a string that uniquely characterizes the gyroscope
      *
-     * @return a YGyro object allowing you to drive the gyroscope.
+     * @return YGyro : a YGyro object allowing you to drive the gyroscope.
      */
     public static function FindGyro($func)
     {
@@ -499,7 +500,7 @@ class YGyro extends YSensor
      * of the device X, Y or Z physical directions using methods of
      * the class YRefFrame.
      *
-     * @return a floating-point number corresponding to roll angle
+     * @return double : a floating-point number corresponding to roll angle
      *         in degrees, between -180 and +180.
      */
     public function get_roll()
@@ -516,7 +517,7 @@ class YGyro extends YSensor
      * of the device X, Y or Z physical directions using methods of
      * the class YRefFrame.
      *
-     * @return a floating-point number corresponding to pitch angle
+     * @return double : a floating-point number corresponding to pitch angle
      *         in degrees, between -90 and +90.
      */
     public function get_pitch()
@@ -533,7 +534,7 @@ class YGyro extends YSensor
      * of the device X, Y or Z physical directions using methods of
      * the class YRefFrame.
      *
-     * @return a floating-point number corresponding to heading
+     * @return double : a floating-point number corresponding to heading
      *         in degrees, between 0 and 360.
      */
     public function get_heading()
@@ -548,7 +549,7 @@ class YGyro extends YSensor
      * integration of gyroscopic measures combined with acceleration and
      * magnetic field measurements.
      *
-     * @return a floating-point number corresponding to the w
+     * @return double : a floating-point number corresponding to the w
      *         component of the quaternion.
      */
     public function get_quaternionW()
@@ -564,7 +565,7 @@ class YGyro extends YSensor
      * magnetic field measurements. The x component is
      * mostly correlated with rotations on the roll axis.
      *
-     * @return a floating-point number corresponding to the x
+     * @return double : a floating-point number corresponding to the x
      *         component of the quaternion.
      */
     public function get_quaternionX()
@@ -580,7 +581,7 @@ class YGyro extends YSensor
      * magnetic field measurements. The y component is
      * mostly correlated with rotations on the pitch axis.
      *
-     * @return a floating-point number corresponding to the y
+     * @return double : a floating-point number corresponding to the y
      *         component of the quaternion.
      */
     public function get_quaternionY()
@@ -596,7 +597,7 @@ class YGyro extends YSensor
      * magnetic field measurements. The x component is
      * mostly correlated with changes of heading.
      *
-     * @return a floating-point number corresponding to the z
+     * @return double : a floating-point number corresponding to the z
      *         component of the quaternion.
      */
     public function get_quaternionZ()
@@ -613,7 +614,7 @@ class YGyro extends YSensor
      * For good responsiveness, remember to call one of these two functions periodically.
      * To unregister a callback, pass a null pointer as argument.
      *
-     * @param callback : the callback function to invoke, or a null pointer.
+     * @param function $callback : the callback function to invoke, or a null pointer.
      *         The callback function should take five arguments:
      *         the YGyro object of the turning device, and the floating
      *         point values of the four components w, x, y and z
@@ -654,7 +655,7 @@ class YGyro extends YSensor
      * For good responsiveness, remember to call one of these two functions periodically.
      * To unregister a callback, pass a null pointer as argument.
      *
-     * @param callback : the callback function to invoke, or a null pointer.
+     * @param function $callback : the callback function to invoke, or a null pointer.
      *         The callback function should take four arguments:
      *         the YGyro object of the turning device, and the floating
      *         point values of the three angles roll, pitch and heading
@@ -735,7 +736,7 @@ class YGyro extends YSensor
     /**
      * Continues the enumeration of gyroscopes started using yFirstGyro().
      *
-     * @return a pointer to a YGyro object, corresponding to
+     * @return YGyro : a pointer to a YGyro object, corresponding to
      *         a gyroscope currently online, or a null pointer
      *         if there are no more gyroscopes to enumerate.
      */
@@ -752,7 +753,7 @@ class YGyro extends YSensor
      * Use the method YGyro.nextGyro() to iterate on
      * next gyroscopes.
      *
-     * @return a pointer to a YGyro object, corresponding to
+     * @return YGyro : a pointer to a YGyro object, corresponding to
      *         the first gyro currently online, or a null pointer
      *         if there are none.
      */
@@ -791,9 +792,9 @@ class YGyro extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the gyroscope
+ * @param string $func : a string that uniquely characterizes the gyroscope
  *
- * @return a YGyro object allowing you to drive the gyroscope.
+ * @return YGyro : a YGyro object allowing you to drive the gyroscope.
  */
 function yFindGyro($func)
 {
@@ -805,7 +806,7 @@ function yFindGyro($func)
  * Use the method YGyro.nextGyro() to iterate on
  * next gyroscopes.
  *
- * @return a pointer to a YGyro object, corresponding to
+ * @return YGyro : a pointer to a YGyro object, corresponding to
  *         the first gyro currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_current.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YCurrent, the high-level API for Current functions
  *
@@ -127,9 +127,9 @@ class YCurrent extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the current sensor
+     * @param string $func : a string that uniquely characterizes the current sensor
      *
-     * @return a YCurrent object allowing you to drive the current sensor.
+     * @return YCurrent : a YCurrent object allowing you to drive the current sensor.
      */
     public static function FindCurrent($func)
     {
@@ -151,7 +151,7 @@ class YCurrent extends YSensor
     /**
      * Continues the enumeration of current sensors started using yFirstCurrent().
      *
-     * @return a pointer to a YCurrent object, corresponding to
+     * @return YCurrent : a pointer to a YCurrent object, corresponding to
      *         a current sensor currently online, or a null pointer
      *         if there are no more current sensors to enumerate.
      */
@@ -168,7 +168,7 @@ class YCurrent extends YSensor
      * Use the method YCurrent.nextCurrent() to iterate on
      * next current sensors.
      *
-     * @return a pointer to a YCurrent object, corresponding to
+     * @return YCurrent : a pointer to a YCurrent object, corresponding to
      *         the first current sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -207,9 +207,9 @@ class YCurrent extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the current sensor
+ * @param string $func : a string that uniquely characterizes the current sensor
  *
- * @return a YCurrent object allowing you to drive the current sensor.
+ * @return YCurrent : a YCurrent object allowing you to drive the current sensor.
  */
 function yFindCurrent($func)
 {
@@ -221,7 +221,7 @@ function yFindCurrent($func)
  * Use the method YCurrent.nextCurrent() to iterate on
  * next current sensors.
  *
- * @return a pointer to a YCurrent object, corresponding to
+ * @return YCurrent : a pointer to a YCurrent object, corresponding to
  *         the first current sensor currently online, or a null pointer
  *         if there are none.
  */

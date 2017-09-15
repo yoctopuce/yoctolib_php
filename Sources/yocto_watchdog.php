@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_watchdog.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -176,8 +176,8 @@ class YWatchdog extends YFunction
     /**
      * Returns the state of the watchdog (A for the idle position, B for the active position).
      *
-     * @return either Y_STATE_A or Y_STATE_B, according to the state of the watchdog (A for the idle
-     * position, B for the active position)
+     * @return integer : either Y_STATE_A or Y_STATE_B, according to the state of the watchdog (A for the
+     * idle position, B for the active position)
      *
      * On failure, throws an exception or returns Y_STATE_INVALID.
      */
@@ -196,10 +196,10 @@ class YWatchdog extends YFunction
     /**
      * Changes the state of the watchdog (A for the idle position, B for the active position).
      *
-     * @param newval : either Y_STATE_A or Y_STATE_B, according to the state of the watchdog (A for the
-     * idle position, B for the active position)
+     * @param integer $newval : either Y_STATE_A or Y_STATE_B, according to the state of the watchdog (A
+     * for the idle position, B for the active position)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -213,9 +213,9 @@ class YWatchdog extends YFunction
      * Returns the state of the watchdog at device startup (A for the idle position, B for the active
      * position, UNCHANGED for no change).
      *
-     * @return a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and Y_STATEATPOWERON_B
-     * corresponding to the state of the watchdog at device startup (A for the idle position, B for the
-     * active position, UNCHANGED for no change)
+     * @return integer : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and
+     * Y_STATEATPOWERON_B corresponding to the state of the watchdog at device startup (A for the idle
+     * position, B for the active position, UNCHANGED for no change)
      *
      * On failure, throws an exception or returns Y_STATEATPOWERON_INVALID.
      */
@@ -236,9 +236,9 @@ class YWatchdog extends YFunction
      * B for the active position, UNCHANGED for no modification). Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param newval : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and Y_STATEATPOWERON_B
+     * @param integer $newval : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and Y_STATEATPOWERON_B
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -252,7 +252,7 @@ class YWatchdog extends YFunction
      * Retourne the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state A before automatically
      * switching back in to B state. Zero means no maximum time.
      *
-     * @return an integer
+     * @return integer : an integer
      *
      * On failure, throws an exception or returns Y_MAXTIMEONSTATEA_INVALID.
      */
@@ -272,9 +272,9 @@ class YWatchdog extends YFunction
      * Sets the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state A before automatically
      * switching back in to B state. Use zero for no maximum time.
      *
-     * @param newval : an integer
+     * @param integer $newval : an integer
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -288,7 +288,7 @@ class YWatchdog extends YFunction
      * Retourne the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B before automatically
      * switching back in to A state. Zero means no maximum time.
      *
-     * @return an integer
+     * @return integer : an integer
      *
      * On failure, throws an exception or returns Y_MAXTIMEONSTATEB_INVALID.
      */
@@ -308,9 +308,9 @@ class YWatchdog extends YFunction
      * Sets the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B before automatically
      * switching back in to A state. Use zero for no maximum time.
      *
-     * @param newval : an integer
+     * @param integer $newval : an integer
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -323,8 +323,8 @@ class YWatchdog extends YFunction
     /**
      * Returns the output state of the watchdog, when used as a simple switch (single throw).
      *
-     * @return either Y_OUTPUT_OFF or Y_OUTPUT_ON, according to the output state of the watchdog, when
-     * used as a simple switch (single throw)
+     * @return integer : either Y_OUTPUT_OFF or Y_OUTPUT_ON, according to the output state of the
+     * watchdog, when used as a simple switch (single throw)
      *
      * On failure, throws an exception or returns Y_OUTPUT_INVALID.
      */
@@ -343,10 +343,10 @@ class YWatchdog extends YFunction
     /**
      * Changes the output state of the watchdog, when used as a simple switch (single throw).
      *
-     * @param newval : either Y_OUTPUT_OFF or Y_OUTPUT_ON, according to the output state of the watchdog,
-     * when used as a simple switch (single throw)
+     * @param integer $newval : either Y_OUTPUT_OFF or Y_OUTPUT_ON, according to the output state of the
+     * watchdog, when used as a simple switch (single throw)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -360,8 +360,8 @@ class YWatchdog extends YFunction
      * Returns the number of milliseconds remaining before the watchdog is returned to idle position
      * (state A), during a measured pulse generation. When there is no ongoing pulse, returns zero.
      *
-     * @return an integer corresponding to the number of milliseconds remaining before the watchdog is
-     * returned to idle position
+     * @return integer : an integer corresponding to the number of milliseconds remaining before the
+     * watchdog is returned to idle position
      *         (state A), during a measured pulse generation
      *
      * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
@@ -388,9 +388,9 @@ class YWatchdog extends YFunction
      * Sets the relay to output B (active) for a specified duration, then brings it
      * automatically back to output A (idle state).
      *
-     * @param ms_duration : pulse duration, in millisecondes
+     * @param integer $ms_duration : pulse duration, in millisecondes
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -421,10 +421,10 @@ class YWatchdog extends YFunction
     /**
      * Schedules a pulse.
      *
-     * @param ms_delay : waiting time before the pulse, in millisecondes
-     * @param ms_duration : pulse duration, in millisecondes
+     * @param integer $ms_delay : waiting time before the pulse, in millisecondes
+     * @param integer $ms_duration : pulse duration, in millisecondes
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -438,7 +438,8 @@ class YWatchdog extends YFunction
      * Returns the number of milliseconds remaining before a pulse (delayedPulse() call)
      * When there is no scheduled pulse, returns zero.
      *
-     * @return an integer corresponding to the number of milliseconds remaining before a pulse (delayedPulse() call)
+     * @return integer : an integer corresponding to the number of milliseconds remaining before a pulse
+     * (delayedPulse() call)
      *         When there is no scheduled pulse, returns zero
      *
      * On failure, throws an exception or returns Y_COUNTDOWN_INVALID.
@@ -458,7 +459,8 @@ class YWatchdog extends YFunction
     /**
      * Returns the watchdog runing state at module power on.
      *
-     * @return either Y_AUTOSTART_OFF or Y_AUTOSTART_ON, according to the watchdog runing state at module power on
+     * @return integer : either Y_AUTOSTART_OFF or Y_AUTOSTART_ON, according to the watchdog runing state
+     * at module power on
      *
      * On failure, throws an exception or returns Y_AUTOSTART_INVALID.
      */
@@ -478,10 +480,10 @@ class YWatchdog extends YFunction
      * Changes the watchdog runningsttae at module power on. Remember to call the
      * saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param newval : either Y_AUTOSTART_OFF or Y_AUTOSTART_ON, according to the watchdog runningsttae at
-     * module power on
+     * @param integer $newval : either Y_AUTOSTART_OFF or Y_AUTOSTART_ON, according to the watchdog
+     * runningsttae at module power on
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -494,7 +496,7 @@ class YWatchdog extends YFunction
     /**
      * Returns the watchdog running state.
      *
-     * @return either Y_RUNNING_OFF or Y_RUNNING_ON, according to the watchdog running state
+     * @return integer : either Y_RUNNING_OFF or Y_RUNNING_ON, according to the watchdog running state
      *
      * On failure, throws an exception or returns Y_RUNNING_INVALID.
      */
@@ -513,9 +515,9 @@ class YWatchdog extends YFunction
     /**
      * Changes the running state of the watchdog.
      *
-     * @param newval : either Y_RUNNING_OFF or Y_RUNNING_ON, according to the running state of the watchdog
+     * @param integer $newval : either Y_RUNNING_OFF or Y_RUNNING_ON, according to the running state of the watchdog
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -530,7 +532,7 @@ class YWatchdog extends YFunction
      * must be called on a regular basis to prevent the watchog to
      * trigger
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -543,8 +545,8 @@ class YWatchdog extends YFunction
     /**
      * Returns  the waiting duration before a reset is automatically triggered by the watchdog, in milliseconds.
      *
-     * @return an integer corresponding to  the waiting duration before a reset is automatically triggered
-     * by the watchdog, in milliseconds
+     * @return integer : an integer corresponding to  the waiting duration before a reset is automatically
+     * triggered by the watchdog, in milliseconds
      *
      * On failure, throws an exception or returns Y_TRIGGERDELAY_INVALID.
      */
@@ -563,10 +565,10 @@ class YWatchdog extends YFunction
     /**
      * Changes the waiting delay before a reset is triggered by the watchdog, in milliseconds.
      *
-     * @param newval : an integer corresponding to the waiting delay before a reset is triggered by the
-     * watchdog, in milliseconds
+     * @param integer $newval : an integer corresponding to the waiting delay before a reset is triggered
+     * by the watchdog, in milliseconds
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -579,7 +581,7 @@ class YWatchdog extends YFunction
     /**
      * Returns the duration of resets caused by the watchdog, in milliseconds.
      *
-     * @return an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
+     * @return integer : an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
      *
      * On failure, throws an exception or returns Y_TRIGGERDURATION_INVALID.
      */
@@ -598,9 +600,10 @@ class YWatchdog extends YFunction
     /**
      * Changes the duration of resets caused by the watchdog, in milliseconds.
      *
-     * @param newval : an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
+     * @param integer $newval : an integer corresponding to the duration of resets caused by the watchdog,
+     * in milliseconds
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -633,9 +636,9 @@ class YWatchdog extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the watchdog
+     * @param string $func : a string that uniquely characterizes the watchdog
      *
-     * @return a YWatchdog object allowing you to drive the watchdog.
+     * @return YWatchdog : a YWatchdog object allowing you to drive the watchdog.
      */
     public static function FindWatchdog($func)
     {
@@ -720,7 +723,7 @@ class YWatchdog extends YFunction
     /**
      * Continues the enumeration of watchdog started using yFirstWatchdog().
      *
-     * @return a pointer to a YWatchdog object, corresponding to
+     * @return YWatchdog : a pointer to a YWatchdog object, corresponding to
      *         a watchdog currently online, or a null pointer
      *         if there are no more watchdog to enumerate.
      */
@@ -737,7 +740,7 @@ class YWatchdog extends YFunction
      * Use the method YWatchdog.nextWatchdog() to iterate on
      * next watchdog.
      *
-     * @return a pointer to a YWatchdog object, corresponding to
+     * @return YWatchdog : a pointer to a YWatchdog object, corresponding to
      *         the first watchdog currently online, or a null pointer
      *         if there are none.
      */
@@ -776,9 +779,9 @@ class YWatchdog extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the watchdog
+ * @param string $func : a string that uniquely characterizes the watchdog
  *
- * @return a YWatchdog object allowing you to drive the watchdog.
+ * @return YWatchdog : a YWatchdog object allowing you to drive the watchdog.
  */
 function yFindWatchdog($func)
 {
@@ -790,7 +793,7 @@ function yFindWatchdog($func)
  * Use the method YWatchdog.nextWatchdog() to iterate on
  * next watchdog.
  *
- * @return a pointer to a YWatchdog object, corresponding to
+ * @return YWatchdog : a pointer to a YWatchdog object, corresponding to
  *         the first watchdog currently online, or a null pointer
  *         if there are none.
  */

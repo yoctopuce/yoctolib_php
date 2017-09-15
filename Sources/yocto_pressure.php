@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pressure.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_pressure.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YPressure, the high-level API for Pressure functions
  *
@@ -92,9 +92,9 @@ class YPressure extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the pressure sensor
+     * @param string $func : a string that uniquely characterizes the pressure sensor
      *
-     * @return a YPressure object allowing you to drive the pressure sensor.
+     * @return YPressure : a YPressure object allowing you to drive the pressure sensor.
      */
     public static function FindPressure($func)
     {
@@ -110,7 +110,7 @@ class YPressure extends YSensor
     /**
      * Continues the enumeration of pressure sensors started using yFirstPressure().
      *
-     * @return a pointer to a YPressure object, corresponding to
+     * @return YPressure : a pointer to a YPressure object, corresponding to
      *         a pressure sensor currently online, or a null pointer
      *         if there are no more pressure sensors to enumerate.
      */
@@ -127,7 +127,7 @@ class YPressure extends YSensor
      * Use the method YPressure.nextPressure() to iterate on
      * next pressure sensors.
      *
-     * @return a pointer to a YPressure object, corresponding to
+     * @return YPressure : a pointer to a YPressure object, corresponding to
      *         the first pressure sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -166,9 +166,9 @@ class YPressure extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the pressure sensor
+ * @param string $func : a string that uniquely characterizes the pressure sensor
  *
- * @return a YPressure object allowing you to drive the pressure sensor.
+ * @return YPressure : a YPressure object allowing you to drive the pressure sensor.
  */
 function yFindPressure($func)
 {
@@ -180,7 +180,7 @@ function yFindPressure($func)
  * Use the method YPressure.nextPressure() to iterate on
  * next pressure sensors.
  *
- * @return a pointer to a YPressure object, corresponding to
+ * @return YPressure : a pointer to a YPressure object, corresponding to
  *         the first pressure sensor currently online, or a null pointer
  *         if there are none.
  */

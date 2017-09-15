@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 28293 2017-08-03 09:01:57Z mvuilleu $
+ * $Id: yocto_currentloopoutput.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -110,9 +110,10 @@ class YCurrentLoopOutput extends YFunction
      * not propely powered, the  target current is not reached and
      * loopPower is set to LOWPWR.
      *
-     * @param newval : a floating point number corresponding to the current loop, the valid range is from 3 to 21mA
+     * @param double $newval : a floating point number corresponding to the current loop, the valid range
+     * is from 3 to 21mA
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -125,7 +126,7 @@ class YCurrentLoopOutput extends YFunction
     /**
      * Returns the loop current set point in mA.
      *
-     * @return a floating point number corresponding to the loop current set point in mA
+     * @return double : a floating point number corresponding to the loop current set point in mA
      *
      * On failure, throws an exception or returns Y_CURRENT_INVALID.
      */
@@ -163,9 +164,9 @@ class YCurrentLoopOutput extends YFunction
      * Changes the loop current at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param newval : a floating point number corresponding to the loop current at device start up
+     * @param double $newval : a floating point number corresponding to the loop current at device start up
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -178,7 +179,7 @@ class YCurrentLoopOutput extends YFunction
     /**
      * Returns the current in the loop at device startup, in mA.
      *
-     * @return a floating point number corresponding to the current in the loop at device startup, in mA
+     * @return double : a floating point number corresponding to the current in the loop at device startup, in mA
      *
      * On failure, throws an exception or returns Y_CURRENTATSTARTUP_INVALID.
      */
@@ -199,8 +200,8 @@ class YCurrentLoopOutput extends YFunction
      * is powered. NOPWR: the loop in not powered. LOWPWR: the loop is not
      * powered enough to maintain the current required (insufficient voltage).
      *
-     * @return a value among Y_LOOPPOWER_NOPWR, Y_LOOPPOWER_LOWPWR and Y_LOOPPOWER_POWEROK corresponding
-     * to the loop powerstate
+     * @return integer : a value among Y_LOOPPOWER_NOPWR, Y_LOOPPOWER_LOWPWR and Y_LOOPPOWER_POWEROK
+     * corresponding to the loop powerstate
      *
      * On failure, throws an exception or returns Y_LOOPPOWER_INVALID.
      */
@@ -239,9 +240,9 @@ class YCurrentLoopOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the 4-20mA output
+     * @param string $func : a string that uniquely characterizes the 4-20mA output
      *
-     * @return a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
+     * @return YCurrentLoopOutput : a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
      */
     public static function FindCurrentLoopOutput($func)
     {
@@ -260,9 +261,9 @@ class YCurrentLoopOutput extends YFunction
      *
      * @param mA_target   : new current value at the end of the transition
      *         (floating-point number, representing the end current in mA)
-     * @param ms_duration : total duration of the transition, in milliseconds
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      */
     public function currentMove($mA_target,$ms_duration)
     {
@@ -302,7 +303,7 @@ class YCurrentLoopOutput extends YFunction
     /**
      * Continues the enumeration of 4-20mA outputs started using yFirstCurrentLoopOutput().
      *
-     * @return a pointer to a YCurrentLoopOutput object, corresponding to
+     * @return YCurrentLoopOutput : a pointer to a YCurrentLoopOutput object, corresponding to
      *         a 4-20mA output currently online, or a null pointer
      *         if there are no more 4-20mA outputs to enumerate.
      */
@@ -319,7 +320,7 @@ class YCurrentLoopOutput extends YFunction
      * Use the method YCurrentLoopOutput.nextCurrentLoopOutput() to iterate on
      * next 4-20mA outputs.
      *
-     * @return a pointer to a YCurrentLoopOutput object, corresponding to
+     * @return YCurrentLoopOutput : a pointer to a YCurrentLoopOutput object, corresponding to
      *         the first 4-20mA output currently online, or a null pointer
      *         if there are none.
      */
@@ -358,9 +359,9 @@ class YCurrentLoopOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the 4-20mA output
+ * @param string $func : a string that uniquely characterizes the 4-20mA output
  *
- * @return a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
+ * @return YCurrentLoopOutput : a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
  */
 function yFindCurrentLoopOutput($func)
 {
@@ -372,7 +373,7 @@ function yFindCurrentLoopOutput($func)
  * Use the method YCurrentLoopOutput.nextCurrentLoopOutput() to iterate on
  * next 4-20mA outputs.
  *
- * @return a pointer to a YCurrentLoopOutput object, corresponding to
+ * @return YCurrentLoopOutput : a pointer to a YCurrentLoopOutput object, corresponding to
  *         the first 4-20mA output currently online, or a null pointer
  *         if there are none.
  */

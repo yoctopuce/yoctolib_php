@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_hubport.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YHubPort, the high-level API for HubPort functions
  *
@@ -112,8 +112,8 @@ class YHubPort extends YFunction
     /**
      * Returns true if the Yocto-hub port is powered, false otherwise.
      *
-     * @return either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the Yocto-hub port is
-     * powered, false otherwise
+     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the Yocto-hub port
+     * is powered, false otherwise
      *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
@@ -133,9 +133,10 @@ class YHubPort extends YFunction
      * Changes the activation of the Yocto-hub port. If the port is enabled, the
      * connected module is powered. Otherwise, port power is shut down.
      *
-     * @param newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation of the Yocto-hub port
+     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation of
+     * the Yocto-hub port
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -148,8 +149,8 @@ class YHubPort extends YFunction
     /**
      * Returns the current state of the Yocto-hub port.
      *
-     * @return a value among Y_PORTSTATE_OFF, Y_PORTSTATE_OVRLD, Y_PORTSTATE_ON, Y_PORTSTATE_RUN and
-     * Y_PORTSTATE_PROG corresponding to the current state of the Yocto-hub port
+     * @return integer : a value among Y_PORTSTATE_OFF, Y_PORTSTATE_OVRLD, Y_PORTSTATE_ON, Y_PORTSTATE_RUN
+     * and Y_PORTSTATE_PROG corresponding to the current state of the Yocto-hub port
      *
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
@@ -170,7 +171,7 @@ class YHubPort extends YFunction
      * The default value is 1000 kbps, but a slower rate may be used if communication
      * problems are encountered.
      *
-     * @return an integer corresponding to the current baud rate used by this Yocto-hub port, in kbps
+     * @return integer : an integer corresponding to the current baud rate used by this Yocto-hub port, in kbps
      *
      * On failure, throws an exception or returns Y_BAUDRATE_INVALID.
      */
@@ -209,9 +210,9 @@ class YHubPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the Yocto-hub port
+     * @param string $func : a string that uniquely characterizes the Yocto-hub port
      *
-     * @return a YHubPort object allowing you to drive the Yocto-hub port.
+     * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
      */
     public static function FindHubPort($func)
     {
@@ -239,7 +240,7 @@ class YHubPort extends YFunction
     /**
      * Continues the enumeration of Yocto-hub ports started using yFirstHubPort().
      *
-     * @return a pointer to a YHubPort object, corresponding to
+     * @return YHubPort : a pointer to a YHubPort object, corresponding to
      *         a Yocto-hub port currently online, or a null pointer
      *         if there are no more Yocto-hub ports to enumerate.
      */
@@ -256,7 +257,7 @@ class YHubPort extends YFunction
      * Use the method YHubPort.nextHubPort() to iterate on
      * next Yocto-hub ports.
      *
-     * @return a pointer to a YHubPort object, corresponding to
+     * @return YHubPort : a pointer to a YHubPort object, corresponding to
      *         the first Yocto-hub port currently online, or a null pointer
      *         if there are none.
      */
@@ -295,9 +296,9 @@ class YHubPort extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the Yocto-hub port
+ * @param string $func : a string that uniquely characterizes the Yocto-hub port
  *
- * @return a YHubPort object allowing you to drive the Yocto-hub port.
+ * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
  */
 function yFindHubPort($func)
 {
@@ -309,7 +310,7 @@ function yFindHubPort($func)
  * Use the method YHubPort.nextHubPort() to iterate on
  * next Yocto-hub ports.
  *
- * @return a pointer to a YHubPort object, corresponding to
+ * @return YHubPort : a pointer to a YHubPort object, corresponding to
  *         the first Yocto-hub port currently online, or a null pointer
  *         if there are none.
  */

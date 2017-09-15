@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_dualpower.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_dualpower.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YDualPower, the high-level API for DualPower functions
  *
@@ -113,7 +113,7 @@ class YDualPower extends YFunction
     /**
      * Returns the current power source for module functions that require lots of current.
      *
-     * @return a value among Y_POWERSTATE_OFF, Y_POWERSTATE_FROM_USB and Y_POWERSTATE_FROM_EXT
+     * @return integer : a value among Y_POWERSTATE_OFF, Y_POWERSTATE_FROM_USB and Y_POWERSTATE_FROM_EXT
      * corresponding to the current power source for module functions that require lots of current
      *
      * On failure, throws an exception or returns Y_POWERSTATE_INVALID.
@@ -133,8 +133,9 @@ class YDualPower extends YFunction
     /**
      * Returns the selected power source for module functions that require lots of current.
      *
-     * @return a value among Y_POWERCONTROL_AUTO, Y_POWERCONTROL_FROM_USB, Y_POWERCONTROL_FROM_EXT and
-     * Y_POWERCONTROL_OFF corresponding to the selected power source for module functions that require lots of current
+     * @return integer : a value among Y_POWERCONTROL_AUTO, Y_POWERCONTROL_FROM_USB,
+     * Y_POWERCONTROL_FROM_EXT and Y_POWERCONTROL_OFF corresponding to the selected power source for
+     * module functions that require lots of current
      *
      * On failure, throws an exception or returns Y_POWERCONTROL_INVALID.
      */
@@ -153,11 +154,11 @@ class YDualPower extends YFunction
     /**
      * Changes the selected power source for module functions that require lots of current.
      *
-     * @param newval : a value among Y_POWERCONTROL_AUTO, Y_POWERCONTROL_FROM_USB, Y_POWERCONTROL_FROM_EXT
-     * and Y_POWERCONTROL_OFF corresponding to the selected power source for module functions that require
-     * lots of current
+     * @param integer $newval : a value among Y_POWERCONTROL_AUTO, Y_POWERCONTROL_FROM_USB,
+     * Y_POWERCONTROL_FROM_EXT and Y_POWERCONTROL_OFF corresponding to the selected power source for
+     * module functions that require lots of current
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -170,7 +171,7 @@ class YDualPower extends YFunction
     /**
      * Returns the measured voltage on the external power source, in millivolts.
      *
-     * @return an integer corresponding to the measured voltage on the external power source, in millivolts
+     * @return integer : an integer corresponding to the measured voltage on the external power source, in millivolts
      *
      * On failure, throws an exception or returns Y_EXTVOLTAGE_INVALID.
      */
@@ -209,9 +210,9 @@ class YDualPower extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the power control
+     * @param string $func : a string that uniquely characterizes the power control
      *
-     * @return a YDualPower object allowing you to drive the power control.
+     * @return YDualPower : a YDualPower object allowing you to drive the power control.
      */
     public static function FindDualPower($func)
     {
@@ -239,7 +240,7 @@ class YDualPower extends YFunction
     /**
      * Continues the enumeration of dual power controls started using yFirstDualPower().
      *
-     * @return a pointer to a YDualPower object, corresponding to
+     * @return YDualPower : a pointer to a YDualPower object, corresponding to
      *         a dual power control currently online, or a null pointer
      *         if there are no more dual power controls to enumerate.
      */
@@ -256,7 +257,7 @@ class YDualPower extends YFunction
      * Use the method YDualPower.nextDualPower() to iterate on
      * next dual power controls.
      *
-     * @return a pointer to a YDualPower object, corresponding to
+     * @return YDualPower : a pointer to a YDualPower object, corresponding to
      *         the first dual power control currently online, or a null pointer
      *         if there are none.
      */
@@ -295,9 +296,9 @@ class YDualPower extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the power control
+ * @param string $func : a string that uniquely characterizes the power control
  *
- * @return a YDualPower object allowing you to drive the power control.
+ * @return YDualPower : a YDualPower object allowing you to drive the power control.
  */
 function yFindDualPower($func)
 {
@@ -309,7 +310,7 @@ function yFindDualPower($func)
  * Use the method YDualPower.nextDualPower() to iterate on
  * next dual power controls.
  *
- * @return a pointer to a YDualPower object, corresponding to
+ * @return YDualPower : a pointer to a YDualPower object, corresponding to
  *         the first dual power control currently online, or a null pointer
  *         if there are none.
  */

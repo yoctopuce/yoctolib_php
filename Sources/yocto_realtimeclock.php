@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_realtimeclock.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -108,8 +108,8 @@ class YRealTimeClock extends YFunction
     /**
      * Returns the current time in Unix format (number of elapsed seconds since Jan 1st, 1970).
      *
-     * @return an integer corresponding to the current time in Unix format (number of elapsed seconds
-     * since Jan 1st, 1970)
+     * @return integer : an integer corresponding to the current time in Unix format (number of elapsed
+     * seconds since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns Y_UNIXTIME_INVALID.
      */
@@ -128,9 +128,9 @@ class YRealTimeClock extends YFunction
     /**
      * Changes the current time. Time is specifid in Unix format (number of elapsed seconds since Jan 1st, 1970).
      *
-     * @param newval : an integer corresponding to the current time
+     * @param integer $newval : an integer corresponding to the current time
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -143,7 +143,7 @@ class YRealTimeClock extends YFunction
     /**
      * Returns the current time in the form "YYYY/MM/DD hh:mm:ss".
      *
-     * @return a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
+     * @return string : a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
      * On failure, throws an exception or returns Y_DATETIME_INVALID.
      */
@@ -162,7 +162,8 @@ class YRealTimeClock extends YFunction
     /**
      * Returns the number of seconds between current time and UTC time (time zone).
      *
-     * @return an integer corresponding to the number of seconds between current time and UTC time (time zone)
+     * @return integer : an integer corresponding to the number of seconds between current time and UTC
+     * time (time zone)
      *
      * On failure, throws an exception or returns Y_UTCOFFSET_INVALID.
      */
@@ -182,9 +183,10 @@ class YRealTimeClock extends YFunction
      * Changes the number of seconds between current time and UTC time (time zone).
      * The timezone is automatically rounded to the nearest multiple of 15 minutes.
      *
-     * @param newval : an integer corresponding to the number of seconds between current time and UTC time (time zone)
+     * @param integer $newval : an integer corresponding to the number of seconds between current time and
+     * UTC time (time zone)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -197,8 +199,8 @@ class YRealTimeClock extends YFunction
     /**
      * Returns true if the clock has been set, and false otherwise.
      *
-     * @return either Y_TIMESET_FALSE or Y_TIMESET_TRUE, according to true if the clock has been set, and
-     * false otherwise
+     * @return integer : either Y_TIMESET_FALSE or Y_TIMESET_TRUE, according to true if the clock has been
+     * set, and false otherwise
      *
      * On failure, throws an exception or returns Y_TIMESET_INVALID.
      */
@@ -237,9 +239,9 @@ class YRealTimeClock extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the clock
+     * @param string $func : a string that uniquely characterizes the clock
      *
-     * @return a YRealTimeClock object allowing you to drive the clock.
+     * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
      */
     public static function FindRealTimeClock($func)
     {
@@ -273,7 +275,7 @@ class YRealTimeClock extends YFunction
     /**
      * Continues the enumeration of clocks started using yFirstRealTimeClock().
      *
-     * @return a pointer to a YRealTimeClock object, corresponding to
+     * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
      *         a clock currently online, or a null pointer
      *         if there are no more clocks to enumerate.
      */
@@ -290,7 +292,7 @@ class YRealTimeClock extends YFunction
      * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
      * next clocks.
      *
-     * @return a pointer to a YRealTimeClock object, corresponding to
+     * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
      *         the first clock currently online, or a null pointer
      *         if there are none.
      */
@@ -329,9 +331,9 @@ class YRealTimeClock extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the clock
+ * @param string $func : a string that uniquely characterizes the clock
  *
- * @return a YRealTimeClock object allowing you to drive the clock.
+ * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
  */
 function yFindRealTimeClock($func)
 {
@@ -343,7 +345,7 @@ function yFindRealTimeClock($func)
  * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
  * next clocks.
  *
- * @return a pointer to a YRealTimeClock object, corresponding to
+ * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
  *         the first clock currently online, or a null pointer
  *         if there are none.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 28231 2017-07-31 16:37:33Z mvuilleu $
+ * $Id: yocto_weighscale.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -123,8 +123,8 @@ class YWeighScale extends YSensor
     /**
      * Returns the current load cell bridge excitation method.
      *
-     * @return a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC corresponding to the
-     * current load cell bridge excitation method
+     * @return integer : a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC corresponding
+     * to the current load cell bridge excitation method
      *
      * On failure, throws an exception or returns Y_EXCITATION_INVALID.
      */
@@ -143,10 +143,10 @@ class YWeighScale extends YSensor
     /**
      * Changes the current load cell bridge excitation method.
      *
-     * @param newval : a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC corresponding
-     * to the current load cell bridge excitation method
+     * @param integer $newval : a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC
+     * corresponding to the current load cell bridge excitation method
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -159,9 +159,10 @@ class YWeighScale extends YSensor
     /**
      * Changes the compensation temperature update rate, in percents.
      *
-     * @param newval : a floating point number corresponding to the compensation temperature update rate, in percents
+     * @param double $newval : a floating point number corresponding to the compensation temperature
+     * update rate, in percents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -175,7 +176,7 @@ class YWeighScale extends YSensor
      * Returns the compensation temperature update rate, in percents.
      * the maximal value is 65 percents.
      *
-     * @return a floating point number corresponding to the compensation temperature update rate, in percents
+     * @return double : a floating point number corresponding to the compensation temperature update rate, in percents
      *
      * On failure, throws an exception or returns Y_ADAPTRATIO_INVALID.
      */
@@ -194,7 +195,7 @@ class YWeighScale extends YSensor
     /**
      * Returns the current compensation temperature.
      *
-     * @return a floating point number corresponding to the current compensation temperature
+     * @return double : a floating point number corresponding to the current compensation temperature
      *
      * On failure, throws an exception or returns Y_COMPTEMPERATURE_INVALID.
      */
@@ -213,7 +214,7 @@ class YWeighScale extends YSensor
     /**
      * Returns the current current thermal compensation value.
      *
-     * @return a floating point number corresponding to the current current thermal compensation value
+     * @return double : a floating point number corresponding to the current current thermal compensation value
      *
      * On failure, throws an exception or returns Y_COMPENSATION_INVALID.
      */
@@ -232,9 +233,10 @@ class YWeighScale extends YSensor
     /**
      * Changes the compensation temperature update rate, in percents.
      *
-     * @param newval : a floating point number corresponding to the compensation temperature update rate, in percents
+     * @param double $newval : a floating point number corresponding to the compensation temperature
+     * update rate, in percents
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -249,7 +251,7 @@ class YWeighScale extends YSensor
      * zero, any measure under the threshold will automatically be ignored and the
      * zero compensation will be updated.
      *
-     * @return a floating point number corresponding to the zero tracking threshold value
+     * @return double : a floating point number corresponding to the zero tracking threshold value
      *
      * On failure, throws an exception or returns Y_ZEROTRACKING_INVALID.
      */
@@ -306,9 +308,9 @@ class YWeighScale extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the weighing scale sensor
+     * @param string $func : a string that uniquely characterizes the weighing scale sensor
      *
-     * @return a YWeighScale object allowing you to drive the weighing scale sensor.
+     * @return YWeighScale : a YWeighScale object allowing you to drive the weighing scale sensor.
      */
     public static function FindWeighScale($func)
     {
@@ -325,7 +327,7 @@ class YWeighScale extends YSensor
      * Adapts the load cell signal bias (stored in the corresponding genericSensor)
      * so that the current signal corresponds to a zero weight.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -338,10 +340,10 @@ class YWeighScale extends YSensor
      * Configures the load cell span parameters (stored in the corresponding genericSensor)
      * so that the current signal corresponds to the specified reference weight.
      *
-     * @param currWeight : reference weight presently on the load cell.
-     * @param maxWeight : maximum weight to be expectect on the load cell.
+     * @param double $currWeight : reference weight presently on the load cell.
+     * @param double $maxWeight : maximum weight to be expectect on the load cell.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -355,13 +357,13 @@ class YWeighScale extends YSensor
      * measured weight based on the compensation temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param tempValues : array of floating point numbers, corresponding to all
+     * @param double[] $tempValues : array of floating point numbers, corresponding to all
      *         temperatures for which an offset correction is specified.
-     * @param compValues : array of floating point numbers, corresponding to the offset correction
+     * @param double[] $compValues : array of floating point numbers, corresponding to the offset correction
      *         to apply for each of the temperature included in the first
      *         argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -412,13 +414,13 @@ class YWeighScale extends YSensor
      * set_offsetCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param tempValues : array of floating point numbers, that is filled by the function
+     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all temperatures for which an offset correction is specified.
-     * @param compValues : array of floating point numbers, that is filled by the function
+     * @param double[] $compValues : array of floating point numbers, that is filled by the function
      *         with the offset correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -456,13 +458,13 @@ class YWeighScale extends YSensor
      * measured weight based on the compensation temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param tempValues : array of floating point numbers, corresponding to all
+     * @param double[] $tempValues : array of floating point numbers, corresponding to all
      *         temperatures for which a span correction is specified.
-     * @param compValues : array of floating point numbers, corresponding to the span correction
+     * @param double[] $compValues : array of floating point numbers, corresponding to the span correction
      *         (in percents) to apply for each of the temperature included in the first
      *         argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -513,13 +515,13 @@ class YWeighScale extends YSensor
      * set_spanCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param tempValues : array of floating point numbers, that is filled by the function
+     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all temperatures for which an span correction is specified.
-     * @param compValues : array of floating point numbers, that is filled by the function
+     * @param double[] $compValues : array of floating point numbers, that is filled by the function
      *         with the span correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -585,7 +587,7 @@ class YWeighScale extends YSensor
     /**
      * Continues the enumeration of weighing scale sensors started using yFirstWeighScale().
      *
-     * @return a pointer to a YWeighScale object, corresponding to
+     * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
      *         a weighing scale sensor currently online, or a null pointer
      *         if there are no more weighing scale sensors to enumerate.
      */
@@ -602,7 +604,7 @@ class YWeighScale extends YSensor
      * Use the method YWeighScale.nextWeighScale() to iterate on
      * next weighing scale sensors.
      *
-     * @return a pointer to a YWeighScale object, corresponding to
+     * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
      *         the first weighing scale sensor currently online, or a null pointer
      *         if there are none.
      */
@@ -641,9 +643,9 @@ class YWeighScale extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the weighing scale sensor
+ * @param string $func : a string that uniquely characterizes the weighing scale sensor
  *
- * @return a YWeighScale object allowing you to drive the weighing scale sensor.
+ * @return YWeighScale : a YWeighScale object allowing you to drive the weighing scale sensor.
  */
 function yFindWeighScale($func)
 {
@@ -655,7 +657,7 @@ function yFindWeighScale($func)
  * Use the method YWeighScale.nextWeighScale() to iterate on
  * next weighing scale sensors.
  *
- * @return a pointer to a YWeighScale object, corresponding to
+ * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
  *         the first weighing scale sensor currently online, or a null pointer
  *         if there are none.
  */

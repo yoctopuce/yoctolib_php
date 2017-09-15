@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 27709 2017-06-01 12:37:26Z seb $
+ * $Id: yocto_compass.php 28427 2017-08-25 16:07:31Z seb $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -109,7 +109,7 @@ class YCompass extends YSensor
     /**
      * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
      *
-     * @return an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -129,9 +129,10 @@ class YCompass extends YSensor
      * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
      * frequency is lower, the device performs averaging.
      *
-     * @param newval : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
+     * (Yocto-3D-V2 only)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -156,7 +157,8 @@ class YCompass extends YSensor
     /**
      * Returns the magnetic heading, regardless of the configured bearing.
      *
-     * @return a floating point number corresponding to the magnetic heading, regardless of the configured bearing
+     * @return double : a floating point number corresponding to the magnetic heading, regardless of the
+     * configured bearing
      *
      * On failure, throws an exception or returns Y_MAGNETICHEADING_INVALID.
      */
@@ -195,9 +197,9 @@ class YCompass extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param func : a string that uniquely characterizes the compass
+     * @param string $func : a string that uniquely characterizes the compass
      *
-     * @return a YCompass object allowing you to drive the compass.
+     * @return YCompass : a YCompass object allowing you to drive the compass.
      */
     public static function FindCompass($func)
     {
@@ -225,7 +227,7 @@ class YCompass extends YSensor
     /**
      * Continues the enumeration of compasses started using yFirstCompass().
      *
-     * @return a pointer to a YCompass object, corresponding to
+     * @return YCompass : a pointer to a YCompass object, corresponding to
      *         a compass currently online, or a null pointer
      *         if there are no more compasses to enumerate.
      */
@@ -242,7 +244,7 @@ class YCompass extends YSensor
      * Use the method YCompass.nextCompass() to iterate on
      * next compasses.
      *
-     * @return a pointer to a YCompass object, corresponding to
+     * @return YCompass : a pointer to a YCompass object, corresponding to
      *         the first compass currently online, or a null pointer
      *         if there are none.
      */
@@ -281,9 +283,9 @@ class YCompass extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param func : a string that uniquely characterizes the compass
+ * @param string $func : a string that uniquely characterizes the compass
  *
- * @return a YCompass object allowing you to drive the compass.
+ * @return YCompass : a YCompass object allowing you to drive the compass.
  */
 function yFindCompass($func)
 {
@@ -295,7 +297,7 @@ function yFindCompass($func)
  * Use the method YCompass.nextCompass() to iterate on
  * next compasses.
  *
- * @return a pointer to a YCompass object, corresponding to
+ * @return YCompass : a pointer to a YCompass object, corresponding to
  *         the first compass currently online, or a null pointer
  *         if there are none.
  */
