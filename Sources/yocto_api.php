@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 28559 2017-09-15 15:01:38Z seb $
+ * $Id: yocto_api.php 28577 2017-09-18 16:19:12Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -291,7 +291,7 @@ class YTcpHub
             foreach ($ref as $key => $value) {
                 if (key_exists($key, $jzon)) {
                     $res[$key] = self::decodeJZON($jzon[$key], $value);
-                } else {
+                } else if (isset($jzon[$ofs])){
                     $res[$key] = self::decodeJZON($jzon[$ofs], $value);
                 }
                 $ofs++;
@@ -390,7 +390,7 @@ class YTcpHub
                             return YAPI_UNAUTHORIZED;
                         }
                     }
-                    if (isset($this->callbackCache['serial']) && !is_null(YAPI::$_jzonCacheDir) && key_exists('serial', $this->callbackCache)) {
+                    if (isset($this->callbackCache['serial']) && !is_null(YAPI::$_jzonCacheDir)) {
                         $jzonCacheDir = YAPI::$_jzonCacheDir;
                         $mergedCache = array();
                         $upToDate = true;
@@ -2688,7 +2688,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.28564";
+        return "1.10.28580";
     }
 
     /**
