@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_serialport.php 28668 2017-09-27 08:25:19Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
- * - - - - - - - - - License information: - - - - - - - - - 
+ * - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
@@ -24,7 +24,7 @@
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
- *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
  *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
@@ -38,9 +38,9 @@
  *
  *********************************************************************/
 
-//--- (YSerialPort return codes)
-//--- (end of YSerialPort return codes)
-//--- (YSerialPort definitions)
+//--- (generated code: YSerialPort return codes)
+//--- (end of generated code: YSerialPort return codes)
+//--- (generated code: YSerialPort definitions)
 if(!defined('Y_VOLTAGELEVEL_OFF'))           define('Y_VOLTAGELEVEL_OFF',          0);
 if(!defined('Y_VOLTAGELEVEL_TTL3V'))         define('Y_VOLTAGELEVEL_TTL3V',        1);
 if(!defined('Y_VOLTAGELEVEL_TTL3VR'))        define('Y_VOLTAGELEVEL_TTL3VR',       2);
@@ -60,9 +60,61 @@ if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',     
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',        YAPI_INVALID_STRING);
-//--- (end of YSerialPort definitions)
+//--- (end of generated code: YSerialPort definitions)
 
-//--- (YSerialPort declaration)
+
+//--- (generated code: YSnoopingRecord definitions)
+//--- (end of generated code: YSnoopingRecord definitions)
+
+//--- (generated code: YSnoopingRecord declaration)
+/**
+ * YSnoopingRecord Class: Description of a message intercepted
+ *
+ *
+ */
+class YSnoopingRecord
+{
+    //--- (end of generated code: YSnoopingRecord declaration)
+
+    //--- (generated code: YSnoopingRecord attributes)
+    protected $_tim                      = 0;                            // int
+    protected $_dir                      = 0;                            // int
+    protected $_msg                      = "";                           // str
+    //--- (end of generated code: YSnoopingRecord attributes)
+
+    function __construct($str_json)
+    {
+        //--- (generated code: YSnoopingRecord constructor)
+        //--- (end of generated code: YSnoopingRecord constructor)
+
+        $loadval = json_decode($str_json, TRUE);
+        $this->_tim = $loadval['t'];
+        $this->_dir = $loadval['m'][0] == '<' ? 1 : 0;
+        $this->_msg = substr($loadval['m'], 1);
+    }
+
+    //--- (generated code: YSnoopingRecord implementation)
+
+    public function get_time()
+    {
+        return $this->_tim;
+    }
+
+    public function get_direction()
+    {
+        return $this->_dir;
+    }
+
+    public function get_message()
+    {
+        return $this->_msg;
+    }
+
+    //--- (end of generated code: YSnoopingRecord implementation)
+}
+
+
+//--- (generated code: YSerialPort declaration)
 /**
  * YSerialPort Class: SerialPort function interface
  *
@@ -93,9 +145,9 @@ class YSerialPort extends YFunction
     const VOLTAGELEVEL_INVALID           = -1;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
     const SERIALMODE_INVALID             = YAPI_INVALID_STRING;
-    //--- (end of YSerialPort declaration)
+    //--- (end of generated code: YSerialPort declaration)
 
-    //--- (YSerialPort attributes)
+    //--- (generated code: YSerialPort attributes)
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
@@ -111,18 +163,18 @@ class YSerialPort extends YFunction
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
     protected $_rxbuffptr                = 0;                            // int
-    //--- (end of YSerialPort attributes)
+    //--- (end of generated code: YSerialPort attributes)
 
     function __construct($str_func)
     {
-        //--- (YSerialPort constructor)
+        //--- (generated code: YSerialPort constructor)
         parent::__construct($str_func);
         $this->_className = 'SerialPort';
 
-        //--- (end of YSerialPort constructor)
+        //--- (end of generated code: YSerialPort constructor)
     }
 
-    //--- (YSerialPort implementation)
+    //--- (generated code: YSerialPort implementation)
 
     function _parseAttr($name, $val)
     {
@@ -754,7 +806,6 @@ class YSerialPort extends YFunction
         // $mult                   is a int;
         // $endpos                 is a int;
         // $res                    is a int;
-
         // first check if we have the requested character in the look-ahead buffer
         $bufflen = strlen($this->_rxbuff);
         if (($this->_rxptr >= $this->_rxbuffptr) && ($this->_rxptr < $this->_rxbuffptr+$bufflen)) {
@@ -762,7 +813,6 @@ class YSerialPort extends YFunction
             $this->_rxptr = $this->_rxptr + 1;
             return $res;
         }
-
         // try to preload more than one byte to speed-up byte-per-byte access
         $currpos = $this->_rxptr;
         $reqlen = 1024;
@@ -789,7 +839,6 @@ class YSerialPort extends YFunction
         }
         // still mixed, need to process character by character
         $this->_rxptr = $currpos;
-
 
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=1', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
@@ -1209,6 +1258,49 @@ class YSerialPort extends YFunction
         $buff = $this->_download('cts.txt');
         if (!(strlen($buff) == 1)) return $this->_throw( YAPI_IO_ERROR, 'invalid CTS reply',YAPI_IO_ERROR);
         $res = ord($buff[0]) - 48;
+        return $res;
+    }
+
+    /**
+     * Retrieves messages (both direction) in the serial port buffer, starting at current position.
+     * This function will only compare and return printable characters in the message strings.
+     * Binary protocols are handled as hexadecimal strings.
+     *
+     * If no message is found, the search waits for one up to the specified maximum timeout
+     * (in milliseconds).
+     *
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
+     *         in the receive buffer.
+     *
+     * @return YSnoopingRecord[] : an array of YSnoopingRecord objects containing the messages found, if any.
+     *         Binary messages are converted to hexadecimal representation.
+     *
+     * On failure, throws an exception or returns an empty array.
+     */
+    public function snoopMessages($maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        $res = Array();         // YSnoopingRecordArr;
+        // $idx                    is a int;
+
+        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&t=0', $this->_rxptr, $maxWait);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return $res;
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        $idx = 0;
+        while ($idx < $msglen) {
+            $res[] = new YSnoopingRecord($msgarr[$idx]);
+            $idx = $idx + 1;
+        }
         return $res;
     }
 
@@ -1827,11 +1919,11 @@ class YSerialPort extends YFunction
         return self::FindSerialPort($next_hwid);
     }
 
-    //--- (end of YSerialPort implementation)
+    //--- (end of generated code: YSerialPort implementation)
 
 };
 
-//--- (SerialPort functions)
+//--- (generated code: SerialPort functions)
 
 /**
  * Retrieves a serial port for a given identifier.
@@ -1879,5 +1971,5 @@ function yFirstSerialPort()
     return YSerialPort::FirstSerialPort();
 }
 
-//--- (end of SerialPort functions)
+//--- (end of generated code: SerialPort functions)
 ?>

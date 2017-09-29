@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_spiport.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_spiport.php 28655 2017-09-26 15:55:10Z seb $
  *
  * Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -831,7 +831,6 @@ class YSpiPort extends YFunction
         // $mult                   is a int;
         // $endpos                 is a int;
         // $res                    is a int;
-
         // first check if we have the requested character in the look-ahead buffer
         $bufflen = strlen($this->_rxbuff);
         if (($this->_rxptr >= $this->_rxbuffptr) && ($this->_rxptr < $this->_rxbuffptr+$bufflen)) {
@@ -839,7 +838,6 @@ class YSpiPort extends YFunction
             $this->_rxptr = $this->_rxptr + 1;
             return $res;
         }
-
         // try to preload more than one byte to speed-up byte-per-byte access
         $currpos = $this->_rxptr;
         $reqlen = 1024;
@@ -866,7 +864,6 @@ class YSpiPort extends YFunction
         }
         // still mixed, need to process character by character
         $this->_rxptr = $currpos;
-
 
         $buff = $this->_download(sprintf('rxdata.bin?pos=%d&len=1', $this->_rxptr));
         $bufflen = strlen($buff) - 1;
