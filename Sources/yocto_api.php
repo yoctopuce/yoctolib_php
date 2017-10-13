@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 28577 2017-09-18 16:19:12Z seb $
+ * $Id: yocto_api.php 28743 2017-10-03 08:13:15Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1499,8 +1499,8 @@ class YAPI
     const INVALID_DOUBLE    = YAPI_INVALID_DOUBLE;
     const INVALID_LONG      = YAPI_INVALID_LONG;
 
-//--- (generated code: return codes)
-    const SUCCESS               = 0;       // everything worked allright
+//--- (generated code: YFunction return codes)
+    const SUCCESS               = 0;       // everything worked all right
     const NOT_INITIALIZED       = -1;      // call yInitAPI() first !
     const INVALID_ARGUMENT      = -2;      // one of the arguments passed to the function is invalid
     const NOT_SUPPORTED         = -3;      // the operation attempted is (currently) not supported
@@ -1510,11 +1510,12 @@ class YAPI
     const TIMEOUT               = -7;      // the device took too long to provide an answer
     const IO_ERROR              = -8;      // there was an I/O problem while talking to the device
     const NO_MORE_DATA          = -9;      // there is no more data to read from
-    const EXHAUSTED             = -10;     // you have run out of a limited ressource, check the documentation
-    const DOUBLE_ACCES          = -11;     // you have two process that try to acces to the same device
+    const EXHAUSTED             = -10;     // you have run out of a limited resource, check the documentation
+    const DOUBLE_ACCES          = -11;     // you have two process that try to access to the same device
     const UNAUTHORIZED          = -12;     // unauthorized access to password-protected device
     const RTC_NOT_READY         = -13;     // real-time clock has not been initialized (or time was lost)
-//--- (end of generated code: return codes)
+    const FILE_NOT_FOUND        = -14;     // the file is not found
+//--- (end of generated code: YFunction return codes)
 
     // yInitAPI constants (not really useful in JavaScript)
     const DETECT_NONE           = 0;
@@ -2688,7 +2689,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.28707";
+        return "1.10.28878";
     }
 
     /**
@@ -5790,11 +5791,11 @@ class YSensor extends YFunction
 
     function __construct($str_func)
     {
-        //--- (YSensor constructor)
+        //--- (generated code: YSensor constructor)
         parent::__construct($str_func);
         $this->_className = 'Sensor';
 
-        //--- (end of YSensor constructor)
+        //--- (end of generated code: YSensor constructor)
     }
 
     public function _getTimedReportCallback()
@@ -8921,7 +8922,7 @@ for($yHdlrIdx = 1; $yHdlrIdx <= 20; $yHdlrIdx++) {
 yRegisterCalibrationHandler(YOCTO_CALIB_TYPE_OFS, 'yLinearCalibrationHandler');
 
 
-//--- (generated code: Function functions)
+//--- (generated code: YFunction functions)
 
 /**
  * Retrieves a function for a given identifier.
@@ -8963,10 +8964,10 @@ function yFirstFunction()
     return YFunction::FirstFunction();
 }
 
-//--- (end of generated code: Function functions)
+//--- (end of generated code: YFunction functions)
 
 
-//--- (generated code: Sensor functions)
+//--- (generated code: YSensor functions)
 
 /**
  * Retrieves a sensor for a given identifier.
@@ -9014,9 +9015,9 @@ function yFirstSensor()
     return YSensor::FirstSensor();
 }
 
-//--- (end of generated code: Sensor functions)
+//--- (end of generated code: YSensor functions)
 
-//--- (generated code: Module functions)
+//--- (generated code: YModule functions)
 
 /**
  * Allows you to find a module from its serial number or from its logical name.
@@ -9058,7 +9059,7 @@ function yFirstModule()
     return YModule::FirstModule();
 }
 
-//--- (end of generated code: Module functions)
+//--- (end of generated code: YModule functions)
 
 
 //--- (generated code: YDataLogger definitions)
@@ -9805,7 +9806,7 @@ class YDataLogger extends YFunction
     //--- (end of generated code: YDataLogger implementation)
 };
 
-//--- (generated code: DataLogger functions)
+//--- (generated code: YDataLogger functions)
 
 /**
  * Retrieves a data logger for a given identifier.
@@ -9853,5 +9854,5 @@ function yFirstDataLogger()
     return YDataLogger::FirstDataLogger();
 }
 
-//--- (end of generated code: DataLogger functions)
+//--- (end of generated code: YDataLogger functions)
 ?>

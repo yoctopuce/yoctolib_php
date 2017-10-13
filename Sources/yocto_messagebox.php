@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_messagebox.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -854,7 +854,7 @@ class YSms
         // $wpos                   is a int;
         // $carry                  is a int;
         // $nbits                  is a int;
-        // $$thisb                 is a int;
+        // $thi_b                  is a int;
         // nbits = number of bits in carry
         $udsize = $this->udataSize();
         $udhsize = strlen($this->_udh);
@@ -896,11 +896,11 @@ class YSms
                     $carry = ord($this->_udata[$i]);
                     $nbits = 7;
                 } else {
-                    $$thisb = ord($this->_udata[$i]);
-                    $res[$wpos] = pack('C', (($carry) | (((((($$thisb) << ($nbits)))) & (255)))));
+                    $thi_b = ord($this->_udata[$i]);
+                    $res[$wpos] = pack('C', (($carry) | (((((($thi_b) << ($nbits)))) & (255)))));
                     $wpos = $wpos + 1;
                     $nbits = $nbits - 1;
-                    $carry = (($$thisb) >> ((7 - $nbits)));
+                    $carry = (($thi_b) >> ((7 - $nbits)));
                 }
                 $i = $i + 1;
             }
@@ -1119,7 +1119,7 @@ class YSms
         // $i                      is a int;
         // $carry                  is a int;
         // $nbits                  is a int;
-        // $$thisb                 is a int;
+        // $thi_b                  is a int;
         $this->_pdu = $pdu;
         $this->_npdu = 1;
         // parse meta-data
@@ -1180,9 +1180,9 @@ class YSms
                 $udhlen = intVal(((8 + 8*$udhsize + 6)) / (7));
                 $nbits = 7*$udhlen - 8 - 8*$udhsize;
                 if ($nbits > 0) {
-                    $$thisb = ord($pdu[$rpos]);
+                    $thi_b = ord($pdu[$rpos]);
                     $rpos = $rpos + 1;
-                    $carry = (($$thisb) >> ($nbits));
+                    $carry = (($thi_b) >> ($nbits));
                     $nbits = 8 - $nbits;
                 }
             } else {
@@ -1204,10 +1204,10 @@ class YSms
                     $carry = 0;
                     $nbits = 0;
                 } else {
-                    $$thisb = ord($pdu[$rpos]);
+                    $thi_b = ord($pdu[$rpos]);
                     $rpos = $rpos + 1;
-                    $this->_udata[$i] = pack('C', (($carry) | (((((($$thisb) << ($nbits)))) & (127)))));
-                    $carry = (($$thisb) >> ((7 - $nbits)));
+                    $this->_udata[$i] = pack('C', (($carry) | (((((($thi_b) << ($nbits)))) & (127)))));
+                    $carry = (($thi_b) >> ((7 - $nbits)));
                     $nbits = $nbits + 1;
                 }
                 $i = $i + 1;
@@ -1270,9 +1270,9 @@ class YSms
 
 };
 
-//--- (generated code: Sms functions)
+//--- (generated code: YSms functions)
 
-//--- (end of generated code: Sms functions)
+//--- (end of generated code: YSms functions)
 
 //--- (generated code: YMessageBox return codes)
 //--- (end of generated code: YMessageBox return codes)
@@ -2188,7 +2188,7 @@ class YMessageBox extends YFunction
 
 };
 
-//--- (generated code: MessageBox functions)
+//--- (generated code: YMessageBox functions)
 
 /**
  * Retrieves a MessageBox interface for a given identifier.
@@ -2236,5 +2236,5 @@ function yFirstMessageBox()
     return YMessageBox::FirstMessageBox();
 }
 
-//--- (end of generated code: MessageBox functions)
+//--- (end of generated code: YMessageBox functions)
 ?>

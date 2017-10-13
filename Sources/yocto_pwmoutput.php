@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_pwmoutput.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
- * - - - - - - - - - License information: - - - - - - - - - 
+ * - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
@@ -24,7 +24,7 @@
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
- *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
  *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
@@ -560,7 +560,7 @@ class YPwmOutput extends YFunction
 
 };
 
-//--- (PwmOutput functions)
+//--- (YPwmOutput functions)
 
 /**
  * Retrieves a PWM for a given identifier.
@@ -608,5 +608,5 @@ function yFirstPwmOutput()
     return YPwmOutput::FirstPwmOutput();
 }
 
-//--- (end of PwmOutput functions)
+//--- (end of YPwmOutput functions)
 ?>

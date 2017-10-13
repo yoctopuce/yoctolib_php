@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 28668 2017-09-27 08:25:19Z seb $
+ * $Id: yocto_serialport.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -1923,7 +1923,7 @@ class YSerialPort extends YFunction
 
 };
 
-//--- (generated code: SerialPort functions)
+//--- (generated code: YSerialPort functions)
 
 /**
  * Retrieves a serial port for a given identifier.
@@ -1971,5 +1971,5 @@ function yFirstSerialPort()
     return YSerialPort::FirstSerialPort();
 }
 
-//--- (end of generated code: SerialPort functions)
+//--- (end of generated code: YSerialPort functions)
 ?>

@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_daisychain.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_daisychain.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements YDaisyChain, the high-level API for DaisyChain functions
  *
- * - - - - - - - - - License information: - - - - - - - - - 
+ * - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
@@ -24,7 +24,7 @@
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED 'AS IS' WITHOUT
- *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
  *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
@@ -265,7 +265,7 @@ class YDaisyChain extends YFunction
 
 };
 
-//--- (DaisyChain functions)
+//--- (YDaisyChain functions)
 
 /**
  * Retrieves a module chain for a given identifier.
@@ -313,5 +313,5 @@ function yFirstDaisyChain()
     return YDaisyChain::FirstDaisyChain();
 }
 
-//--- (end of DaisyChain functions)
+//--- (end of YDaisyChain functions)
 ?>

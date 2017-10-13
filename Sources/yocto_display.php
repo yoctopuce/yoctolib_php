@@ -1,36 +1,36 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_display.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
- * - - - - - - - - - License information: - - - - - - - - - 
+ * - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
  *  Yoctopuce Sarl (hereafter Licensor) grants to you a perpetual
  *  non-exclusive license to use, modify, copy and integrate this
- *  file into your software for the sole purpose of interfacing 
- *  with Yoctopuce products. 
+ *  file into your software for the sole purpose of interfacing
+ *  with Yoctopuce products.
  *
- *  You may reproduce and distribute copies of this file in 
+ *  You may reproduce and distribute copies of this file in
  *  source or object form, as long as the sole purpose of this
- *  code is to interface with Yoctopuce products. You must retain 
+ *  code is to interface with Yoctopuce products. You must retain
  *  this notice in the distributed source file.
  *
  *  You should refer to Yoctopuce General Terms and Conditions
- *  for additional information regarding your rights and 
+ *  for additional information regarding your rights and
  *  obligations.
  *
  *  THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
- *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING 
- *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS 
+ *  WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ *  WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS
  *  FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO
  *  EVENT SHALL LICENSOR BE LIABLE FOR ANY INCIDENTAL, SPECIAL,
- *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, 
- *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR 
- *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT 
+ *  INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA,
+ *  COST OF PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR
+ *  SERVICES, ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT
  *  LIMITED TO ANY DEFENSE THEREOF), ANY CLAIMS FOR INDEMNITY OR
  *  CONTRIBUTION, OR OTHER SIMILAR COSTS, WHETHER ASSERTED ON THE
  *  BASIS OF CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF
@@ -38,8 +38,10 @@
  *
  *********************************************************************/
 
-//--- (generated code: return codes)
-//--- (end of generated code: return codes)
+//--- (generated code: YDisplay return codes)
+//--- (end of generated code: YDisplay return codes)
+//--- (generated code: YDisplayLayer return codes)
+//--- (end of generated code: YDisplayLayer return codes)
 //--- (generated code: YDisplay definitions)
 if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
 if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
@@ -128,7 +130,7 @@ class YDisplayLayer
     }
 
     // internal function to flush any pending command for this layer
-    public function flush_now() 
+    public function flush_now()
     {
         $res = YAPI_SUCCESS;
         if($this->_cmdbuff != '') {
@@ -137,12 +139,12 @@ class YDisplayLayer
         }
         return $res;
     }
-    
+
     // internal function to send a state command for this layer
-    private function command_push($str_cmd) 
+    private function command_push($str_cmd)
     {
         $res = YAPI_SUCCESS;
-        
+
         if(strlen($this->_cmdbuff)+strlen($str_cmd) >= 100) {
             // force flush before, to prevent overflow
             $res = $this->flush_now();
@@ -150,7 +152,7 @@ class YDisplayLayer
         if($this->_cmdbuff=='') {
             // always prepend layer ID first
             $this->_cmdbuff = $this->_id;
-        } 
+        }
         $this->_cmdbuff .= $str_cmd;
         return $res;
     }
@@ -726,7 +728,7 @@ class YDisplay extends YFunction
         $this->_recording  = FALSE;
         $this->_sequence   = '';
     }
-    
+
     //--- (generated code: YDisplay implementation)
 
     function _parseAttr($name, $val)
@@ -1379,7 +1381,7 @@ class YDisplay extends YFunction
         }
         return YAPI_SUCCESS;
     }
-    
+
     public function resetHiddenLayerFlags()
     {
         if( !is_null($this->_allDisplayLayers)) {
@@ -1392,14 +1394,14 @@ class YDisplay extends YFunction
     public function sendCommand($str_cmd)
     {
         if(!$this->_recording) {
-            return $this->set_command($str_cmd); 
+            return $this->set_command($str_cmd);
         }
         $this->_sequence .= str_replace("\n", "\x0b", $str_cmd)."\n";
         return YAPI_SUCCESS;
     }
 };
 
-//--- (generated code: Display functions)
+//--- (generated code: YDisplay functions)
 
 /**
  * Retrieves a display for a given identifier.
@@ -1447,5 +1449,5 @@ function yFirstDisplay()
     return YDisplay::FirstDisplay();
 }
 
-//--- (end of generated code: Display functions)
+//--- (end of generated code: YDisplay functions)
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 28427 2017-08-25 16:07:31Z seb $
+ * $Id: yocto_cellular.php 28743 2017-10-03 08:13:15Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -117,9 +117,9 @@ class YCellRecord
 
 };
 
-//--- (generated code: CellRecord functions)
+//--- (generated code: YCellRecord functions)
 
-//--- (end of generated code: CellRecord functions)
+//--- (end of generated code: YCellRecord functions)
 
 //--- (generated code: YCellular return codes)
 //--- (end of generated code: YCellular return codes)
@@ -1151,7 +1151,7 @@ class YCellular extends YFunction
 
 };
 
-//--- (generated code: Cellular functions)
+//--- (generated code: YCellular functions)
 
 /**
  * Retrieves a cellular interface for a given identifier.
@@ -1199,5 +1199,5 @@ function yFirstCellular()
     return YCellular::FirstCellular();
 }
 
-//--- (end of generated code: Cellular functions)
+//--- (end of generated code: YCellular functions)
 ?>
