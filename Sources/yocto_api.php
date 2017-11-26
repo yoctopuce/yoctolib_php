@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_api.php 29240 2017-11-23 13:29:57Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -70,7 +70,7 @@ define('Y_FRIENDLYNAME_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_LOGICALNAME_INVALID'))        define('Y_LOGICALNAME_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_ADVERTISEDVALUE_INVALID'))    define('Y_ADVERTISEDVALUE_INVALID',   YAPI_INVALID_STRING);
 //--- (end of generated code: YFunction definitions)
-
+define('YAPI_HASH_BUF_SIZE', 28);
 //--- (generated code: YMeasure definitions)
 //--- (end of generated code: YMeasure definitions)
 if(!defined('Y_DATA_INVALID'))               define('Y_DATA_INVALID',              YAPI_INVALID_DOUBLE);
@@ -2689,7 +2689,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.28878";
+        return "1.10.29281";
     }
 
     /**
@@ -8383,6 +8383,7 @@ class YModule extends YFunction
         foreach($restoreLast as $each) {
             $this->_download($each);
         }
+        $this->clearCache();
         return YAPI_SUCCESS;
     }
 

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_colorledcluster.php 29186 2017-11-16 10:04:13Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -689,6 +689,7 @@ class YColorLedCluster extends YFunction
      * color codes. The first color code represents the target RGB value of the first LED,
      * the next color code represents the target value of the next LED, etc.
      *
+     * @param integer $ledIndex : index of the first LED which should be updated
      * @param Integer[] $rgbList : a list of target 24bit RGB codes, in the form 0xRRGGBB
      * @param delay   : transition duration in ms
      *
@@ -696,7 +697,7 @@ class YColorLedCluster extends YFunction
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function rgbArray_move($rgbList,$delay)
+    public function rgbArrayOfs_move($ledIndex,$rgbList,$delay)
     {
         // $listlen                is a int;
         // $buff                   is a bin;
@@ -714,7 +715,27 @@ class YColorLedCluster extends YFunction
             $idx = $idx + 1;
         }
 
-        $res = $this->_upload(sprintf('rgb:%d',$delay), $buff);
+        $res = $this->_upload(sprintf('rgb:%d:%d',$delay,$ledIndex), $buff);
+        return $res;
+    }
+
+    /**
+     * Sets up a smooth RGB color transition to the specified pixel-by-pixel list of RGB
+     * color codes. The first color code represents the target RGB value of the first LED,
+     * the next color code represents the target value of the next LED, etc.
+     *
+     * @param Integer[] $rgbList : a list of target 24bit RGB codes, in the form 0xRRGGBB
+     * @param delay   : transition duration in ms
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function rgbArray_move($rgbList,$delay)
+    {
+        // $res                    is a int;
+
+        $res = $this->rgbArrayOfs_move(0,$rgbList,$delay);
         return $res;
     }
 
@@ -783,6 +804,27 @@ class YColorLedCluster extends YFunction
      */
     public function hslArray_move($hslList,$delay)
     {
+        // $res                    is a int;
+
+        $res = $this->hslArrayOfs_move(0,$hslList, $delay);
+        return $res;
+    }
+
+    /**
+     * Sets up a smooth HSL color transition to the specified pixel-by-pixel list of HSL
+     * color codes. The first color code represents the target HSL value of the first LED,
+     * the second color code represents the target value of the second LED, etc.
+     *
+     * @param integer $ledIndex : index of the first LED which should be updated
+     * @param Integer[] $hslList : a list of target 24bit HSL codes, in the form 0xHHSSLL
+     * @param delay   : transition duration in ms
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function hslArrayOfs_move($ledIndex,$hslList,$delay)
+    {
         // $listlen                is a int;
         // $buff                   is a bin;
         // $idx                    is a int;
@@ -799,7 +841,7 @@ class YColorLedCluster extends YFunction
             $idx = $idx + 1;
         }
 
-        $res = $this->_upload(sprintf('hsl:%d',$delay), $buff);
+        $res = $this->_upload(sprintf('hsl:%d:%d',$delay,$ledIndex), $buff);
         return $res;
     }
 

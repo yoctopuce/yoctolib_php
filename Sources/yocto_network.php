@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_network.php 29077 2017-11-03 13:04:17Z seb $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -555,6 +555,8 @@ class YNetwork extends YFunction
      */
     public function set_userPassword($newval)
     {
+        if (strlen($newval) > YAPI_HASH_BUF_SIZE)
+            return $this->_throw(YAPI_INVALID_ARGUMENT,'Password too long :'.$newval);
         $rest_val = $newval;
         return $this->_setAttr("userPassword",$rest_val);
     }
@@ -595,6 +597,8 @@ class YNetwork extends YFunction
      */
     public function set_adminPassword($newval)
     {
+        if (strlen($newval) > YAPI_HASH_BUF_SIZE)
+            return $this->_throw(YAPI_INVALID_ARGUMENT,'Password too long :'.$newval);
         $rest_val = $newval;
         return $this->_setAttr("adminPassword",$rest_val);
     }
