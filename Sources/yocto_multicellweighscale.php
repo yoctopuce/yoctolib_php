@@ -1,9 +1,9 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 29472 2017-12-20 11:34:07Z mvuilleu $
+ * $Id: yocto_multicellweighscale.php 29478 2017-12-21 08:10:05Z seb $
  *
- * Implements YWeighScale, the high-level API for WeighScale functions
+ * Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
  * - - - - - - - - - License information: - - - - - - - - -
  *
@@ -38,33 +38,35 @@
  *
  *********************************************************************/
 
-//--- (YWeighScale return codes)
-//--- (end of YWeighScale return codes)
-//--- (YWeighScale definitions)
+//--- (YMultiCellWeighScale return codes)
+//--- (end of YMultiCellWeighScale return codes)
+//--- (YMultiCellWeighScale definitions)
 if(!defined('Y_EXCITATION_OFF'))             define('Y_EXCITATION_OFF',            0);
 if(!defined('Y_EXCITATION_DC'))              define('Y_EXCITATION_DC',             1);
 if(!defined('Y_EXCITATION_AC'))              define('Y_EXCITATION_AC',             2);
 if(!defined('Y_EXCITATION_INVALID'))         define('Y_EXCITATION_INVALID',        -1);
+if(!defined('Y_CELLCOUNT_INVALID'))          define('Y_CELLCOUNT_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_COMPTEMPADAPTRATIO_INVALID')) define('Y_COMPTEMPADAPTRATIO_INVALID', YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPTEMPAVG_INVALID'))        define('Y_COMPTEMPAVG_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPTEMPCHG_INVALID'))        define('Y_COMPTEMPCHG_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPENSATION_INVALID'))       define('Y_COMPENSATION_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZEROTRACKING_INVALID'))       define('Y_ZEROTRACKING_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
-//--- (end of YWeighScale definitions)
+//--- (end of YMultiCellWeighScale definitions)
 
-//--- (YWeighScale declaration)
+//--- (YMultiCellWeighScale declaration)
 /**
- * YWeighScale Class: WeighScale function interface
+ * YMultiCellWeighScale Class: MultiCellWeighScale function interface
  *
- * The YWeighScale class provides a weight measurement from a ratiometric load cell
+ * The YMultiCellWeighScale class provides a weight measurement from a set of ratiometric load cells
  * sensor. It can be used to control the bridge excitation parameters, in order to avoid
  * measure shifts caused by temperature variation in the electronics, and can also
  * automatically apply an additional correction factor based on temperature to
- * compensate for offsets in the load cell itself.
+ * compensate for offsets in the load cells themselves.
  */
-class YWeighScale extends YSensor
+class YMultiCellWeighScale extends YSensor
 {
+    const CELLCOUNT_INVALID              = YAPI_INVALID_UINT;
     const EXCITATION_OFF                 = 0;
     const EXCITATION_DC                  = 1;
     const EXCITATION_AC                  = 2;
@@ -75,9 +77,10 @@ class YWeighScale extends YSensor
     const COMPENSATION_INVALID           = YAPI_INVALID_DOUBLE;
     const ZEROTRACKING_INVALID           = YAPI_INVALID_DOUBLE;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
-    //--- (end of YWeighScale declaration)
+    //--- (end of YMultiCellWeighScale declaration)
 
-    //--- (YWeighScale attributes)
+    //--- (YMultiCellWeighScale attributes)
+    protected $_cellCount                = Y_CELLCOUNT_INVALID;          // UInt31
     protected $_excitation               = Y_EXCITATION_INVALID;         // ExcitationMode
     protected $_compTempAdaptRatio       = Y_COMPTEMPADAPTRATIO_INVALID; // MeasureVal
     protected $_compTempAvg              = Y_COMPTEMPAVG_INVALID;        // MeasureVal
@@ -85,22 +88,25 @@ class YWeighScale extends YSensor
     protected $_compensation             = Y_COMPENSATION_INVALID;       // MeasureVal
     protected $_zeroTracking             = Y_ZEROTRACKING_INVALID;       // MeasureVal
     protected $_command                  = Y_COMMAND_INVALID;            // Text
-    //--- (end of YWeighScale attributes)
+    //--- (end of YMultiCellWeighScale attributes)
 
     function __construct($str_func)
     {
-        //--- (YWeighScale constructor)
+        //--- (YMultiCellWeighScale constructor)
         parent::__construct($str_func);
-        $this->_className = 'WeighScale';
+        $this->_className = 'MultiCellWeighScale';
 
-        //--- (end of YWeighScale constructor)
+        //--- (end of YMultiCellWeighScale constructor)
     }
 
-    //--- (YWeighScale implementation)
+    //--- (YMultiCellWeighScale implementation)
 
     function _parseAttr($name, $val)
     {
         switch($name) {
+        case 'cellCount':
+            $this->_cellCount = intval($val);
+            return 1;
         case 'excitation':
             $this->_excitation = intval($val);
             return 1;
@@ -124,6 +130,40 @@ class YWeighScale extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns the number of load cells in use.
+     *
+     * @return integer : an integer corresponding to the number of load cells in use
+     *
+     * On failure, throws an exception or returns Y_CELLCOUNT_INVALID.
+     */
+    public function get_cellCount()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_CELLCOUNT_INVALID;
+            }
+        }
+        $res = $this->_cellCount;
+        return $res;
+    }
+
+    /**
+     * Changes the number of load cells in use.
+     *
+     * @param integer $newval : an integer corresponding to the number of load cells in use
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_cellCount($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("cellCount",$rest_val);
     }
 
     /**
@@ -318,7 +358,7 @@ class YWeighScale extends YSensor
     }
 
     /**
-     * Retrieves a weighing scale sensor for a given identifier.
+     * Retrieves a multi-cell weighing scale sensor for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -328,11 +368,11 @@ class YWeighScale extends YSensor
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the weighing scale sensor is online at the time
+     * This function does not require that the multi-cell weighing scale sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWeighScale.isOnline() to test if the weighing scale sensor is
+     * Use the method YMultiCellWeighScale.isOnline() to test if the multi-cell weighing scale sensor is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a weighing scale sensor by logical name, no error is notified: the first instance
+     * a multi-cell weighing scale sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -340,23 +380,24 @@ class YWeighScale extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the weighing scale sensor
+     * @param string $func : a string that uniquely characterizes the multi-cell weighing scale sensor
      *
-     * @return YWeighScale : a YWeighScale object allowing you to drive the weighing scale sensor.
+     * @return YMultiCellWeighScale : a YMultiCellWeighScale object allowing you to drive the multi-cell
+     * weighing scale sensor.
      */
-    public static function FindWeighScale($func)
+    public static function FindMultiCellWeighScale($func)
     {
-        // $obj                    is a YWeighScale;
-        $obj = YFunction::_FindFromCache('WeighScale', $func);
+        // $obj                    is a YMultiCellWeighScale;
+        $obj = YFunction::_FindFromCache('MultiCellWeighScale', $func);
         if ($obj == null) {
-            $obj = new YWeighScale($func);
-            YFunction::_AddToCache('WeighScale', $func, $obj);
+            $obj = new YMultiCellWeighScale($func);
+            YFunction::_AddToCache('MultiCellWeighScale', $func, $obj);
         }
         return $obj;
     }
 
     /**
-     * Adapts the load cell signal bias (stored in the corresponding genericSensor)
+     * Adapts the load cells signal bias (stored in the corresponding genericSensor)
      * so that the current signal corresponds to a zero weight.
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
@@ -369,7 +410,7 @@ class YWeighScale extends YSensor
     }
 
     /**
-     * Configures the load cell span parameters (stored in the corresponding genericSensor)
+     * Configures the load cells span parameters (stored in the corresponding genericSensors)
      * so that the current signal corresponds to the specified reference weight.
      *
      * @param double $currWeight : reference weight presently on the load cell.
@@ -384,236 +425,11 @@ class YWeighScale extends YSensor
         return $this->set_command(sprintf('S%d:%d', round(1000*$currWeight), round(1000*$maxWeight)));
     }
 
-    public function setCompensationTable($tableIndex,$tempValues,$compValues)
-    {
-        // $siz                    is a int;
-        // $res                    is a int;
-        // $idx                    is a int;
-        // $found                  is a int;
-        // $prev                   is a float;
-        // $curr                   is a float;
-        // $currComp               is a float;
-        // $idxTemp                is a float;
-        $siz = sizeof($tempValues);
-        if (!($siz != 1)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'thermal compensation table must have at least two points',YAPI_INVALID_ARGUMENT);
-        if (!($siz == sizeof($compValues))) return $this->_throw( YAPI_INVALID_ARGUMENT, 'table sizes mismatch',YAPI_INVALID_ARGUMENT);
+    public function cellCount()
+    { return $this->get_cellCount(); }
 
-        $res = $this->set_command(sprintf('%dZ', $tableIndex));
-        if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to reset thermal compensation table',YAPI_IO_ERROR);
-        // add records in growing temperature value
-        $found = 1;
-        $prev = -999999.0;
-        while ($found > 0) {
-            $found = 0;
-            $curr = 99999999.0;
-            $currComp = -999999.0;
-            $idx = 0;
-            while ($idx < $siz) {
-                $idxTemp = $tempValues[$idx];
-                if (($idxTemp > $prev) && ($idxTemp < $curr)) {
-                    $curr = $idxTemp;
-                    $currComp = $compValues[$idx];
-                    $found = 1;
-                }
-                $idx = $idx + 1;
-            }
-            if ($found > 0) {
-                $res = $this->set_command(sprintf('%dm%d:%d', $tableIndex, round(1000*$curr), round(1000*$currComp)));
-                if (!($res==YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to set thermal compensation table',YAPI_IO_ERROR);
-                $prev = $curr;
-            }
-        }
-        return YAPI_SUCCESS;
-    }
-
-    public function loadCompensationTable($tableIndex,&$tempValues,&$compValues)
-    {
-        // $id                     is a str;
-        // $bin_json               is a bin;
-        $paramlist = Array();   // strArr;
-        // $siz                    is a int;
-        // $idx                    is a int;
-        // $temp                   is a float;
-        // $comp                   is a float;
-
-        $id = $this->get_functionId();
-        $id = substr($id,  10, strlen($id) - 10);
-        $bin_json = $this->_download(sprintf('extra.json?page=%d',(4*intVal($id))+$tableIndex));
-        $paramlist = $this->_json_get_array($bin_json);
-        // convert all values to float and append records
-        $siz = ((sizeof($paramlist)) >> (1));
-        while(sizeof($tempValues) > 0) { array_pop($tempValues); };
-        while(sizeof($compValues) > 0) { array_pop($compValues); };
-        $idx = 0;
-        while ($idx < $siz) {
-            $temp = floatval($paramlist[2*$idx])/1000.0;
-            $comp = floatval($paramlist[2*$idx+1])/1000.0;
-            $tempValues[] = $temp;
-            $compValues[] = $comp;
-            $idx = $idx + 1;
-        }
-        return YAPI_SUCCESS;
-    }
-
-    /**
-     * Records a weight offset thermal compensation table, in order to automatically correct the
-     * measured weight based on the averaged compensation temperature.
-     * The weight correction will be applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, corresponding to all averaged
-     *         temperatures for which an offset correction is specified.
-     * @param double[] $compValues : array of floating point numbers, corresponding to the offset correction
-     *         to apply for each of the temperature included in the first
-     *         argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_offsetAvgCompensationTable($tempValues,$compValues)
-    {
-        return $this->setCompensationTable(0, $tempValues, $compValues);
-    }
-
-    /**
-     * Retrieves the weight offset thermal compensation table previously configured using the
-     * set_offsetAvgCompensationTable function.
-     * The weight correction is applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
-     *         with all averaged temperatures for which an offset correction is specified.
-     * @param double[] $compValues : array of floating point numbers, that is filled by the function
-     *         with the offset correction applied for each of the temperature
-     *         included in the first argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function loadOffsetAvgCompensationTable(&$tempValues,&$compValues)
-    {
-        return $this->loadCompensationTable(0, $tempValues, $compValues);
-    }
-
-    /**
-     * Records a weight offset thermal compensation table, in order to automatically correct the
-     * measured weight based on the variation of temperature.
-     * The weight correction will be applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, corresponding to temperature
-     *         variations for which an offset correction is specified.
-     * @param double[] $compValues : array of floating point numbers, corresponding to the offset correction
-     *         to apply for each of the temperature variation included in the first
-     *         argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_offsetChgCompensationTable($tempValues,$compValues)
-    {
-        return $this->setCompensationTable(1, $tempValues, $compValues);
-    }
-
-    /**
-     * Retrieves the weight offset thermal compensation table previously configured using the
-     * set_offsetChgCompensationTable function.
-     * The weight correction is applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
-     *         with all temperature variations for which an offset correction is specified.
-     * @param double[] $compValues : array of floating point numbers, that is filled by the function
-     *         with the offset correction applied for each of the temperature
-     *         variation included in the first argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function loadOffsetChgCompensationTable(&$tempValues,&$compValues)
-    {
-        return $this->loadCompensationTable(1, $tempValues, $compValues);
-    }
-
-    /**
-     * Records a weight span thermal compensation table, in order to automatically correct the
-     * measured weight based on the compensation temperature.
-     * The weight correction will be applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, corresponding to all averaged
-     *         temperatures for which a span correction is specified.
-     * @param double[] $compValues : array of floating point numbers, corresponding to the span correction
-     *         (in percents) to apply for each of the temperature included in the first
-     *         argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_spanAvgCompensationTable($tempValues,$compValues)
-    {
-        return $this->setCompensationTable(2, $tempValues, $compValues);
-    }
-
-    /**
-     * Retrieves the weight span thermal compensation table previously configured using the
-     * set_spanAvgCompensationTable function.
-     * The weight correction is applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
-     *         with all averaged temperatures for which an span correction is specified.
-     * @param double[] $compValues : array of floating point numbers, that is filled by the function
-     *         with the span correction applied for each of the temperature
-     *         included in the first argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function loadSpanAvgCompensationTable(&$tempValues,&$compValues)
-    {
-        return $this->loadCompensationTable(2, $tempValues, $compValues);
-    }
-
-    /**
-     * Records a weight span thermal compensation table, in order to automatically correct the
-     * measured weight based on the variation of temperature.
-     * The weight correction will be applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, corresponding to all variations of
-     *         temperatures for which a span correction is specified.
-     * @param double[] $compValues : array of floating point numbers, corresponding to the span correction
-     *         (in percents) to apply for each of the temperature variation included
-     *         in the first argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_spanChgCompensationTable($tempValues,$compValues)
-    {
-        return $this->setCompensationTable(3, $tempValues, $compValues);
-    }
-
-    /**
-     * Retrieves the weight span thermal compensation table previously configured using the
-     * set_spanChgCompensationTable function.
-     * The weight correction is applied by linear interpolation between specified points.
-     *
-     * @param double[] $tempValues : array of floating point numbers, that is filled by the function
-     *         with all variation of temperature for which an span correction is specified.
-     * @param double[] $compValues : array of floating point numbers, that is filled by the function
-     *         with the span correction applied for each of variation of temperature
-     *         included in the first argument, index by index.
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function loadSpanChgCompensationTable(&$tempValues,&$compValues)
-    {
-        return $this->loadCompensationTable(3, $tempValues, $compValues);
-    }
+    public function setCellCount($newval)
+    { return $this->set_cellCount($newval); }
 
     public function excitation()
     { return $this->get_excitation(); }
@@ -649,43 +465,43 @@ class YWeighScale extends YSensor
     { return $this->set_command($newval); }
 
     /**
-     * Continues the enumeration of weighing scale sensors started using yFirstWeighScale().
+     * Continues the enumeration of multi-cell weighing scale sensors started using yFirstMultiCellWeighScale().
      *
-     * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
-     *         a weighing scale sensor currently online, or a null pointer
-     *         if there are no more weighing scale sensors to enumerate.
+     * @return YMultiCellWeighScale : a pointer to a YMultiCellWeighScale object, corresponding to
+     *         a multi-cell weighing scale sensor currently online, or a null pointer
+     *         if there are no more multi-cell weighing scale sensors to enumerate.
      */
-    public function nextWeighScale()
+    public function nextMultiCellWeighScale()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
         if($resolve->errorType != YAPI_SUCCESS) return null;
         $next_hwid = YAPI::getNextHardwareId($this->_className, $resolve->result);
         if($next_hwid == null) return null;
-        return self::FindWeighScale($next_hwid);
+        return self::FindMultiCellWeighScale($next_hwid);
     }
 
     /**
-     * Starts the enumeration of weighing scale sensors currently accessible.
-     * Use the method YWeighScale.nextWeighScale() to iterate on
-     * next weighing scale sensors.
+     * Starts the enumeration of multi-cell weighing scale sensors currently accessible.
+     * Use the method YMultiCellWeighScale.nextMultiCellWeighScale() to iterate on
+     * next multi-cell weighing scale sensors.
      *
-     * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
-     *         the first weighing scale sensor currently online, or a null pointer
+     * @return YMultiCellWeighScale : a pointer to a YMultiCellWeighScale object, corresponding to
+     *         the first multi-cell weighing scale sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstWeighScale()
-    {   $next_hwid = YAPI::getFirstHardwareId('WeighScale');
+    public static function FirstMultiCellWeighScale()
+    {   $next_hwid = YAPI::getFirstHardwareId('MultiCellWeighScale');
         if($next_hwid == null) return null;
-        return self::FindWeighScale($next_hwid);
+        return self::FindMultiCellWeighScale($next_hwid);
     }
 
-    //--- (end of YWeighScale implementation)
+    //--- (end of YMultiCellWeighScale implementation)
 
 };
 
-//--- (YWeighScale functions)
+//--- (YMultiCellWeighScale functions)
 
 /**
- * Retrieves a weighing scale sensor for a given identifier.
+ * Retrieves a multi-cell weighing scale sensor for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -695,11 +511,11 @@ class YWeighScale extends YSensor
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the weighing scale sensor is online at the time
+ * This function does not require that the multi-cell weighing scale sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YWeighScale.isOnline() to test if the weighing scale sensor is
+ * Use the method YMultiCellWeighScale.isOnline() to test if the multi-cell weighing scale sensor is
  * indeed online at a given time. In case of ambiguity when looking for
- * a weighing scale sensor by logical name, no error is notified: the first instance
+ * a multi-cell weighing scale sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -707,28 +523,29 @@ class YWeighScale extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the weighing scale sensor
+ * @param string $func : a string that uniquely characterizes the multi-cell weighing scale sensor
  *
- * @return YWeighScale : a YWeighScale object allowing you to drive the weighing scale sensor.
+ * @return YMultiCellWeighScale : a YMultiCellWeighScale object allowing you to drive the multi-cell
+ * weighing scale sensor.
  */
-function yFindWeighScale($func)
+function yFindMultiCellWeighScale($func)
 {
-    return YWeighScale::FindWeighScale($func);
+    return YMultiCellWeighScale::FindMultiCellWeighScale($func);
 }
 
 /**
- * Starts the enumeration of weighing scale sensors currently accessible.
- * Use the method YWeighScale.nextWeighScale() to iterate on
- * next weighing scale sensors.
+ * Starts the enumeration of multi-cell weighing scale sensors currently accessible.
+ * Use the method YMultiCellWeighScale.nextMultiCellWeighScale() to iterate on
+ * next multi-cell weighing scale sensors.
  *
- * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
- *         the first weighing scale sensor currently online, or a null pointer
+ * @return YMultiCellWeighScale : a pointer to a YMultiCellWeighScale object, corresponding to
+ *         the first multi-cell weighing scale sensor currently online, or a null pointer
  *         if there are none.
  */
-function yFirstWeighScale()
+function yFirstMultiCellWeighScale()
 {
-    return YWeighScale::FirstWeighScale();
+    return YMultiCellWeighScale::FirstMultiCellWeighScale();
 }
 
-//--- (end of YWeighScale functions)
+//--- (end of YMultiCellWeighScale functions)
 ?>

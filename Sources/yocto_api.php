@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 29240 2017-11-23 13:29:57Z seb $
+ * $Id: yocto_api.php 29466 2017-12-20 08:11:49Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -2689,7 +2689,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.29281";
+        return "1.10.29543";
     }
 
     /**
@@ -5890,7 +5890,8 @@ class YSensor extends YFunction
     }
 
     /**
-     * Changes the recorded minimal value observed.
+     * Changes the recorded minimal value observed. Can be used to reset the value returned
+     * by get_lowestValue().
      *
      * @param double $newval : a floating point number corresponding to the recorded minimal value observed
      *
@@ -5906,6 +5907,7 @@ class YSensor extends YFunction
 
     /**
      * Returns the minimal value observed for the measure since the device was started.
+     * Can be reset to an arbitrary value thanks to set_lowestValue().
      *
      * @return double : a floating point number corresponding to the minimal value observed for the
      * measure since the device was started
@@ -5926,7 +5928,8 @@ class YSensor extends YFunction
     }
 
     /**
-     * Changes the recorded maximal value observed.
+     * Changes the recorded maximal value observed. Can be used to reset the value returned
+     * by get_lowestValue().
      *
      * @param double $newval : a floating point number corresponding to the recorded maximal value observed
      *
@@ -5942,6 +5945,7 @@ class YSensor extends YFunction
 
     /**
      * Returns the maximal value observed for the measure since the device was started.
+     * Can be reset to an arbitrary value thanks to set_highestValue().
      *
      * @return double : a floating point number corresponding to the maximal value observed for the
      * measure since the device was started

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_multiaxiscontroller.php 29507 2017-12-28 14:14:56Z mvuilleu $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -217,7 +217,19 @@ class YMultiAxisController extends YFunction
 
     public function sendCommand($command)
     {
-        return $this->set_command($command);
+        // $url                    is a str;
+        // $retBin                 is a bin;
+        // $res                    is a int;
+        $url = sprintf('cmd.txt?X=%s', $command);
+        //may throw an exception
+        $retBin = $this->_download($url);
+        $res = ord($retBin[0]);
+        if ($res == 49) {
+            if (!($res == 48)) return $this->_throw( YAPI_DEVICE_BUSY, 'Motor command pipeline is full, try again later',YAPI_DEVICE_BUSY);
+        } else {
+            if (!($res == 48)) return $this->_throw( YAPI_IO_ERROR, 'Motor command failed permanently',YAPI_IO_ERROR);
+        }
+        return YAPI_SUCCESS;
     }
 
     /**
