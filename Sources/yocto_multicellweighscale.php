@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multicellweighscale.php 29478 2017-12-21 08:10:05Z seb $
+ * $Id: yocto_multicellweighscale.php 29661 2018-01-18 13:32:13Z mvuilleu $
  *
  * Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
@@ -130,6 +130,23 @@ class YMultiCellWeighScale extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Changes the measuring unit for the weight.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param string $newval : a string corresponding to the measuring unit for the weight
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_unit($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("unit",$rest_val);
     }
 
     /**
@@ -424,6 +441,9 @@ class YMultiCellWeighScale extends YSensor
     {
         return $this->set_command(sprintf('S%d:%d', round(1000*$currWeight), round(1000*$maxWeight)));
     }
+
+    public function setUnit($newval)
+    { return $this->set_unit($newval); }
 
     public function cellCount()
     { return $this->get_cellCount(); }

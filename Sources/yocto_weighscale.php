@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 29472 2017-12-20 11:34:07Z mvuilleu $
+ * $Id: yocto_weighscale.php 29661 2018-01-18 13:32:13Z mvuilleu $
  *
  * Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -124,6 +124,23 @@ class YWeighScale extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Changes the measuring unit for the weight.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param string $newval : a string corresponding to the measuring unit for the weight
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_unit($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("unit",$rest_val);
     }
 
     /**
@@ -614,6 +631,9 @@ class YWeighScale extends YSensor
     {
         return $this->loadCompensationTable(3, $tempValues, $compValues);
     }
+
+    public function setUnit($newval)
+    { return $this->set_unit($newval); }
 
     public function excitation()
     { return $this->get_excitation(); }

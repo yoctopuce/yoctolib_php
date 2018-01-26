@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_proximity.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_proximity.php 29767 2018-01-26 08:53:27Z seb $
  *
  * Implements YProximity, the high-level API for Proximity functions
  *
@@ -50,6 +50,9 @@ if(!defined('Y_PROXIMITYREPORTMODE_PULSECOUNT')) define('Y_PROXIMITYREPORTMODE_P
 if(!defined('Y_PROXIMITYREPORTMODE_INVALID')) define('Y_PROXIMITYREPORTMODE_INVALID', -1);
 if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_DETECTIONTHRESHOLD_INVALID')) define('Y_DETECTIONTHRESHOLD_INVALID', YAPI_INVALID_UINT);
+if(!defined('Y_DETECTIONHYSTERESIS_INVALID')) define('Y_DETECTIONHYSTERESIS_INVALID', YAPI_INVALID_UINT);
+if(!defined('Y_PRESENCEMINTIME_INVALID'))    define('Y_PRESENCEMINTIME_INVALID',   YAPI_INVALID_UINT);
+if(!defined('Y_REMOVALMINTIME_INVALID'))     define('Y_REMOVALMINTIME_INVALID',    YAPI_INVALID_UINT);
 if(!defined('Y_LASTTIMEAPPROACHED_INVALID')) define('Y_LASTTIMEAPPROACHED_INVALID', YAPI_INVALID_LONG);
 if(!defined('Y_LASTTIMEREMOVED_INVALID'))    define('Y_LASTTIMEREMOVED_INVALID',   YAPI_INVALID_LONG);
 if(!defined('Y_PULSECOUNTER_INVALID'))       define('Y_PULSECOUNTER_INVALID',      YAPI_INVALID_LONG);
@@ -70,6 +73,9 @@ class YProximity extends YSensor
 {
     const SIGNALVALUE_INVALID            = YAPI_INVALID_DOUBLE;
     const DETECTIONTHRESHOLD_INVALID     = YAPI_INVALID_UINT;
+    const DETECTIONHYSTERESIS_INVALID    = YAPI_INVALID_UINT;
+    const PRESENCEMINTIME_INVALID        = YAPI_INVALID_UINT;
+    const REMOVALMINTIME_INVALID         = YAPI_INVALID_UINT;
     const ISPRESENT_FALSE                = 0;
     const ISPRESENT_TRUE                 = 1;
     const ISPRESENT_INVALID              = -1;
@@ -86,6 +92,9 @@ class YProximity extends YSensor
     //--- (YProximity attributes)
     protected $_signalValue              = Y_SIGNALVALUE_INVALID;        // MeasureVal
     protected $_detectionThreshold       = Y_DETECTIONTHRESHOLD_INVALID; // UInt31
+    protected $_detectionHysteresis      = Y_DETECTIONHYSTERESIS_INVALID; // UInt31
+    protected $_presenceMinTime          = Y_PRESENCEMINTIME_INVALID;    // UInt31
+    protected $_removalMinTime           = Y_REMOVALMINTIME_INVALID;     // UInt31
     protected $_isPresent                = Y_ISPRESENT_INVALID;          // Bool
     protected $_lastTimeApproached       = Y_LASTTIMEAPPROACHED_INVALID; // Time
     protected $_lastTimeRemoved          = Y_LASTTIMEREMOVED_INVALID;    // Time
@@ -113,6 +122,15 @@ class YProximity extends YSensor
             return 1;
         case 'detectionThreshold':
             $this->_detectionThreshold = intval($val);
+            return 1;
+        case 'detectionHysteresis':
+            $this->_detectionHysteresis = intval($val);
+            return 1;
+        case 'presenceMinTime':
+            $this->_presenceMinTime = intval($val);
+            return 1;
+        case 'removalMinTime':
+            $this->_removalMinTime = intval($val);
             return 1;
         case 'isPresent':
             $this->_isPresent = intval($val);
@@ -194,6 +212,120 @@ class YProximity extends YSensor
     {
         $rest_val = strval($newval);
         return $this->_setAttr("detectionThreshold",$rest_val);
+    }
+
+    /**
+     * Returns the hysteresis used to determine the logical state of the proximity sensor, when considered
+     * as a binary input (on/off).
+     *
+     * @return integer : an integer corresponding to the hysteresis used to determine the logical state of
+     * the proximity sensor, when considered
+     *         as a binary input (on/off)
+     *
+     * On failure, throws an exception or returns Y_DETECTIONHYSTERESIS_INVALID.
+     */
+    public function get_detectionHysteresis()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_DETECTIONHYSTERESIS_INVALID;
+            }
+        }
+        $res = $this->_detectionHysteresis;
+        return $res;
+    }
+
+    /**
+     * Changes the hysteresis used to determine the logical state of the proximity sensor, when considered
+     * as a binary input (on/off).
+     *
+     * @param integer $newval : an integer corresponding to the hysteresis used to determine the logical
+     * state of the proximity sensor, when considered
+     *         as a binary input (on/off)
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_detectionHysteresis($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("detectionHysteresis",$rest_val);
+    }
+
+    /**
+     * Returns the minimal detection duration before signaling a presence event. Any shorter detection is
+     * considered as noise or bounce (false positive) and filtered out.
+     *
+     * @return integer : an integer corresponding to the minimal detection duration before signaling a presence event
+     *
+     * On failure, throws an exception or returns Y_PRESENCEMINTIME_INVALID.
+     */
+    public function get_presenceMinTime()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_PRESENCEMINTIME_INVALID;
+            }
+        }
+        $res = $this->_presenceMinTime;
+        return $res;
+    }
+
+    /**
+     * Changes the minimal detection duration before signaling a presence event. Any shorter detection is
+     * considered as noise or bounce (false positive) and filtered out.
+     *
+     * @param integer $newval : an integer corresponding to the minimal detection duration before
+     * signaling a presence event
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_presenceMinTime($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("presenceMinTime",$rest_val);
+    }
+
+    /**
+     * Returns the minimal detection duration before signaling a removal event. Any shorter detection is
+     * considered as noise or bounce (false positive) and filtered out.
+     *
+     * @return integer : an integer corresponding to the minimal detection duration before signaling a removal event
+     *
+     * On failure, throws an exception or returns Y_REMOVALMINTIME_INVALID.
+     */
+    public function get_removalMinTime()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_REMOVALMINTIME_INVALID;
+            }
+        }
+        $res = $this->_removalMinTime;
+        return $res;
+    }
+
+    /**
+     * Changes the minimal detection duration before signaling a removal event. Any shorter detection is
+     * considered as noise or bounce (false positive) and filtered out.
+     *
+     * @param integer $newval : an integer corresponding to the minimal detection duration before
+     * signaling a removal event
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_removalMinTime($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("removalMinTime",$rest_val);
     }
 
     /**
@@ -407,6 +539,24 @@ class YProximity extends YSensor
 
     public function setDetectionThreshold($newval)
     { return $this->set_detectionThreshold($newval); }
+
+    public function detectionHysteresis()
+    { return $this->get_detectionHysteresis(); }
+
+    public function setDetectionHysteresis($newval)
+    { return $this->set_detectionHysteresis($newval); }
+
+    public function presenceMinTime()
+    { return $this->get_presenceMinTime(); }
+
+    public function setPresenceMinTime($newval)
+    { return $this->set_presenceMinTime($newval); }
+
+    public function removalMinTime()
+    { return $this->get_removalMinTime(); }
+
+    public function setRemovalMinTime($newval)
+    { return $this->set_removalMinTime($newval); }
 
     public function isPresent()
     { return $this->get_isPresent(); }
