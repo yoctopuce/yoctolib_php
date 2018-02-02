@@ -18,7 +18,7 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $sensor = yFindWeighScale("$serial.WeighScale");
+      $sensor = yFindWeighScale("$serial.weighScale1");
       if (!$sensor->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
@@ -32,7 +32,7 @@
       }
   }
   Print("Module to use: <input name='serial' value='$serial'><br>");
-  $sensor = yFindGenericSensor("$serial.WeighScale");
+  $sensor = yFindWeighScale("$serial.weighScale1");
 
   if($sensor->get_excitation() == Y_EXCITATION_OFF) {
       $sensor->set_excitation(Y_EXCITATION_AC);

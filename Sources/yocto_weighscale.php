@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 29661 2018-01-18 13:32:13Z mvuilleu $
+ * $Id: yocto_weighscale.php 29804 2018-01-30 18:05:21Z mvuilleu $
  *
  * Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -280,10 +280,11 @@ class YWeighScale extends YSensor
     }
 
     /**
-     * Changes the compensation temperature update rate, in percents.
+     * Changes the zero tracking threshold value. When this threshold is larger than
+     * zero, any measure under the threshold will automatically be ignored and the
+     * zero compensation will be updated.
      *
-     * @param double $newval : a floating point number corresponding to the compensation temperature
-     * update rate, in percents
+     * @param double $newval : a floating point number corresponding to the zero tracking threshold value
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

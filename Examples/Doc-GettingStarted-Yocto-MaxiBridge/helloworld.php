@@ -32,7 +32,7 @@
       }
   }
   Print("Module to use: <input name='serial' value='$serial'><br>");
-  $sensor = yFindGenericSensor("$serial.multiCellWeighScale");
+  $sensor = yFindMultiCellWeighScale("$serial.multiCellWeighScale");
 
   if($sensor->get_excitation() == Y_EXCITATION_OFF) {
       $sensor->set_excitation(Y_EXCITATION_AC);
