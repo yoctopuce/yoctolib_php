@@ -1,1 +1,2 @@
-- Add support and examples for Yocto-Bridge and Yocto-MaxiBridge
+- Add workaround for PHP bug (failed to open connection to tcp://127.0.0.1:4444/)
+- Fix typo in example

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 29466 2017-12-20 08:11:49Z mvuilleu $
+ * $Id: yocto_api.php 29949 2018-02-16 00:33:22Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -648,7 +648,12 @@ class YTcpReq
     {
         // for now, use client socket only since server sockets
         // for callbacks are not reliably available on a public server
-        return @stream_socket_client($this->hub->streamaddr, $errno, $errstr, $mstimeout / 1000);
+        $addr = $this->hub->streamaddr;
+        $pos = strpos($addr, '/', 9);
+        if($pos !== FALSE) {
+            $addr = substr($addr, 0, $pos);
+        }
+        return @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000);
     }
 
 
@@ -2689,7 +2694,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.29837";
+        return "1.10.30008";
     }
 
     /**
@@ -3140,7 +3145,7 @@ class YAPI
                     $meta = array();
                     foreach($lines as $line) {
                         if(preg_match('/([^:]+): (.+)/m', $line, $match)) {
-                            $match[1] = preg_replace('/(?<=^|[\x09\x20\x2D])./e', 'strtoupper("\0")', strtolower(trim($match[1])));
+                            $match[1] = preg_replace_callback('/(?<=^|[\x09\x20\x2D])./', function($matches) { return strtoupper($matches[0]); }, strtolower(trim($match[1])));
                             $meta[$match[1]] = trim($match[2]);
                         }
                     }

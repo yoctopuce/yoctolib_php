@@ -42,7 +42,7 @@
   $hvalue = $hum->get_currentValue();
   $pvalue = $press->get_currentValue();
   $tvalue = $temp->get_currentValue();
-  Print("Temperarature: $tvalue °C<br>");
+  Print("Temperature: $tvalue °C<br>");
   Print("Humidity: $hvalue %RH<br>");
   Print("Pressure: $pvalue hPa<br>");
   yFreeAPI();

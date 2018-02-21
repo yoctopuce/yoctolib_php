@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 28807 2017-10-12 09:46:33Z seb $
+ * $Id: yocto_pwminput.php 29968 2018-02-19 15:12:34Z seb $
  *
  * Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -49,6 +49,8 @@ if(!defined('Y_PWMREPORTMODE_PWM_PULSECOUNT')) define('Y_PWMREPORTMODE_PWM_PULSE
 if(!defined('Y_PWMREPORTMODE_PWM_CPS'))      define('Y_PWMREPORTMODE_PWM_CPS',     5);
 if(!defined('Y_PWMREPORTMODE_PWM_CPM'))      define('Y_PWMREPORTMODE_PWM_CPM',     6);
 if(!defined('Y_PWMREPORTMODE_PWM_STATE'))    define('Y_PWMREPORTMODE_PWM_STATE',   7);
+if(!defined('Y_PWMREPORTMODE_PWM_FREQ_CPS')) define('Y_PWMREPORTMODE_PWM_FREQ_CPS', 8);
+if(!defined('Y_PWMREPORTMODE_PWM_FREQ_CPM')) define('Y_PWMREPORTMODE_PWM_FREQ_CPM', 9);
 if(!defined('Y_PWMREPORTMODE_INVALID'))      define('Y_PWMREPORTMODE_INVALID',     -1);
 if(!defined('Y_DUTYCYCLE_INVALID'))          define('Y_DUTYCYCLE_INVALID',         YAPI_INVALID_DOUBLE);
 if(!defined('Y_PULSEDURATION_INVALID'))      define('Y_PULSEDURATION_INVALID',     YAPI_INVALID_DOUBLE);
@@ -85,6 +87,8 @@ class YPwmInput extends YSensor
     const PWMREPORTMODE_PWM_CPS          = 5;
     const PWMREPORTMODE_PWM_CPM          = 6;
     const PWMREPORTMODE_PWM_STATE        = 7;
+    const PWMREPORTMODE_PWM_FREQ_CPS     = 8;
+    const PWMREPORTMODE_PWM_FREQ_CPM     = 9;
     const PWMREPORTMODE_INVALID          = -1;
     const DEBOUNCEPERIOD_INVALID         = YAPI_INVALID_UINT;
     //--- (end of YPwmInput declaration)
@@ -271,9 +275,9 @@ class YPwmInput extends YSensor
      *
      * @return integer : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE, Y_PWMREPORTMODE_PWM_FREQUENCY,
      * Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT, Y_PWMREPORTMODE_PWM_PULSECOUNT,
-     * Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM and Y_PWMREPORTMODE_PWM_STATE corresponding to the
-     * parameter (frequency/duty cycle, pulse width, edges count) returned by the get_currentValue
-     * function and callbacks
+     * Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM, Y_PWMREPORTMODE_PWM_STATE,
+     * Y_PWMREPORTMODE_PWM_FREQ_CPS and Y_PWMREPORTMODE_PWM_FREQ_CPM corresponding to the parameter
+     * (frequency/duty cycle, pulse width, edges count) returned by the get_currentValue function and callbacks
      *
      * On failure, throws an exception or returns Y_PWMREPORTMODE_INVALID.
      */
@@ -297,9 +301,10 @@ class YPwmInput extends YSensor
      *
      * @param integer $newval : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE,
      * Y_PWMREPORTMODE_PWM_FREQUENCY, Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT,
-     * Y_PWMREPORTMODE_PWM_PULSECOUNT, Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM and
-     * Y_PWMREPORTMODE_PWM_STATE corresponding to the  parameter  type (frequency/duty cycle, pulse width,
-     * or edge count) returned by the get_currentValue function and callbacks
+     * Y_PWMREPORTMODE_PWM_PULSECOUNT, Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM,
+     * Y_PWMREPORTMODE_PWM_STATE, Y_PWMREPORTMODE_PWM_FREQ_CPS and Y_PWMREPORTMODE_PWM_FREQ_CPM
+     * corresponding to the  parameter  type (frequency/duty cycle, pulse width, or edge count) returned
+     * by the get_currentValue function and callbacks
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
