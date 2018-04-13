@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 29186 2017-11-16 10:04:13Z seb $
+ * $Id: yocto_colorledcluster.php 30500 2018-04-04 07:53:46Z mvuilleu $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -41,6 +41,9 @@
 //--- (YColorLedCluster return codes)
 //--- (end of YColorLedCluster return codes)
 //--- (YColorLedCluster definitions)
+if(!defined('Y_LEDTYPE_RGB'))                define('Y_LEDTYPE_RGB',               0);
+if(!defined('Y_LEDTYPE_RGBW'))               define('Y_LEDTYPE_RGBW',              1);
+if(!defined('Y_LEDTYPE_INVALID'))            define('Y_LEDTYPE_INVALID',           -1);
 if(!defined('Y_ACTIVELEDCOUNT_INVALID'))     define('Y_ACTIVELEDCOUNT_INVALID',    YAPI_INVALID_UINT);
 if(!defined('Y_MAXLEDCOUNT_INVALID'))        define('Y_MAXLEDCOUNT_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_BLINKSEQMAXCOUNT_INVALID'))   define('Y_BLINKSEQMAXCOUNT_INVALID',  YAPI_INVALID_UINT);
@@ -64,6 +67,9 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 class YColorLedCluster extends YFunction
 {
     const ACTIVELEDCOUNT_INVALID         = YAPI_INVALID_UINT;
+    const LEDTYPE_RGB                    = 0;
+    const LEDTYPE_RGBW                   = 1;
+    const LEDTYPE_INVALID                = -1;
     const MAXLEDCOUNT_INVALID            = YAPI_INVALID_UINT;
     const BLINKSEQMAXCOUNT_INVALID       = YAPI_INVALID_UINT;
     const BLINKSEQMAXSIZE_INVALID        = YAPI_INVALID_UINT;
@@ -72,6 +78,7 @@ class YColorLedCluster extends YFunction
 
     //--- (YColorLedCluster attributes)
     protected $_activeLedCount           = Y_ACTIVELEDCOUNT_INVALID;     // UInt31
+    protected $_ledType                  = Y_LEDTYPE_INVALID;            // LedType
     protected $_maxLedCount              = Y_MAXLEDCOUNT_INVALID;        // UInt31
     protected $_blinkSeqMaxCount         = Y_BLINKSEQMAXCOUNT_INVALID;   // UInt31
     protected $_blinkSeqMaxSize          = Y_BLINKSEQMAXSIZE_INVALID;    // UInt31
@@ -94,6 +101,9 @@ class YColorLedCluster extends YFunction
         switch($name) {
         case 'activeLedCount':
             $this->_activeLedCount = intval($val);
+            return 1;
+        case 'ledType':
+            $this->_ledType = intval($val);
             return 1;
         case 'maxLedCount':
             $this->_maxLedCount = intval($val);
@@ -143,6 +153,42 @@ class YColorLedCluster extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("activeLedCount",$rest_val);
+    }
+
+    /**
+     * Returns the RGB LED type currently handled by the device.
+     *
+     * @return integer : either Y_LEDTYPE_RGB or Y_LEDTYPE_RGBW, according to the RGB LED type currently
+     * handled by the device
+     *
+     * On failure, throws an exception or returns Y_LEDTYPE_INVALID.
+     */
+    public function get_ledType()
+    {
+        // $res                    is a enumLEDTYPE;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_LEDTYPE_INVALID;
+            }
+        }
+        $res = $this->_ledType;
+        return $res;
+    }
+
+    /**
+     * Changes the RGB LED type currently handled by the device.
+     *
+     * @param integer $newval : either Y_LEDTYPE_RGB or Y_LEDTYPE_RGBW, according to the RGB LED type
+     * currently handled by the device
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_ledType($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("ledType",$rest_val);
     }
 
     /**
@@ -1087,6 +1133,12 @@ class YColorLedCluster extends YFunction
 
     public function setActiveLedCount($newval)
     { return $this->set_activeLedCount($newval); }
+
+    public function ledType()
+    { return $this->get_ledType(); }
+
+    public function setLedType($newval)
+    { return $this->set_ledType($newval); }
 
     public function maxLedCount()
     { return $this->get_maxLedCount(); }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 29507 2017-12-28 14:14:56Z mvuilleu $
+ * $Id: yocto_multiaxiscontroller.php 30483 2018-03-29 07:43:07Z mvuilleu $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -240,7 +240,7 @@ class YMultiAxisController extends YFunction
      */
     public function reset()
     {
-        return $this->sendCommand('Z');
+        return $this->set_command('Z');
     }
 
     /**
@@ -339,7 +339,7 @@ class YMultiAxisController extends YFunction
      */
     public function emergencyStop()
     {
-        return $this->sendCommand('!');
+        return $this->set_command('!');
     }
 
     /**
@@ -350,7 +350,7 @@ class YMultiAxisController extends YFunction
      */
     public function abortAndBrake()
     {
-        return $this->sendCommand('B');
+        return $this->set_command('B');
     }
 
     /**
@@ -361,7 +361,7 @@ class YMultiAxisController extends YFunction
      */
     public function abortAndHiZ()
     {
-        return $this->sendCommand('z');
+        return $this->set_command('z');
     }
 
     public function nAxis()

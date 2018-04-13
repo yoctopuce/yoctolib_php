@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_pwmoutput.php 30595 2018-04-12 21:36:11Z mvuilleu $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -83,7 +83,7 @@ class YPwmOutput extends YFunction
     protected $_period                   = Y_PERIOD_INVALID;             // MeasureVal
     protected $_dutyCycle                = Y_DUTYCYCLE_INVALID;          // MeasureVal
     protected $_pulseDuration            = Y_PULSEDURATION_INVALID;      // MeasureVal
-    protected $_pwmTransition            = Y_PWMTRANSITION_INVALID;      // AnyFloatTransition
+    protected $_pwmTransition            = Y_PWMTRANSITION_INVALID;      // Text
     protected $_enabledAtPowerOn         = Y_ENABLEDATPOWERON_INVALID;   // Bool
     protected $_dutyCycleAtPowerOn       = Y_DUTYCYCLEATPOWERON_INVALID; // MeasureVal
     //--- (end of YPwmOutput attributes)
@@ -433,8 +433,8 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Performs a smooth transistion of the pulse duration toward a given value. Any period,
-     * frequency, duty cycle or pulse width change will cancel any ongoing transition process.
+     * Performs a smooth transistion of the pulse duration toward a given value.
+     * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
      * @param ms_target   : new pulse duration at the end of the transition
      *         (floating-point number, representing the pulse duration in milliseconds)
@@ -455,10 +455,11 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Performs a smooth change of the pulse duration toward a given value.
+     * Performs a smooth change of the duty cycle toward a given value.
+     * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
      * @param target      : new duty cycle at the end of the transition
-     *         (floating-point number, between 0 and 1)
+     *         (percentage, floating-point number between 0 and 100)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
      * @return integer : YAPI_SUCCESS when the call succeeds.
@@ -475,6 +476,96 @@ class YPwmOutput extends YFunction
             $target = 100.0;
         }
         $newval = sprintf('%d:%d', round($target*65536), $ms_duration);
+        return $this->set_pwmTransition($newval);
+    }
+
+    /**
+     * Performs a smooth frequency change toward a given value.
+     * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
+     *
+     * @param target      : new freuency at the end of the transition (floating-point number)
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
+     *
+     * @return integer : YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function frequencyMove($target,$ms_duration)
+    {
+        // $newval                 is a str;
+        if ($target < 0.001) {
+            $target = 0.001;
+        }
+        $newval = sprintf('%FHz:%d', $target, $ms_duration);
+        return $this->set_pwmTransition($newval);
+    }
+
+    /**
+     * Trigger a given number of pulses of specified duration, at current frequency.
+     * At the end of the pulse train, revert to the original state of the PWM generator.
+     *
+     * @param double $ms_target : desired pulse duration
+     *         (floating-point number, representing the pulse duration in milliseconds)
+     * @param n_pulses  : desired pulse count
+     *
+     * @return integer : YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerPulsesByDuration($ms_target,$n_pulses)
+    {
+        // $newval                 is a str;
+        if ($ms_target < 0.0) {
+            $ms_target = 0.0;
+        }
+        $newval = sprintf('%dms*%d', round($ms_target*65536), $n_pulses);
+        return $this->set_pwmTransition($newval);
+    }
+
+    /**
+     * Trigger a given number of pulses of specified duration, at current frequency.
+     * At the end of the pulse train, revert to the original state of the PWM generator.
+     *
+     * @param target   : desired duty cycle for the generated pulses
+     *         (percentage, floating-point number between 0 and 100)
+     * @param integer $n_pulses : desired pulse count
+     *
+     * @return integer : YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerPulsesByDutyCycle($target,$n_pulses)
+    {
+        // $newval                 is a str;
+        if ($target < 0.0) {
+            $target = 0.0;
+        }
+        if ($target > 100.0) {
+            $target = 100.0;
+        }
+        $newval = sprintf('%d*%d', round($target*65536), $n_pulses);
+        return $this->set_pwmTransition($newval);
+    }
+
+    /**
+     * Trigger a given number of pulses at the specified frequency, using current duty cycle.
+     * At the end of the pulse train, revert to the original state of the PWM generator.
+     *
+     * @param target   : desired frequency for the generated pulses (floating-point number)
+     *         (percentage, floating-point number between 0 and 100)
+     * @param integer $n_pulses : desired pulse count
+     *
+     * @return integer : YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function triggerPulsesByFrequency($target,$n_pulses)
+    {
+        // $newval                 is a str;
+        if ($target < 0.001) {
+            $target = 0.001;
+        }
+        $newval = sprintf('%FHz*%d', $target, $n_pulses);
         return $this->set_pwmTransition($newval);
     }
 

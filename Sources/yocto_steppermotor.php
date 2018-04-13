@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_steppermotor.php 29507 2017-12-28 14:14:56Z mvuilleu $
+ * $Id: yocto_steppermotor.php 30483 2018-03-29 07:43:07Z mvuilleu $
  *
  * Implements YStepperMotor, the high-level API for StepperMotor functions
  *
@@ -693,7 +693,7 @@ class YStepperMotor extends YFunction
      */
     public function reset()
     {
-        return $this->sendCommand('Z');
+        return $this->set_command('Z');
     }
 
     /**
@@ -791,7 +791,7 @@ class YStepperMotor extends YFunction
      */
     public function emergencyStop()
     {
-        return $this->sendCommand('!');
+        return $this->set_command('!');
     }
 
     /**
@@ -804,7 +804,7 @@ class YStepperMotor extends YFunction
      */
     public function alertStepOut()
     {
-        return $this->sendCommand('.');
+        return $this->set_command('.');
     }
 
     /**
@@ -821,9 +821,9 @@ class YStepperMotor extends YFunction
     {
         if (!($dir != 0)) return $this->_throw( YAPI_INVALID_ARGUMENT, 'direction must be +1 or -1',YAPI_INVALID_ARGUMENT);
         if ($dir > 0) {
-            return $this->sendCommand('.+');
+            return $this->set_command('.+');
         }
-        return $this->sendCommand('.-');
+        return $this->set_command('.-');
     }
 
     /**
@@ -834,7 +834,7 @@ class YStepperMotor extends YFunction
      */
     public function abortAndBrake()
     {
-        return $this->sendCommand('B');
+        return $this->set_command('B');
     }
 
     /**
@@ -845,7 +845,7 @@ class YStepperMotor extends YFunction
      */
     public function abortAndHiZ()
     {
-        return $this->sendCommand('z');
+        return $this->set_command('z');
     }
 
     public function motorState()

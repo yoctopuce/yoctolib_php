@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 29077 2017-11-03 13:04:17Z seb $
+ * $Id: yocto_network.php 30462 2018-03-26 09:19:24Z mvuilleu $
  *
  * Implements YNetwork, the high-level API for Network functions
  *
@@ -65,6 +65,7 @@ if(!defined('Y_CALLBACKENCODING_AZURE'))     define('Y_CALLBACKENCODING_AZURE', 
 if(!defined('Y_CALLBACKENCODING_INFLUXDB'))  define('Y_CALLBACKENCODING_INFLUXDB', 8);
 if(!defined('Y_CALLBACKENCODING_MQTT'))      define('Y_CALLBACKENCODING_MQTT',     9);
 if(!defined('Y_CALLBACKENCODING_YOCTO_API_JZON')) define('Y_CALLBACKENCODING_YOCTO_API_JZON', 10);
+if(!defined('Y_CALLBACKENCODING_PRTG'))      define('Y_CALLBACKENCODING_PRTG',     11);
 if(!defined('Y_CALLBACKENCODING_INVALID'))   define('Y_CALLBACKENCODING_INVALID',  -1);
 if(!defined('Y_MACADDRESS_INVALID'))         define('Y_MACADDRESS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_IPADDRESS_INVALID'))          define('Y_IPADDRESS_INVALID',         YAPI_INVALID_STRING);
@@ -135,6 +136,7 @@ class YNetwork extends YFunction
     const CALLBACKENCODING_INFLUXDB      = 8;
     const CALLBACKENCODING_MQTT          = 9;
     const CALLBACKENCODING_YOCTO_API_JZON = 10;
+    const CALLBACKENCODING_PRTG          = 11;
     const CALLBACKENCODING_INVALID       = -1;
     const CALLBACKCREDENTIALS_INVALID    = YAPI_INVALID_STRING;
     const CALLBACKINITIALDELAY_INVALID   = YAPI_INVALID_UINT;
@@ -835,8 +837,8 @@ class YNetwork extends YFunction
      * @return integer : a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
      * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
      * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE,
-     * Y_CALLBACKENCODING_INFLUXDB, Y_CALLBACKENCODING_MQTT and Y_CALLBACKENCODING_YOCTO_API_JZON
-     * corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_INFLUXDB, Y_CALLBACKENCODING_MQTT, Y_CALLBACKENCODING_YOCTO_API_JZON and
+     * Y_CALLBACKENCODING_PRTG corresponding to the encoding standard to use for representing notification values
      *
      * On failure, throws an exception or returns Y_CALLBACKENCODING_INVALID.
      */
@@ -858,8 +860,8 @@ class YNetwork extends YFunction
      * @param integer $newval : a value among Y_CALLBACKENCODING_FORM, Y_CALLBACKENCODING_JSON,
      * Y_CALLBACKENCODING_JSON_ARRAY, Y_CALLBACKENCODING_CSV, Y_CALLBACKENCODING_YOCTO_API,
      * Y_CALLBACKENCODING_JSON_NUM, Y_CALLBACKENCODING_EMONCMS, Y_CALLBACKENCODING_AZURE,
-     * Y_CALLBACKENCODING_INFLUXDB, Y_CALLBACKENCODING_MQTT and Y_CALLBACKENCODING_YOCTO_API_JZON
-     * corresponding to the encoding standard to use for representing notification values
+     * Y_CALLBACKENCODING_INFLUXDB, Y_CALLBACKENCODING_MQTT, Y_CALLBACKENCODING_YOCTO_API_JZON and
+     * Y_CALLBACKENCODING_PRTG corresponding to the encoding standard to use for representing notification values
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
