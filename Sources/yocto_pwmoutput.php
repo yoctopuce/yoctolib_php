@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 30595 2018-04-12 21:36:11Z mvuilleu $
+ * $Id: yocto_pwmoutput.php 30679 2018-04-24 09:34:17Z mvuilleu $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -567,6 +567,16 @@ class YPwmOutput extends YFunction
         }
         $newval = sprintf('%FHz*%d', $target, $n_pulses);
         return $this->set_pwmTransition($newval);
+    }
+
+    public function markForRepeat()
+    {
+        return $this->set_pwmTransition(':');
+    }
+
+    public function repeatFromMark()
+    {
+        return $this->set_pwmTransition('R');
     }
 
     public function enabled()

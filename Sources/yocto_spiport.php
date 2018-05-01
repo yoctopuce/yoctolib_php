@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_spiport.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_spiport.php 30685 2018-04-24 13:46:18Z seb $
  *
  * Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -660,7 +660,7 @@ class YSpiPort extends YFunction
      */
     public function writeByte($code)
     {
-        return $this->sendCommand(sprintf('$%02x', $code));
+        return $this->sendCommand(sprintf('$%02X', $code));
     }
 
     /**
@@ -1040,11 +1040,11 @@ class YSpiPort extends YFunction
         $res = '';
         $ofs = 0;
         while ($ofs + 3 < $bufflen) {
-            $res = sprintf('%s%02x%02x%02x%02x', $res, ord($buff[$ofs]), ord($buff[$ofs + 1]), ord($buff[$ofs + 2]), ord($buff[$ofs + 3]));
+            $res = sprintf('%s%02X%02X%02X%02X', $res, ord($buff[$ofs]), ord($buff[$ofs + 1]), ord($buff[$ofs + 2]), ord($buff[$ofs + 3]));
             $ofs = $ofs + 4;
         }
         while ($ofs < $bufflen) {
-            $res = sprintf('%s%02x', $res, ord($buff[$ofs]));
+            $res = sprintf('%s%02X', $res, ord($buff[$ofs]));
             $ofs = $ofs + 1;
         }
         return $res;

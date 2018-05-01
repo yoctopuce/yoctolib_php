@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_serialport.php 30685 2018-04-24 13:46:18Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -635,7 +635,7 @@ class YSerialPort extends YFunction
      */
     public function writeByte($code)
     {
-        return $this->sendCommand(sprintf('$%02x', $code));
+        return $this->sendCommand(sprintf('$%02X', $code));
     }
 
     /**
@@ -1015,11 +1015,11 @@ class YSerialPort extends YFunction
         $res = '';
         $ofs = 0;
         while ($ofs + 3 < $bufflen) {
-            $res = sprintf('%s%02x%02x%02x%02x', $res, ord($buff[$ofs]), ord($buff[$ofs + 1]), ord($buff[$ofs + 2]), ord($buff[$ofs + 3]));
+            $res = sprintf('%s%02X%02X%02X%02X', $res, ord($buff[$ofs]), ord($buff[$ofs + 1]), ord($buff[$ofs + 2]), ord($buff[$ofs + 3]));
             $ofs = $ofs + 4;
         }
         while ($ofs < $bufflen) {
-            $res = sprintf('%s%02x', $res, ord($buff[$ofs]));
+            $res = sprintf('%s%02X', $res, ord($buff[$ofs]));
             $ofs = $ofs + 1;
         }
         return $res;
@@ -1348,11 +1348,11 @@ class YSerialPort extends YFunction
         // $hexb                   is a int;
         $funCode = $pduBytes[0];
         $nib = (($funCode) >> (4));
-        $pat = sprintf('%02x[%x%x]%x.*', $slaveNo, $nib, ($nib+8), (($funCode) & (15)));
-        $cmd = sprintf('%02x%02x', $slaveNo, $funCode);
+        $pat = sprintf('%02X[%X%X]%X.*', $slaveNo, $nib, ($nib+8), (($funCode) & (15)));
+        $cmd = sprintf('%02X%02X', $slaveNo, $funCode);
         $i = 1;
         while ($i < sizeof($pduBytes)) {
-            $cmd = sprintf('%s%02x', $cmd, (($pduBytes[$i]) & (0xff)));
+            $cmd = sprintf('%s%02X', $cmd, (($pduBytes[$i]) & (0xff)));
             $i = $i + 1;
         }
 
