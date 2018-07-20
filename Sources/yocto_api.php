@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 29949 2018-02-16 00:33:22Z mvuilleu $
+ * $Id: yocto_api.php 31241 2018-07-17 15:13:37Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -142,6 +142,7 @@ define('NOTIFY_NETPKT_FUNCNAME', '4');
 define('NOTIFY_NETPKT_FUNCVAL', '5');
 define('NOTIFY_NETPKT_LOG', '7');
 define('NOTIFY_NETPKT_FUNCNAMEYDX', '8');
+define('NOTIFY_NETPKT_CONFCHGYDX', 's');
 define('NOTIFY_NETPKT_FLUSHV2YDX', 't');
 define('NOTIFY_NETPKT_FUNCV2YDX', 'u');
 define('NOTIFY_NETPKT_TIMEV2YDX', 'v');
@@ -1858,7 +1859,7 @@ class YAPI
                     $req->reply = substr($req->reply, $linepos+1);
                     $linepos = strpos($req->reply, "\n");
                     $firstCode = substr($ev, 0, 1);
-                    if (strlen($ev) >= 3 && $firstCode >= NOTIFY_NETPKT_FLUSHV2YDX && $firstCode <= NOTIFY_NETPKT_TIMEAVGYDX) {
+                    if (strlen($ev) >= 3 && $firstCode >= NOTIFY_NETPKT_CONFCHGYDX && $firstCode <= NOTIFY_NETPKT_TIMEAVGYDX) {
                         // function value ydx (tiny notification)
                         $hub->devListValidity = 10000;
                         $hub->retryDelay = 15;
@@ -1886,6 +1887,10 @@ class YAPI
                                             break;
                                         case NOTIFY_NETPKT_DEVLOGYDX:
                                             // log notification
+                                            break;
+                                        case NOTIFY_NETPKT_CONFCHGYDX:
+                                            // configuration change notification
+                                            YAPI::setConfChange($serial);
                                             break;
                                         case NOTIFY_NETPKT_TIMEVALYDX:
                                         case NOTIFY_NETPKT_TIMEAVGYDX:
@@ -2325,6 +2330,13 @@ class YAPI
         self::$_fnByType[$classname]->setTimedReport($str_hwid, $float_timestamp, $arr_report);
     }
 
+    // Publish a configuration change event
+    public static function setConfChange($str_serial)
+    {
+        $module = yFindModule($str_serial.".module");
+        $module->_invokeConfigChangeCallback();
+    }
+
     // Retrieve a function advertised value by hardware id
     public static function getFunctionValue($str_hwid)
     {
@@ -2694,7 +2706,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.30760";
+        return "1.10.31315";
     }
 
     /**
@@ -6957,6 +6969,7 @@ class YModule extends YFunction
     protected $_rebootCountdown          = Y_REBOOTCOUNTDOWN_INVALID;    // Int
     protected $_userVar                  = Y_USERVAR_INVALID;            // Int
     protected $_logCallback              = null;                         // YModuleLogCallback
+    protected $_confChangeCallback       = null;                         // YModuleConfigChangeCallback
     //--- (end of generated code: YModule attributes)
 
     function __construct($str_func)
@@ -7592,6 +7605,36 @@ class YModule extends YFunction
     public function triggerFirmwareUpdate($secBeforeReboot)
     {
         return $this->set_rebootCountdown(-$secBeforeReboot);
+    }
+
+    /**
+     * Register a callback function, to be called when a persistent settings in
+     * a device configuration has been changed (e.g. change of unit, etc).
+     *
+     * @param function $callback : a procedure taking a YModule parameter, or null
+     *         to unregister a previously registered  callback.
+     */
+    public function registerConfigChangeCallback($callback)
+    {
+        $this->_confChangeCallback = $callback;
+        return 0;
+    }
+
+    public function _invokeConfigChangeCallback()
+    {
+        if (!is_null($this->_confChangeCallback)) {
+            call_user_func($this->_confChangeCallback, $this);
+        }
+        return 0;
+    }
+
+    /**
+     * Triggers a configuration change callback, to check if they are supported or not.
+     */
+    public function triggerConfigChangeCallback()
+    {
+        $this->_setAttr('persistentSettings','2');
+        return 0;
     }
 
     /**

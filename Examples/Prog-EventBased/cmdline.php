@@ -8,14 +8,7 @@ include("../../Sources/yocto_anbutton.php");
 function valueChangeCallBack($obj_fct, $str_value)
 {
     $info = $obj_fct->get_userData();
-
-    $apival = $obj_fct->get_calibratedValue();
-    $obj_fct->clearCache();
-    $value1 = $obj_fct->get_calibratedValue();
-    Print($obj_fct->get_hardwareId() . ": " . $str_value . "=" . $value1 . " (" . $apival . ")\n");
-
-
-    //Print("{$info['name']}: $str_value {$info['unit']} (new value)\n");
+    Print("{$info['name']}: $str_value {$info['unit']} (new value)\n");
 }
 
 function timedReportCallBack($obj_fct, $obj_measure)
@@ -24,10 +17,16 @@ function timedReportCallBack($obj_fct, $obj_measure)
     Print("{$info['name']}: {$obj_measure->get_averageValue()} {$info['unit']} (timed report)\n");
 }
 
+function configChangeCallback($obj_module)
+{
+    Print("{$obj_module->get_serialNumber()}: configuration change\n");
+}
+
 function deviceArrival($module)
 {
     $serial = $module->get_serialNumber();
     Print("New device: $serial\n");
+    $module->registerConfigChangeCallback('configChangeCallback');
 
     // First solution: look for a specific type of function (eg. anButton)
     $fctcount = $module->functionCount();

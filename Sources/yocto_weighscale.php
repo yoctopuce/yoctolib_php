@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 29804 2018-01-30 18:05:21Z mvuilleu $
+ * $Id: yocto_weighscale.php 31016 2018-06-04 08:45:40Z mvuilleu $
  *
  * Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -45,7 +45,8 @@ if(!defined('Y_EXCITATION_OFF'))             define('Y_EXCITATION_OFF',         
 if(!defined('Y_EXCITATION_DC'))              define('Y_EXCITATION_DC',             1);
 if(!defined('Y_EXCITATION_AC'))              define('Y_EXCITATION_AC',             2);
 if(!defined('Y_EXCITATION_INVALID'))         define('Y_EXCITATION_INVALID',        -1);
-if(!defined('Y_COMPTEMPADAPTRATIO_INVALID')) define('Y_COMPTEMPADAPTRATIO_INVALID', YAPI_INVALID_DOUBLE);
+if(!defined('Y_TEMPAVGADAPTRATIO_INVALID'))  define('Y_TEMPAVGADAPTRATIO_INVALID', YAPI_INVALID_DOUBLE);
+if(!defined('Y_TEMPCHGADAPTRATIO_INVALID'))  define('Y_TEMPCHGADAPTRATIO_INVALID', YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPTEMPAVG_INVALID'))        define('Y_COMPTEMPAVG_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPTEMPCHG_INVALID'))        define('Y_COMPTEMPCHG_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMPENSATION_INVALID'))       define('Y_COMPENSATION_INVALID',      YAPI_INVALID_DOUBLE);
@@ -69,7 +70,8 @@ class YWeighScale extends YSensor
     const EXCITATION_DC                  = 1;
     const EXCITATION_AC                  = 2;
     const EXCITATION_INVALID             = -1;
-    const COMPTEMPADAPTRATIO_INVALID     = YAPI_INVALID_DOUBLE;
+    const TEMPAVGADAPTRATIO_INVALID      = YAPI_INVALID_DOUBLE;
+    const TEMPCHGADAPTRATIO_INVALID      = YAPI_INVALID_DOUBLE;
     const COMPTEMPAVG_INVALID            = YAPI_INVALID_DOUBLE;
     const COMPTEMPCHG_INVALID            = YAPI_INVALID_DOUBLE;
     const COMPENSATION_INVALID           = YAPI_INVALID_DOUBLE;
@@ -79,7 +81,8 @@ class YWeighScale extends YSensor
 
     //--- (YWeighScale attributes)
     protected $_excitation               = Y_EXCITATION_INVALID;         // ExcitationMode
-    protected $_compTempAdaptRatio       = Y_COMPTEMPADAPTRATIO_INVALID; // MeasureVal
+    protected $_tempAvgAdaptRatio        = Y_TEMPAVGADAPTRATIO_INVALID;  // MeasureVal
+    protected $_tempChgAdaptRatio        = Y_TEMPCHGADAPTRATIO_INVALID;  // MeasureVal
     protected $_compTempAvg              = Y_COMPTEMPAVG_INVALID;        // MeasureVal
     protected $_compTempChg              = Y_COMPTEMPCHG_INVALID;        // MeasureVal
     protected $_compensation             = Y_COMPENSATION_INVALID;       // MeasureVal
@@ -104,8 +107,11 @@ class YWeighScale extends YSensor
         case 'excitation':
             $this->_excitation = intval($val);
             return 1;
-        case 'compTempAdaptRatio':
-            $this->_compTempAdaptRatio = round($val * 1000.0 / 65536.0) / 1000.0;
+        case 'tempAvgAdaptRatio':
+            $this->_tempAvgAdaptRatio = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'tempChgAdaptRatio':
+            $this->_tempChgAdaptRatio = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'compTempAvg':
             $this->_compTempAvg = round($val * 1000.0 / 65536.0) / 1000.0;
@@ -180,43 +186,86 @@ class YWeighScale extends YSensor
     }
 
     /**
-     * Changes the averaged temperature update rate, in percents.
+     * Changes the averaged temperature update rate, in per mille.
+     * The purpose of this adaptation ratio is to model the thermal inertia of the load cell.
      * The averaged temperature is updated every 10 seconds, by applying this adaptation rate
      * to the difference between the measures ambiant temperature and the current compensation
-     * temperature. The standard rate is 0.04 percents, and the maximal rate is 65 percents.
+     * temperature. The standard rate is 0.2 per mille, and the maximal rate is 65 per mille.
      *
      * @param double $newval : a floating point number corresponding to the averaged temperature update
-     * rate, in percents
+     * rate, in per mille
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_compTempAdaptRatio($newval)
+    public function set_tempAvgAdaptRatio($newval)
     {
         $rest_val = strval(round($newval * 65536.0));
-        return $this->_setAttr("compTempAdaptRatio",$rest_val);
+        return $this->_setAttr("tempAvgAdaptRatio",$rest_val);
     }
 
     /**
-     * Returns the averaged temperature update rate, in percents.
+     * Returns the averaged temperature update rate, in per mille.
+     * The purpose of this adaptation ratio is to model the thermal inertia of the load cell.
      * The averaged temperature is updated every 10 seconds, by applying this adaptation rate
      * to the difference between the measures ambiant temperature and the current compensation
-     * temperature. The standard rate is 0.04 percents, and the maximal rate is 65 percents.
+     * temperature. The standard rate is 0.2 per mille, and the maximal rate is 65 per mille.
      *
-     * @return double : a floating point number corresponding to the averaged temperature update rate, in percents
+     * @return double : a floating point number corresponding to the averaged temperature update rate, in per mille
      *
-     * On failure, throws an exception or returns Y_COMPTEMPADAPTRATIO_INVALID.
+     * On failure, throws an exception or returns Y_TEMPAVGADAPTRATIO_INVALID.
      */
-    public function get_compTempAdaptRatio()
+    public function get_tempAvgAdaptRatio()
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
-                return Y_COMPTEMPADAPTRATIO_INVALID;
+                return Y_TEMPAVGADAPTRATIO_INVALID;
             }
         }
-        $res = $this->_compTempAdaptRatio;
+        $res = $this->_tempAvgAdaptRatio;
+        return $res;
+    }
+
+    /**
+     * Changes the temperature change update rate, in per mille.
+     * The temperature change is updated every 10 seconds, by applying this adaptation rate
+     * to the difference between the measures ambiant temperature and the current temperature used for
+     * change compensation. The standard rate is 0.6 per mille, and the maximal rate is 65 pour mille.
+     *
+     * @param double $newval : a floating point number corresponding to the temperature change update
+     * rate, in per mille
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_tempChgAdaptRatio($newval)
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("tempChgAdaptRatio",$rest_val);
+    }
+
+    /**
+     * Returns the temperature change update rate, in per mille.
+     * The temperature change is updated every 10 seconds, by applying this adaptation rate
+     * to the difference between the measures ambiant temperature and the current temperature used for
+     * change compensation. The standard rate is 0.6 per mille, and the maximal rate is 65 pour mille.
+     *
+     * @return double : a floating point number corresponding to the temperature change update rate, in per mille
+     *
+     * On failure, throws an exception or returns Y_TEMPCHGADAPTRATIO_INVALID.
+     */
+    public function get_tempChgAdaptRatio()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+                return Y_TEMPCHGADAPTRATIO_INVALID;
+            }
+        }
+        $res = $this->_tempChgAdaptRatio;
         return $res;
     }
 
@@ -642,11 +691,17 @@ class YWeighScale extends YSensor
     public function setExcitation($newval)
     { return $this->set_excitation($newval); }
 
-    public function setCompTempAdaptRatio($newval)
-    { return $this->set_compTempAdaptRatio($newval); }
+    public function setTempAvgAdaptRatio($newval)
+    { return $this->set_tempAvgAdaptRatio($newval); }
 
-    public function compTempAdaptRatio()
-    { return $this->get_compTempAdaptRatio(); }
+    public function tempAvgAdaptRatio()
+    { return $this->get_tempAvgAdaptRatio(); }
+
+    public function setTempChgAdaptRatio($newval)
+    { return $this->set_tempChgAdaptRatio($newval); }
+
+    public function tempChgAdaptRatio()
+    { return $this->get_tempChgAdaptRatio(); }
 
     public function compTempAvg()
     { return $this->get_compTempAvg(); }
