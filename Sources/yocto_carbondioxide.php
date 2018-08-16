@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_carbondioxide.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_carbondioxide.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -44,6 +44,8 @@
 if(!defined('Y_ABCPERIOD_INVALID'))          define('Y_ABCPERIOD_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YCarbonDioxide definitions)
+    #--- (YCarbonDioxide yapiwrapper)
+   #--- (end of YCarbonDioxide yapiwrapper)
 
 //--- (YCarbonDioxide declaration)
 /**
@@ -101,7 +103,7 @@ class YCarbonDioxide extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ABCPERIOD_INVALID;
             }
         }
@@ -132,7 +134,7 @@ class YCarbonDioxide extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

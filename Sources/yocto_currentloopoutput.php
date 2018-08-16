@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_currentloopoutput.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_currentloopoutput.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -49,6 +49,8 @@ if(!defined('Y_CURRENT_INVALID'))            define('Y_CURRENT_INVALID',        
 if(!defined('Y_CURRENTTRANSITION_INVALID'))  define('Y_CURRENTTRANSITION_INVALID', YAPI_INVALID_STRING);
 if(!defined('Y_CURRENTATSTARTUP_INVALID'))   define('Y_CURRENTATSTARTUP_INVALID',  YAPI_INVALID_DOUBLE);
 //--- (end of YCurrentLoopOutput definitions)
+    #--- (YCurrentLoopOutput yapiwrapper)
+   #--- (end of YCurrentLoopOutput yapiwrapper)
 
 //--- (YCurrentLoopOutput declaration)
 /**
@@ -134,7 +136,7 @@ class YCurrentLoopOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENT_INVALID;
             }
         }
@@ -146,7 +148,7 @@ class YCurrentLoopOutput extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTTRANSITION_INVALID;
             }
         }
@@ -187,7 +189,7 @@ class YCurrentLoopOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTATSTARTUP_INVALID;
             }
         }
@@ -209,7 +211,7 @@ class YCurrentLoopOutput extends YFunction
     {
         // $res                    is a enumLOOPPWRSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LOOPPOWER_INVALID;
             }
         }

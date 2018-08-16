@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_rangefinder.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_rangefinder.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -50,6 +50,8 @@ if(!defined('Y_HARDWARECALIBRATION_INVALID')) define('Y_HARDWARECALIBRATION_INVA
 if(!defined('Y_CURRENTTEMPERATURE_INVALID')) define('Y_CURRENTTEMPERATURE_INVALID', YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YRangeFinder definitions)
+    #--- (YRangeFinder yapiwrapper)
+   #--- (end of YRangeFinder yapiwrapper)
 
 //--- (YRangeFinder declaration)
 /**
@@ -142,7 +144,7 @@ class YRangeFinder extends YSensor
     {
         // $res                    is a enumRANGEFINDERMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RANGEFINDERMODE_INVALID;
             }
         }
@@ -173,7 +175,7 @@ class YRangeFinder extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_HARDWARECALIBRATION_INVALID;
             }
         }
@@ -199,7 +201,7 @@ class YRangeFinder extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTTEMPERATURE_INVALID;
             }
         }
@@ -211,7 +213,7 @@ class YRangeFinder extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

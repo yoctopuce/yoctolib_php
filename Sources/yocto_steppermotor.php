@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_steppermotor.php 30483 2018-03-29 07:43:07Z mvuilleu $
+ * $Id: yocto_steppermotor.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YStepperMotor, the high-level API for StepperMotor functions
  *
@@ -68,6 +68,8 @@ if(!defined('Y_AUXMODE_INVALID'))            define('Y_AUXMODE_INVALID',        
 if(!defined('Y_AUXSIGNAL_INVALID'))          define('Y_AUXSIGNAL_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YStepperMotor definitions)
+    #--- (YStepperMotor yapiwrapper)
+   #--- (end of YStepperMotor yapiwrapper)
 
 //--- (YStepperMotor declaration)
 /**
@@ -198,7 +200,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a enumSTEPPERSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MOTORSTATE_INVALID;
             }
         }
@@ -217,7 +219,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DIAGS_INVALID;
             }
         }
@@ -258,7 +260,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STEPPOS_INVALID;
             }
         }
@@ -278,7 +280,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SPEED_INVALID;
             }
         }
@@ -314,7 +316,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULLINSPEED_INVALID;
             }
         }
@@ -350,7 +352,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXACCEL_INVALID;
             }
         }
@@ -385,7 +387,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXSPEED_INVALID;
             }
         }
@@ -406,7 +408,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a enumSTEPPINGMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STEPPING_INVALID;
             }
         }
@@ -442,7 +444,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OVERCURRENT_INVALID;
             }
         }
@@ -478,7 +480,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TCURRSTOP_INVALID;
             }
         }
@@ -514,7 +516,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TCURRRUN_INVALID;
             }
         }
@@ -542,7 +544,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ALERTMODE_INVALID;
             }
         }
@@ -560,7 +562,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AUXMODE_INVALID;
             }
         }
@@ -585,7 +587,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AUXSIGNAL_INVALID;
             }
         }
@@ -613,7 +615,7 @@ class YStepperMotor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

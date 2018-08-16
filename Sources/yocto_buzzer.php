@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_buzzer.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_buzzer.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -48,6 +48,8 @@ if(!defined('Y_PLAYSEQMAXSIZE_INVALID'))     define('Y_PLAYSEQMAXSIZE_INVALID', 
 if(!defined('Y_PLAYSEQSIGNATURE_INVALID'))   define('Y_PLAYSEQSIGNATURE_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YBuzzer definitions)
+    #--- (YBuzzer yapiwrapper)
+   #--- (end of YBuzzer yapiwrapper)
 
 //--- (YBuzzer declaration)
 /**
@@ -139,7 +141,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
@@ -158,7 +160,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLUME_INVALID;
             }
         }
@@ -192,7 +194,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PLAYSEQSIZE_INVALID;
             }
         }
@@ -211,7 +213,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PLAYSEQMAXSIZE_INVALID;
             }
         }
@@ -233,7 +235,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PLAYSEQSIGNATURE_INVALID;
             }
         }
@@ -245,7 +247,7 @@ class YBuzzer extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

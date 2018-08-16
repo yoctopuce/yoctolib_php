@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_display.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -783,7 +783,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
@@ -817,7 +817,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STARTUPSEQ_INVALID;
             }
         }
@@ -854,7 +854,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BRIGHTNESS_INVALID;
             }
         }
@@ -891,7 +891,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a enumORIENTATION;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ORIENTATION_INVALID;
             }
         }
@@ -927,7 +927,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYWIDTH_INVALID;
             }
         }
@@ -946,7 +946,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYHEIGHT_INVALID;
             }
         }
@@ -966,7 +966,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a enumDISPLAYTYPE;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYTYPE_INVALID;
             }
         }
@@ -985,7 +985,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LAYERWIDTH_INVALID;
             }
         }
@@ -1004,7 +1004,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LAYERHEIGHT_INVALID;
             }
         }
@@ -1023,7 +1023,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LAYERCOUNT_INVALID;
             }
         }
@@ -1035,7 +1035,7 @@ class YDisplay extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

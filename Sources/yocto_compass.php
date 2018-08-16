@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_compass.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_compass.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YCompass, the high-level API for Compass functions
  *
@@ -48,6 +48,8 @@ if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',           
 if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
 if(!defined('Y_MAGNETICHEADING_INVALID'))    define('Y_MAGNETICHEADING_INVALID',   YAPI_INVALID_DOUBLE);
 //--- (end of YCompass definitions)
+    #--- (YCompass yapiwrapper)
+   #--- (end of YCompass yapiwrapper)
 
 //--- (YCompass declaration)
 /**
@@ -117,7 +119,7 @@ class YCompass extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BANDWIDTH_INVALID;
             }
         }
@@ -146,7 +148,7 @@ class YCompass extends YSensor
     {
         // $res                    is a enumAXIS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AXIS_INVALID;
             }
         }
@@ -166,7 +168,7 @@ class YCompass extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAGNETICHEADING_INVALID;
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_humidity.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_humidity.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YHumidity, the high-level API for Humidity functions
  *
@@ -44,6 +44,8 @@
 if(!defined('Y_RELHUM_INVALID'))             define('Y_RELHUM_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ABSHUM_INVALID'))             define('Y_ABSHUM_INVALID',            YAPI_INVALID_DOUBLE);
 //--- (end of YHumidity definitions)
+    #--- (YHumidity yapiwrapper)
+   #--- (end of YHumidity yapiwrapper)
 
 //--- (YHumidity declaration)
 /**
@@ -120,7 +122,7 @@ class YHumidity extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RELHUM_INVALID;
             }
         }
@@ -140,7 +142,7 @@ class YHumidity extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ABSHUM_INVALID;
             }
         }

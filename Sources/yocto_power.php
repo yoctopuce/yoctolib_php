@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_power.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_power.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YPower, the high-level API for Power functions
  *
@@ -45,6 +45,8 @@ if(!defined('Y_COSPHI_INVALID'))             define('Y_COSPHI_INVALID',         
 if(!defined('Y_METER_INVALID'))              define('Y_METER_INVALID',             YAPI_INVALID_DOUBLE);
 if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YPower definitions)
+    #--- (YPower yapiwrapper)
+   #--- (end of YPower yapiwrapper)
 
 //--- (YPower declaration)
 /**
@@ -109,7 +111,7 @@ class YPower extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COSPHI_INVALID;
             }
         }
@@ -136,7 +138,7 @@ class YPower extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_METER_INVALID;
             }
         }
@@ -155,7 +157,7 @@ class YPower extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_METERTIMER_INVALID;
             }
         }

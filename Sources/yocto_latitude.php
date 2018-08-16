@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_latitude.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_latitude.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YLatitude, the high-level API for Latitude functions
  *
@@ -42,6 +42,8 @@
 //--- (end of YLatitude return codes)
 //--- (YLatitude definitions)
 //--- (end of YLatitude definitions)
+    #--- (YLatitude yapiwrapper)
+   #--- (end of YLatitude yapiwrapper)
 
 //--- (YLatitude declaration)
 /**

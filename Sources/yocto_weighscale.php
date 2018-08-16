@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_weighscale.php 31016 2018-06-04 08:45:40Z mvuilleu $
+ * $Id: yocto_weighscale.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -53,6 +53,8 @@ if(!defined('Y_COMPENSATION_INVALID'))       define('Y_COMPENSATION_INVALID',   
 if(!defined('Y_ZEROTRACKING_INVALID'))       define('Y_ZEROTRACKING_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YWeighScale definitions)
+    #--- (YWeighScale yapiwrapper)
+   #--- (end of YWeighScale yapiwrapper)
 
 //--- (YWeighScale declaration)
 /**
@@ -161,7 +163,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a enumEXCITATIONMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_EXCITATION_INVALID;
             }
         }
@@ -220,7 +222,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TEMPAVGADAPTRATIO_INVALID;
             }
         }
@@ -261,7 +263,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TEMPCHGADAPTRATIO_INVALID;
             }
         }
@@ -281,7 +283,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMPTEMPAVG_INVALID;
             }
         }
@@ -301,7 +303,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMPTEMPCHG_INVALID;
             }
         }
@@ -320,7 +322,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMPENSATION_INVALID;
             }
         }
@@ -358,7 +360,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ZEROTRACKING_INVALID;
             }
         }
@@ -370,7 +372,7 @@ class YWeighScale extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

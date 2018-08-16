@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voc.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_voc.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YVoc, the high-level API for Voc functions
  *
@@ -42,6 +42,8 @@
 //--- (end of YVoc return codes)
 //--- (YVoc definitions)
 //--- (end of YVoc definitions)
+    #--- (YVoc yapiwrapper)
+   #--- (end of YVoc yapiwrapper)
 
 //--- (YVoc declaration)
 /**

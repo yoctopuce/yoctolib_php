@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 31241 2018-07-17 15:13:37Z mvuilleu $
+ * $Id: yocto_api.php 31700 2018-08-16 16:13:47Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -236,7 +236,8 @@ class YTcpHub
     /** @var  YTcpReq */
     public $notifReq;                   // notification request, or null if not open
     public $notifPos;                   // absolute position in notification stream
-    public $devListValidity;            // default validity of updateDeviceList
+    /** @var  boolean */
+    public $isNotifWorking;            // boolean that is true when we receive ping notification
     public $devListExpires;             // timestamp of next useful updateDeviceList
     /** @var  YTcpReq */
     public $devListReq;                 // updateDeviceList request, or null if not open
@@ -271,7 +272,7 @@ class YTcpHub
         $this->notifurl = 'not.byn';
         $this->notifHandle = null;
         $this->notifPos = -1;
-        $this->devListValidity = 500;
+        $this->isNotifWorking = false;
         $this->devListExpires = 0;
         $this->serialByYdx = Array();
         $this->retryDelay = 15;
@@ -829,6 +830,11 @@ class YFunctionType
     protected $_valueByHwId;            // hash table of function advertised value by logical name
     protected $_baseType;               // default to no abstract base type (generic YFunction)
 
+    /**
+     * YFunctionType constructor.
+     * @param $str_classname
+     * @throws Exception
+     */
     function __construct($str_classname)
     {
         if(ord($str_classname[strlen($str_classname)-1]) <= 57) throw new Exception("Invalid function type",-1);
@@ -1190,6 +1196,14 @@ class YDevice
     }
 
     // Throw an exception, keeping track of it in the object itself
+
+    /**
+     * @param $int_errType
+     * @param $str_errMsg
+     * @param $obj_retVal
+     * @return mixed
+     * @throws YAPI_Exception
+     */
     protected function _throw($int_errType, $str_errMsg, $obj_retVal)
     {
         $this->_lastErrorType = $int_errType;
@@ -1397,7 +1411,7 @@ class YDevice
     /**
      * Returns the number of functions (beside the "module" interface) available on the module.
      *
-     * @return the number of functions on the module
+     * @return integer: the number of functions on the module
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1412,7 +1426,7 @@ class YDevice
      * @param functionIndex : the index of the function for which the information is desired, starting at
      * 0 for the first function.
      *
-     * @return a string corresponding to the unambiguous hardware identifier of the requested module function
+     * @return string : a string corresponding to the unambiguous hardware identifier of the requested module function
      *
      * On failure, throws an exception or returns an empty string.
      */
@@ -1445,7 +1459,7 @@ class YDevice
      * @param functionIndex : the index of the function for which the information is desired, starting at
      * 0 for the first function.
      *
-     * @return a string corresponding to the logical name of the requested module function
+     * @return string:  a string corresponding to the logical name of the requested module function
      *
      * On failure, throws an exception or returns an empty string.
      */
@@ -1476,7 +1490,7 @@ class YDevice
      * @param functionIndex : the index of the function for which the information is desired, starting at
      * 0 for the first function.
      *
-     * @return a short string (up to 6 characters) corresponding to the advertised value of the requested
+     * @return string : a short string (up to 6 characters) corresponding to the advertised value of the requested
      * module function
      *
      * On failure, throws an exception or returns an empty string.
@@ -1489,6 +1503,115 @@ class YDevice
         return '';
     }
 }
+
+
+
+
+//--- (generated code: YAPIContext definitions)
+//--- (end of generated code: YAPIContext definitions)
+
+//--- (generated code: YAPIContext declaration)
+/**
+ * YAPIContext Class: Control interface for the firmware update process
+ *
+ *
+ */
+class YAPIContext
+{
+    //--- (end of generated code: YAPIContext declaration)
+
+    public $_deviceListValidityMs     = 10000;                        // ulong
+    //--- (generated code: YAPIContext attributes)
+    protected $_cacheValidity            = 5;                            // ulong
+    //--- (end of generated code: YAPIContext attributes)
+
+    function __construct()
+    {
+        //--- (generated code: YAPIContext constructor)
+        //--- (end of generated code: YAPIContext constructor)
+    }
+
+    //--- (generated code: YAPIContext implementation)
+
+    /**
+     * Change the time between each forced enumeration of the YoctoHub used.
+     * By default, the library performs a complete enumeration every 10 seconds.
+     * To reduce network traffic it is possible to increase this delay.
+     * This is particularly useful when a YoctoHub is connected to a GSM network
+     * where the traffic is charged. This setting does not affect modules connected by USB,
+     * nor the operation of arrival/removal callbacks.
+     * Note: This function must be called after yInitAPI.
+     *
+     * @param integer $deviceListValidity : number of seconds between each enumeration.
+     */
+    public function SetDeviceListValidity($deviceListValidity)
+    {
+        $this->SetDeviceListValidity_internal($deviceListValidity);
+    }
+
+    //cannot be generated for PHP:
+    //private function SetDeviceListValidity_internal($deviceListValidity)
+
+    /**
+     * Returns the time between each forced enumeration of the YoctoHub used.
+     * Note: This function must be called after yInitAPI.
+     *
+     * @return integer : the number of seconds between each enumeration.
+     */
+    public function GetDeviceListValidity()
+    {
+        return $this->GetDeviceListValidity_internal();
+    }
+
+    //cannot be generated for PHP:
+    //private function GetDeviceListValidity_internal()
+
+    /**
+     * Change the validity period of the data loaded by the library.
+     * By default, when accessing a module, all the attributes of the
+     * module functions are automatically kept in cache for the standard
+     * duration (5 ms). This method can be used to change this standard duration,
+     * for example in order to reduce network or USB traffic. This parameter
+     * does not affect value change callbacks
+     * Note: This function must be called after yInitAPI.
+     *
+     * @param integer $cacheValidityMs : an integer corresponding to the validity attributed to the
+     *         loaded function parameters, in milliseconds
+     */
+    public function SetCacheValidity($cacheValidityMs)
+    {
+        $this->_cacheValidity = $cacheValidityMs;
+    }
+
+    /**
+     * Returns the validity period of the data loaded by the library.
+     * This method returns the cache validity of all attributes
+     * module functions.
+     * Note: This function must be called after yInitAPI .
+     *
+     * @return integer : an integer corresponding to the validity attributed to the
+     *         loaded function parameters, in milliseconds
+     */
+    public function GetCacheValidity()
+    {
+        return $this->_cacheValidity;
+    }
+
+    //--- (end of generated code: YAPIContext implementation)
+
+    public function SetDeviceListValidity_internal($deviceListValidity)
+    {
+        $this->_deviceListValidityMs = $deviceListValidity * 1000;
+    }
+
+    public function GetDeviceListValidity_internal()
+    {
+        return intval ($this->_deviceListValidityMs /1000);
+    }
+
+
+};
+
 
 //
 // YAPI Context
@@ -1565,6 +1688,8 @@ class YAPI
      */
     static $_jzonCacheDir;
 
+    /** @var  YAPIContext */
+    static $_yapiContext;
 
     // PUBLIC GLOBAL SETTINGS
 
@@ -1594,6 +1719,7 @@ class YAPI
         self::$_data_events = Array();
         self::$_pendingRequests = Array();
         self::$_jzonCacheDir = null;
+        self::$_yapiContext = new YAPIContext();
 
         self::$_decExp = Array(
             1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0,
@@ -1750,7 +1876,11 @@ class YAPI
 
                 // enable monitoring for this hub if not yet done
                 self::monitorEvents($hub);
-                $hub->devListExpires = $now + $hub->devListValidity;
+                if ($hub->isNotifWorking) {
+                    $hub->devListExpires = $now + YAPI::$_yapiContext->_deviceListValidityMs;
+                } else {
+                    $hub->devListExpires = $now + 500;
+                }
             }
             if($alldone) break;
         }
@@ -1859,9 +1989,13 @@ class YAPI
                     $req->reply = substr($req->reply, $linepos+1);
                     $linepos = strpos($req->reply, "\n");
                     $firstCode = substr($ev, 0, 1);
+                    if (strlen($ev)==0){
+                        // empty line to send ping
+                        continue;
+                    }
                     if (strlen($ev) >= 3 && $firstCode >= NOTIFY_NETPKT_CONFCHGYDX && $firstCode <= NOTIFY_NETPKT_TIMEAVGYDX) {
                         // function value ydx (tiny notification)
-                        $hub->devListValidity = 10000;
+                        $hub->isNotifWorking = true;
                         $hub->retryDelay = 15;
                         if ($hub->notifPos >= 0) {
                             $hub->notifPos += strlen($ev) + 1;
@@ -1924,7 +2058,7 @@ class YAPI
                             }
                         }
                     } else if (strlen($ev) > 5 && substr($ev, 0, 4) == 'YN01') {
-                        $hub->devListValidity = 10000;
+                        $hub->isNotifWorking = true;
                         $hub->retryDelay = 15;
                         if ($hub->notifPos >= 0) {
                             $hub->notifPos += strlen($ev) + 1;
@@ -1948,7 +2082,7 @@ class YAPI
                             }
                     } else {
                         // oops, bad notification ? be safe until a good one comes
-                        $hub->devListValidity = 500;
+                        $hub->isNotifWorking = false;
                         $hub->devListExpires = 0;
                         $hub->notifPos = -1;
                     }
@@ -2688,6 +2822,65 @@ class YAPI
         return $res->result;
     }
 
+
+    //--- (generated code: YAPIContext yapiwrapper)
+    /**
+     * Change the time between each forced enumeration of the YoctoHub used.
+     * By default, the library performs a complete enumeration every 10 seconds.
+     * To reduce network traffic it is possible to increase this delay.
+     * This is particularly useful when a YoctoHub is connected to a GSM network
+     * where the traffic is charged. This setting does not affect modules connected by USB,
+     * nor the operation of arrival/removal callbacks.
+     * Note: This function must be called after yInitAPI.
+     *
+     * @param integer $deviceListValidity : number of seconds between each enumeration.
+     */
+    public static function SetDeviceListValidity($deviceListValidity)
+    {
+        self::$_yapiContext->SetDeviceListValidity($deviceListValidity);
+    }
+    /**
+     * Returns the time between each forced enumeration of the YoctoHub used.
+     * Note: This function must be called after yInitAPI.
+     *
+     * @return integer : the number of seconds between each enumeration.
+     */
+    public static function GetDeviceListValidity()
+    {
+        return self::$_yapiContext->GetDeviceListValidity();
+    }
+    /**
+     * Change the validity period of the data loaded by the library.
+     * By default, when accessing a module, all the attributes of the
+     * module functions are automatically kept in cache for the standard
+     * duration (5 ms). This method can be used to change this standard duration,
+     * for example in order to reduce network or USB traffic. This parameter
+     * does not affect value change callbacks
+     * Note: This function must be called after yInitAPI.
+     *
+     * @param integer $cacheValidityMs : an integer corresponding to the validity attributed to the
+     *         loaded function parameters, in milliseconds
+     */
+    public static function SetCacheValidity($cacheValidityMs)
+    {
+        self::$_yapiContext->SetCacheValidity($cacheValidityMs);
+    }
+    /**
+     * Returns the validity period of the data loaded by the library.
+     * This method returns the cache validity of all attributes
+     * module functions.
+     * Note: This function must be called after yInitAPI .
+     *
+     * @return integer : an integer corresponding to the validity attributed to the
+     *         loaded function parameters, in milliseconds
+     */
+    public static function GetCacheValidity()
+    {
+        return self::$_yapiContext->GetCacheValidity();
+    }
+   #--- (end of generated code: YAPIContext yapiwrapper)
+
+
     /**
      * Returns the version identifier for the Yoctopuce library in use.
      * The version is a string in the form "Major.Minor.Build",
@@ -2706,7 +2899,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.31315";
+        return "1.10.31701";
     }
 
     /**
@@ -2755,7 +2948,7 @@ class YAPI
     {
         if (is_null(self::$_hubs) or is_null(self::$_jzonCacheDir)) return;
 
-        if ($bool_removeFile && is_dir(self::$_jzonCacheDir)) {
+        if ($bool_removeFiles && is_dir(self::$_jzonCacheDir)) {
             $files = glob(self::$_jzonCacheDir . "{,.}*.json", GLOB_BRACE); // get all file names
             foreach ($files as $file) {
                 if (is_file($file))
@@ -3087,6 +3280,13 @@ class YAPI
         return YAPI_SUCCESS;
     }
 
+    /**
+     * @param $host
+     * @param $relurl
+     * @param $cbdata
+     * @param $errmsg
+     * @return int
+     */
     static public function _forwardHTTPreq($host, $relurl, $cbdata, &$errmsg)
     {
         $errno = 0;
@@ -3228,7 +3428,7 @@ class YAPI
      *              should be forwarded
      * @param errmsg : a string passed by reference to receive any error message.
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer: YAPI_SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -3300,6 +3500,7 @@ class YAPI
     public static function HandleEvents(&$errmsg='')
     {
         // monitor hubs for events
+        /** @noinspection PhpStatementHasEmptyBodyInspection */
         while(self::_handleEvents_internal(0)) {}
 
         // handle pending events
@@ -3724,28 +3925,15 @@ class YFirmwareUpdate
         $this->_force = $force;
     }
 
-    public function _processMore($i)
+    private function _processMore_internal($i)
     {
         //not yet implemented
         $this->_progress = -1;
         $this->_progress_msg = "Not supported in PHP";
+        return $this->_progress;
     }
 
-
-    /**
-     * Test if the byn file is valid for this module. It is possible to pass a directory instead of a file.
-     * In that case, this method returns the path of the most recent appropriate byn file. This method will
-     * ignore any firmware older than minrelease.
-     *
-     * @param string $serial : the serial number of the module to update
-     * @param string $path : the path of a byn file or a directory that contains byn files
-     * @param integer $minrelease : a positive integer
-     *
-     * @return string : : the path of the byn file to use, or an empty string if no byn files matches the requirement
-     *
-     * On failure, returns a string that starts with "error:".
-     */
-    public static function CheckFirmware($serial,$path,$minrelease)
+    private static function CheckFirmware_internal($serial,$path,$minrelease)
     {
         if ($path == "http://www.yoctopuce.com" || $path == "www.yoctopuce.com") {
             $yoctopuce_infos = file_get_contents('http://www.yoctopuce.com/FR/common/getLastFirmwareLink.php?serial=' . $serial);
@@ -3771,7 +3959,7 @@ class YFirmwareUpdate
         }
     }
 
-    public static function GetAllBootLoaders()
+    private static function GetAllBootLoaders_internal()
     {
         return array();
     }
@@ -3779,14 +3967,49 @@ class YFirmwareUpdate
 
     //--- (generated code: YFirmwareUpdate implementation)
 
-    //cannot be generated for PHP:
-    //public function _processMore($newupdate)
+    public function _processMore($newupdate)
+    {
+        return $this->_processMore_internal($newupdate);
+    }
 
     //cannot be generated for PHP:
-    //public static function GetAllBootLoaders()
+    //private function _processMore_internal($newupdate)
+
+    /**
+     * Returns a list of all the modules in "firmware update" mode. Only devices
+     * connected over USB are listed. For devices connected to a YoctoHub, you
+     * must connect yourself to the YoctoHub web interface.
+     *
+     * @return string[] : an array of strings containing the serial numbers of devices in "firmware update" mode.
+     */
+    public static function GetAllBootLoaders()
+    {
+        return self::GetAllBootLoaders_internal();
+    }
 
     //cannot be generated for PHP:
-    //public static function CheckFirmware($serial,$path,$minrelease)
+    //private static function GetAllBootLoaders_internal()
+
+    /**
+     * Test if the byn file is valid for this module. It is possible to pass a directory instead of a file.
+     * In that case, this method returns the path of the most recent appropriate byn file. This method will
+     * ignore any firmware older than minrelease.
+     *
+     * @param string $serial : the serial number of the module to update
+     * @param string $path : the path of a byn file or a directory that contains byn files
+     * @param integer $minrelease : a positive integer
+     *
+     * @return string : : the path of the byn file to use, or an empty string if no byn files matches the requirement
+     *
+     * On failure, returns a string that starts with "error:".
+     */
+    public static function CheckFirmware($serial,$path,$minrelease)
+    {
+        return self::CheckFirmware_internal($serial,$path,$minrelease);
+    }
+
+    //cannot be generated for PHP:
+    //private static function CheckFirmware_internal($serial,$path,$minrelease)
 
     /**
      * Returns the progress of the firmware update, on a scale from 0 to 100. When the object is
@@ -4645,7 +4868,11 @@ class YDataSet
                 $url = $stream->_get_url();
             }
         }
-        return $this->processMore($this->_progress, $this->_parent->_download($url));
+        try {
+            return $this->processMore($this->_progress, $this->_parent->_download($url));
+        } catch (Exception $ex) {
+            return $this->processMore($this->_progress, $this->_parent->_download($url));
+        }
     }
 
     /**
@@ -4953,7 +5180,7 @@ class YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LOGICALNAME_INVALID;
             }
         }
@@ -4992,7 +5219,7 @@ class YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ADVERTISEDVALUE_INVALID;
             }
         }
@@ -5873,7 +6100,7 @@ class YSensor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_UNIT_INVALID;
             }
         }
@@ -5893,7 +6120,7 @@ class YSensor extends YFunction
     {
         // $res                    is a float;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTVALUE_INVALID;
             }
         }
@@ -5935,7 +6162,7 @@ class YSensor extends YFunction
     {
         // $res                    is a float;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LOWESTVALUE_INVALID;
             }
         }
@@ -5973,7 +6200,7 @@ class YSensor extends YFunction
     {
         // $res                    is a float;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_HIGHESTVALUE_INVALID;
             }
         }
@@ -5995,7 +6222,7 @@ class YSensor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTRAWVALUE_INVALID;
             }
         }
@@ -6016,7 +6243,7 @@ class YSensor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LOGFREQUENCY_INVALID;
             }
         }
@@ -6056,7 +6283,7 @@ class YSensor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REPORTFREQUENCY_INVALID;
             }
         }
@@ -6095,7 +6322,7 @@ class YSensor extends YFunction
     {
         // $res                    is a enumADVERTISINGMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ADVMODE_INVALID;
             }
         }
@@ -6124,7 +6351,7 @@ class YSensor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONPARAM_INVALID;
             }
         }
@@ -6166,7 +6393,7 @@ class YSensor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RESOLUTION_INVALID;
             }
         }
@@ -6188,7 +6415,7 @@ class YSensor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SENSORSTATE_INVALID;
             }
         }
@@ -6569,7 +6796,7 @@ class YSensor extends YFunction
         while(sizeof($refValues) > 0) { array_pop($refValues); };
         // Load function parameters if not yet loaded
         if ($this->_scale == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return YAPI_DEVICE_NOT_FOUND;
             }
         }
@@ -6606,7 +6833,7 @@ class YSensor extends YFunction
         }
         // Load function parameters if not yet loaded
         if ($this->_scale == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return YAPI_INVALID_STRING;
             }
         }
@@ -7093,7 +7320,7 @@ class YModule extends YFunction
         return $dev->functionValue($functionIndex);
     }
 
-    protected function _flattenJsonStruct($jsoncomplex)
+    protected function _flattenJsonStruct_internal($jsoncomplex)
     {
         $decoded = json_decode($jsoncomplex);
         if ($decoded == null) {
@@ -7116,27 +7343,13 @@ class YModule extends YFunction
         return json_encode($attrs);
     }
 
-    /**
-     * Returns a list of all the modules that are plugged into the current module.
-     * This method only makes sense when called for a YoctoHub/VirtualHub.
-     * Otherwise, an empty array will be returned.
-     *
-     * @return string[] : an array of strings containing the sub modules.
-     */
-    public function get_subDevices()
+    private function get_subDevices_internal()
     {
         $serial = $this->get_serialNumber();
         return YAPI::getSubDevicesFrom($serial);
     }
 
-    /**
-     * Returns the serial number of the YoctoHub on which this module is connected.
-     * If the module is connected by USB, or if the module is the root YoctoHub, an
-     * empty string is returned.
-     *
-     * @return string : a string with the serial number of the YoctoHub or an empty string
-     */
-    public function get_parentHub()
+    private function get_parentHub_internal()
     {
         $serial = $this->get_serialNumber();
         $hubserial = YAPI::getHubSerialFrom($serial);
@@ -7145,13 +7358,7 @@ class YModule extends YFunction
         return $hubserial;
     }
 
-    /**
-     * Returns the URL used to access the module. If the module is connected by USB, the
-     * string 'usb' is returned.
-     *
-     * @return string : a string with the URL of the module.
-     */
-    public function get_url()
+    private function get_url_internal()
     {
         $dev = $this->_getDev();
         if (!($dev == null)) {
@@ -7221,7 +7428,7 @@ class YModule extends YFunction
             if (!($dev == null)) {
                 return $dev->getProductName();
             }
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PRODUCTNAME_INVALID;
             }
         }
@@ -7245,7 +7452,7 @@ class YModule extends YFunction
             if (!($dev == null)) {
                 return $dev->getSerialNumber();
             }
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SERIALNUMBER_INVALID;
             }
         }
@@ -7269,7 +7476,7 @@ class YModule extends YFunction
             if (!($dev == null)) {
                 return $dev->getProductId();
             }
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PRODUCTID_INVALID;
             }
         }
@@ -7288,7 +7495,7 @@ class YModule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PRODUCTRELEASE_INVALID;
             }
         }
@@ -7307,7 +7514,7 @@ class YModule extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FIRMWARERELEASE_INVALID;
             }
         }
@@ -7327,7 +7534,7 @@ class YModule extends YFunction
     {
         // $res                    is a enumFLASHSETTINGS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PERSISTENTSETTINGS_INVALID;
             }
         }
@@ -7352,7 +7559,7 @@ class YModule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LUMINOSITY_INVALID;
             }
         }
@@ -7394,7 +7601,7 @@ class YModule extends YFunction
             if (!($dev == null)) {
                 return $dev->getBeacon();
             }
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BEACON_INVALID;
             }
         }
@@ -7428,7 +7635,7 @@ class YModule extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_UPTIME_INVALID;
             }
         }
@@ -7447,7 +7654,7 @@ class YModule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_USBCURRENT_INVALID;
             }
         }
@@ -7469,7 +7676,7 @@ class YModule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REBOOTCOUNTDOWN_INVALID;
             }
         }
@@ -7495,7 +7702,7 @@ class YModule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_USERVAR_INVALID;
             }
         }
@@ -7930,8 +8137,13 @@ class YModule extends YFunction
         return $res;
     }
 
+    public function _flattenJsonStruct($jsoncomplex)
+    {
+        return $this->_flattenJsonStruct_internal($jsoncomplex);
+    }
+
     //cannot be generated for PHP:
-    //public function _flattenJsonStruct($jsoncomplex)
+    //private function _flattenJsonStruct_internal($jsoncomplex)
 
     public function calibVersion($cparams)
     {
@@ -8496,14 +8708,49 @@ class YModule extends YFunction
         return $this->_upload('logs.txt', $text);
     }
 
-    //cannot be generated for PHP:
-    //public function get_subDevices()
+    /**
+     * Returns a list of all the modules that are plugged into the current module.
+     * This method only makes sense when called for a YoctoHub/VirtualHub.
+     * Otherwise, an empty array will be returned.
+     *
+     * @return string[] : an array of strings containing the sub modules.
+     */
+    public function get_subDevices()
+    {
+        return $this->get_subDevices_internal();
+    }
 
     //cannot be generated for PHP:
-    //public function get_parentHub()
+    //private function get_subDevices_internal()
+
+    /**
+     * Returns the serial number of the YoctoHub on which this module is connected.
+     * If the module is connected by USB, or if the module is the root YoctoHub, an
+     * empty string is returned.
+     *
+     * @return string : a string with the serial number of the YoctoHub or an empty string
+     */
+    public function get_parentHub()
+    {
+        return $this->get_parentHub_internal();
+    }
 
     //cannot be generated for PHP:
-    //public function get_url()
+    //private function get_parentHub_internal()
+
+    /**
+     * Returns the URL used to access the module. If the module is connected by USB, the
+     * string 'usb' is returned.
+     *
+     * @return string : a string with the URL of the module.
+     */
+    public function get_url()
+    {
+        return $this->get_url_internal();
+    }
+
+    //cannot be generated for PHP:
+    //private function get_url_internal()
 
     public function productName()
     { return $this->get_productName(); }
@@ -8816,7 +9063,7 @@ function yTestHub($url, $mstimeout, &$errmsg="")
  *              should be forwarded
  * @param errmsg : a string passed by reference to receive any error message.
  *
- * @return YAPI_SUCCESS when the call succeeds.
+ * @return integer : YAPI_SUCCESS when the call succeeds.
  *
  * On failure, throws an exception or returns a negative error code.
  */
@@ -9537,7 +9784,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTRUNINDEX_INVALID;
             }
         }
@@ -9556,7 +9803,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TIMEUTC_INVALID;
             }
         }
@@ -9591,7 +9838,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a enumOFFONPENDING;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RECORDING_INVALID;
             }
         }
@@ -9627,7 +9874,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AUTOSTART_INVALID;
             }
         }
@@ -9665,7 +9912,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BEACONDRIVEN_INVALID;
             }
         }
@@ -9695,7 +9942,7 @@ class YDataLogger extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CLEARHISTORY_INVALID;
             }
         }

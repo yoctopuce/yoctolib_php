@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_watchdog.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_watchdog.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -65,6 +65,8 @@ if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',      
 if(!defined('Y_TRIGGERDELAY_INVALID'))       define('Y_TRIGGERDELAY_INVALID',      YAPI_INVALID_LONG);
 if(!defined('Y_TRIGGERDURATION_INVALID'))    define('Y_TRIGGERDURATION_INVALID',   YAPI_INVALID_LONG);
 //--- (end of YWatchdog definitions)
+    #--- (YWatchdog yapiwrapper)
+   #--- (end of YWatchdog yapiwrapper)
 
 //--- (YWatchdog declaration)
 /**
@@ -185,7 +187,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a enumTOGGLE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STATE_INVALID;
             }
         }
@@ -223,7 +225,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a enumTOGGLEATPOWERON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STATEATPOWERON_INVALID;
             }
         }
@@ -260,7 +262,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEA_INVALID;
             }
         }
@@ -296,7 +298,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEB_INVALID;
             }
         }
@@ -332,7 +334,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OUTPUT_INVALID;
             }
         }
@@ -370,7 +372,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
@@ -404,7 +406,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a YDelayedPulse;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DELAYEDPULSETIMER_INVALID;
             }
         }
@@ -448,7 +450,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COUNTDOWN_INVALID;
             }
         }
@@ -468,7 +470,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AUTOSTART_INVALID;
             }
         }
@@ -504,7 +506,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RUNNING_INVALID;
             }
         }
@@ -554,7 +556,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TRIGGERDELAY_INVALID;
             }
         }
@@ -589,7 +591,7 @@ class YWatchdog extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TRIGGERDURATION_INVALID;
             }
         }

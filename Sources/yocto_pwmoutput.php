@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwmoutput.php 31296 2018-07-19 12:34:36Z mvuilleu $
+ * $Id: yocto_pwmoutput.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -54,6 +54,8 @@ if(!defined('Y_PULSEDURATION_INVALID'))      define('Y_PULSEDURATION_INVALID',  
 if(!defined('Y_PWMTRANSITION_INVALID'))      define('Y_PWMTRANSITION_INVALID',     YAPI_INVALID_STRING);
 if(!defined('Y_DUTYCYCLEATPOWERON_INVALID')) define('Y_DUTYCYCLEATPOWERON_INVALID', YAPI_INVALID_DOUBLE);
 //--- (end of YPwmOutput definitions)
+    #--- (YPwmOutput yapiwrapper)
+   #--- (end of YPwmOutput yapiwrapper)
 
 //--- (YPwmOutput declaration)
 /**
@@ -141,7 +143,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
@@ -191,7 +193,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
@@ -225,7 +227,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PERIOD_INVALID;
             }
         }
@@ -259,7 +261,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLE_INVALID;
             }
         }
@@ -295,7 +297,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSEDURATION_INVALID;
             }
         }
@@ -307,7 +309,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PWMTRANSITION_INVALID;
             }
         }
@@ -333,7 +335,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLEDATPOWERON_INVALID;
             }
         }
@@ -386,7 +388,7 @@ class YPwmOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLEATPOWERON_INVALID;
             }
         }

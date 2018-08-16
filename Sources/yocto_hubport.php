@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_hubport.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_hubport.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YHubPort, the high-level API for HubPort functions
  *
@@ -52,6 +52,8 @@ if(!defined('Y_PORTSTATE_PROG'))             define('Y_PORTSTATE_PROG',         
 if(!defined('Y_PORTSTATE_INVALID'))          define('Y_PORTSTATE_INVALID',         -1);
 if(!defined('Y_BAUDRATE_INVALID'))           define('Y_BAUDRATE_INVALID',          YAPI_INVALID_UINT);
 //--- (end of YHubPort definitions)
+    #--- (YHubPort yapiwrapper)
+   #--- (end of YHubPort yapiwrapper)
 
 //--- (YHubPort declaration)
 /**
@@ -121,7 +123,7 @@ class YHubPort extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }
@@ -158,7 +160,7 @@ class YHubPort extends YFunction
     {
         // $res                    is a enumPORTSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTSTATE_INVALID;
             }
         }
@@ -179,7 +181,7 @@ class YHubPort extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BAUDRATE_INVALID;
             }
         }

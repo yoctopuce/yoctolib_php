@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_bluetoothlink.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_bluetoothlink.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YBluetoothLink, the high-level API for BluetoothLink functions
  *
@@ -60,6 +60,8 @@ if(!defined('Y_VOLUME_INVALID'))             define('Y_VOLUME_INVALID',         
 if(!defined('Y_LINKQUALITY_INVALID'))        define('Y_LINKQUALITY_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YBluetoothLink definitions)
+    #--- (YBluetoothLink yapiwrapper)
+   #--- (end of YBluetoothLink yapiwrapper)
 
 //--- (YBluetoothLink declaration)
 /**
@@ -163,7 +165,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OWNADDRESS_INVALID;
             }
         }
@@ -187,7 +189,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PAIRINGPIN_INVALID;
             }
         }
@@ -223,7 +225,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REMOTEADDRESS_INVALID;
             }
         }
@@ -258,7 +260,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REMOTENAME_INVALID;
             }
         }
@@ -277,7 +279,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MUTE_INVALID;
             }
         }
@@ -312,7 +314,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PREAMPLIFIER_INVALID;
             }
         }
@@ -346,7 +348,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLUME_INVALID;
             }
         }
@@ -381,7 +383,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a enumBTSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LINKSTATE_INVALID;
             }
         }
@@ -401,7 +403,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LINKQUALITY_INVALID;
             }
         }
@@ -413,7 +415,7 @@ class YBluetoothLink extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

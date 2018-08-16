@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_poweroutput.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_poweroutput.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -46,6 +46,8 @@ if(!defined('Y_VOLTAGE_OUT3V3'))             define('Y_VOLTAGE_OUT3V3',         
 if(!defined('Y_VOLTAGE_OUT5V'))              define('Y_VOLTAGE_OUT5V',             2);
 if(!defined('Y_VOLTAGE_INVALID'))            define('Y_VOLTAGE_INVALID',           -1);
 //--- (end of YPowerOutput definitions)
+    #--- (YPowerOutput yapiwrapper)
+   #--- (end of YPowerOutput yapiwrapper)
 
 //--- (YPowerOutput declaration)
 /**
@@ -99,7 +101,7 @@ class YPowerOutput extends YFunction
     {
         // $res                    is a enumPOWEROUPUTVOLTAGE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLTAGE_INVALID;
             }
         }

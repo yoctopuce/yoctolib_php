@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_relay.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YRelay, the high-level API for Relay functions
  *
@@ -57,6 +57,8 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
 if(!defined('Y_DELAYEDPULSETIMER_INVALID'))  define('Y_DELAYEDPULSETIMER_INVALID', null);
 if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',         YAPI_INVALID_LONG);
 //--- (end of YRelay definitions)
+    #--- (YRelay yapiwrapper)
+   #--- (end of YRelay yapiwrapper)
 
 //--- (YRelay declaration)
 /**
@@ -154,7 +156,7 @@ class YRelay extends YFunction
     {
         // $res                    is a enumTOGGLE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STATE_INVALID;
             }
         }
@@ -192,7 +194,7 @@ class YRelay extends YFunction
     {
         // $res                    is a enumTOGGLEATPOWERON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STATEATPOWERON_INVALID;
             }
         }
@@ -229,7 +231,7 @@ class YRelay extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEA_INVALID;
             }
         }
@@ -265,7 +267,7 @@ class YRelay extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXTIMEONSTATEB_INVALID;
             }
         }
@@ -301,7 +303,7 @@ class YRelay extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OUTPUT_INVALID;
             }
         }
@@ -339,7 +341,7 @@ class YRelay extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
@@ -373,7 +375,7 @@ class YRelay extends YFunction
     {
         // $res                    is a YDelayedPulse;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DELAYEDPULSETIMER_INVALID;
             }
         }
@@ -417,7 +419,7 @@ class YRelay extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COUNTDOWN_INVALID;
             }
         }

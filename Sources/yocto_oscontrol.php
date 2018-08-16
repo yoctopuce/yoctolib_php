@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_oscontrol.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_oscontrol.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YOsControl, the high-level API for OsControl functions
  *
@@ -43,6 +43,8 @@
 //--- (YOsControl definitions)
 if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID'))  define('Y_SHUTDOWNCOUNTDOWN_INVALID', YAPI_INVALID_UINT);
 //--- (end of YOsControl definitions)
+    #--- (YOsControl yapiwrapper)
+   #--- (end of YOsControl yapiwrapper)
 
 //--- (YOsControl declaration)
 /**
@@ -96,7 +98,7 @@ class YOsControl extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SHUTDOWNCOUNTDOWN_INVALID;
             }
         }

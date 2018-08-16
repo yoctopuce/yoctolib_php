@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voltage.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_voltage.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YVoltage, the high-level API for Voltage functions
  *
@@ -45,6 +45,8 @@ if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',          
 if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
 if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
 //--- (end of YVoltage definitions)
+    #--- (YVoltage yapiwrapper)
+   #--- (end of YVoltage yapiwrapper)
 
 //--- (YVoltage declaration)
 /**
@@ -90,7 +92,7 @@ class YVoltage extends YSensor
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }

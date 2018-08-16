@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_lightsensor.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_lightsensor.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -48,6 +48,8 @@ if(!defined('Y_MEASURETYPE_HIGH_RATE'))      define('Y_MEASURETYPE_HIGH_RATE',  
 if(!defined('Y_MEASURETYPE_HIGH_ENERGY'))    define('Y_MEASURETYPE_HIGH_ENERGY',   4);
 if(!defined('Y_MEASURETYPE_INVALID'))        define('Y_MEASURETYPE_INVALID',       -1);
 //--- (end of YLightSensor definitions)
+    #--- (YLightSensor yapiwrapper)
+   #--- (end of YLightSensor yapiwrapper)
 
 //--- (YLightSensor declaration)
 /**
@@ -134,7 +136,7 @@ class YLightSensor extends YSensor
     {
         // $res                    is a enumLIGHTSENSORTYPEALL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MEASURETYPE_INVALID;
             }
         }

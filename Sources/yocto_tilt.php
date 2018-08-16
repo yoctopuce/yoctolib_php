@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_tilt.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_tilt.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YTilt, the high-level API for Tilt functions
  *
@@ -47,6 +47,8 @@ if(!defined('Y_AXIS_Z'))                     define('Y_AXIS_Z',                 
 if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',              -1);
 if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
 //--- (end of YTilt definitions)
+    #--- (YTilt yapiwrapper)
+   #--- (end of YTilt yapiwrapper)
 
 //--- (YTilt declaration)
 /**
@@ -111,7 +113,7 @@ class YTilt extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BANDWIDTH_INVALID;
             }
         }
@@ -140,7 +142,7 @@ class YTilt extends YSensor
     {
         // $res                    is a enumAXIS;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_AXIS_INVALID;
             }
         }

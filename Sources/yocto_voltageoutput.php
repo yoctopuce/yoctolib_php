@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_voltageoutput.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_voltageoutput.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -45,6 +45,8 @@ if(!defined('Y_CURRENTVOLTAGE_INVALID'))     define('Y_CURRENTVOLTAGE_INVALID', 
 if(!defined('Y_VOLTAGETRANSITION_INVALID'))  define('Y_VOLTAGETRANSITION_INVALID', YAPI_INVALID_STRING);
 if(!defined('Y_VOLTAGEATSTARTUP_INVALID'))   define('Y_VOLTAGEATSTARTUP_INVALID',  YAPI_INVALID_DOUBLE);
 //--- (end of YVoltageOutput definitions)
+    #--- (YVoltageOutput yapiwrapper)
+   #--- (end of YVoltageOutput yapiwrapper)
 
 //--- (YVoltageOutput declaration)
 /**
@@ -118,7 +120,7 @@ class YVoltageOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CURRENTVOLTAGE_INVALID;
             }
         }
@@ -130,7 +132,7 @@ class YVoltageOutput extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLTAGETRANSITION_INVALID;
             }
         }
@@ -171,7 +173,7 @@ class YVoltageOutput extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLTAGEATSTARTUP_INVALID;
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupschedule.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_wakeupschedule.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -49,6 +49,8 @@ if(!defined('Y_MONTHDAYS_INVALID'))          define('Y_MONTHDAYS_INVALID',      
 if(!defined('Y_MONTHS_INVALID'))             define('Y_MONTHS_INVALID',            YAPI_INVALID_UINT);
 if(!defined('Y_NEXTOCCURENCE_INVALID'))      define('Y_NEXTOCCURENCE_INVALID',     YAPI_INVALID_LONG);
 //--- (end of YWakeUpSchedule definitions)
+    #--- (YWakeUpSchedule yapiwrapper)
+   #--- (end of YWakeUpSchedule yapiwrapper)
 
 //--- (YWakeUpSchedule declaration)
 /**
@@ -130,7 +132,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MINUTESA_INVALID;
             }
         }
@@ -166,7 +168,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MINUTESB_INVALID;
             }
         }
@@ -201,7 +203,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_HOURS_INVALID;
             }
         }
@@ -235,7 +237,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_WEEKDAYS_INVALID;
             }
         }
@@ -269,7 +271,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MONTHDAYS_INVALID;
             }
         }
@@ -303,7 +305,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MONTHS_INVALID;
             }
         }
@@ -337,7 +339,7 @@ class YWakeUpSchedule extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_NEXTOCCURENCE_INVALID;
             }
         }

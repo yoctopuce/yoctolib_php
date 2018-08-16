@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_temperature.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_temperature.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YTemperature, the high-level API for Temperature functions
  *
@@ -61,6 +61,8 @@ if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',    
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YTemperature definitions)
+    #--- (YTemperature yapiwrapper)
+   #--- (end of YTemperature yapiwrapper)
 
 //--- (YTemperature declaration)
 /**
@@ -170,7 +172,7 @@ class YTemperature extends YSensor
     {
         // $res                    is a enumTEMPSENSORTYPEALL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SENSORTYPE_INVALID;
             }
         }
@@ -213,7 +215,7 @@ class YTemperature extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALVALUE_INVALID;
             }
         }
@@ -232,7 +234,7 @@ class YTemperature extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALUNIT_INVALID;
             }
         }
@@ -244,7 +246,7 @@ class YTemperature extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

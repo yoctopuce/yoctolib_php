@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_dualpower.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_dualpower.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YDualPower, the high-level API for DualPower functions
  *
@@ -52,6 +52,8 @@ if(!defined('Y_POWERCONTROL_OFF'))           define('Y_POWERCONTROL_OFF',       
 if(!defined('Y_POWERCONTROL_INVALID'))       define('Y_POWERCONTROL_INVALID',      -1);
 if(!defined('Y_EXTVOLTAGE_INVALID'))         define('Y_EXTVOLTAGE_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YDualPower definitions)
+    #--- (YDualPower yapiwrapper)
+   #--- (end of YDualPower yapiwrapper)
 
 //--- (YDualPower declaration)
 /**
@@ -122,7 +124,7 @@ class YDualPower extends YFunction
     {
         // $res                    is a enumPWRSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_POWERSTATE_INVALID;
             }
         }
@@ -143,7 +145,7 @@ class YDualPower extends YFunction
     {
         // $res                    is a enumPWRCTRL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_POWERCONTROL_INVALID;
             }
         }
@@ -179,7 +181,7 @@ class YDualPower extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_EXTVOLTAGE_INVALID;
             }
         }

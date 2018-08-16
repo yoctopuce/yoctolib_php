@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_digitalio.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_digitalio.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -53,6 +53,8 @@ if(!defined('Y_PORTDIAGS_INVALID'))          define('Y_PORTDIAGS_INVALID',      
 if(!defined('Y_PORTSIZE_INVALID'))           define('Y_PORTSIZE_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YDigitalIO definitions)
+    #--- (YDigitalIO yapiwrapper)
+   #--- (end of YDigitalIO yapiwrapper)
 
 //--- (YDigitalIO declaration)
 /**
@@ -142,7 +144,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTSTATE_INVALID;
             }
         }
@@ -179,7 +181,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTDIRECTION_INVALID;
             }
         }
@@ -217,7 +219,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTOPENDRAIN_INVALID;
             }
         }
@@ -254,7 +256,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTPOLARITY_INVALID;
             }
         }
@@ -294,7 +296,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTDIAGS_INVALID;
             }
         }
@@ -313,7 +315,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PORTSIZE_INVALID;
             }
         }
@@ -333,7 +335,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a enumIOVOLTAGE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OUTPUTVOLTAGE_INVALID;
             }
         }
@@ -362,7 +364,7 @@ class YDigitalIO extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

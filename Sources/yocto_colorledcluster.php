@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 30500 2018-04-04 07:53:46Z mvuilleu $
+ * $Id: yocto_colorledcluster.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -50,6 +50,8 @@ if(!defined('Y_BLINKSEQMAXCOUNT_INVALID'))   define('Y_BLINKSEQMAXCOUNT_INVALID'
 if(!defined('Y_BLINKSEQMAXSIZE_INVALID'))    define('Y_BLINKSEQMAXSIZE_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YColorLedCluster definitions)
+    #--- (YColorLedCluster yapiwrapper)
+   #--- (end of YColorLedCluster yapiwrapper)
 
 //--- (YColorLedCluster declaration)
 /**
@@ -132,7 +134,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ACTIVELEDCOUNT_INVALID;
             }
         }
@@ -167,7 +169,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a enumLEDTYPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LEDTYPE_INVALID;
             }
         }
@@ -202,7 +204,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MAXLEDCOUNT_INVALID;
             }
         }
@@ -221,7 +223,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXCOUNT_INVALID;
             }
         }
@@ -240,7 +242,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXSIZE_INVALID;
             }
         }
@@ -252,7 +254,7 @@ class YColorLedCluster extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

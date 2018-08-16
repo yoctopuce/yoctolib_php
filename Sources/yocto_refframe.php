@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_refframe.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_refframe.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -63,6 +63,8 @@ if(!defined('Y_MOUNTPOS_INVALID'))           define('Y_MOUNTPOS_INVALID',       
 if(!defined('Y_BEARING_INVALID'))            define('Y_BEARING_INVALID',           YAPI_INVALID_DOUBLE);
 if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID',  YAPI_INVALID_STRING);
 //--- (end of YRefFrame definitions)
+    #--- (YRefFrame yapiwrapper)
+   #--- (end of YRefFrame yapiwrapper)
 
 //--- (YRefFrame declaration)
 /**
@@ -161,7 +163,7 @@ class YRefFrame extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MOUNTPOS_INVALID;
             }
         }
@@ -216,7 +218,7 @@ class YRefFrame extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BEARING_INVALID;
             }
         }
@@ -228,7 +230,7 @@ class YRefFrame extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CALIBRATIONPARAM_INVALID;
             }
         }
@@ -246,7 +248,7 @@ class YRefFrame extends YFunction
     {
         // $res                    is a enumFUSIONMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FUSIONMODE_INVALID;
             }
         }

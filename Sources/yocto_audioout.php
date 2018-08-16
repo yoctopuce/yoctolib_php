@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_audioout.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_audioout.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -49,6 +49,8 @@ if(!defined('Y_VOLUMERANGE_INVALID'))        define('Y_VOLUMERANGE_INVALID',    
 if(!defined('Y_SIGNAL_INVALID'))             define('Y_SIGNAL_INVALID',            YAPI_INVALID_INT);
 if(!defined('Y_NOSIGNALFOR_INVALID'))        define('Y_NOSIGNALFOR_INVALID',       YAPI_INVALID_INT);
 //--- (end of YAudioOut definitions)
+    #--- (YAudioOut yapiwrapper)
+   #--- (end of YAudioOut yapiwrapper)
 
 //--- (YAudioOut declaration)
 /**
@@ -119,7 +121,7 @@ class YAudioOut extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLUME_INVALID;
             }
         }
@@ -153,7 +155,7 @@ class YAudioOut extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MUTE_INVALID;
             }
         }
@@ -191,7 +193,7 @@ class YAudioOut extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VOLUMERANGE_INVALID;
             }
         }
@@ -210,7 +212,7 @@ class YAudioOut extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNAL_INVALID;
             }
         }
@@ -229,7 +231,7 @@ class YAudioOut extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_NOSIGNALFOR_INVALID;
             }
         }

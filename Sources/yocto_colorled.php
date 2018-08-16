@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorled.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_colorled.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -51,6 +51,8 @@ if(!defined('Y_BLINKSEQMAXSIZE_INVALID'))    define('Y_BLINKSEQMAXSIZE_INVALID',
 if(!defined('Y_BLINKSEQSIGNATURE_INVALID'))  define('Y_BLINKSEQSIGNATURE_INVALID', YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YColorLed definitions)
+    #--- (YColorLed yapiwrapper)
+   #--- (end of YColorLed yapiwrapper)
 
 //--- (YColorLed declaration)
 /**
@@ -144,7 +146,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RGBCOLOR_INVALID;
             }
         }
@@ -178,7 +180,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_HSLCOLOR_INVALID;
             }
         }
@@ -205,7 +207,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RGBMOVE_INVALID;
             }
         }
@@ -239,7 +241,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_HSLMOVE_INVALID;
             }
         }
@@ -280,7 +282,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RGBCOLORATPOWERON_INVALID;
             }
         }
@@ -315,7 +317,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKSEQSIZE_INVALID;
             }
         }
@@ -334,7 +336,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKSEQMAXSIZE_INVALID;
             }
         }
@@ -356,7 +358,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKSEQSIGNATURE_INVALID;
             }
         }
@@ -368,7 +370,7 @@ class YColorLed extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

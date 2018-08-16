@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_multiaxiscontroller.php 30483 2018-03-29 07:43:07Z mvuilleu $
+ * $Id: yocto_multiaxiscontroller.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -51,6 +51,8 @@ if(!defined('Y_GLOBALSTATE_INVALID'))        define('Y_GLOBALSTATE_INVALID',    
 if(!defined('Y_NAXIS_INVALID'))              define('Y_NAXIS_INVALID',             YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YMultiAxisController definitions)
+    #--- (YMultiAxisController yapiwrapper)
+   #--- (end of YMultiAxisController yapiwrapper)
 
 //--- (YMultiAxisController declaration)
 /**
@@ -115,7 +117,7 @@ class YMultiAxisController extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_NAXIS_INVALID;
             }
         }
@@ -151,7 +153,7 @@ class YMultiAxisController extends YFunction
     {
         // $res                    is a enumSTEPPERSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_GLOBALSTATE_INVALID;
             }
         }
@@ -163,7 +165,7 @@ class YMultiAxisController extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

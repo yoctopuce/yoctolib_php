@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_wakeupmonitor.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -56,6 +56,8 @@ if(!defined('Y_SLEEPCOUNTDOWN_INVALID'))     define('Y_SLEEPCOUNTDOWN_INVALID', 
 if(!defined('Y_NEXTWAKEUP_INVALID'))         define('Y_NEXTWAKEUP_INVALID',        YAPI_INVALID_LONG);
 if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',           YAPI_INVALID_LONG);
 //--- (end of YWakeUpMonitor definitions)
+    #--- (YWakeUpMonitor yapiwrapper)
+   #--- (end of YWakeUpMonitor yapiwrapper)
 
 //--- (YWakeUpMonitor declaration)
 /**
@@ -140,7 +142,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_POWERDURATION_INVALID;
             }
         }
@@ -175,7 +177,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SLEEPCOUNTDOWN_INVALID;
             }
         }
@@ -209,7 +211,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_NEXTWAKEUP_INVALID;
             }
         }
@@ -245,7 +247,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a enumWAKEUPREASON;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_WAKEUPREASON_INVALID;
             }
         }
@@ -265,7 +267,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a enumWAKEUPSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_WAKEUPSTATE_INVALID;
             }
         }
@@ -283,7 +285,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_RTCTIME_INVALID;
             }
         }

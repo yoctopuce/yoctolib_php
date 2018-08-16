@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_motor.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_motor.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YMotor, the high-level API for Motor functions
  *
@@ -59,6 +59,8 @@ if(!defined('Y_STARTERTIME_INVALID'))        define('Y_STARTERTIME_INVALID',    
 if(!defined('Y_FAILSAFETIMEOUT_INVALID'))    define('Y_FAILSAFETIMEOUT_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YMotor definitions)
+    #--- (YMotor yapiwrapper)
+   #--- (end of YMotor yapiwrapper)
 
 //--- (YMotor declaration)
 /**
@@ -171,7 +173,7 @@ class YMotor extends YFunction
     {
         // $res                    is a enumMOTORSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_MOTORSTATUS_INVALID;
             }
         }
@@ -216,7 +218,7 @@ class YMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DRIVINGFORCE_INVALID;
             }
         }
@@ -255,7 +257,7 @@ class YMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BRAKINGFORCE_INVALID;
             }
         }
@@ -299,7 +301,7 @@ class YMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CUTOFFVOLTAGE_INVALID;
             }
         }
@@ -321,7 +323,7 @@ class YMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_OVERCURRENTLIMIT_INVALID;
             }
         }
@@ -378,7 +380,7 @@ class YMotor extends YFunction
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
@@ -400,7 +402,7 @@ class YMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_STARTERTIME_INVALID;
             }
         }
@@ -442,7 +444,7 @@ class YMotor extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FAILSAFETIMEOUT_INVALID;
             }
         }
@@ -474,7 +476,7 @@ class YMotor extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_COMMAND_INVALID;
             }
         }

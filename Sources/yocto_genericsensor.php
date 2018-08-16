@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_genericsensor.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_genericsensor.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -52,6 +52,8 @@ if(!defined('Y_SIGNALRANGE_INVALID'))        define('Y_SIGNALRANGE_INVALID',    
 if(!defined('Y_VALUERANGE_INVALID'))         define('Y_VALUERANGE_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_SIGNALBIAS_INVALID'))         define('Y_SIGNALBIAS_INVALID',        YAPI_INVALID_DOUBLE);
 //--- (end of YGenericSensor definitions)
+    #--- (YGenericSensor yapiwrapper)
+   #--- (end of YGenericSensor yapiwrapper)
 
 //--- (YGenericSensor declaration)
 /**
@@ -151,7 +153,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALVALUE_INVALID;
             }
         }
@@ -170,7 +172,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration == 0) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALUNIT_INVALID;
             }
         }
@@ -189,7 +191,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALRANGE_INVALID;
             }
         }
@@ -223,7 +225,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_VALUERANGE_INVALID;
             }
         }
@@ -278,7 +280,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALBIAS_INVALID;
             }
         }
@@ -304,7 +306,7 @@ class YGenericSensor extends YSensor
     {
         // $res                    is a enumSIGNALSAMPLING;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALSAMPLING_INVALID;
             }
         }

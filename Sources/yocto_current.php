@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_current.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YCurrent, the high-level API for Current functions
  *
@@ -45,6 +45,8 @@ if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',          
 if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
 if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',           -1);
 //--- (end of YCurrent definitions)
+    #--- (YCurrent yapiwrapper)
+   #--- (end of YCurrent yapiwrapper)
 
 //--- (YCurrent declaration)
 /**
@@ -90,7 +92,7 @@ class YCurrent extends YSensor
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ENABLED_INVALID;
             }
         }

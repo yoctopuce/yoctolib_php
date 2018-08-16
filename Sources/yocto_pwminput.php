@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 29968 2018-02-19 15:12:34Z seb $
+ * $Id: yocto_pwminput.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -60,6 +60,8 @@ if(!defined('Y_PULSECOUNTER_INVALID'))       define('Y_PULSECOUNTER_INVALID',   
 if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',        YAPI_INVALID_LONG);
 if(!defined('Y_DEBOUNCEPERIOD_INVALID'))     define('Y_DEBOUNCEPERIOD_INVALID',    YAPI_INVALID_UINT);
 //--- (end of YPwmInput definitions)
+    #--- (YPwmInput yapiwrapper)
+   #--- (end of YPwmInput yapiwrapper)
 
 //--- (YPwmInput declaration)
 /**
@@ -157,7 +159,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DUTYCYCLE_INVALID;
             }
         }
@@ -177,7 +179,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSEDURATION_INVALID;
             }
         }
@@ -196,7 +198,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FREQUENCY_INVALID;
             }
         }
@@ -215,7 +217,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PERIOD_INVALID;
             }
         }
@@ -236,7 +238,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSECOUNTER_INVALID;
             }
         }
@@ -261,7 +263,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
@@ -285,7 +287,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a enumPWMREPORTMODETYPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PWMREPORTMODE_INVALID;
             }
         }
@@ -327,7 +329,7 @@ class YPwmInput extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DEBOUNCEPERIOD_INVALID;
             }
         }

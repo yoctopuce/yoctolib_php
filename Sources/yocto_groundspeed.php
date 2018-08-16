@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_groundspeed.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_groundspeed.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *
@@ -42,6 +42,8 @@
 //--- (end of YGroundSpeed return codes)
 //--- (YGroundSpeed definitions)
 //--- (end of YGroundSpeed definitions)
+    #--- (YGroundSpeed yapiwrapper)
+   #--- (end of YGroundSpeed yapiwrapper)
 
 //--- (YGroundSpeed declaration)
 /**

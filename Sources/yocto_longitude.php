@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_longitude.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_longitude.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YLongitude, the high-level API for Longitude functions
  *
@@ -42,6 +42,8 @@
 //--- (end of YLongitude return codes)
 //--- (YLongitude definitions)
 //--- (end of YLongitude definitions)
+    #--- (YLongitude yapiwrapper)
+   #--- (end of YLongitude yapiwrapper)
 
 //--- (YLongitude declaration)
 /**

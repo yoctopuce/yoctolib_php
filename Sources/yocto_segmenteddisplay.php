@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_segmenteddisplay.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_segmenteddisplay.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -48,6 +48,8 @@ if(!defined('Y_DISPLAYMODE_AUTO60'))         define('Y_DISPLAYMODE_AUTO60',     
 if(!defined('Y_DISPLAYMODE_INVALID'))        define('Y_DISPLAYMODE_INVALID',       -1);
 if(!defined('Y_DISPLAYEDTEXT_INVALID'))      define('Y_DISPLAYEDTEXT_INVALID',     YAPI_INVALID_STRING);
 //--- (end of YSegmentedDisplay definitions)
+    #--- (YSegmentedDisplay yapiwrapper)
+   #--- (end of YSegmentedDisplay yapiwrapper)
 
 //--- (YSegmentedDisplay declaration)
 /**
@@ -105,7 +107,7 @@ class YSegmentedDisplay extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYEDTEXT_INVALID;
             }
         }
@@ -132,7 +134,7 @@ class YSegmentedDisplay extends YFunction
     {
         // $res                    is a enumDISPLAYMODE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYMODE_INVALID;
             }
         }

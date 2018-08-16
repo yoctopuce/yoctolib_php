@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_led.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_led.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YLed, the high-level API for Led functions
  *
@@ -53,6 +53,8 @@ if(!defined('Y_BLINKING_PANIC'))             define('Y_BLINKING_PANIC',         
 if(!defined('Y_BLINKING_INVALID'))           define('Y_BLINKING_INVALID',          -1);
 if(!defined('Y_LUMINOSITY_INVALID'))         define('Y_LUMINOSITY_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YLed definitions)
+    #--- (YLed yapiwrapper)
+   #--- (end of YLed yapiwrapper)
 
 //--- (YLed declaration)
 /**
@@ -121,7 +123,7 @@ class YLed extends YFunction
     {
         // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_POWER_INVALID;
             }
         }
@@ -155,7 +157,7 @@ class YLed extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LUMINOSITY_INVALID;
             }
         }
@@ -190,7 +192,7 @@ class YLed extends YFunction
     {
         // $res                    is a enumBLINK;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_BLINKING_INVALID;
             }
         }

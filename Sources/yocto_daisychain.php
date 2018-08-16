@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_daisychain.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_daisychain.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YDaisyChain, the high-level API for DaisyChain functions
  *
@@ -50,6 +50,8 @@ if(!defined('Y_DAISYSTATE_INVALID'))         define('Y_DAISYSTATE_INVALID',     
 if(!defined('Y_CHILDCOUNT_INVALID'))         define('Y_CHILDCOUNT_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_REQUIREDCHILDCOUNT_INVALID')) define('Y_REQUIREDCHILDCOUNT_INVALID', YAPI_INVALID_UINT);
 //--- (end of YDaisyChain definitions)
+    #--- (YDaisyChain yapiwrapper)
+   #--- (end of YDaisyChain yapiwrapper)
 
 //--- (YDaisyChain declaration)
 /**
@@ -117,7 +119,7 @@ class YDaisyChain extends YFunction
     {
         // $res                    is a enumDAISYSTATE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DAISYSTATE_INVALID;
             }
         }
@@ -136,7 +138,7 @@ class YDaisyChain extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_CHILDCOUNT_INVALID;
             }
         }
@@ -155,7 +157,7 @@ class YDaisyChain extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REQUIREDCHILDCOUNT_INVALID;
             }
         }

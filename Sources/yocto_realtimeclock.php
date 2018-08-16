@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_realtimeclock.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_realtimeclock.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -48,6 +48,8 @@ if(!defined('Y_UNIXTIME_INVALID'))           define('Y_UNIXTIME_INVALID',       
 if(!defined('Y_DATETIME_INVALID'))           define('Y_DATETIME_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',         YAPI_INVALID_INT);
 //--- (end of YRealTimeClock definitions)
+    #--- (YRealTimeClock yapiwrapper)
+   #--- (end of YRealTimeClock yapiwrapper)
 
 //--- (YRealTimeClock declaration)
 /**
@@ -117,7 +119,7 @@ class YRealTimeClock extends YFunction
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_UNIXTIME_INVALID;
             }
         }
@@ -151,7 +153,7 @@ class YRealTimeClock extends YFunction
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DATETIME_INVALID;
             }
         }
@@ -171,7 +173,7 @@ class YRealTimeClock extends YFunction
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_UTCOFFSET_INVALID;
             }
         }
@@ -208,7 +210,7 @@ class YRealTimeClock extends YFunction
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TIMESET_INVALID;
             }
         }

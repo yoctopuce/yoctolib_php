@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_altitude.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_altitude.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YAltitude, the high-level API for Altitude functions
  *
@@ -44,6 +44,8 @@
 if(!defined('Y_QNH_INVALID'))                define('Y_QNH_INVALID',               YAPI_INVALID_DOUBLE);
 if(!defined('Y_TECHNOLOGY_INVALID'))         define('Y_TECHNOLOGY_INVALID',        YAPI_INVALID_STRING);
 //--- (end of YAltitude definitions)
+    #--- (YAltitude yapiwrapper)
+   #--- (end of YAltitude yapiwrapper)
 
 //--- (YAltitude declaration)
 /**
@@ -139,7 +141,7 @@ class YAltitude extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_QNH_INVALID;
             }
         }
@@ -160,7 +162,7 @@ class YAltitude extends YSensor
     {
         // $res                    is a string;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_TECHNOLOGY_INVALID;
             }
         }

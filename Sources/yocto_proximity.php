@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_proximity.php 29767 2018-01-26 08:53:27Z seb $
+ * $Id: yocto_proximity.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YProximity, the high-level API for Proximity functions
  *
@@ -58,6 +58,8 @@ if(!defined('Y_LASTTIMEREMOVED_INVALID'))    define('Y_LASTTIMEREMOVED_INVALID',
 if(!defined('Y_PULSECOUNTER_INVALID'))       define('Y_PULSECOUNTER_INVALID',      YAPI_INVALID_LONG);
 if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',        YAPI_INVALID_LONG);
 //--- (end of YProximity definitions)
+    #--- (YProximity yapiwrapper)
+   #--- (end of YProximity yapiwrapper)
 
 //--- (YProximity declaration)
 /**
@@ -166,7 +168,7 @@ class YProximity extends YSensor
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_SIGNALVALUE_INVALID;
             }
         }
@@ -188,7 +190,7 @@ class YProximity extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DETECTIONTHRESHOLD_INVALID;
             }
         }
@@ -228,7 +230,7 @@ class YProximity extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DETECTIONHYSTERESIS_INVALID;
             }
         }
@@ -266,7 +268,7 @@ class YProximity extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PRESENCEMINTIME_INVALID;
             }
         }
@@ -303,7 +305,7 @@ class YProximity extends YSensor
     {
         // $res                    is a int;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_REMOVALMINTIME_INVALID;
             }
         }
@@ -341,7 +343,7 @@ class YProximity extends YSensor
     {
         // $res                    is a enumBOOL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_ISPRESENT_INVALID;
             }
         }
@@ -363,7 +365,7 @@ class YProximity extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LASTTIMEAPPROACHED_INVALID;
             }
         }
@@ -385,7 +387,7 @@ class YProximity extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_LASTTIMEREMOVED_INVALID;
             }
         }
@@ -406,7 +408,7 @@ class YProximity extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSECOUNTER_INVALID;
             }
         }
@@ -431,7 +433,7 @@ class YProximity extends YSensor
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PULSETIMER_INVALID;
             }
         }
@@ -453,7 +455,7 @@ class YProximity extends YSensor
     {
         // $res                    is a enumPROXIMITYREPORTMODETYPE;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$defaultCacheValidity) != YAPI_SUCCESS) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PROXIMITYREPORTMODE_INVALID;
             }
         }

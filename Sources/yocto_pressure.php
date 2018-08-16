@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pressure.php 28743 2017-10-03 08:13:15Z seb $
+ * $Id: yocto_pressure.php 31453 2018-08-08 10:22:16Z seb $
  *
  * Implements YPressure, the high-level API for Pressure functions
  *
@@ -42,6 +42,8 @@
 //--- (end of YPressure return codes)
 //--- (YPressure definitions)
 //--- (end of YPressure definitions)
+    #--- (YPressure yapiwrapper)
+   #--- (end of YPressure yapiwrapper)
 
 //--- (YPressure declaration)
 /**
