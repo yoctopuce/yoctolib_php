@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 31700 2018-08-16 16:13:47Z seb $
+ * $Id: yocto_api.php 31770 2018-08-20 09:54:36Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1522,7 +1522,7 @@ class YAPIContext
 
     public $_deviceListValidityMs     = 10000;                        // ulong
     //--- (generated code: YAPIContext attributes)
-    protected $_cacheValidity            = 5;                            // ulong
+    protected $_defaultCacheValidity     = 5;                            // ulong
     //--- (end of generated code: YAPIContext attributes)
 
     function __construct()
@@ -1543,6 +1543,7 @@ class YAPIContext
      * Note: This function must be called after yInitAPI.
      *
      * @param integer $deviceListValidity : number of seconds between each enumeration.
+     * @noreturn
      */
     public function SetDeviceListValidity($deviceListValidity)
     {
@@ -1576,11 +1577,12 @@ class YAPIContext
      * Note: This function must be called after yInitAPI.
      *
      * @param integer $cacheValidityMs : an integer corresponding to the validity attributed to the
-     *         loaded function parameters, in milliseconds
+     *         loaded function parameters, in milliseconds.
+     * @noreturn
      */
     public function SetCacheValidity($cacheValidityMs)
     {
-        $this->_cacheValidity = $cacheValidityMs;
+        $this->_defaultCacheValidity = $cacheValidityMs;
     }
 
     /**
@@ -1594,7 +1596,7 @@ class YAPIContext
      */
     public function GetCacheValidity()
     {
-        return $this->_cacheValidity;
+        return $this->_defaultCacheValidity;
     }
 
     //--- (end of generated code: YAPIContext implementation)
@@ -2834,6 +2836,7 @@ class YAPI
      * Note: This function must be called after yInitAPI.
      *
      * @param integer $deviceListValidity : number of seconds between each enumeration.
+     * @noreturn
      */
     public static function SetDeviceListValidity($deviceListValidity)
     {
@@ -2859,7 +2862,8 @@ class YAPI
      * Note: This function must be called after yInitAPI.
      *
      * @param integer $cacheValidityMs : an integer corresponding to the validity attributed to the
-     *         loaded function parameters, in milliseconds
+     *         loaded function parameters, in milliseconds.
+     * @noreturn
      */
     public static function SetCacheValidity($cacheValidityMs)
     {
@@ -2899,7 +2903,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.31701";
+        return "1.10.31874";
     }
 
     /**
