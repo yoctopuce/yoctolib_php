@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_colorledcluster.php 31894 2018-08-24 21:29:05Z seb $
  *
  * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -344,6 +344,27 @@ class YColorLedCluster extends YFunction
      */
     public function set_rgbColorAtPowerOn($ledIndex,$count,$rgbValue)
     {
+        return $this->sendCommand(sprintf('SC%d,%d,%x',$ledIndex,$count,$rgbValue));
+    }
+
+    /**
+     * Changes the  color at device startup of consecutve LEDs in the cluster, using a HSL color. Encoding
+     * is done as follows: 0xHHSSLL.
+     * Don't forget to call saveLedsConfigAtPowerOn() to make sure the modification is saved in the device
+     * flash memory.
+     *
+     * @param integer $ledIndex :  index of the first affected LED.
+     * @param count    :  affected LED count.
+     * @param integer $hslValue :  new color.
+     *
+     * @return integer : YAPI_SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_hslColorAtPowerOn($ledIndex,$count,$hslValue)
+    {
+        // $rgbValue               is a int;
+        $rgbValue = $this->hsl2rgb($hslValue);
         return $this->sendCommand(sprintf('SC%d,%d,%x',$ledIndex,$count,$rgbValue));
     }
 
@@ -1127,6 +1148,78 @@ class YColorLedCluster extends YFunction
             $res[] = $started;
             $idx = $idx + 1;
         }
+        return $res;
+    }
+
+    public function hsl2rgbInt($temp1,$temp2,$temp3)
+    {
+        if ($temp3 >= 170) {
+            return intVal((($temp1 + 127)) / (255));
+        }
+        if ($temp3 > 42) {
+            if ($temp3 <= 127) {
+                return intVal((($temp2 + 127)) / (255));
+            }
+            $temp3 = 170 - $temp3;
+        }
+        return intVal((($temp1*255 + ($temp2-$temp1) * (6 * $temp3) + 32512)) / (65025));
+    }
+
+    public function hsl2rgb($hslValue)
+    {
+        // $R                      is a int;
+        // $G                      is a int;
+        // $B                      is a int;
+        // $H                      is a int;
+        // $S                      is a int;
+        // $L                      is a int;
+        // $temp1                  is a int;
+        // $temp2                  is a int;
+        // $temp3                  is a int;
+        // $res                    is a int;
+        $L = (($hslValue) & (0xff));
+        $S = (((($hslValue) >> (8))) & (0xff));
+        $H = (((($hslValue) >> (16))) & (0xff));
+        if ($S==0) {
+            $res = (($L) << (16))+(($L) << (8))+$L;
+            return $res;
+        }
+        if ($L<=127) {
+            $temp2 = $L * (255 + $S);
+        } else {
+            $temp2 = ($L+$S) * 255 - $L*$S;
+        }
+        $temp1 = 510 * $L - $temp2;
+        // R
+        $temp3 = ($H + 85);
+        if ($temp3 > 255) {
+            $temp3 = $temp3-255;
+        }
+        $R = $this->hsl2rgbInt($temp1, $temp2, $temp3);
+        // G
+        $temp3 = $H;
+        if ($temp3 > 255) {
+            $temp3 = $temp3-255;
+        }
+        $G = $this->hsl2rgbInt($temp1, $temp2, $temp3);
+        // B
+        if ($H >= 85) {
+            $temp3 = $H - 85 ;
+        } else {
+            $temp3 = $H + 170;
+        }
+        $B = $this->hsl2rgbInt($temp1, $temp2, $temp3);
+        // just in case
+        if ($R>255) {
+            $R=255;
+        }
+        if ($G>255) {
+            $G=255;
+        }
+        if ($B>255) {
+            $B=255;
+        }
+        $res = (($R) << (16))+(($G) << (8))+$B;
         return $res;
     }
 
