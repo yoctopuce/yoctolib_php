@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 31770 2018-08-20 09:54:36Z seb $
+ * $Id: yocto_api.php 32376 2018-09-27 07:57:07Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1682,6 +1682,7 @@ class YAPI
     protected static $_data_events;
     /** @var  YTcpReq[] */
     protected static $_pendingRequests;
+    protected static $_beacons;
     protected static $_calibHandlers;
     protected static $_decExp;
 
@@ -1701,7 +1702,7 @@ class YAPI
 
     // Switch to turn off exceptions and use return codes instead, for source-code compatibility
     // with languages without exception support like C
-    public static $exceptionsDisabled = false; // set to true if you want error codes instead of exceptions
+    public static $exceptionsDisabled = false;  // set to true if you want error codes instead of exceptions
 
     public static function _init()
     {
@@ -1720,6 +1721,7 @@ class YAPI
         self::$_removalCallback = null;
         self::$_data_events = Array();
         self::$_pendingRequests = Array();
+        self::$_beacons = array();
         self::$_jzonCacheDir = null;
         self::$_yapiContext = new YAPIContext();
 
@@ -2068,9 +2070,13 @@ class YAPI
                         $notype = substr($ev, 4, 1);
                         if ($notype == NOTIFY_NETPKT_NOT_SYNC) {
                             $hub->notifPos = intVal(substr($ev, 5));
-                        } else
+                        } else {
                             switch (intVal($notype)) {
+                                /** @noinspection PhpMissingBreakStatementInspection */
                                 case 0: // device name change, or arrival
+                                    $parts = explode(',', substr($ev, 5));
+                                    YAPI::setBeaconChange($parts[0], $parts[2]);
+                                // no break on purpose
                                 case 2: // device plug/unplug
                                 case 4: // function name change
                                 case 8: // function name change (ydx)
@@ -2082,6 +2088,7 @@ class YAPI
                                     YAPI::setFunctionValue($parts[0] . '.' . $parts[1], $value[0]);
                                     break;
                             }
+                        }
                     } else {
                         // oops, bad notification ? be safe until a good one comes
                         $hub->isNotifWorking = false;
@@ -2472,6 +2479,17 @@ class YAPI
         $module = yFindModule($str_serial.".module");
         $module->_invokeConfigChangeCallback();
     }
+
+    // Publish a configuration change event
+    public static function setBeaconChange($str_serial, $int_beacon)
+    {
+        if (!array_key_exists($str_serial ,self::$_beacons) || self::$_beacons[$str_serial] != $int_beacon) {
+            self::$_beacons[$str_serial] = $int_beacon;
+            $module = yFindModule($str_serial . ".module");
+            $module->_invokeBeaconCallback($int_beacon);
+        }
+    }
+
 
     // Retrieve a function advertised value by hardware id
     public static function getFunctionValue($str_hwid)
@@ -2903,7 +2921,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.31897";
+        return "1.10.32391";
     }
 
     /**
@@ -4060,7 +4078,7 @@ class YFirmwareUpdate
         // $leng                   is a int;
         $err = $this->_settings;
         $leng = strlen($err);
-        if (( $leng >= 6) && ('error:' == substr($err, 0, 6))) {
+        if (($leng >= 6) && ('error:' == substr($err, 0, 6))) {
             $this->_progress = -1;
             $this->_progress_msg = substr($err,  6, $leng - 6);
         } else {
@@ -6646,7 +6664,7 @@ class YSensor extends YFunction
             return null;
         }
         $hwid = $serial . '.dataLogger';
-        $logger  = YDataLogger::FindDataLogger($hwid);
+        $logger = YDataLogger::FindDataLogger($hwid);
         return $logger;
     }
 
@@ -7201,7 +7219,9 @@ class YModule extends YFunction
     protected $_userVar                  = Y_USERVAR_INVALID;            // Int
     protected $_logCallback              = null;                         // YModuleLogCallback
     protected $_confChangeCallback       = null;                         // YModuleConfigChangeCallback
+    protected $_beaconCallback           = null;                         // YModuleBeaconCallback
     //--- (end of generated code: YModule attributes)
+    protected static $_moduleCallbackList = array();
 
     function __construct($str_func)
     {
@@ -7210,6 +7230,10 @@ class YModule extends YFunction
         $this->_className = 'Module';
 
         //--- (end of generated code: YModule constructor)
+    }
+
+    private static function _updateModuleCallbackList($module, $add)
+    {
     }
 
     // Return the internal device object hosting the function
@@ -7827,6 +7851,11 @@ class YModule extends YFunction
      */
     public function registerConfigChangeCallback($callback)
     {
+        if (!is_null($callback)) {
+            YModule::_updateModuleCallbackList($this, true);
+        } else {
+            YModule::_updateModuleCallbackList($this, false);
+        }
         $this->_confChangeCallback = $callback;
         return 0;
     }
@@ -7840,11 +7869,38 @@ class YModule extends YFunction
     }
 
     /**
+     * Register a callback function, to be called when the localization beacon of the module
+     * has been changed. The callback function should take two arguments: the YModule object of
+     * which the beacon has changed, and an integer describing the new beacon state.
+     *
+     * @param function $callback : The callback function to call, or null to unregister a
+     *         previously registered callback.
+     */
+    public function registerBeaconCallback($callback)
+    {
+        if (!is_null($callback)) {
+            YModule::_updateModuleCallbackList($this, true);
+        } else {
+            YModule::_updateModuleCallbackList($this, false);
+        }
+        $this->_beaconCallback = $callback;
+        return 0;
+    }
+
+    public function _invokeBeaconCallback($beaconState)
+    {
+        if (!is_null($this->_beaconCallback)) {
+            call_user_func($this->_beaconCallback, $this, $beaconState);
+        }
+        return 0;
+    }
+
+    /**
      * Triggers a configuration change callback, to check if they are supported or not.
      */
     public function triggerConfigChangeCallback()
     {
-        $this->_setAttr('persistentSettings','2');
+        $this->_setAttr('persistentSettings', '2');
         return 0;
     }
 
@@ -7875,7 +7931,7 @@ class YModule extends YFunction
         }
         //may throw an exception
         $serial = $this->get_serialNumber();
-        $tmp_res = YFirmwareUpdate::CheckFirmware($serial,$path, $release);
+        $tmp_res = YFirmwareUpdate::CheckFirmware($serial, $path, $release);
         if (Ystrpos($tmp_res,'error:') == 0) {
             $this->_throw(YAPI_INVALID_ARGUMENT, $tmp_res);
         }
@@ -8098,10 +8154,10 @@ class YModule extends YFunction
         // $i                      is a int;
         // $fid                    is a str;
 
-        $count  = $this->functionCount();
+        $count = $this->functionCount();
         $i = 0;
         while ($i < $count) {
-            $fid  = $this->functionId($i);
+            $fid = $this->functionId($i);
             if ($fid == $funcId) {
                 return true;
             }

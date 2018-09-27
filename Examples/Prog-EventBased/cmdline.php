@@ -22,11 +22,17 @@ function configChangeCallback($obj_module)
     Print("{$obj_module->get_serialNumber()}: configuration change\n");
 }
 
+function beaconCallback($obj_module, $int_beacon)
+{
+    Print("{$obj_module->get_serialNumber()}: beacon changed to $int_beacon\n");
+}
+
 function deviceArrival($module)
 {
     $serial = $module->get_serialNumber();
     Print("New device: $serial\n");
     $module->registerConfigChangeCallback('configChangeCallback');
+    $module->registerBeaconCallback('beaconCallback');
 
     // First solution: look for a specific type of function (eg. anButton)
     $fctcount = $module->functionCount();
@@ -35,18 +41,18 @@ function deviceArrival($module)
         if (strpos($hardwareId, ".anButton") !== false) {
             Print("- {$hardwareId}\n");
             $button = YAnButton::FindAnButton($hardwareId);
-            $button->set_userData(Array('name'=>$hardwareId, 'unit'=>''));
+            $button->set_userData(Array('name' => $hardwareId, 'unit' => ''));
             $button->registerValueCallback('valueChangeCallBack');
         }
     }
 
     // Alternate solution: register any kind of sensor on the device
     $sensor = YSensor::FirstSensor();
-    while($sensor) {
-        if($sensor->get_module()->get_serialNumber() == $serial) {
+    while ($sensor) {
+        if ($sensor->get_module()->get_serialNumber() == $serial) {
             $hardwareId = $sensor->get_hardwareId();
             Print("- {$hardwareId}\n");
-            $sensor->set_userData(Array('name'=>$hardwareId, 'unit'=>$sensor->get_unit()));
+            $sensor->set_userData(Array('name' => $hardwareId, 'unit' => $sensor->get_unit()));
             $sensor->registerValueCallback('valueChangeCallBack');
             $sensor->registerTimedReportCallback('timedReportCallBack');
         }
@@ -62,20 +68,17 @@ function deviceRemoval($module)
 
 function handleHotPlug()
 {
-    while(true) {
+    while (true) {
         ySleep(100);
         yUpdateDeviceList();
     }
 }
 
 
-YAPI::$defaultCacheValidity = 5000;
 
-// Use explicit error handling rather than exceptions
-YAPI::DisableExceptions();
 
 // Setup the API to use the VirtualHub on local machine
-if(YAPI::RegisterHub('http://127.0.0.1:4444/') != YAPI::SUCCESS) {
+if (YAPI::RegisterHub('http://127.0.0.1:4444/') != YAPI::SUCCESS) {
     Print("Cannot contact VirtualHub on 127.0.0.1");
 }
 
