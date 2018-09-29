@@ -1,5 +1,5 @@
 {
-    "name":"Yoctolib Libraries for PHP",
+    "name":"yoctopuce/yoctolib_php",
     "description":"Libraries for connecting with Yoctopuce components via a running VirtualHub.",
     "license":"Yoctopuce-License",
     "type":"library",
