@@ -1,3 +1,3 @@
-PHP v1.10.32391
+PHP v1.10.32417
 
-- Add support for beacon change callback
+- Add support for composer packages
