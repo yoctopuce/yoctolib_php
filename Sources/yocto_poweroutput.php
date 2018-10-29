@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_poweroutput.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_poweroutput.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YPowerOutput, the high-level API for PowerOutput functions
+ *  Implements YPowerOutput, the high-level API for PowerOutput functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

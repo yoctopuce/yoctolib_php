@@ -1,3 +1,6 @@
-PHP v1.10.32417
+PHP v1.10.32759
 
-- Add support for composer packages
+- YModule.get_hardwareId() method return last know hardwareId when the module is disconnected
+- Code clean-up in Doc-XXX examples
+- Add support for composer
+- Add support for JZON encoding in direct access

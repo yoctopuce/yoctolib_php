@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_relay.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_relay.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YRelay, the high-level API for Relay functions
+ *  Implements YRelay, the high-level API for Relay functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

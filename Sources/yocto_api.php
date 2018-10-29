@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 32376 2018-09-27 07:57:07Z seb $
+ * $Id: yocto_api.php 32590 2018-10-09 07:18:12Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -73,8 +73,8 @@ if(!defined('Y_ADVERTISEDVALUE_INVALID'))    define('Y_ADVERTISEDVALUE_INVALID',
 define('YAPI_HASH_BUF_SIZE', 28);
 //--- (generated code: YMeasure definitions)
 //--- (end of generated code: YMeasure definitions)
-if(!defined('Y_DATA_INVALID'))               define('Y_DATA_INVALID',              YAPI_INVALID_DOUBLE);
-if(!defined('Y_DURATION_INVALID'))           define('Y_DURATION_INVALID',          YAPI_INVALID_INT);
+if (!defined('Y_DATA_INVALID')) define('Y_DATA_INVALID', YAPI_INVALID_DOUBLE);
+if (!defined('Y_DURATION_INVALID')) define('Y_DURATION_INVALID', YAPI_INVALID_INT);
 
 //--- (generated code: YFirmwareUpdate definitions)
 //--- (end of generated code: YFirmwareUpdate definitions)
@@ -199,24 +199,26 @@ function Ystrpos($haystack, $needle)
 //
 class YAPI_YReq
 {
-    public $hwid       = "";
-    public $deviceid   = "";
+    public $hwid = "";
+    public $deviceid = "";
     public $functionid = "";
     public $errorType;
     public $errorMsg;
     public $result;
+    public $obj_result = NULL;
 
-    function __construct($str_hwid, $int_errType, $str_errMsg, $obj_result)
+    function __construct($str_hwid, $int_errType, $str_errMsg, $bin_result, $obj_result = null)
     {
         $sep = strpos($str_hwid, ".");
-        if($sep !== false) {
-            $this->hwid       = $str_hwid;
-            $this->deviceid   = substr($str_hwid, 0, $sep);
-            $this->functionid = substr($str_hwid, $sep+1);
+        if ($sep !== false) {
+            $this->hwid = $str_hwid;
+            $this->deviceid = substr($str_hwid, 0, $sep);
+            $this->functionid = substr($str_hwid, $sep + 1);
         }
-        $this->errorType  = $int_errType;
-        $this->errorMsg   = $str_errMsg;
-        $this->result     = $obj_result;
+        $this->errorType = $int_errType;
+        $this->errorMsg = $str_errMsg;
+        $this->result = $bin_result;
+        $this->obj_result = $obj_result;
     }
 }
 
@@ -1324,69 +1326,88 @@ class YDevice
      */
     public function requestAPI()
     {
-        if($this->_cache['_expiration'] > YAPI::GetTickCount()) {
-            return new YAPI_YReq($this->_serialNumber.".module",
-                                 YAPI_SUCCESS, 'no error', $this->_cache['_json']);
+        if ($this->_cache['_expiration'] > YAPI::GetTickCount()) {
+            return new YAPI_YReq($this->_serialNumber . ".module",
+                YAPI_SUCCESS, 'no error', $this->_cache['_json'], $this->_cache['_precooked']);
         }
-        $yreq = YAPI::devRequest($this->_rootUrl, 'GET /api.json');
-        if($yreq->errorType != YAPI_SUCCESS) return $yreq;
+        $req = 'GET /api.json';
+        $use_jzon = false;
+        if (isset($this->_cache['_precooked']) && $this->_cache['_precooked']['module']['firmwareRelease']) {
+            $req .= "?fw=" . $this->_cache['_precooked']['module']['firmwareRelease'];
+            $use_jzon = true;
+        }
+        $yreq = YAPI::devRequest($this->_rootUrl, $req);
+        if ($yreq->errorType != YAPI_SUCCESS) return $yreq;
+        if ($use_jzon) {
+            $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+            if (json_last_error() != JSON_ERROR_NONE) {
+                return $this->_throw(YAPI_IO_ERROR, 'Request failed, Invalid JZON data for ' . $this->_rootUrl,
+                    YAPI_IO_ERROR);
+            }
+            $decoded = YTcpHub::decodeJZON($loadval, $this->_cache['_precooked']);
+            $this->_cache['_json'] = json_encode($decoded);
+            $this->_cache['_precooked'] = $decoded;
+        } else {
+            $this->_cache['_json'] = $yreq->result;
+            $this->_cache['_precooked'] = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+            if (json_last_error() != JSON_ERROR_NONE) {
+                return $this->_throw(YAPI_IO_ERROR, 'Request failed, could not parse API result for ' . $this->_rootUrl,
+                    YAPI_IO_ERROR);
+            }
+        }
         $this->_cache['_expiration'] = YAPI::GetTickCount() + YAPI::$defaultCacheValidity;
-        $this->_cache['_json'] = $yreq->result;
-        return $yreq;
+
+        return new YAPI_YReq($this->_serialNumber . ".module",
+            YAPI_SUCCESS, 'no error', $this->_cache['_json'], $this->_cache['_precooked']);
     }
+
+
 
     // Reload a device API (store in cache), and update YAPI function lists accordingly
     // Intended to be called within UpdateDeviceList only
     public function refresh()
     {
         $yreq = $this->requestAPI();
-        if($yreq->errorType != YAPI_SUCCESS) {
+        if ($yreq->errorType != YAPI_SUCCESS) {
             return $this->_throw($yreq->errorType, $yreq->errorMsg, $yreq->errorType);
         }
-        $loadval = json_decode(iconv("ISO-8859-1","UTF-8", $yreq->result), true);
-        if(json_last_error() != JSON_ERROR_NONE) {
-            return $this->_throw(YAPI_IO_ERROR, 'Request failed, could not parse API result for '.$this->_rootUrl,
-                                 YAPI_IO_ERROR);
-        }
-        $this->_cache['_expiration'] = YAPI::GetTickCount() + YAPI::$defaultCacheValidity;
-        $this->_cache['_json'] = $yreq->result;
-
+        $loadval = $yreq->result;
         $reindex = false;
-        if($this->_productName == "") {
+        if ($this->_productName == "") {
             // parse module and function names for the first time
-            foreach($loadval as $func => $iface) {
-                if($func == 'module') {
+            foreach ($loadval as $func => $iface) {
+                if ($func == 'module') {
                     $this->_serialNumber = $iface['serialNumber'];
-                    $this->_logicalName  = $iface['logicalName'];
-                    $this->_productName  = $iface['productName'];
-                    $this->_productId    = $iface['productId'];
-                    $this->_beacon       = $iface['beacon'];
-                } else if($func == 'services') {
+                    $this->_logicalName = $iface['logicalName'];
+                    $this->_productName = $iface['productName'];
+                    $this->_productId = $iface['productId'];
+                    $this->_beacon = $iface['beacon'];
+                } else if ($func == 'services') {
                     $this->_updateFromYP($iface['yellowPages']);
                 }
             }
             $reindex = true;
         } else {
             // parse module and refresh names if needed
-            foreach($loadval as $func => $iface) {
-                if($func == 'module') {
-                    if($this->_logicalName != $iface['logicalName']) {
+            foreach ($loadval as $func => $iface) {
+                if ($func == 'module') {
+                    if ($this->_logicalName != $iface['logicalName']) {
                         $this->_logicalName = $iface['logicalName'];
                         $reindex = true;
                     }
                     $this->_beacon = $iface['beacon'];
-                } else if($func != 'services') {
-                    if(isset($iface[$func]['logicalName']))
+                } else if ($func != 'services') {
+                    if (isset($iface[$func]['logicalName']))
                         $name = $iface[$func]['logicalName'];
                     else
                         $name = $this->_logicalName;
-                    if(isset($iface[$func]['advertisedValue'])) {
+                    if (isset($iface[$func]['advertisedValue'])) {
                         $pubval = $iface[$func]['advertisedValue'];
-                        YAPI::setFunctionValue($this->_serialNumber.'.'.$func, $pubval);
+                        YAPI::setFunctionValue($this->_serialNumber . '.' . $func, $pubval);
                     }
-                    foreach($this->_functions as $funydx => $fundef) {
-                        if($fundef[0] == $func) {
-                            if($fundef[1] != $name) {
+                    foreach ($this->_functions as $funydx => $fundef) {
+                        if ($fundef[0] == $func) {
+                            if ($fundef[1] != $name) {
                                 $this->_functions[$funydx][1] = $name;
                                 $reindex = true;
                             }
@@ -1396,7 +1417,7 @@ class YDevice
                 }
             }
         }
-        if($reindex) {
+        if ($reindex) {
             YAPI::reindexDevice($this);
         }
         return YAPI_SUCCESS;
@@ -1612,7 +1633,7 @@ class YAPIContext
     }
 
 
-};
+}
 
 
 //
@@ -2921,7 +2942,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.32417";
+        return "1.10.32759";
     }
 
     /**
@@ -8712,6 +8733,21 @@ class YModule extends YFunction
     }
 
     /**
+     * Returns the unique hardware identifier of the module.
+     * The unique hardware identifier is made of the device serial
+     * number followed by string ".module".
+     *
+     * @return string : a string that uniquely identifies the module
+     */
+    public function get_hardwareId()
+    {
+        // $serial                 is a str;
+
+        $serial = $this->get_serialNumber();
+        return $serial . '.module';
+    }
+
+    /**
      * Downloads the specified built-in file and returns a binary buffer with its content.
      *
      * @param string $pathname : name of the new file to load
@@ -8894,7 +8930,7 @@ class YModule extends YFunction
     }
 
     //--- (end of generated code: YModule implementation)
-};
+}
 
 /**
  * Enables the HTTP callback cache. When enabled, this cache reduces the quantity of data sent to the
@@ -9670,7 +9706,7 @@ class YOldDataStream extends YDataStream
         if($this->_interval == 0) $this->loadStream();
         return $this->_interval;
     }
-};
+}
 
 
 //--- (generated code: YDataLogger declaration)
@@ -10164,7 +10200,7 @@ class YDataLogger extends YFunction
     }
 
     //--- (end of generated code: YDataLogger implementation)
-};
+}
 
 //--- (generated code: YDataLogger functions)
 

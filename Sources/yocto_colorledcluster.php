@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_colorledcluster.php 31894 2018-08-24 21:29:05Z seb $
+ *  $Id: yocto_colorledcluster.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YColorLedCluster, the high-level API for ColorLedCluster functions
+ *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

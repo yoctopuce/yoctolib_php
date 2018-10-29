@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_network.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_network.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YNetwork, the high-level API for Network functions
+ *  Implements YNetwork, the high-level API for Network functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

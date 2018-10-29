@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_pwminput.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_pwminput.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YPwmInput, the high-level API for PwmInput functions
+ *  Implements YPwmInput, the high-level API for PwmInput functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
@@ -146,6 +146,24 @@ class YPwmInput extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Changes the measuring unit for the measured quantity. That unit
+     * is just a string which is automatically initialized each time
+     * the measurement mode is changed. But is can be set to an
+     * arbitrary value.
+     *
+     * @param string $newval : a string corresponding to the measuring unit for the measured quantity
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_unit($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("unit",$rest_val);
     }
 
     /**
@@ -401,6 +419,9 @@ class YPwmInput extends YSensor
     {
         return $this->set_pulseCounter(0);
     }
+
+    public function setUnit($newval)
+    { return $this->set_unit($newval); }
 
     public function dutyCycle()
     { return $this->get_dutyCycle(); }

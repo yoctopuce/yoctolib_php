@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_buzzer.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_buzzer.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YBuzzer, the high-level API for Buzzer functions
+ *  Implements YBuzzer, the high-level API for Buzzer functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

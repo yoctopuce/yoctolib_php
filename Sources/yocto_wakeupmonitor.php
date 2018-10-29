@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wakeupmonitor.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_wakeupmonitor.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
+ *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_rangefinder.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_rangefinder.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YRangeFinder, the high-level API for RangeFinder functions
+ *  Implements YRangeFinder, the high-level API for RangeFinder functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

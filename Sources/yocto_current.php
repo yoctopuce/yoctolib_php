@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_current.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_current.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YCurrent, the high-level API for Current functions
+ *  Implements YCurrent, the high-level API for Current functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *

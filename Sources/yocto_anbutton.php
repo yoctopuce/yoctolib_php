@@ -1,11 +1,11 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_anbutton.php 31453 2018-08-08 10:22:16Z seb $
+ *  $Id: yocto_anbutton.php 32610 2018-10-10 06:52:20Z seb $
  *
- * Implements YAnButton, the high-level API for AnButton functions
+ *  Implements YAnButton, the high-level API for AnButton functions
  *
- * - - - - - - - - - License information: - - - - - - - - -
+ *  - - - - - - - - - License information: - - - - - - - - -
  *
  *  Copyright (C) 2011 and beyond by Yoctopuce Sarl, Switzerland.
  *
