@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmpowersource.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_pwmpowersource.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -179,6 +179,9 @@ class YPwmPowerSource extends YFunction
 
     /**
      * Continues the enumeration of Voltage sources started using yFirstPwmPowerSource().
+     * Caution: You can't make any assumption about the returned Voltage sources order.
+     * If you want to find a specific a voltage source, use PwmPowerSource.findPwmPowerSource()
+     * and a hardwareID or a logical name.
      *
      * @return YPwmPowerSource : a pointer to a YPwmPowerSource object, corresponding to
      *         a voltage source currently online, or a null pointer

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_tilt.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *
@@ -199,6 +199,9 @@ class YTilt extends YSensor
 
     /**
      * Continues the enumeration of tilt sensors started using yFirstTilt().
+     * Caution: You can't make any assumption about the returned tilt sensors order.
+     * If you want to find a specific a tilt sensor, use Tilt.findTilt()
+     * and a hardwareID or a logical name.
      *
      * @return YTilt : a pointer to a YTilt object, corresponding to
      *         a tilt sensor currently online, or a null pointer

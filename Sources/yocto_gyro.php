@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_gyro.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -109,6 +109,9 @@ class YQt extends YSensor
 
     /**
      * Continues the enumeration of quaternion components started using yFirstQt().
+     * Caution: You can't make any assumption about the returned quaternion components order.
+     * If you want to find a specific a quaternion component, use Qt.findQt()
+     * and a hardwareID or a logical name.
      *
      * @return YQt : a pointer to a YQt object, corresponding to
      *         a quaternion component currently online, or a null pointer
@@ -735,6 +738,9 @@ class YGyro extends YSensor
 
     /**
      * Continues the enumeration of gyroscopes started using yFirstGyro().
+     * Caution: You can't make any assumption about the returned gyroscopes order.
+     * If you want to find a specific a gyroscope, use Gyro.findGyro()
+     * and a hardwareID or a logical name.
      *
      * @return YGyro : a pointer to a YGyro object, corresponding to
      *         a gyroscope currently online, or a null pointer

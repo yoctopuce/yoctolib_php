@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_serialport.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -1891,6 +1891,9 @@ class YSerialPort extends YFunction
 
     /**
      * Continues the enumeration of serial ports started using yFirstSerialPort().
+     * Caution: You can't make any assumption about the returned serial ports order.
+     * If you want to find a specific a serial port, use SerialPort.findSerialPort()
+     * and a hardwareID or a logical name.
      *
      * @return YSerialPort : a pointer to a YSerialPort object, corresponding to
      *         a serial port currently online, or a null pointer

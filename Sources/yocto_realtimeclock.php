@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_realtimeclock.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -276,6 +276,9 @@ class YRealTimeClock extends YFunction
 
     /**
      * Continues the enumeration of clocks started using yFirstRealTimeClock().
+     * Caution: You can't make any assumption about the returned clocks order.
+     * If you want to find a specific a clock, use RealTimeClock.findRealTimeClock()
+     * and a hardwareID or a logical name.
      *
      * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
      *         a clock currently online, or a null pointer

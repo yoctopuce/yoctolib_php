@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_wireless.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -514,6 +514,9 @@ class YWireless extends YFunction
 
     /**
      * Continues the enumeration of wireless lan interfaces started using yFirstWireless().
+     * Caution: You can't make any assumption about the returned wireless lan interfaces order.
+     * If you want to find a specific a wireless lan interface, use Wireless.findWireless()
+     * and a hardwareID or a logical name.
      *
      * @return YWireless : a pointer to a YWireless object, corresponding to
      *         a wireless lan interface currently online, or a null pointer

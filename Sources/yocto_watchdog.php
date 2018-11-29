@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_watchdog.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_watchdog.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -724,6 +724,9 @@ class YWatchdog extends YFunction
 
     /**
      * Continues the enumeration of watchdog started using yFirstWatchdog().
+     * Caution: You can't make any assumption about the returned watchdog order.
+     * If you want to find a specific a watchdog, use Watchdog.findWatchdog()
+     * and a hardwareID or a logical name.
      *
      * @return YWatchdog : a pointer to a YWatchdog object, corresponding to
      *         a watchdog currently online, or a null pointer

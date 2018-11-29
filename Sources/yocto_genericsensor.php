@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_genericsensor.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_genericsensor.php 33114 2018-11-09 21:58:19Z mvuilleu $
  *
  *  Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -45,6 +45,7 @@ if(!defined('Y_SIGNALSAMPLING_HIGH_RATE'))   define('Y_SIGNALSAMPLING_HIGH_RATE'
 if(!defined('Y_SIGNALSAMPLING_HIGH_RATE_FILTERED')) define('Y_SIGNALSAMPLING_HIGH_RATE_FILTERED', 1);
 if(!defined('Y_SIGNALSAMPLING_LOW_NOISE'))   define('Y_SIGNALSAMPLING_LOW_NOISE',  2);
 if(!defined('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED')) define('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED', 3);
+if(!defined('Y_SIGNALSAMPLING_HIGHEST_RATE')) define('Y_SIGNALSAMPLING_HIGHEST_RATE', 4);
 if(!defined('Y_SIGNALSAMPLING_INVALID'))     define('Y_SIGNALSAMPLING_INVALID',    -1);
 if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
@@ -76,6 +77,7 @@ class YGenericSensor extends YSensor
     const SIGNALSAMPLING_HIGH_RATE_FILTERED = 1;
     const SIGNALSAMPLING_LOW_NOISE       = 2;
     const SIGNALSAMPLING_LOW_NOISE_FILTERED = 3;
+    const SIGNALSAMPLING_HIGHEST_RATE    = 4;
     const SIGNALSAMPLING_INVALID         = -1;
     //--- (end of YGenericSensor declaration)
 
@@ -297,8 +299,8 @@ class YGenericSensor extends YSensor
      * to get measures as stable as possible when working on a noisy signal.
      *
      * @return integer : a value among Y_SIGNALSAMPLING_HIGH_RATE, Y_SIGNALSAMPLING_HIGH_RATE_FILTERED,
-     * Y_SIGNALSAMPLING_LOW_NOISE and Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric
-     * signal sampling method to use
+     * Y_SIGNALSAMPLING_LOW_NOISE, Y_SIGNALSAMPLING_LOW_NOISE_FILTERED and Y_SIGNALSAMPLING_HIGHEST_RATE
+     * corresponding to the electric signal sampling method to use
      *
      * On failure, throws an exception or returns Y_SIGNALSAMPLING_INVALID.
      */
@@ -323,8 +325,9 @@ class YGenericSensor extends YSensor
      * to get measures as stable as possible when working on a noisy signal.
      *
      * @param integer $newval : a value among Y_SIGNALSAMPLING_HIGH_RATE,
-     * Y_SIGNALSAMPLING_HIGH_RATE_FILTERED, Y_SIGNALSAMPLING_LOW_NOISE and
-     * Y_SIGNALSAMPLING_LOW_NOISE_FILTERED corresponding to the electric signal sampling method to use
+     * Y_SIGNALSAMPLING_HIGH_RATE_FILTERED, Y_SIGNALSAMPLING_LOW_NOISE,
+     * Y_SIGNALSAMPLING_LOW_NOISE_FILTERED and Y_SIGNALSAMPLING_HIGHEST_RATE corresponding to the electric
+     * signal sampling method to use
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -426,6 +429,9 @@ class YGenericSensor extends YSensor
 
     /**
      * Continues the enumeration of generic sensors started using yFirstGenericSensor().
+     * Caution: You can't make any assumption about the returned generic sensors order.
+     * If you want to find a specific a generic sensor, use GenericSensor.findGenericSensor()
+     * and a hardwareID or a logical name.
      *
      * @return YGenericSensor : a pointer to a YGenericSensor object, corresponding to
      *         a generic sensor currently online, or a null pointer

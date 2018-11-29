@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioout.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_audioout.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -300,6 +300,9 @@ class YAudioOut extends YFunction
 
     /**
      * Continues the enumeration of audio outputs started using yFirstAudioOut().
+     * Caution: You can't make any assumption about the returned audio outputs order.
+     * If you want to find a specific an audio output, use AudioOut.findAudioOut()
+     * and a hardwareID or a logical name.
      *
      * @return YAudioOut : a pointer to a YAudioOut object, corresponding to
      *         an audio output currently online, or a null pointer

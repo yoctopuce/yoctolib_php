@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_segmenteddisplay.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_segmenteddisplay.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -200,6 +200,9 @@ class YSegmentedDisplay extends YFunction
 
     /**
      * Continues the enumeration of segmented displays started using yFirstSegmentedDisplay().
+     * Caution: You can't make any assumption about the returned segmented displays order.
+     * If you want to find a specific a segmented display, use SegmentedDisplay.findSegmentedDisplay()
+     * and a hardwareID or a logical name.
      *
      * @return YSegmentedDisplay : a pointer to a YSegmentedDisplay object, corresponding to
      *         a segmented display currently online, or a null pointer

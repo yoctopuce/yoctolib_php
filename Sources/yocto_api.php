@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 32590 2018-10-09 07:18:12Z seb $
+ * $Id: yocto_api.php 33400 2018-11-27 07:58:29Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1086,13 +1086,13 @@ class YFunctionType
     }
 
     // Stores a function advertised value by hardware id, queue an event if needed
-    public function setTimedReport($str_hwid, $float_timestamp, $arr_report)
+    public function setTimedReport($str_hwid, $float_timestamp, $float_duration, $arr_report)
     {
         foreach(YFunction::$_TimedReportCallbackList as $fun) {
             $hwId = $fun->_getHwId();
             if(!$hwId) continue;
             if($hwId == $str_hwid) {
-                YAPI::addTimedReportEvent($fun, $float_timestamp, $arr_report);
+                YAPI::addTimedReportEvent($fun, $float_timestamp, $float_duration, $arr_report);
             }
         }
     }
@@ -1155,6 +1155,8 @@ class YDevice
     protected $_logicalName;
     protected $_productName;
     protected $_productId;
+    protected $_lastTimeRef;
+    protected $_lastDuration;
     protected $_beacon;
     protected $_deviceTime;
     protected $_devYdx;
@@ -1166,6 +1168,10 @@ class YDevice
     protected $_ongoingReq;
     public    $_lastErrorType;
     public    $_lastErrorMsg;
+    private   $_logNeedPulling;
+    private   $_logIsPulling;
+    private   $_logCallback;
+    private   $_logpos;
 
     function __construct($str_rooturl, $obj_wpRec=null, $obj_ypRecs=null)
     {
@@ -1274,16 +1280,67 @@ class YDevice
         return $this->_beacon;
     }
 
-    // Return the beacon state of the device, as found during discovery
-    public function getDeviceTime()
+    public function getLastTimeRef()
     {
-        return $this->_deviceTime;
+        return $this->_lastTimeRef;
     }
 
-    // Return the beacon state of the device, as found during discovery
-    public function setDeviceTime($float_timestamp)
+    public function getLastDuration()
     {
-        $this->_deviceTime = $float_timestamp;
+        return $this->_lastDuration;
+    }
+
+    public function setTimeRef($float_timestamp, $float_duration)
+    {
+        $this->_lastTimeRef = $float_timestamp;
+        $this->_lastDuration = $float_duration;
+    }
+
+
+    public function triggerLogPull()
+    {
+        if ($this->_logCallback == null || $this->_logIsPulling) {
+            return;
+        }
+        $this->_logIsPulling = true;
+        $request = "GET logs.txt?pos=" . $this->_logpos;
+        $yreq = YAPI::devRequest($this->_rootUrl, $request);
+        if ($yreq->errorType != YAPI_SUCCESS) return;
+
+        if ($this->_logCallback == null) {
+            $this->_logIsPulling = false;
+            return;
+        }
+        $resultStr = iconv("ISO-8859-1", "UTF-8", $yreq->result);
+        $pos = strrpos($resultStr,"\n@");
+        if ($pos < 0) {
+            $this->_logIsPulling = false;
+            return;
+        }
+        $logs = substr($resultStr, 0, $pos);
+        if (strlen($logs)>0) {
+            $posStr = substr($resultStr, $pos + 2);
+            $this->_logpos = (int)$posStr;
+            $module = YModule::FindModule($this->_serialNumber . ".module");
+            $lines = explode("\n", rtrim($logs));
+            foreach ($lines as $line) {
+                call_user_func($this->_logCallback, $module, $line);
+            }
+        }
+        $this->_logIsPulling = false;
+    }
+
+    public function setDeviceLogPending()
+    {
+        $this->_logNeedPulling = true;
+    }
+
+    public function registerLogCallback($obj_callback)
+    {
+        $this->_logCallback = $obj_callback;
+        if ($obj_callback != null) {
+            $this->triggerLogPull();
+        }
     }
 
     // Return the hub-specific devYdx of the device, as found during discovery
@@ -1333,7 +1390,7 @@ class YDevice
         $req = 'GET /api.json';
         $use_jzon = false;
         if (isset($this->_cache['_precooked']) && $this->_cache['_precooked']['module']['firmwareRelease']) {
-            $req .= "?fw=" . $this->_cache['_precooked']['module']['firmwareRelease'];
+            $req .= "?fw=" . urlencode($this->_cache['_precooked']['module']['firmwareRelease']);
             $use_jzon = true;
         }
         $yreq = YAPI::devRequest($this->_rootUrl, $req);
@@ -1438,7 +1495,11 @@ class YDevice
      */
     public function functionCount()
     {
-        return sizeof($this->_functions);
+        $funcPos = 0;
+        foreach ($this->_functions as $funydx => $fundef) {
+            $funcPos++;
+        }
+        return $funcPos;
     }
 
     /**
@@ -1453,16 +1514,34 @@ class YDevice
      */
     public function functionId($functionIndex)
     {
-        if($functionIndex < sizeof($this->_functions)) {
-            return $this->_functions[$functionIndex][0];
+        $funcPos = 0;
+        foreach ($this->_functions as $funydx => $fundef) {
+            if($functionIndex == $funcPos) {
+                return $fundef[0];
+            }
+            $funcPos++;
         }
         return '';
     }
 
+    public function functionBaseType($functionIndex)
+    {
+        $fid = $this->functionId($functionIndex);
+        if($fid != '') {
+            $ftype =  YAPI::getFunctionBaseType($this->_serialNumber.'.'.$fid);
+            foreach (YAPI::$BASETYPES as $name => $type) {
+                if ($ftype === $type){
+                    return $name;
+                }
+            }
+        }
+        return 'Function';
+    }
+
     public function functionType($functionIndex)
     {
-        if($functionIndex < sizeof($this->_functions)) {
-            $fid = $this->_functions[$functionIndex][0];
+        $fid = $this->functionId($functionIndex);
+        if($fid != '') {
             for ($i = 0; $i < strlen($fid); $i++) {
                 if ($fid[$i] >= '0' && $fid[$i] <= '9') {
                     break;
@@ -1472,7 +1551,6 @@ class YDevice
         }
         return '';
     }
-
 
     /**
      * Retrieves the logical name of the <i>n</i>th function on the module.
@@ -1486,23 +1564,14 @@ class YDevice
      */
     public function functionName($functionIndex)
     {
-        if($functionIndex < sizeof($this->_functions)) {
-            return $this->_functions[$functionIndex][1];
+        $funcPos = 0;
+        foreach ($this->_functions as $funydx => $fundef) {
+            if($functionIndex == $funcPos) {
+                return $fundef[1];
+            }
+            $funcPos++;
         }
         return '';
-    }
-
-    public function functionBaseType($functionIndex)
-    {
-        if($functionIndex < sizeof($this->_functions)) {
-            $ftype =  YAPI::getFunctionBaseType($this->_serialNumber.'.'.$this->_functions[$functionIndex][0]);
-            foreach (YAPI::$BASETYPES as $name=> $type) {
-                if ($ftype===$type){
-                    return $name;
-                }
-            }
-        }
-        return 'Function';
     }
 
     /**
@@ -1518,8 +1587,9 @@ class YDevice
      */
     public function functionValue($functionIndex)
     {
-        if($functionIndex < sizeof($this->_functions)) {
-            return YAPI::getFunctionValue($this->_serialNumber.'.'.$this->_functions[$functionIndex][0]);
+        $fid = $this->functionId($functionIndex);
+        if($fid != '') {
+            return YAPI::getFunctionValue($this->_serialNumber.'.'.$fid);
         }
         return '';
     }
@@ -1977,6 +2047,12 @@ class YAPI
             }
         }
 
+        // Monitor all pending request for logs
+        foreach(self::$_devs as $serial => $dev) {
+            $dev->triggerLogPull();
+        }
+
+
         // monitor all pending requests
         $streams = Array();
         foreach(self::$_pendingRequests as $req) {
@@ -2046,6 +2122,8 @@ class YAPI
                                             break;
                                         case NOTIFY_NETPKT_DEVLOGYDX:
                                             // log notification
+                                            $dev = self::$_devs[$serial];
+                                            $dev->setDeviceLogPending();
                                             break;
                                         case NOTIFY_NETPKT_CONFCHGYDX:
                                             // configuration change notification
@@ -2062,9 +2140,22 @@ class YAPI
                                             $dev = self::$_devs[$serial];
                                             if($funcid == 'time') {
                                                 $time = $arr[1]+0x100*$arr[2]+0x10000*$arr[3]+0x1000000*$arr[4];
-                                                $dev->setDeviceTime($time + $arr[5] / 250.0);
+                                                $ms = $arr[5] * 4;
+                                                if (sizeof($arr)>=7) {
+                                                    $ms += $arr[6] >> 6;
+                                                    $duration_ms = $arr[7];
+                                                    $duration_ms += ($arr[6] & 0xf) * 0x100;
+                                                    if ($arr[6] & 0x10) {
+                                                        $duration= $duration_ms;
+                                                    } else {
+                                                        $duration = $duration_ms / 1000.0;
+                                                    }
+                                                } else {
+                                                    $duration = 0.0;
+                                                }
+                                                $dev->setTimeRef( $time + $ms / 1000.0, $duration);
                                             } else {
-                                                YAPI::setTimedReport($serial . '.' . $funcid, $dev->getDeviceTime(), $arr);
+                                                YAPI::setTimedReport($serial . '.' . $funcid, $dev->getLastTimeRef(), $dev->getLastDuration() , $arr);
                                             }
                                             break;
                                         case NOTIFY_NETPKT_FUNCV2YDX:
@@ -2488,10 +2579,10 @@ class YAPI
     }
 
     // Set add a timed value report for a function
-    public static function setTimedReport($str_hwid, $float_timestamp, $arr_report)
+    public static function setTimedReport($str_hwid, $float_timestamp, $float_duration, $arr_report)
     {
         $classname = self::functionClass($str_hwid);
-        self::$_fnByType[$classname]->setTimedReport($str_hwid, $float_timestamp, $arr_report);
+        self::$_fnByType[$classname]->setTimedReport($str_hwid, $float_timestamp, $float_duration, $arr_report);
     }
 
     // Publish a configuration change event
@@ -2533,9 +2624,9 @@ class YAPI
     }
 
     // Queue a function value event
-    public static function addTimedReportEvent($obj_func, $float_timestamp, $arr_report)
+    public static function addTimedReportEvent($obj_func, $float_timestamp, $float_duration, $arr_report)
     {
-        self::$_data_events[] = Array($obj_func, $float_timestamp, $arr_report);
+        self::$_data_events[] = Array($obj_func, $float_timestamp, $float_duration, $arr_report);
     }
 
     // Find the hardwareId for the first instance of a given function class
@@ -2942,7 +3033,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.32759";
+        return "1.10.33423";
     }
 
     /**
@@ -3562,7 +3653,7 @@ class YAPI
                 /** @noinspection PhpUndefinedMethodInspection */
                 $dev = YAPI::getDevice($ysensor->get_module()->get_serialNumber());
                 if(!is_null($dev)) {
-                    $report = $ysensor->_decodeTimedReport($evt[1],$evt[2]);
+                    $report = $ysensor->_decodeTimedReport($evt[1],$evt[2],$evt[3]);
                     $ysensor->_invokeTimedReportCallback($report);
                 }
             }
@@ -4138,21 +4229,17 @@ class YDataStream
     protected $_utcStamp                 = 0;                            // u32
     protected $_nCols                    = 0;                            // int
     protected $_nRows                    = 0;                            // int
-    protected $_duration                 = 0;                            // int
+    protected $_startTime                = 0;                            // float
+    protected $_duration                 = 0;                            // float
+    protected $_dataSamplesInterval      = 0;                            // float
+    protected $_firstMeasureDuration     = 0;                            // float
     protected $_columnNames              = Array();                      // strArr
     protected $_functionId               = "";                           // str
     protected $_isClosed                 = 0;                            // bool
     protected $_isAvg                    = 0;                            // bool
-    protected $_isScal                   = 0;                            // bool
-    protected $_isScal32                 = 0;                            // bool
-    protected $_decimals                 = 0;                            // int
-    protected $_offset                   = 0;                            // float
-    protected $_scale                    = 0;                            // float
-    protected $_samplesPerHour           = 0;                            // int
     protected $_minVal                   = 0;                            // float
     protected $_avgVal                   = 0;                            // float
     protected $_maxVal                   = 0;                            // float
-    protected $_decexp                   = 0;                            // float
     protected $_caltyp                   = 0;                            // int
     protected $_calpar                   = Array();                      // intArr
     protected $_calraw                   = Array();                      // floatArr
@@ -4178,51 +4265,45 @@ class YDataStream
         // $val                    is a int;
         // $i                      is a int;
         // $maxpos                 is a int;
-        // $iRaw                   is a int;
-        // $iRef                   is a int;
+        // $ms_offset              is a int;
+        // $samplesPerHour         is a int;
         // $fRaw                   is a float;
         // $fRef                   is a float;
-        // $duration_float         is a float;
         $iCalib = Array();      // intArr;
         // decode sequence header to extract data
         $this->_runNo = $encoded[0] + ((($encoded[1]) << (16)));
         $this->_utcStamp = $encoded[2] + ((($encoded[3]) << (16)));
         $val = $encoded[4];
         $this->_isAvg = ((($val) & (0x100)) == 0);
-        $this->_samplesPerHour = (($val) & (0xff));
+        $samplesPerHour = (($val) & (0xff));
         if ((($val) & (0x100)) != 0) {
-            $this->_samplesPerHour = $this->_samplesPerHour * 3600;
+            $samplesPerHour = $samplesPerHour * 3600;
         } else {
             if ((($val) & (0x200)) != 0) {
-                $this->_samplesPerHour = $this->_samplesPerHour * 60;
+                $samplesPerHour = $samplesPerHour * 60;
             }
         }
-        $val = $encoded[5];
-        if ($val > 32767) {
-            $val = $val - 65536;
+        $this->_dataSamplesInterval = 3600.0 / $samplesPerHour;
+        $ms_offset = $encoded[6];
+        if ($ms_offset < 1000) {
+            // new encoding -> add the ms to the UTC timestamp
+            $this->_startTime = $this->_utcStamp + ($ms_offset / 1000.0);
+        } else {
+            // legacy encoding subtract the measure interval form the UTC timestamp
+            $this->_startTime = $this->_utcStamp -  $this->_dataSamplesInterval;
         }
-        $this->_decimals = $val;
-        $this->_offset = $val;
-        $this->_scale = $encoded[6];
-        $this->_isScal = ($this->_scale != 0);
-        $this->_isScal32 = (sizeof($encoded) >= 14);
+        $this->_firstMeasureDuration = $encoded[5];
+        if (!($this->_isAvg)) {
+            $this->_firstMeasureDuration = $this->_firstMeasureDuration / 1000.0;
+        }
         $val = $encoded[7];
         $this->_isClosed = ($val != 0xffff);
         if ($val == 0xffff) {
             $val = 0;
         }
         $this->_nRows = $val;
-        $duration_float = $this->_nRows * 3600 / $this->_samplesPerHour;
-        $this->_duration = round($duration_float);
+        $this->_duration = $this->_nRows * $this->_dataSamplesInterval;
         // precompute decoding parameters
-        $this->_decexp = 1.0;
-        if ($this->_scale == 0) {
-            $i = 0;
-            while ($i < $this->_decimals) {
-                $this->_decexp = $this->_decexp * 10.0;
-                $i = $i + 1;
-            }
-        }
         $iCalib = $dataset->_get_calibration();
         $this->_caltyp = $iCalib[0];
         if ($this->_caltyp != 0) {
@@ -4231,42 +4312,20 @@ class YDataStream
             while(sizeof($this->_calpar) > 0) { array_pop($this->_calpar); };
             while(sizeof($this->_calraw) > 0) { array_pop($this->_calraw); };
             while(sizeof($this->_calref) > 0) { array_pop($this->_calref); };
-            if ($this->_isScal32) {
-                $i = 1;
-                while ($i < $maxpos) {
-                    $this->_calpar[] = $iCalib[$i];
-                    $i = $i + 1;
-                }
-                $i = 1;
-                while ($i + 1 < $maxpos) {
-                    $fRaw = $iCalib[$i];
-                    $fRaw = $fRaw / 1000.0;
-                    $fRef = $iCalib[$i + 1];
-                    $fRef = $fRef / 1000.0;
-                    $this->_calraw[] = $fRaw;
-                    $this->_calref[] = $fRef;
-                    $i = $i + 2;
-                }
-            } else {
-                $i = 1;
-                while ($i + 1 < $maxpos) {
-                    $iRaw = $iCalib[$i];
-                    $iRef = $iCalib[$i + 1];
-                    $this->_calpar[] = $iRaw;
-                    $this->_calpar[] = $iRef;
-                    if ($this->_isScal) {
-                        $fRaw = $iRaw;
-                        $fRaw = ($fRaw - $this->_offset) / $this->_scale;
-                        $fRef = $iRef;
-                        $fRef = ($fRef - $this->_offset) / $this->_scale;
-                        $this->_calraw[] = $fRaw;
-                        $this->_calref[] = $fRef;
-                    } else {
-                        $this->_calraw[] = YAPI::_decimalToDouble($iRaw);
-                        $this->_calref[] = YAPI::_decimalToDouble($iRef);
-                    }
-                    $i = $i + 2;
-                }
+            $i = 1;
+            while ($i < $maxpos) {
+                $this->_calpar[] = $iCalib[$i];
+                $i = $i + 1;
+            }
+            $i = 1;
+            while ($i + 1 < $maxpos) {
+                $fRaw = $iCalib[$i];
+                $fRaw = $fRaw / 1000.0;
+                $fRef = $iCalib[$i + 1];
+                $fRef = $fRef / 1000.0;
+                $this->_calraw[] = $fRaw;
+                $this->_calref[] = $fRef;
+                $i = $i + 2;
             }
         }
         // preload column names for backward-compatibility
@@ -4284,15 +4343,9 @@ class YDataStream
         }
         // decode min/avg/max values for the sequence
         if ($this->_nRows > 0) {
-            if ($this->_isScal32) {
-                $this->_avgVal = $this->_decodeAvg($encoded[8] + ((((($encoded[9]) ^ (0x8000))) << (16))), 1);
-                $this->_minVal = $this->_decodeVal($encoded[10] + ((($encoded[11]) << (16))));
-                $this->_maxVal = $this->_decodeVal($encoded[12] + ((($encoded[13]) << (16))));
-            } else {
-                $this->_minVal = $this->_decodeVal($encoded[8]);
-                $this->_maxVal = $this->_decodeVal($encoded[9]);
-                $this->_avgVal = $this->_decodeAvg($encoded[10] + ((($encoded[11]) << (16))), $this->_nRows);
-            }
+            $this->_avgVal = $this->_decodeAvg($encoded[8] + ((((($encoded[9]) ^ (0x8000))) << (16))), 1);
+            $this->_minVal = $this->_decodeVal($encoded[10] + ((($encoded[11]) << (16))));
+            $this->_maxVal = $this->_decodeVal($encoded[12] + ((($encoded[13]) << (16))));
         }
         return 0;
     }
@@ -4313,34 +4366,18 @@ class YDataStream
         if ($this->_isAvg) {
             while ($idx + 3 < sizeof($udat)) {
                 while(sizeof($dat) > 0) { array_pop($dat); };
-                if ($this->_isScal32) {
-                    $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))));
-                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
-                    $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << (16))));
-                    $idx = $idx + 6;
-                } else {
-                    $dat[] = $this->_decodeVal($udat[$idx]);
-                    $dat[] = $this->_decodeAvg($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))), 1);
-                    $dat[] = $this->_decodeVal($udat[$idx + 1]);
-                    $idx = $idx + 4;
-                }
+                $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))));
+                $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << (16))));
+                $idx = $idx + 6;
                 $this->_values[] = $dat;
             }
         } else {
-            if ($this->_isScal && !($this->_isScal32)) {
-                while ($idx < sizeof($udat)) {
-                    while(sizeof($dat) > 0) { array_pop($dat); };
-                    $dat[] = $this->_decodeVal($udat[$idx]);
-                    $this->_values[] = $dat;
-                    $idx = $idx + 1;
-                }
-            } else {
-                while ($idx + 1 < sizeof($udat)) {
-                    while(sizeof($dat) > 0) { array_pop($dat); };
-                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
-                    $this->_values[] = $dat;
-                    $idx = $idx + 2;
-                }
+            while ($idx + 1 < sizeof($udat)) {
+                while(sizeof($dat) > 0) { array_pop($dat); };
+                $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                $this->_values[] = $dat;
+                $idx = $idx + 2;
             }
         }
 
@@ -4365,15 +4402,7 @@ class YDataStream
     {
         // $val                    is a float;
         $val = $w;
-        if ($this->_isScal32) {
-            $val = $val / 1000.0;
-        } else {
-            if ($this->_isScal) {
-                $val = ($val - $this->_offset) / $this->_scale;
-            } else {
-                $val = YAPI::_decimalToDouble($w);
-            }
-        }
+        $val = $val / 1000.0;
         if ($this->_caltyp != 0) {
             if (!is_null($this->_calhdl)) {
                 $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
@@ -4386,15 +4415,7 @@ class YDataStream
     {
         // $val                    is a float;
         $val = $dw;
-        if ($this->_isScal32) {
-            $val = $val / 1000.0;
-        } else {
-            if ($this->_isScal) {
-                $val = ($val / (100 * $count) - $this->_offset) / $this->_scale;
-            } else {
-                $val = $val / ($count * $this->_decexp);
-            }
-        }
+        $val = $val / 1000.0;
         if ($this->_caltyp != 0) {
             if (!is_null($this->_calhdl)) {
                 $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
@@ -4426,7 +4447,9 @@ class YDataStream
      * If the device uses a firmware older than version 13000, value is
      * relative to the start of the time the device was powered on, and
      * is always positive.
-     * If you need an absolute UTC timestamp, use get_startTimeUTC().
+     * If you need an absolute UTC timestamp, use get_realStartTimeUTC().
+     *
+     * <b>DEPRECATED</b>: This method has been replaced by get_realStartTimeUTC().
      *
      * @return integer : an unsigned number corresponding to the number of seconds
      *         between the start of the run and the beginning of this data
@@ -4442,13 +4465,29 @@ class YDataStream
      * If the UTC time was not set in the datalogger at the time of the recording
      * of this data stream, this method returns 0.
      *
+     * <b>DEPRECATED</b>: This method has been replaced by get_realStartTimeUTC().
+     *
      * @return integer : an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the beginning of this data
      *         stream (i.e. Unix time representation of the absolute time).
      */
     public function get_startTimeUTC()
     {
-        return $this->_utcStamp;
+        return round($this->_startTime);
+    }
+
+    /**
+     * Returns the start time of the data stream, relative to the Jan 1, 1970.
+     * If the UTC time was not set in the datalogger at the time of the recording
+     * of this data stream, this method returns 0.
+     *
+     * @return double : a floating-point number  corresponding to the number of seconds
+     *         between the Jan 1, 1970 and the beginning of this data
+     *         stream (i.e. Unix time representation of the absolute time).
+     */
+    public function get_realStartTimeUTC()
+    {
+        return $this->_startTime;
     }
 
     /**
@@ -4461,12 +4500,17 @@ class YDataStream
      */
     public function get_dataSamplesIntervalMs()
     {
-        return intVal((3600000) / ($this->_samplesPerHour));
+        return round($this->_dataSamplesInterval*1000);
     }
 
     public function get_dataSamplesInterval()
     {
-        return 3600.0 / $this->_samplesPerHour;
+        return $this->_dataSamplesInterval;
+    }
+
+    public function get_firstDataSamplesInterval()
+    {
+        return $this->_firstMeasureDuration;
     }
 
     /**
@@ -4582,14 +4626,7 @@ class YDataStream
         return $this->_maxVal;
     }
 
-    /**
-     * Returns the approximate duration of this stream, in seconds.
-     *
-     * @return integer : the number of seconds covered by this stream.
-     *
-     * On failure, throws an exception or returns Y_DURATION_INVALID.
-     */
-    public function get_duration()
+    public function get_realDuration()
     {
         if ($this->_isClosed) {
             return $this->_duration;
@@ -4683,8 +4720,8 @@ class YDataSet
     protected $_hardwareId               = "";                           // str
     protected $_functionId               = "";                           // str
     protected $_unit                     = "";                           // str
-    protected $_startTime                = 0;                            // u32
-    protected $_endTime                  = 0;                            // u32
+    protected $_startTime                = 0;                            // float
+    protected $_endTime                  = 0;                            // float
     protected $_progress                 = 0;                            // int
     protected $_calib                    = Array();                      // intArr
     protected $_streams                  = Array();                      // YDataStreamArr
@@ -4728,10 +4765,13 @@ class YDataSet
         // $strdata                is a str;
         // $tim                    is a float;
         // $itv                    is a float;
+        // $fitv                   is a float;
+        // $end_                   is a float;
         // $nCols                  is a int;
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
+        // $firstMeasure           is a bool;
 
         if ($progress != $this->_progress) {
             return $this->_progress;
@@ -4751,8 +4791,12 @@ class YDataSet
         if (sizeof($dataRows) == 0) {
             return $this->get_progress();
         }
-        $tim = $stream->get_startTimeUTC();
+        $tim = $stream->get_realStartTimeUTC();
+        $fitv = $stream->get_firstDataSamplesInterval();
         $itv = $stream->get_dataSamplesInterval();
+        if ($fitv == 0) {
+            $fitv = $itv;
+        }
         if ($tim < $itv) {
             $tim = $itv;
         }
@@ -4769,12 +4813,18 @@ class YDataSet
             $maxCol = 0;
         }
 
+        $firstMeasure = true;
         foreach($dataRows as $each) {
-            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
-                $this->_measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            if ($firstMeasure) {
+                $end_ = $tim + $fitv;
+                $firstMeasure = false;
+            } else {
+                $end_ = $tim + $itv;
             }
-            $tim = $tim + $itv;
-            $tim = round($tim * 1000) / 1000.0;
+            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($end_ <= $this->_endTime))) {
+                $this->_measures[] = new YMeasure($tim, $end_, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            }
+            $tim = $end_;
         }
         return $this->get_progress();
     }
@@ -4836,11 +4886,19 @@ class YDataSet
      * to reflect the timestamp of the first measure actually found in the
      * dataLogger within the specified range.
      *
+     * <b>DEPRECATED</b>: This method has been replaced by get_summary()
+     * which contain more precise informations on the YDataSet.
+     *
      * @return integer : an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the beginning of this data
      *         set (i.e. Unix time representation of the absolute time).
      */
     public function get_startTimeUTC()
+    {
+        return $this->imm_get_startTimeUTC();
+    }
+
+    public function imm_get_startTimeUTC()
     {
         return $this->_startTime;
     }
@@ -4853,13 +4911,22 @@ class YDataSet
      * to reflect the timestamp of the last measure actually found in the
      * dataLogger within the specified range.
      *
+     * <b>DEPRECATED</b>: This method has been replaced by get_summary()
+     * which contain more precise informations on the YDataSet.
+     *
+     *
      * @return integer : an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the end of this data
      *         set (i.e. Unix time representation of the absolute time).
      */
     public function get_endTimeUTC()
     {
-        return $this->_endTime;
+        return $this->imm_get_endTimeUTC();
+    }
+
+    public function imm_get_endTimeUTC()
+    {
+        return round($this->_endTime);
     }
 
     /**
@@ -4898,10 +4965,10 @@ class YDataSet
         if ($this->_progress < 0) {
             $url = sprintf('logger.json?id=%s',$this->_functionId);
             if ($this->_startTime != 0) {
-                $url = sprintf('%s&from=%u',$url,$this->_startTime);
+                $url = sprintf('%s&from=%u',$url,$this->imm_get_startTimeUTC());
             }
             if ($this->_endTime != 0) {
-                $url = sprintf('%s&to=%u',$url,$this->_endTime);
+                $url = sprintf('%s&to=%u',$url,$this->imm_get_endTimeUTC()+1);
             }
         } else {
             if ($this->_progress >= sizeof($this->_streams)) {
@@ -4975,21 +5042,22 @@ class YDataSet
      */
     public function get_measuresAt($measure)
     {
-        // $startUtc               is a u32;
+        // $startUtc               is a float;
         // $stream                 is a YDataStream;
         $dataRows = Array();    // floatArrArr;
         $measures = Array();    // YMeasureArr;
         // $tim                    is a float;
         // $itv                    is a float;
+        // $end_                   is a float;
         // $nCols                  is a int;
         // $minCol                 is a int;
         // $avgCol                 is a int;
         // $maxCol                 is a int;
 
-        $startUtc = round($measure.get_startTimeUTC());
+        $startUtc = $measure.get_startTimeUTC();
         $stream = null;
         foreach($this->_streams as $each) {
-            if ($each->get_startTimeUTC() == $startUtc) {
+            if ($each->get_realStartTimeUTC() == $startUtc) {
                 $stream = $each;
             }
         }
@@ -5000,7 +5068,7 @@ class YDataSet
         if (sizeof($dataRows) == 0) {
             return $measures;
         }
-        $tim = $stream->get_startTimeUTC();
+        $tim = $stream->get_realStartTimeUTC();
         $itv = $stream->get_dataSamplesInterval();
         if ($tim < $itv) {
             $tim = $itv;
@@ -5019,10 +5087,11 @@ class YDataSet
         }
 
         foreach($dataRows as $each) {
-            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($tim <= $this->_endTime))) {
-                $measures[] = new YMeasure($tim - $itv, $tim, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            $end_ = $tim + $itv;
+            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($end_ <= $this->_endTime))) {
+                $measures[] = new YMeasure($tim, $end_, $each[$minCol], $each[$avgCol], $each[$maxCol]);
             }
-            $tim = $tim + $itv;
+            $tim = $end_;
         }
         return $measures;
     }
@@ -5085,11 +5154,11 @@ class YDataSet
         for($i = 0; $i < sizeof($loadval['streams']); $i++) {
             /** @var $stream YDataStream */
             $stream = $this->_parent->_findDataStream($this, $loadval['streams'][$i]);
-            $streamEndTime = $stream->get_startTimeUTC() + $stream->get_duration();
-            $streamStartTime = $stream->get_startTimeUTC() - intVal($stream->get_dataSamplesIntervalMs()/1000);
+            $streamStartTime = $stream->get_realstartTimeUTC();
+            $streamEndTime = $streamStartTime + $stream->get_realDuration();
             if($this->_startTime > 0 && $streamEndTime <= $this->_startTime) {
                 // this stream is too early, drop it
-            } else if($this->_endTime > 0 && $stream->get_startTimeUTC() > $this->_endTime) {
+            } else if($this->_endTime > 0 && $streamStartTime >= $this->_endTime) {
                 // this stream is too late, drop it
             } else {
                 $this->_streams[] = $stream;
@@ -5099,16 +5168,16 @@ class YDataSet
                 if($endTime < $streamEndTime) {
                     $endTime = $streamEndTime;
                 }
-                if($stream->isClosed() && $stream->get_startTimeUTC() >= $this->_startTime &&
+                if($stream->isClosed() && $streamStartTime >= $this->_startTime &&
                 ($this->_endTime == 0 || $streamEndTime <= $this->_endTime)) {
                     if ($summaryMinVal > $stream->get_minValue())
                         $summaryMinVal = $stream->get_minValue();
                     if ($summaryMaxVal < $stream->get_maxValue())
                         $summaryMaxVal = $stream->get_maxValue();
-                    $summaryTotalAvg  += $stream->get_averageValue() * $stream->get_duration();
-                    $summaryTotalTime += $stream->get_duration();
+                    $summaryTotalAvg  += $stream->get_averageValue() * $stream->get_realDuration();
+                    $summaryTotalTime += $stream->get_realDuration();
 
-                    $rec = new YMeasure($stream->get_startTimeUTC(),
+                    $rec = new YMeasure($streamStartTime,
                                         $streamEndTime,
                                         $stream->get_minValue(),
                                         $stream->get_averageValue(),
@@ -5779,7 +5848,12 @@ class YFunction
         if(isset($this->_dataStreams[$key]))
             return $this->_dataStreams[$key];
 
-        $newDataStream = new YDataStream($this, $obj_dataset, YAPI::_decodeWords($str_def));
+        $words = YAPI::_decodeWords($str_def);
+        if (sizeof($words) < 14) {
+            $this->_throw(YAPI_VERSION_MISMATCH,"device firmware is too old");
+            return null;
+        }
+        $newDataStream = new YDataStream($this, $obj_dataset, $words);
         $this->_dataStreams[$key] = $newDataStream;
         return $newDataStream;
     }
@@ -6067,8 +6141,6 @@ class YSensor extends YFunction
     protected $_offset                   = 0;                            // float
     protected $_scale                    = 0;                            // float
     protected $_decexp                   = 0;                            // float
-    protected $_isScal                   = 0;                            // bool
-    protected $_isScal32                 = 0;                            // bool
     protected $_caltyp                   = 0;                            // int
     protected $_calpar                   = Array();                      // intArr
     protected $_calraw                   = Array();                      // floatArr
@@ -6515,7 +6587,6 @@ class YSensor extends YFunction
         // $fRef                   is a float;
         $this->_caltyp = -1;
         $this->_scale = -1;
-        $this->_isScal32 = false;
         while(sizeof($this->_calpar) > 0) { array_pop($this->_calpar); };
         while(sizeof($this->_calraw) > 0) { array_pop($this->_calraw); };
         while(sizeof($this->_calref) > 0) { array_pop($this->_calref); };
@@ -6549,8 +6620,6 @@ class YSensor extends YFunction
                 }
             }
             // New 32bit text format
-            $this->_isScal = true;
-            $this->_isScal32 = true;
             $this->_offset = 0;
             $this->_scale = 1000;
             $maxpos = sizeof($iCalib);
@@ -6581,23 +6650,13 @@ class YSensor extends YFunction
                 return 0;
             }
             // Save variable format (scale for scalar, or decimal exponent)
-            $this->_isScal = ($iCalib[1] > 0);
-            if ($this->_isScal) {
-                $this->_offset = $iCalib[0];
-                if ($this->_offset > 32767) {
-                    $this->_offset = $this->_offset - 65536;
-                }
-                $this->_scale = $iCalib[1];
-                $this->_decexp = 0;
-            } else {
-                $this->_offset = 0;
-                $this->_scale = 1;
-                $this->_decexp = 1.0;
-                $position = $iCalib[0];
-                while ($position > 0) {
-                    $this->_decexp = $this->_decexp * 10;
-                    $position = $position - 1;
-                }
+            $this->_offset = 0;
+            $this->_scale = 1;
+            $this->_decexp = 1.0;
+            $position = $iCalib[0];
+            while ($position > 0) {
+                $this->_decexp = $this->_decexp * 10;
+                $position = $position - 1;
             }
             // Shortcut when there is no calibration parameter
             if (sizeof($iCalib) == 2) {
@@ -6629,17 +6688,8 @@ class YSensor extends YFunction
                 $iRef = $iCalib[$position + 1];
                 $this->_calpar[] = $iRaw;
                 $this->_calpar[] = $iRef;
-                if ($this->_isScal) {
-                    $fRaw = $iRaw;
-                    $fRaw = ($fRaw - $this->_offset) / $this->_scale;
-                    $fRef = $iRef;
-                    $fRef = ($fRef - $this->_offset) / $this->_scale;
-                    $this->_calraw[] = $fRaw;
-                    $this->_calref[] = $fRef;
-                } else {
-                    $this->_calraw[] = YAPI::_decimalToDouble($iRaw);
-                    $this->_calref[] = YAPI::_decimalToDouble($iRef);
-                }
+                $this->_calraw[] = YAPI::_decimalToDouble($iRaw);
+                $this->_calref[] = YAPI::_decimalToDouble($iRef);
                 $position = $position + 2;
             }
         }
@@ -6732,11 +6782,11 @@ class YSensor extends YFunction
      * as DataSet objects are not supported by firmwares older than
      * version 13000.
      *
-     * @param integer $startTime : the start of the desired measure time interval,
+     * @param double $startTime : the start of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any meaasure, without initial limit.
-     * @param integer $endTime : the end of the desired measure time interval,
+     * @param double $endTime : the end of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any meaasure, without ending limit.
@@ -6863,8 +6913,6 @@ class YSensor extends YFunction
         // $res                    is a str;
         // $npt                    is a int;
         // $idx                    is a int;
-        // $iRaw                   is a int;
-        // $iRef                   is a int;
         $npt = sizeof($rawValues);
         if ($npt != sizeof($refValues)) {
             $this->_throw(YAPI_INVALID_ARGUMENT, 'Invalid calibration parameters (size mismatch)');
@@ -6885,36 +6933,12 @@ class YSensor extends YFunction
             $this->_throw(YAPI_NOT_SUPPORTED, 'Calibration parameters format mismatch. Please upgrade your library or firmware.');
             return '0';
         }
-        if ($this->_isScal32) {
-            // 32-bit fixed-point encoding
-            $res = sprintf('%d', YOCTO_CALIB_TYPE_OFS);
-            $idx = 0;
-            while ($idx < $npt) {
-                $res = sprintf('%s,%F,%F', $res, $rawValues[$idx], $refValues[$idx]);
-                $idx = $idx + 1;
-            }
-        } else {
-            if ($this->_isScal) {
-                // 16-bit fixed-point encoding
-                $res = sprintf('%d', $npt);
-                $idx = 0;
-                while ($idx < $npt) {
-                    $iRaw = round($rawValues[$idx] * $this->_scale + $this->_offset);
-                    $iRef = round($refValues[$idx] * $this->_scale + $this->_offset);
-                    $res = sprintf('%s,%d,%d', $res, $iRaw, $iRef);
-                    $idx = $idx + 1;
-                }
-            } else {
-                // 16-bit floating-point decimal encoding
-                $res = sprintf('%d', 10 + $npt);
-                $idx = 0;
-                while ($idx < $npt) {
-                    $iRaw = YAPI::_doubleToDecimal($rawValues[$idx]);
-                    $iRef = YAPI::_doubleToDecimal($refValues[$idx]);
-                    $res = sprintf('%s,%d,%d', $res, $iRaw, $iRef);
-                    $idx = $idx + 1;
-                }
-            }
+        // 32-bit fixed-point encoding
+        $res = sprintf('%d', YOCTO_CALIB_TYPE_OFS);
+        $idx = 0;
+        while ($idx < $npt) {
+            $res = sprintf('%s,%F,%F', $res, $rawValues[$idx], $refValues[$idx]);
+            $idx = $idx + 1;
         }
         return $res;
     }
@@ -6936,140 +6960,103 @@ class YSensor extends YFunction
         return call_user_func($this->_calhdl, $rawValue, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
     }
 
-    public function _decodeTimedReport($timestamp,$report)
+    public function _decodeTimedReport($timestamp,$duration,$report)
     {
         // $i                      is a int;
         // $byteVal                is a int;
-        // $poww                   is a int;
-        // $minRaw                 is a int;
-        // $avgRaw                 is a int;
-        // $maxRaw                 is a int;
+        // $poww                   is a float;
+        // $minRaw                 is a float;
+        // $avgRaw                 is a float;
+        // $maxRaw                 is a float;
         // $sublen                 is a int;
-        // $difRaw                 is a int;
+        // $difRaw                 is a float;
         // $startTime              is a float;
         // $endTime                is a float;
         // $minVal                 is a float;
         // $avgVal                 is a float;
         // $maxVal                 is a float;
-        $startTime = $this->_prevTimedReport;
+        if ($duration > 0) {
+            $startTime = $timestamp - $duration;
+        } else {
+            $startTime = $this->_prevTimedReport;
+        }
         $endTime = $timestamp;
         $this->_prevTimedReport = $endTime;
         if ($startTime == 0) {
             $startTime = $endTime;
         }
-        if ($report[0] == 2) {
-            // 32bit timed report format
-            if (sizeof($report) <= 5) {
-                // sub-second report, 1-4 bytes
-                $poww = 1;
-                $avgRaw = 0;
-                $byteVal = 0;
-                $i = 1;
-                while ($i < sizeof($report)) {
-                    $byteVal = $report[$i];
-                    $avgRaw = $avgRaw + $poww * $byteVal;
-                    $poww = $poww * 0x100;
-                    $i = $i + 1;
-                }
-                if ((($byteVal) & (0x80)) != 0) {
-                    $avgRaw = $avgRaw - $poww;
-                }
-                $avgVal = $avgRaw / 1000.0;
-                if ($this->_caltyp != 0) {
-                    if (!is_null($this->_calhdl)) {
-                        $avgVal = call_user_func($this->_calhdl, $avgVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
-                    }
-                }
-                $minVal = $avgVal;
-                $maxVal = $avgVal;
-            } else {
-                // averaged report: avg,avg-min,max-avg
-                $sublen = 1 + (($report[1]) & (3));
-                $poww = 1;
-                $avgRaw = 0;
-                $byteVal = 0;
-                $i = 2;
-                while (($sublen > 0) && ($i < sizeof($report))) {
-                    $byteVal = $report[$i];
-                    $avgRaw = $avgRaw + $poww * $byteVal;
-                    $poww = $poww * 0x100;
-                    $i = $i + 1;
-                    $sublen = $sublen - 1;
-                }
-                if ((($byteVal) & (0x80)) != 0) {
-                    $avgRaw = $avgRaw - $poww;
-                }
-                $sublen = 1 + (((($report[1]) >> (2))) & (3));
-                $poww = 1;
-                $difRaw = 0;
-                while (($sublen > 0) && ($i < sizeof($report))) {
-                    $byteVal = $report[$i];
-                    $difRaw = $difRaw + $poww * $byteVal;
-                    $poww = $poww * 0x100;
-                    $i = $i + 1;
-                    $sublen = $sublen - 1;
-                }
-                $minRaw = $avgRaw - $difRaw;
-                $sublen = 1 + (((($report[1]) >> (4))) & (3));
-                $poww = 1;
-                $difRaw = 0;
-                while (($sublen > 0) && ($i < sizeof($report))) {
-                    $byteVal = $report[$i];
-                    $difRaw = $difRaw + $poww * $byteVal;
-                    $poww = $poww * 0x100;
-                    $i = $i + 1;
-                    $sublen = $sublen - 1;
-                }
-                $maxRaw = $avgRaw + $difRaw;
-                $avgVal = $avgRaw / 1000.0;
-                $minVal = $minRaw / 1000.0;
-                $maxVal = $maxRaw / 1000.0;
-                if ($this->_caltyp != 0) {
-                    if (!is_null($this->_calhdl)) {
-                        $avgVal = call_user_func($this->_calhdl, $avgVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
-                        $minVal = call_user_func($this->_calhdl, $minVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
-                        $maxVal = call_user_func($this->_calhdl, $maxVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
-                    }
+        // 32bit timed report format
+        if (sizeof($report) <= 5) {
+            // sub-second report, 1-4 bytes
+            $poww = 1;
+            $avgRaw = 0;
+            $byteVal = 0;
+            $i = 1;
+            while ($i < sizeof($report)) {
+                $byteVal = $report[$i];
+                $avgRaw = $avgRaw + $poww * $byteVal;
+                $poww = $poww * 0x100;
+                $i = $i + 1;
+            }
+            if ((($byteVal) & (0x80)) != 0) {
+                $avgRaw = $avgRaw - $poww;
+            }
+            $avgVal = $avgRaw / 1000.0;
+            if ($this->_caltyp != 0) {
+                if (!is_null($this->_calhdl)) {
+                    $avgVal = call_user_func($this->_calhdl, $avgVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
                 }
             }
+            $minVal = $avgVal;
+            $maxVal = $avgVal;
         } else {
-            // 16bit timed report format
-            if ($report[0] == 0) {
-                // sub-second report, 1-4 bytes
-                $poww = 1;
-                $avgRaw = 0;
-                $byteVal = 0;
-                $i = 1;
-                while ($i < sizeof($report)) {
-                    $byteVal = $report[$i];
-                    $avgRaw = $avgRaw + $poww * $byteVal;
-                    $poww = $poww * 0x100;
-                    $i = $i + 1;
+            // averaged report: avg,avg-min,max-avg
+            $sublen = 1 + (($report[1]) & (3));
+            $poww = 1;
+            $avgRaw = 0;
+            $byteVal = 0;
+            $i = 2;
+            while (($sublen > 0) && ($i < sizeof($report))) {
+                $byteVal = $report[$i];
+                $avgRaw = $avgRaw + $poww * $byteVal;
+                $poww = $poww * 0x100;
+                $i = $i + 1;
+                $sublen = $sublen - 1;
+            }
+            if ((($byteVal) & (0x80)) != 0) {
+                $avgRaw = $avgRaw - $poww;
+            }
+            $sublen = 1 + (((($report[1]) >> (2))) & (3));
+            $poww = 1;
+            $difRaw = 0;
+            while (($sublen > 0) && ($i < sizeof($report))) {
+                $byteVal = $report[$i];
+                $difRaw = $difRaw + $poww * $byteVal;
+                $poww = $poww * 0x100;
+                $i = $i + 1;
+                $sublen = $sublen - 1;
+            }
+            $minRaw = $avgRaw - $difRaw;
+            $sublen = 1 + (((($report[1]) >> (4))) & (3));
+            $poww = 1;
+            $difRaw = 0;
+            while (($sublen > 0) && ($i < sizeof($report))) {
+                $byteVal = $report[$i];
+                $difRaw = $difRaw + $poww * $byteVal;
+                $poww = $poww * 0x100;
+                $i = $i + 1;
+                $sublen = $sublen - 1;
+            }
+            $maxRaw = $avgRaw + $difRaw;
+            $avgVal = $avgRaw / 1000.0;
+            $minVal = $minRaw / 1000.0;
+            $maxVal = $maxRaw / 1000.0;
+            if ($this->_caltyp != 0) {
+                if (!is_null($this->_calhdl)) {
+                    $avgVal = call_user_func($this->_calhdl, $avgVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+                    $minVal = call_user_func($this->_calhdl, $minVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
+                    $maxVal = call_user_func($this->_calhdl, $maxVal, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
                 }
-                if ($this->_isScal) {
-                    $avgVal = $this->_decodeVal($avgRaw);
-                } else {
-                    if ((($byteVal) & (0x80)) != 0) {
-                        $avgRaw = $avgRaw - $poww;
-                    }
-                    $avgVal = $this->_decodeAvg($avgRaw);
-                }
-                $minVal = $avgVal;
-                $maxVal = $avgVal;
-            } else {
-                // averaged report 2+4+2 bytes
-                $minRaw = $report[1] + 0x100 * $report[2];
-                $maxRaw = $report[3] + 0x100 * $report[4];
-                $avgRaw = $report[5] + 0x100 * $report[6] + 0x10000 * $report[7];
-                $byteVal = $report[8];
-                if ((($byteVal) & (0x80)) == 0) {
-                    $avgRaw = $avgRaw + 0x1000000 * $byteVal;
-                } else {
-                    $avgRaw = $avgRaw - 0x1000000 * (0x100 - $byteVal);
-                }
-                $minVal = $this->_decodeVal($minRaw);
-                $avgVal = $this->_decodeAvg($avgRaw);
-                $maxVal = $this->_decodeVal($maxRaw);
             }
         }
         return new YMeasure($startTime, $endTime, $minVal, $avgVal, $maxVal);
@@ -7079,11 +7066,6 @@ class YSensor extends YFunction
     {
         // $val                    is a float;
         $val = $w;
-        if ($this->_isScal) {
-            $val = ($val - $this->_offset) / $this->_scale;
-        } else {
-            $val = YAPI::_decimalToDouble($w);
-        }
         if ($this->_caltyp != 0) {
             if (!is_null($this->_calhdl)) {
                 $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
@@ -7096,11 +7078,6 @@ class YSensor extends YFunction
     {
         // $val                    is a float;
         $val = $dw;
-        if ($this->_isScal) {
-            $val = ($val / 100 - $this->_offset) / $this->_scale;
-        } else {
-            $val = $val / $this->_decexp;
-        }
         if ($this->_caltyp != 0) {
             if (!is_null($this->_calhdl)) {
                 $val = call_user_func($this->_calhdl, $val, $this->_caltyp, $this->_calpar, $this->_calraw, $this->_calref);
@@ -7165,6 +7142,9 @@ class YSensor extends YFunction
 
     /**
      * Continues the enumeration of sensors started using yFirstSensor().
+     * Caution: You can't make any assumption about the returned sensors order.
+     * If you want to find a specific a sensor, use Sensor.findSensor()
+     * and a hardwareID or a logical name.
      *
      * @return YSensor : a pointer to a YSensor object, corresponding to
      *         a sensor currently online, or a null pointer
@@ -7416,6 +7396,13 @@ class YModule extends YFunction
         return "";
     }
 
+    private function _startStopDevLog_internal($str_serial, $bool_start)
+    {
+        $dev = $this->_getDev();
+        if (!($dev == null)) {
+            $dev->registerLogCallback($this->_logCallback);
+        }
+    }
     //--- (generated code: YModule implementation)
 
     function _parseAttr($name, $val)
@@ -7787,6 +7774,7 @@ class YModule extends YFunction
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
+     *
      * If a call to this object's is_online() method returns FALSE although
      * you are certain that the device is plugged, make sure that you did
      * call registerHub() at application initialization time.
@@ -7861,6 +7849,41 @@ class YModule extends YFunction
     public function triggerFirmwareUpdate($secBeforeReboot)
     {
         return $this->set_rebootCountdown(-$secBeforeReboot);
+    }
+
+    public function _startStopDevLog($serial,$start)
+    {
+        $this->_startStopDevLog_internal($serial,$start);
+    }
+
+    //cannot be generated for PHP:
+    //private function _startStopDevLog_internal($serial,$start)
+
+    /**
+     * Registers a device log callback function. This callback will be called each time
+     * that a module sends a new log message. Mostly useful to debug a Yoctopuce module.
+     *
+     * @param function $callback : the callback function to call, or a null pointer. The callback function
+     * should take two
+     *         arguments: the module object that emitted the log message, and the character string containing the log.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function registerLogCallback($callback)
+    {
+        // $serial                 is a str;
+
+        $serial = $this->get_serialNumber();
+        if ($serial == YAPI_INVALID_STRING) {
+            return YAPI_DEVICE_NOT_FOUND;
+        }
+        $this->_logCallback = $callback;
+        $this->_startStopDevLog($serial, !is_null($callback));
+        return 0;
+    }
+
+    public function get_logCallback()
+    {
+        return $this->_logCallback;
     }
 
     /**
@@ -8158,6 +8181,8 @@ class YModule extends YFunction
                 $this->_upload($name, YAPI::_hexStrToBin($data));
             }
         }
+        // Apply settings a second time for file-dependent settings and dynamic sensor nodes
+        $this->set_allSettings($json_api);
         return YAPI_SUCCESS;
     }
 
@@ -8901,6 +8926,9 @@ class YModule extends YFunction
 
     /**
      * Continues the module enumeration started using yFirstModule().
+     * Caution: You can't make any assumption about the returned modules order.
+     * If you want to find a specific module, use Module.findModule()
+     * and a hardwareID or a logical name.
      *
      * @return YModule : a pointer to a YModule object, corresponding to
      *         the next module found, or a null pointer
@@ -9426,6 +9454,7 @@ function yFirstSensor()
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
+ *
  * If a call to this object's is_online() method returns FALSE although
  * you are certain that the device is plugged, make sure that you did
  * call registerHub() at application initialization time.
@@ -9475,238 +9504,6 @@ if(!defined('Y_CLEARHISTORY_INVALID'))       define('Y_CLEARHISTORY_INVALID',   
 if(!defined('Y_CURRENTRUNINDEX_INVALID'))    define('Y_CURRENTRUNINDEX_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_TIMEUTC_INVALID'))            define('Y_TIMEUTC_INVALID',           YAPI_INVALID_LONG);
 //--- (end of generated code: YDataLogger definitions)
-
-/**
- * YOldDataStream Class: Sequence of measured data, stored by the data logger
- *
- * A data stream is a small collection of consecutive measures for a set
- * of sensors. A few properties are available directly from the object itself
- * (they are preloaded at instantiation time), while most other properties and
- * the actual data are loaded on demand when accessed for the first time.
- */
-class YOldDataStream extends YDataStream
-{
-    const DATA_INVALID = Y_INVALID_FLOAT;
-
-    protected $_dataLogger = null;
-    protected $_interval   = 0;
-    protected $_timeStamp  = 0;
-
-    function __construct($parent, $run, $stamp, $utc=-1, $itv=0)
-    {
-        parent::__construct($parent);
-
-        $this->_dataLogger = $parent;
-        $this->_runNo      = $run;
-        $this->_timeStamp  = $stamp;
-        $this->_utcStamp   = $utc;
-        $this->_interval   = $itv;
-        $this->_samplesPerHour = ($itv == 0 ? 3600 : 3600 / $this->_interval);
-        $this->_isClosed   = 1;
-        $this->_minVal     = Y_INVALID_FLOAT;
-        $this->_avgVal     = Y_INVALID_FLOAT;
-        $this->_maxVal     = Y_INVALID_FLOAT;
-    }
-
-    // Internal function to preload all values into object
-    //
-    public function loadStream()
-    {
-        $coldiv = null;
-        $coltyp = null;
-        $colscl = null;
-        $colofs = null;
-        $calhdl = null;
-        $caltyp = null;
-        $calpar = null;
-        $calraw = null;
-        $calref = null;
-
-        $loadval = null;
-        $retcode = $this->_dataLogger->getData($this->_runNo, $this->_timeStamp, $loadval);
-        if($retcode != YAPI_SUCCESS) {
-            return $retcode;
-        }
-        if(isset($loadval['time']))     $this->_timeStamp = $loadval['time'];
-        if(isset($loadval['UTC']))      $this->_utcStamp  = $loadval['UTC'];
-        if(isset($loadval['interval'])) $this->_interval  = $loadval['interval'];
-        if(isset($loadval['nRows']))    $this->_nRows     = $loadval['nRows'];
-        if(isset($loadval['keys'])) {
-            $this->_columnNames = $loadval['keys'];
-            if($this->_nCols == 0) {
-                $this->_nCols = sizeof($this->_columnNames);
-            } else if($this->_nCols != sizeof($this->_columnNames)) {
-                $this->_nCols = 0;
-                return YAPI_IO_ERROR;
-            }
-        }
-        if(isset($loadval['div'])) {
-            $coldiv = $loadval['div'];
-            if($this->_nCols == 0) {
-                $this->_nCols = sizeof($coldiv);
-            } else if($this->_nCols != sizeof($coldiv)) {
-                $this->_nCols = 0;
-                return YAPI_IO_ERROR;
-            }
-        }
-        if(isset($loadval['type'])) {
-            $coltyp = $loadval['type'];
-            if($this->_nCols == 0) {
-                $this->_nCols = sizeof($coltyp);
-            } else if($this->_nCols != sizeof($coltyp)) {
-                $this->_nCols = 0;
-                return YAPI_IO_ERROR;
-            }
-        }
-        if(isset($loadval['scal'])) {
-            $colscl = $loadval['scal'];
-            $colofs = Array();
-            if($this->_nCols == 0) {
-                $this->_nCols = sizeof($colscl);
-            } else if($this->_nCols != sizeof($colscl)) {
-                $this->_nCols = 0;
-                return YAPI_IO_ERROR;
-            }
-            for($i = 0; $i < sizeof($colscl); $i++) {
-                $colscl[$i] /= 65536.0;
-                $colofs[$i] = ($coltyp[$i] != 0 ? -32767 : 0);
-            }
-        } else {
-            $colscl = Array();
-            $colofs = Array();
-            for($i = 0; $i < sizeof($coldiv); $i++) {
-                $colscl[$i] = 1.0 / $coldiv[$i];
-                $colofs[$i] = ($coltyp[$i] != 0 ? -32767 : 0);
-            }
-        }
-        if(isset($loadval['cal'])) {
-            $calhdl = Array();
-            $caltyp = Array();
-            $calpar = Array();
-            $calraw = Array();
-            $calref = Array();
-            for($c = 0; $c < $this->_nCols; $c++) {
-                $params = $loadval['cal'][$c];
-                if(!$params) continue;
-                $params = explode(',', $params);
-                if(sizeof($params) < 11) continue;
-                $calhdl[$c] = YAPI::getCalibrationHandler($params[0]);
-                if(is_null($calhdl[$c])) continue;
-                $caltyp[$c] = intVal($params[0]);
-                $calpar[$c] = Array();
-                $calraw[$c] = Array();
-                $calref[$c] = Array();
-                for($i = 1; $i < sizeof($params); $i += 2) {
-                    $calpar[$c][$i-1] = intVal($params[$i]);
-                    $calpar[$c][$i]   = intVal($params[$i+1]);
-                    if($caltyp[$c] <= 10) {
-                        $calraw[$c][$i>>1] = ($calpar[$c][$i-1] + $colofs[$c]) / $coldiv[$c];
-                        $calref[$c][$i>>1] = ($calpar[$c][$i]   + $colofs[$c]) / $coldiv[$c];
-                    } else {
-                        $calraw[$c][$i>>1] = YAPI::decimalToDouble($calpar[$c][$i-1]);
-                        $calref[$c][$i>>1] = YAPI::decimalToDouble($calpar[$c][$i]);
-                    }
-                }
-            }
-        }
-        if(isset($loadval['data'])) {
-            if($this->_nCols == 0 || is_null($coldiv) || is_null($coltyp)) {
-                return YAPI_IO_ERROR;
-            }
-            if(is_string($loadval['data'])) {
-                $data = $loadval['data'];
-                $datalen = strlen($data);
-                $udata = Array();
-                for($i = 0; $i < $datalen;) {
-                    if($data[$i] >= 'a') {
-                        $srcpos = sizeof($udata)-1-(ord($data[$i++])-97);
-                        if($srcpos < 0) return YAPI_IO_ERROR;
-                        $udata[] = $udata[$srcpos];
-                    } else {
-                        if($i+2 > $datalen) return YAPI_IO_ERROR;
-                        $val = ord($data[$i++]) - 48;
-                        $val += (ord($data[$i++]) - 48) << 5;
-                        if($data[$i] == 'z') $data[$i] = '\\';
-                        $val += (ord($data[$i++]) - 48) << 10;
-                        $udata[] = $val;
-                    }
-                }
-                $loadval['data'] = $udata;
-            }
-            $this->_values = Array();
-            $dat = Array();
-            $c = 0;
-            foreach($loadval['data'] as $val) {
-                if($coltyp[$c] < 2) {
-                    $val = ($val + $colofs[$c]) * $colscl[$c];
-                } else {
-                    $val = YAPI::decimalToDouble($val-32767);
-                }
-                if(!is_null($calhdl) && isset($calhdl[$c])) {
-                    // use post-calibration function
-                    if($caltyp[$c] <= 10) {
-                        $val = call_user_func($calhdl[$c], ($val+$colofs[$c])/$coldiv[$c], $caltyp[$c],
-                                              $calpar[$c], $calraw[$c], $calref[$c]);
-                    } else if($caltyp[$c] > 20) {
-                        $val = call_user_func($calhdl[$c], $val, $caltyp[$c],
-                                              $calpar[$c], $calraw[$c], $calref[$c]);
-                    }
-                }
-                $dat[] = $val;
-                if(++$c == $this->_nCols) {
-                    $this->_values[] = $dat;
-                    $dat = Array();
-                    $c = 0;
-                }
-            }
-        }
-        return YAPI_SUCCESS;
-    }
-
-    /**
-     * Returns the relative start time of the data stream, measured in seconds.
-     * For recent firmwares, the value is relative to the present time,
-     * which means the value is always negative.
-     * If the device uses a firmware older than version 13000, value is
-     * relative to the start of the time the device was powered on, and
-     * is always positive.
-     * If you need an absolute UTC timestamp, use get_startTimeUTC().
-     *
-     * @return an unsigned number corresponding to the number of seconds
-     *         between the start of the run and the beginning of this data
-     *         stream.
-     */
-    public function get_startTime()
-    {
-        return $this->_timeStamp;
-    }
-    public function startTime()
-    {
-        return $this->_timeStamp;
-    }
-
-    /**
-     * Returns the number of seconds elapsed between  two consecutive
-     * rows of this data stream. By default, the data logger records one row
-     * per second, but there might be alternative streams at lower resolution
-     * created by summarizing the original stream for archiving purposes.
-     *
-     * This method does not cause any access to the device, as the value
-     * is preloaded in the object at instantiation time.
-     *
-     * @return an unsigned number corresponding to a number of seconds.
-     */
-    public function get_dataSamplesInterval()
-    {
-        if($this->_interval == 0) $this->loadStream();
-        return $this->_interval;
-    }
-    public function dataSamplesInterval()
-    {
-        if($this->_interval == 0) $this->loadStream();
-        return $this->_interval;
-    }
-}
 
 
 //--- (generated code: YDataLogger declaration)
@@ -9784,59 +9581,6 @@ class YDataLogger extends YFunction
         $loadval = json_decode($yreq->result, true);
 
         return YAPI_SUCCESS;
-    }
-
-    /**
-     * Builds a list of all data streams hold by the data logger (legacy method).
-     * The caller must pass by reference an empty array to hold YDataStream
-     * objects, and the function fills it with objects describing available
-     * data sequences.
-     *
-     * This is the old way to retrieve data from the DataLogger.
-     * For new applications, you should rather use get_dataSets()
-     * method, or call directly get_recordedData() on the
-     * sensor object.
-     *
-     * @param YDataStream[] $v : an array of YDataStream objects to be filled in
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function get_dataStreams(&$v)
-    {
-        $v = Array();
-        $loadval = null;
-        $retcode = $this->getData(null, null, $loadval);
-        if($retcode != YAPI_SUCCESS) {
-            return $retcode;
-        }
-        if(sizeof($loadval) == 0) {
-            return YAPI_SUCCESS;
-        }
-        if(!isset($loadval[0]['id'])) {
-            // old datalogger format: [runIdx, timerel, utc, interval]
-            foreach($loadval as $arr) {
-                if(sizeof($arr) < 4) {
-                    return $this->_throw(YAPI_IO_ERROR, "Unexpected JSON reply format", YAPI_IO_ERROR);
-                }
-                $v[] = new YOldDataStream($this,$arr[0],$arr[1],$arr[2],$arr[3]);
-            }
-        } else {
-            // new datalogger format: {"id":"...","unit":"...","streams":["...",...]}
-            $sets = $this->parse_dataSets(json_encode($loadval));
-            for ($i = 0; $i < sizeof($sets); $i++) {
-                $ds = $sets[$i]->get_privateDataStreams();
-                for ($si=0; $si < sizeof($ds); $si++) {
-                    $v[] = $ds[$si];
-                }
-            }
-        }
-        return YAPI_SUCCESS;
-    }
-    public function getDataStreams(&$v)
-    {
-        return $this->get_dataStreams($v);
     }
 
     //--- (generated code: YDataLogger implementation)
@@ -10171,6 +9915,9 @@ class YDataLogger extends YFunction
 
     /**
      * Continues the enumeration of data loggers started using yFirstDataLogger().
+     * Caution: You can't make any assumption about the returned data loggers order.
+     * If you want to find a specific a data logger, use DataLogger.findDataLogger()
+     * and a hardwareID or a logical name.
      *
      * @return YDataLogger : a pointer to a YDataLogger object, corresponding to
      *         a data logger currently online, or a null pointer

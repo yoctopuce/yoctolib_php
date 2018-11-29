@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_oscontrol.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -172,6 +172,9 @@ class YOsControl extends YFunction
 
     /**
      * Continues the enumeration of OS control started using yFirstOsControl().
+     * Caution: You can't make any assumption about the returned OS control order.
+     * If you want to find a specific OS control, use OsControl.findOsControl()
+     * and a hardwareID or a logical name.
      *
      * @return YOsControl : a pointer to a YOsControl object, corresponding to
      *         OS control currently online, or a null pointer

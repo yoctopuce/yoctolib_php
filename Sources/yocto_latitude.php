@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_latitude.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_latitude.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YLatitude, the high-level API for Latitude functions
  *
@@ -112,6 +112,9 @@ class YLatitude extends YSensor
 
     /**
      * Continues the enumeration of latitude sensors started using yFirstLatitude().
+     * Caution: You can't make any assumption about the returned latitude sensors order.
+     * If you want to find a specific a latitude sensor, use Latitude.findLatitude()
+     * and a hardwareID or a logical name.
      *
      * @return YLatitude : a pointer to a YLatitude object, corresponding to
      *         a latitude sensor currently online, or a null pointer

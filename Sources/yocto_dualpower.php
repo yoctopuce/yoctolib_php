@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_dualpower.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_dualpower.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YDualPower, the high-level API for DualPower functions
  *
@@ -241,6 +241,9 @@ class YDualPower extends YFunction
 
     /**
      * Continues the enumeration of dual power controls started using yFirstDualPower().
+     * Caution: You can't make any assumption about the returned dual power controls order.
+     * If you want to find a specific a dual power control, use DualPower.findDualPower()
+     * and a hardwareID or a logical name.
      *
      * @return YDualPower : a pointer to a YDualPower object, corresponding to
      *         a dual power control currently online, or a null pointer

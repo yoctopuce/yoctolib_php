@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_network.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -1369,6 +1369,9 @@ class YNetwork extends YFunction
 
     /**
      * Continues the enumeration of network interfaces started using yFirstNetwork().
+     * Caution: You can't make any assumption about the returned network interfaces order.
+     * If you want to find a specific a network interface, use Network.findNetwork()
+     * and a hardwareID or a logical name.
      *
      * @return YNetwork : a pointer to a YNetwork object, corresponding to
      *         a network interface currently online, or a null pointer

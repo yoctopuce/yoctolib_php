@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_motor.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_motor.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YMotor, the high-level API for Motor functions
  *
@@ -634,6 +634,9 @@ class YMotor extends YFunction
 
     /**
      * Continues the enumeration of motors started using yFirstMotor().
+     * Caution: You can't make any assumption about the returned motors order.
+     * If you want to find a specific a motor, use Motor.findMotor()
+     * and a hardwareID or a logical name.
      *
      * @return YMotor : a pointer to a YMotor object, corresponding to
      *         a motor currently online, or a null pointer

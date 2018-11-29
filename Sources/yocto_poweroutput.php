@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_poweroutput.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_poweroutput.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -174,6 +174,9 @@ class YPowerOutput extends YFunction
 
     /**
      * Continues the enumeration of dual power ouput controls started using yFirstPowerOutput().
+     * Caution: You can't make any assumption about the returned dual power ouput controls order.
+     * If you want to find a specific a dual power  ouput control, use PowerOutput.findPowerOutput()
+     * and a hardwareID or a logical name.
      *
      * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
      *         a dual power  ouput control currently online, or a null pointer

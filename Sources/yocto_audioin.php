@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioin.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_audioin.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -300,6 +300,9 @@ class YAudioIn extends YFunction
 
     /**
      * Continues the enumeration of audio inputs started using yFirstAudioIn().
+     * Caution: You can't make any assumption about the returned audio inputs order.
+     * If you want to find a specific an audio input, use AudioIn.findAudioIn()
+     * and a hardwareID or a logical name.
      *
      * @return YAudioIn : a pointer to a YAudioIn object, corresponding to
      *         an audio input currently online, or a null pointer

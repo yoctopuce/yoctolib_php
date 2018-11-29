@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multiaxiscontroller.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_multiaxiscontroller.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -383,6 +383,9 @@ class YMultiAxisController extends YFunction
 
     /**
      * Continues the enumeration of multi-axis controllers started using yFirstMultiAxisController().
+     * Caution: You can't make any assumption about the returned multi-axis controllers order.
+     * If you want to find a specific a multi-axis controller, use MultiAxisController.findMultiAxisController()
+     * and a hardwareID or a logical name.
      *
      * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to
      *         a multi-axis controller currently online, or a null pointer

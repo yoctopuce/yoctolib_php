@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_relay.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_relay.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YRelay, the high-level API for Relay functions
  *
@@ -512,6 +512,9 @@ class YRelay extends YFunction
 
     /**
      * Continues the enumeration of relays started using yFirstRelay().
+     * Caution: You can't make any assumption about the returned relays order.
+     * If you want to find a specific a relay, use Relay.findRelay()
+     * and a hardwareID or a logical name.
      *
      * @return YRelay : a pointer to a YRelay object, corresponding to
      *         a relay currently online, or a null pointer

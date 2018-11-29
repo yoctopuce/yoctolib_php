@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_current.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_current.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YCurrent, the high-level API for Current functions
  *
@@ -152,6 +152,9 @@ class YCurrent extends YSensor
 
     /**
      * Continues the enumeration of current sensors started using yFirstCurrent().
+     * Caution: You can't make any assumption about the returned current sensors order.
+     * If you want to find a specific a current sensor, use Current.findCurrent()
+     * and a hardwareID or a logical name.
      *
      * @return YCurrent : a pointer to a YCurrent object, corresponding to
      *         a current sensor currently online, or a null pointer

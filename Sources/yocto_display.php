@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_display.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -1316,6 +1316,9 @@ class YDisplay extends YFunction
 
     /**
      * Continues the enumeration of displays started using yFirstDisplay().
+     * Caution: You can't make any assumption about the returned displays order.
+     * If you want to find a specific a display, use Display.findDisplay()
+     * and a hardwareID or a logical name.
      *
      * @return YDisplay : a pointer to a YDisplay object, corresponding to
      *         a display currently online, or a null pointer

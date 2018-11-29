@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_messagebox.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -2156,6 +2156,9 @@ class YMessageBox extends YFunction
 
     /**
      * Continues the enumeration of MessageBox interfaces started using yFirstMessageBox().
+     * Caution: You can't make any assumption about the returned MessageBox interfaces order.
+     * If you want to find a specific a MessageBox interface, use MessageBox.findMessageBox()
+     * and a hardwareID or a logical name.
      *
      * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
      *         a MessageBox interface currently online, or a null pointer

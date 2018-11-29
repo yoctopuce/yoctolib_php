@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 31453 2018-08-08 10:22:16Z seb $
+ * $Id: yocto_cellular.php 32907 2018-11-02 10:18:55Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -1119,6 +1119,9 @@ class YCellular extends YFunction
 
     /**
      * Continues the enumeration of cellular interfaces started using yFirstCellular().
+     * Caution: You can't make any assumption about the returned cellular interfaces order.
+     * If you want to find a specific a cellular interface, use Cellular.findCellular()
+     * and a hardwareID or a logical name.
      *
      * @return YCellular : a pointer to a YCellular object, corresponding to
      *         a cellular interface currently online, or a null pointer

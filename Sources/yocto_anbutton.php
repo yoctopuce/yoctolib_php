@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_anbutton.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_anbutton.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YAnButton, the high-level API for AnButton functions
  *
@@ -558,6 +558,9 @@ class YAnButton extends YFunction
 
     /**
      * Continues the enumeration of analog inputs started using yFirstAnButton().
+     * Caution: You can't make any assumption about the returned analog inputs order.
+     * If you want to find a specific an analog input, use AnButton.findAnButton()
+     * and a hardwareID or a logical name.
      *
      * @return YAnButton : a pointer to a YAnButton object, corresponding to
      *         an analog input currently online, or a null pointer

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_rangefinder.php 32610 2018-10-10 06:52:20Z seb $
+ *  $Id: yocto_rangefinder.php 32907 2018-11-02 10:18:55Z seb $
  *
  *  Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -396,6 +396,9 @@ class YRangeFinder extends YSensor
 
     /**
      * Continues the enumeration of range finders started using yFirstRangeFinder().
+     * Caution: You can't make any assumption about the returned range finders order.
+     * If you want to find a specific a range finder, use RangeFinder.findRangeFinder()
+     * and a hardwareID or a logical name.
      *
      * @return YRangeFinder : a pointer to a YRangeFinder object, corresponding to
      *         a range finder currently online, or a null pointer
