@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 33400 2018-11-27 07:58:29Z seb $
+ * $Id: yocto_api.php 33505 2018-12-05 14:45:46Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -71,6 +71,9 @@ if(!defined('Y_LOGICALNAME_INVALID'))        define('Y_LOGICALNAME_INVALID',    
 if(!defined('Y_ADVERTISEDVALUE_INVALID'))    define('Y_ADVERTISEDVALUE_INVALID',   YAPI_INVALID_STRING);
 //--- (end of generated code: YFunction definitions)
 define('YAPI_HASH_BUF_SIZE', 28);
+define('YAPI_MIN_DOUBLE',              -INF);
+define('YAPI_MAX_DOUBLE',              INF);
+
 //--- (generated code: YMeasure definitions)
 //--- (end of generated code: YMeasure definitions)
 if (!defined('Y_DATA_INVALID')) define('Y_DATA_INVALID', YAPI_INVALID_DOUBLE);
@@ -3033,7 +3036,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.33423";
+        return "1.10.33576";
     }
 
     /**
@@ -4720,17 +4723,21 @@ class YDataSet
     protected $_hardwareId               = "";                           // str
     protected $_functionId               = "";                           // str
     protected $_unit                     = "";                           // str
-    protected $_startTime                = 0;                            // float
-    protected $_endTime                  = 0;                            // float
+    protected $_startTimeMs              = 0;                            // float
+    protected $_endTimeMs                = 0;                            // float
     protected $_progress                 = 0;                            // int
     protected $_calib                    = Array();                      // intArr
     protected $_streams                  = Array();                      // YDataStreamArr
     protected $_summary                  = null;                         // YMeasure
     protected $_preview                  = Array();                      // YMeasureArr
     protected $_measures                 = Array();                      // YMeasureArr
+    protected $_summaryMinVal            = 0;                            // float
+    protected $_summaryMaxVal            = 0;                            // float
+    protected $_summaryTotalAvg          = 0;                            // float
+    protected $_summaryTotalTime         = 0;                            // float
     //--- (end of generated code: YDataSet attributes)
 
-    public function __construct($obj_parent, $str_functionId = null, $str_unit = null, $u32_startTime = null, $u32_endTime = null)
+    public function __construct($obj_parent, $str_functionId = null, $str_unit = null, $float_startTime = null, $float_endTime = null)
     {
         //--- (generated code: YDataSet constructor)
         //--- (end of generated code: YDataSet constructor)
@@ -4745,8 +4752,8 @@ class YDataSet
             $this->_parent     = $obj_parent;
             $this->_functionId = $str_functionId;
             $this->_unit       = $str_unit;
-            $this->_startTime  = $u32_startTime;
-            $this->_endTime    = $u32_endTime;
+            $this->_startTimeMs= $float_startTime * 1000;
+            $this->_endTimeMs  = $float_endTime * 1000;
             $this->_progress   = -1;
         }
     }
@@ -4758,11 +4765,179 @@ class YDataSet
         return $this->_calib;
     }
 
+    public function loadSummary($data)
+    {
+        $dataRows = Array();    // floatArrArr;
+        // $tim                    is a float;
+        // $mitv                   is a float;
+        // $itv                    is a float;
+        // $fitv                   is a float;
+        // $end_                   is a float;
+        // $nCols                  is a int;
+        // $minCol                 is a int;
+        // $avgCol                 is a int;
+        // $maxCol                 is a int;
+        // $res                    is a int;
+        // $m_pos                  is a int;
+        // $previewTotalTime       is a float;
+        // $previewTotalAvg        is a float;
+        // $previewMinVal          is a float;
+        // $previewMaxVal          is a float;
+        // $previewAvgVal          is a float;
+        // $previewStartMs         is a float;
+        // $previewStopMs          is a float;
+        // $previewDuration        is a float;
+        // $streamStartTimeMs      is a float;
+        // $streamDuration         is a float;
+        // $streamEndTimeMs        is a float;
+        // $minVal                 is a float;
+        // $avgVal                 is a float;
+        // $maxVal                 is a float;
+        // $summaryStartMs         is a float;
+        // $summaryStopMs          is a float;
+        // $summaryTotalTime       is a float;
+        // $summaryTotalAvg        is a float;
+        // $summaryMinVal          is a float;
+        // $summaryMaxVal          is a float;
+        // $url                    is a str;
+        // $strdata                is a str;
+        $measure_data = Array(); // floatArr;
+
+        if ($this->_progress < 0) {
+            $strdata = $data;
+            if ($strdata == '{}') {
+                $this->_parent->_throw(YAPI_VERSION_MISMATCH, 'device firmware is too old');
+                return YAPI_VERSION_MISMATCH;
+            }
+            $res = $this->_parse($strdata);
+            if ($res < 0) {
+                return $res;
+            }
+        }
+        $summaryTotalTime = 0;
+        $summaryTotalAvg = 0;
+        $summaryMinVal = YAPI_MAX_DOUBLE;
+        $summaryMaxVal = YAPI_MIN_DOUBLE;
+        $summaryStartMs = YAPI_MAX_DOUBLE;
+        $summaryStopMs = YAPI_MIN_DOUBLE;
+
+        // Parse comlete streams
+        foreach( $this->_streams as $each) {
+            $streamStartTimeMs = round($each->get_realStartTimeUTC() *1000);
+            $streamDuration = $each->get_realDuration() ;
+            $streamEndTimeMs = $streamStartTimeMs + round($streamDuration * 1000);
+            if (($streamStartTimeMs >= $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($streamEndTimeMs <= $this->_endTimeMs))) {
+                // stream that are completely inside the dataset
+                $previewMinVal = $each->get_minValue();
+                $previewAvgVal = $each->get_averageValue();
+                $previewMaxVal = $each->get_maxValue();
+                $previewStartMs = $streamStartTimeMs;
+                $previewStopMs = $streamEndTimeMs;
+                $previewDuration = $streamDuration;
+            } else {
+                // stream that are partially in the dataset
+                // we need to parse data to filter value outide the dataset
+                $url = $each->_get_url();
+                $data = $this->_parent->_download($url);
+                $each->_parseStream($data);
+                $dataRows = $each->get_dataRows();
+                if (sizeof($dataRows) == 0) {
+                    return $this->get_progress();
+                }
+                $tim = $streamStartTimeMs;
+                $fitv = round($each->get_firstDataSamplesInterval() * 1000);
+                $itv = round($each->get_dataSamplesInterval() * 1000);
+                $nCols = sizeof($dataRows[0]);
+                $minCol = 0;
+                if ($nCols > 2) {
+                    $avgCol = 1;
+                } else {
+                    $avgCol = 0;
+                }
+                if ($nCols > 2) {
+                    $maxCol = 2;
+                } else {
+                    $maxCol = 0;
+                }
+                $previewTotalTime = 0;
+                $previewTotalAvg = 0;
+                $previewStartMs = $streamEndTimeMs;
+                $previewStopMs = $streamStartTimeMs;
+                $previewMinVal = YAPI_MAX_DOUBLE;
+                $previewMaxVal = YAPI_MIN_DOUBLE;
+                $m_pos = 0;
+                while ($m_pos < sizeof($dataRows)) {
+                    $measure_data  = $dataRows[$m_pos];
+                    if ($m_pos == 0) {
+                        $mitv = $fitv;
+                    } else {
+                        $mitv = $itv;
+                    }
+                    $end_ = $tim + $mitv;
+                    if (($end_ > $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($tim < $this->_endTimeMs))) {
+                        $minVal = $measure_data[$minCol];
+                        $avgVal = $measure_data[$avgCol];
+                        $maxVal = $measure_data[$maxCol];
+                        if ($previewStartMs > $tim) {
+                            $previewStartMs = $tim;
+                        }
+                        if ($previewStopMs < $end_) {
+                            $previewStopMs = $end_;
+                        }
+                        if ($previewMinVal > $minVal) {
+                            $previewMinVal = $minVal;
+                        }
+                        if ($previewMaxVal < $maxVal) {
+                            $previewMaxVal = $maxVal;
+                        }
+                        $previewTotalAvg = $previewTotalAvg + ($avgVal * $mitv);
+                        $previewTotalTime = $previewTotalTime + $mitv;
+                    }
+                    $tim = $end_;
+                    $m_pos = $m_pos + 1;
+                }
+                if ($previewTotalTime > 0) {
+                    $previewAvgVal = $previewTotalAvg / $previewTotalTime;
+                    $previewDuration = ($previewStopMs - $previewStartMs) / 1000.0;
+                } else {
+                    $previewAvgVal = 0.0;
+                    $previewDuration = 0.0;
+                }
+            }
+            $this->_preview[] = new YMeasure($previewStartMs / 1000.0, $previewStopMs / 1000.0, $previewMinVal, $previewAvgVal, $previewMaxVal);
+            if ($summaryMinVal > $previewMinVal) {
+                $summaryMinVal = $previewMinVal;
+            }
+            if ($summaryMaxVal < $previewMaxVal) {
+                $summaryMaxVal = $previewMaxVal;
+            }
+            if ($summaryStartMs > $previewStartMs) {
+                $summaryStartMs = $previewStartMs;
+            }
+            if ($summaryStopMs < $previewStopMs) {
+                $summaryStopMs = $previewStopMs;
+            }
+            $summaryTotalAvg = $summaryTotalAvg + ($previewAvgVal * $previewDuration);
+            $summaryTotalTime = $summaryTotalTime + $previewDuration;
+        }
+        if (($this->_startTimeMs == 0) || ($this->_startTimeMs > $summaryStartMs)) {
+            $this->_startTimeMs = $summaryStartMs;
+        }
+        if (($this->_endTimeMs == 0) || ($this->_endTimeMs < $summaryStopMs)) {
+            $this->_endTimeMs = $summaryStopMs;
+        }
+        if ($summaryTotalTime > 0) {
+            $this->_summary = new YMeasure($summaryStartMs / 1000.0, $summaryStopMs / 1000.0, $summaryMinVal, $summaryTotalAvg / $summaryTotalTime, $summaryMaxVal);
+        } else {
+            $this->_summary = new YMeasure(0.0, 0.0, YAPI_INVALID_DOUBLE, YAPI_INVALID_DOUBLE, YAPI_INVALID_DOUBLE);
+        }
+        return $this->get_progress();
+    }
+
     public function processMore($progress,$data)
     {
         // $stream                 is a YDataStream;
         $dataRows = Array();    // floatArrArr;
-        // $strdata                is a str;
         // $tim                    is a float;
         // $itv                    is a float;
         // $fitv                   is a float;
@@ -4777,12 +4952,7 @@ class YDataSet
             return $this->_progress;
         }
         if ($this->_progress < 0) {
-            $strdata = $data;
-            if ($strdata == '{}') {
-                $this->_parent->_throw(YAPI_VERSION_MISMATCH, 'device firmware is too old');
-                return YAPI_VERSION_MISMATCH;
-            }
-            return $this->_parse($strdata);
+            return $this->loadSummary($data);
         }
         $stream = $this->_streams[$this->_progress];
         $stream->_parseStream($data);
@@ -4791,9 +4961,9 @@ class YDataSet
         if (sizeof($dataRows) == 0) {
             return $this->get_progress();
         }
-        $tim = $stream->get_realStartTimeUTC();
-        $fitv = $stream->get_firstDataSamplesInterval();
-        $itv = $stream->get_dataSamplesInterval();
+        $tim = round($stream->get_realStartTimeUTC() * 1000);
+        $fitv = round($stream->get_firstDataSamplesInterval() * 1000);
+        $itv = round($stream->get_dataSamplesInterval() * 1000);
         if ($fitv == 0) {
             $fitv = $itv;
         }
@@ -4821,8 +4991,8 @@ class YDataSet
             } else {
                 $end_ = $tim + $itv;
             }
-            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($end_ <= $this->_endTime))) {
-                $this->_measures[] = new YMeasure($tim, $end_, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            if (($end_ > $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($tim < $this->_endTimeMs))) {
+                $this->_measures[] = new YMeasure($tim / 1000, $end_ / 1000, $each[$minCol], $each[$avgCol], $each[$maxCol]);
             }
             $tim = $end_;
         }
@@ -4900,7 +5070,7 @@ class YDataSet
 
     public function imm_get_startTimeUTC()
     {
-        return $this->_startTime;
+        return ($this->_startTimeMs / 1000.0);
     }
 
     /**
@@ -4926,7 +5096,7 @@ class YDataSet
 
     public function imm_get_endTimeUTC()
     {
-        return round($this->_endTime);
+        return round($this->_endTimeMs / 1000.0);
     }
 
     /**
@@ -4964,10 +5134,10 @@ class YDataSet
         // $stream                 is a YDataStream;
         if ($this->_progress < 0) {
             $url = sprintf('logger.json?id=%s',$this->_functionId);
-            if ($this->_startTime != 0) {
+            if ($this->_startTimeMs != 0) {
                 $url = sprintf('%s&from=%u',$url,$this->imm_get_startTimeUTC());
             }
-            if ($this->_endTime != 0) {
+            if ($this->_endTimeMs != 0) {
                 $url = sprintf('%s&to=%u',$url,$this->imm_get_endTimeUTC()+1);
             }
         } else {
@@ -5042,7 +5212,7 @@ class YDataSet
      */
     public function get_measuresAt($measure)
     {
-        // $startUtc               is a float;
+        // $startUtcMs             is a float;
         // $stream                 is a YDataStream;
         $dataRows = Array();    // floatArrArr;
         $measures = Array();    // YMeasureArr;
@@ -5054,10 +5224,10 @@ class YDataSet
         // $avgCol                 is a int;
         // $maxCol                 is a int;
 
-        $startUtc = $measure.get_startTimeUTC();
+        $startUtcMs = $measure.get_startTimeUTC() * 1000;
         $stream = null;
         foreach($this->_streams as $each) {
-            if ($each->get_realStartTimeUTC() == $startUtc) {
+            if (round($each->get_realStartTimeUTC() *1000) == $startUtcMs) {
                 $stream = $each;
             }
         }
@@ -5068,8 +5238,8 @@ class YDataSet
         if (sizeof($dataRows) == 0) {
             return $measures;
         }
-        $tim = $stream->get_realStartTimeUTC();
-        $itv = $stream->get_dataSamplesInterval();
+        $tim = round($stream->get_realStartTimeUTC() * 1000);
+        $itv = round($stream->get_dataSamplesInterval() * 1000);
         if ($tim < $itv) {
             $tim = $itv;
         }
@@ -5088,8 +5258,8 @@ class YDataSet
 
         foreach($dataRows as $each) {
             $end_ = $tim + $itv;
-            if (($tim >= $this->_startTime) && (($this->_endTime == 0) || ($end_ <= $this->_endTime))) {
-                $measures[] = new YMeasure($tim, $end_, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            if (($end_ > $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($tim < $this->_endTimeMs))) {
+                $measures[] = new YMeasure($tim / 1000.0, $end_ / 1000.0, $each[$minCol], $each[$avgCol], $each[$maxCol]);
             }
             $tim = $end_;
         }
@@ -5131,12 +5301,6 @@ class YDataSet
     // YDataSet parser for stream list
     public function _parse($str_json)
     {
-        $summaryMinVal    = 9e1000;
-        $summaryMaxVal    = -9e1000;
-        $summaryTotalTime = 0;
-        $summaryTotalAvg  = 0;
-        $startTime        = 0x7fffffff;
-        $endTime          = 0;
         $loadval = json_decode(iconv("ISO-8859-1","UTF-8", $str_json), true);
 
         $this->_functionId = $loadval['id'];
@@ -5154,48 +5318,15 @@ class YDataSet
         for($i = 0; $i < sizeof($loadval['streams']); $i++) {
             /** @var $stream YDataStream */
             $stream = $this->_parent->_findDataStream($this, $loadval['streams'][$i]);
-            $streamStartTime = $stream->get_realstartTimeUTC();
-            $streamEndTime = $streamStartTime + $stream->get_realDuration();
-            if($this->_startTime > 0 && $streamEndTime <= $this->_startTime) {
+            $streamStartTime = $stream->get_realstartTimeUTC() * 1000;
+            $streamEndTime = $streamStartTime + $stream->get_realDuration() * 1000;
+            if($this->_startTimeMs > 0 && $streamEndTime <= $this->_startTimeMs) {
                 // this stream is too early, drop it
-            } else if($this->_endTime > 0 && $streamStartTime >= $this->_endTime) {
+            } else if($this->_endTimeMs > 0 && $streamStartTime >= $this->_endTimeMs) {
                 // this stream is too late, drop it
             } else {
                 $this->_streams[] = $stream;
-                if($startTime > $streamStartTime) {
-                    $startTime = $streamStartTime;
-                }
-                if($endTime < $streamEndTime) {
-                    $endTime = $streamEndTime;
-                }
-                if($stream->isClosed() && $streamStartTime >= $this->_startTime &&
-                ($this->_endTime == 0 || $streamEndTime <= $this->_endTime)) {
-                    if ($summaryMinVal > $stream->get_minValue())
-                        $summaryMinVal = $stream->get_minValue();
-                    if ($summaryMaxVal < $stream->get_maxValue())
-                        $summaryMaxVal = $stream->get_maxValue();
-                    $summaryTotalAvg  += $stream->get_averageValue() * $stream->get_realDuration();
-                    $summaryTotalTime += $stream->get_realDuration();
-
-                    $rec = new YMeasure($streamStartTime,
-                                        $streamEndTime,
-                                        $stream->get_minValue(),
-                                        $stream->get_averageValue(),
-                                        $stream->get_maxValue());
-                    $this->_preview[] = $rec;
-                }
             }
-        }
-        if((sizeof($this->_streams) > 0) && ($summaryTotalTime>0)) {
-            // update time boundaries with actual data
-            if($this->_startTime < $startTime) {
-                $this->_startTime = $startTime;
-            }
-            if($this->_endTime == 0 || $this->_endTime > $endTime) {
-                $this->_endTime = $endTime;
-            }
-            $this->_summary = new YMeasure($this->_startTime,$this->_endTime,
-                                           $summaryMinVal,$summaryTotalAvg/$summaryTotalTime,$summaryMaxVal);
         }
         $this->_progress = 0;
         return $this->get_progress();
