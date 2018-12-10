@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 33505 2018-12-05 14:45:46Z seb $
+ * $Id: yocto_api.php 33601 2018-12-09 14:30:31Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -3036,7 +3036,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.33576";
+        return "1.10.33636";
     }
 
     /**
@@ -9634,6 +9634,7 @@ if(!defined('Y_CLEARHISTORY_TRUE'))          define('Y_CLEARHISTORY_TRUE',      
 if(!defined('Y_CLEARHISTORY_INVALID'))       define('Y_CLEARHISTORY_INVALID',      -1);
 if(!defined('Y_CURRENTRUNINDEX_INVALID'))    define('Y_CURRENTRUNINDEX_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_TIMEUTC_INVALID'))            define('Y_TIMEUTC_INVALID',           YAPI_INVALID_LONG);
+if(!defined('Y_USAGE_INVALID'))              define('Y_USAGE_INVALID',             YAPI_INVALID_UINT);
 //--- (end of generated code: YDataLogger definitions)
 
 
@@ -9660,6 +9661,7 @@ class YDataLogger extends YFunction
     const BEACONDRIVEN_OFF               = 0;
     const BEACONDRIVEN_ON                = 1;
     const BEACONDRIVEN_INVALID           = -1;
+    const USAGE_INVALID                  = YAPI_INVALID_UINT;
     const CLEARHISTORY_FALSE             = 0;
     const CLEARHISTORY_TRUE              = 1;
     const CLEARHISTORY_INVALID           = -1;
@@ -9671,6 +9673,7 @@ class YDataLogger extends YFunction
     protected $_recording                = Y_RECORDING_INVALID;          // OffOnPending
     protected $_autoStart                = Y_AUTOSTART_INVALID;          // OnOff
     protected $_beaconDriven             = Y_BEACONDRIVEN_INVALID;       // OnOff
+    protected $_usage                    = Y_USAGE_INVALID;              // Percent
     protected $_clearHistory             = Y_CLEARHISTORY_INVALID;       // Bool
     //--- (end of generated code: YDataLogger attributes)
     protected $dataLoggerURL = null;
@@ -9733,6 +9736,9 @@ class YDataLogger extends YFunction
             return 1;
         case 'beaconDriven':
             $this->_beaconDriven = intval($val);
+            return 1;
+        case 'usage':
+            $this->_usage = intval($val);
             return 1;
         case 'clearHistory':
             $this->_clearHistory = intval($val);
@@ -9909,6 +9915,25 @@ class YDataLogger extends YFunction
         return $this->_setAttr("beaconDriven",$rest_val);
     }
 
+    /**
+     * Returns the percentage of datalogger memory in use.
+     *
+     * @return integer : an integer corresponding to the percentage of datalogger memory in use
+     *
+     * On failure, throws an exception or returns Y_USAGE_INVALID.
+     */
+    public function get_usage()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_USAGE_INVALID;
+            }
+        }
+        $res = $this->_usage;
+        return $res;
+    }
+
     public function get_clearHistory()
     {
         // $res                    is a enumBOOL;
@@ -10037,6 +10062,9 @@ class YDataLogger extends YFunction
 
     public function setBeaconDriven($newval)
     { return $this->set_beaconDriven($newval); }
+
+    public function usage()
+    { return $this->get_usage(); }
 
     public function clearHistory()
     { return $this->get_clearHistory(); }
