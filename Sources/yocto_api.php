@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 33716 2018-12-14 14:21:46Z seb $
+ * $Id: yocto_api.php 33903 2018-12-28 08:49:26Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3036,7 +3036,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.33736";
+        return "1.10.34131";
     }
 
     /**
@@ -3599,7 +3599,9 @@ class YAPI
      * in case a change in the list of connected devices is detected.
      *
      * This function can be called as frequently as desired to refresh the device list
-     * and to make the application aware of hot-plug events.
+     * and to make the application aware of hot-plug events. However, since device
+     * detection is quite a heavy process, UpdateDeviceList shouldn't be called more
+     * than once every two seconds.
      *
      * @param errmsg {YErrorMsg} : a string passed by reference to receive any error message.
      *
@@ -5604,6 +5606,20 @@ class YFunction
         return $attrVal;
     }
 
+    /**
+     * Returns the serial number of the module, as set by the factory.
+     *
+     * @return string : a string corresponding to the serial number of the module, as set by the factory.
+     *
+     * On failure, throws an exception or returns YModule.SERIALNUMBER_INVALID.
+     */
+    public function get_serialNumber()
+    {
+        // $m                      is a YModule;
+        $m = $this->get_module();
+        return $m->get_serialNumber();
+    }
+
     public function _parserHelper()
     {
         return 0;
@@ -6356,6 +6372,13 @@ class YSensor extends YFunction
 
     /**
      * Returns the current value of the measure, in the specified unit, as a floating point number.
+     * Note that a get_currentValue() call will *not* start a measure in the device, it
+     * will just return the last measure that occurred in the device. Indeed, internally, each Yoctopuce
+     * devices is continuously making measurements at a hardware specific frequency.
+     *
+     * If continuously calling  get_currentValue() leads you to performances issues, then
+     * you might consider to switch to callback programming model. Check the "advanced
+     * programming" chapter in in your device user manual for more information.
      *
      * @return double : a floating point number corresponding to the current value of the measure, in the
      * specified unit, as a floating point number
@@ -6502,7 +6525,9 @@ class YSensor extends YFunction
      * The frequency can be specified as samples per second,
      * as sample per minute (for instance "15/m") or in samples per
      * hour (eg. "4/h"). To disable recording for this function, use
-     * the value "OFF".
+     * the value "OFF". Note that setting the  datalogger recording frequency
+     * to a greater value than the sensor native sampling frequency is useless,
+     * and even counterproductive: those two frequencies are not related.
      *
      * @param string $newval : a string corresponding to the datalogger recording frequency for this function
      *
@@ -6542,7 +6567,10 @@ class YSensor extends YFunction
      * The frequency can be specified as samples per second,
      * as sample per minute (for instance "15/m") or in samples per
      * hour (e.g. "4/h"). To disable timed value notifications for this
-     * function, use the value "OFF".
+     * function, use the value "OFF". Note that setting the  timed value
+     * notification frequency to a greater value than the sensor native
+     * sampling frequency is unless, and even counterproductive: those two
+     * frequencies are not related.
      *
      * @param string $newval : a string corresponding to the timed value notification frequency for this function
      *
@@ -9334,7 +9362,9 @@ function yForwardHTTPCallback($url,&$errmsg="")
  * in case a change in the list of connected devices is detected.
  *
  * This function can be called as frequently as desired to refresh the device list
- * and to make the application aware of hot-plug events.
+ * and to make the application aware of hot-plug events. However, since device
+ * detection is quite a heavy process, UpdateDeviceList shouldn't be called more
+ * than once every two seconds.
  *
  * @param errmsg {YErrorMsg} : a string passed by reference to receive any error message.
  *
@@ -9645,7 +9675,8 @@ if(!defined('Y_USAGE_INVALID'))              define('Y_USAGE_INVALID',          
  * Yoctopuce sensors include a non-volatile memory capable of storing ongoing measured
  * data automatically, without requiring a permanent connection to a computer.
  * The DataLogger function controls the global parameters of the internal data
- * logger.
+ * logger. Recording control (start/stop) as well as data retreival is done at
+ * sensor objects level.
  */
 class YDataLogger extends YFunction
 {
@@ -9861,8 +9892,10 @@ class YDataLogger extends YFunction
 
     /**
      * Changes the default activation state of the data logger on power up.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
+     * Do not forget to call the saveToFlash() method of the module to save the
+     * configuration change.  Note: if the device doesn't have any time source at his disposal when
+     * starting up, it will wait for ~8 seconds before automatically starting to record  with
+     * an arbitrary timestamp
      *
      * @param integer $newval : either Y_AUTOSTART_OFF or Y_AUTOSTART_ON, according to the default
      * activation state of the data logger on power up
