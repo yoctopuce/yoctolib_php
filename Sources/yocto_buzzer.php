@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 33716 2018-12-14 14:21:46Z seb $
+ *  $Id: yocto_buzzer.php 34289 2019-02-03 21:12:49Z mvuilleu $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -564,6 +564,28 @@ class YBuzzer extends YFunction
     public function oncePlaySeq()
     {
         return $this->sendCommand('s');
+    }
+
+    /**
+     * Saves the preprogrammed playing sequence to flash memory.
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function savePlaySeq()
+    {
+        return $this->sendCommand('W');
+    }
+
+    /**
+     * Reloads the preprogrammed playing sequence from the flash memory.
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function reloadPlaySeq()
+    {
+        return $this->sendCommand('R');
     }
 
     /**
