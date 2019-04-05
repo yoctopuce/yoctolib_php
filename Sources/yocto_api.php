@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 33903 2018-12-28 08:49:26Z seb $
+ * $Id: yocto_api.php 34703 2019-03-19 15:22:29Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3036,7 +3036,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.34302";
+        return "1.10.34990";
     }
 
     /**
@@ -3350,11 +3350,27 @@ class YAPI
         $auth = '';
         self::_parseRegisteredURL($url, $str_url, $auth);
         $new_hubs = array();
-        foreach(self::$_hubs as $hub_url=> $hubst){
+        foreach (self::$_hubs as $hub_url => $hubst) {
             if ($hub_url == $str_url) {
+                // leave max 10 second to finish pending requests
+                $timeout = YAPI::GetTickCount() + 10000;
+                foreach (self::$_pendingRequests as $tcpreq) {
+                    if ($tcpreq->hub->rooturl === $hubst->rooturl) {
+                        $request = trim($tcpreq->request);
+                        if (substr($request, 0, 12) == 'GET /not.byn') {
+                            continue;
+                        }
+                        while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout) {
+                            self::_handleEvents_internal(100);
+                        }
+                    }
+                }
                 // remove all connected devices
                 foreach (self::$_hubs[$hub_url]->serialByYdx as $serial) {
                     self::forgetDevice(self::$_devs[$serial]);
+                }
+                if ($hubst->notifReq) {
+                    $hubst->notifReq->close();
                 }
             } else {
                 $new_hubs[$hub_url] = self::$_hubs[$hub_url];

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 34022 2019-01-15 18:21:34Z seb $
+ *  $Id: yocto_network.php 34604 2019-03-11 14:49:45Z seb $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
