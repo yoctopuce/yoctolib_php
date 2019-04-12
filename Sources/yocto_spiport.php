@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 33722 2018-12-14 15:04:43Z seb $
+ *  $Id: yocto_spiport.php 35124 2019-04-12 09:03:41Z seb $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -1204,7 +1204,7 @@ class YSpiPort extends YFunction
         // $msglen                 is a int;
         // $res                    is a str;
 
-        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $query);
+        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
         $msglen = sizeof($msgarr);

@@ -1,6 +1,3 @@
-PHP v1.10.34990
+PHP v1.10.35124
 
-- Fix loadThermistorResponseTable() method of YTemperature
-- Add documentation for YFileRecord and YWlanRecord class
-- Add toggle() method in YRelay class
-- Fix YAPI::UnregisterHub() method that was not closing all TCP sockets
+- Fix handling of '=' character in parameters for the queryLine() method

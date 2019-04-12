@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 32907 2018-11-02 10:18:55Z seb $
+ * $Id: yocto_serialport.php 35124 2019-04-12 09:03:41Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -1177,7 +1177,7 @@ class YSerialPort extends YFunction
         // $msglen                 is a int;
         // $res                    is a str;
 
-        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $query);
+        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
         $msglen = sizeof($msgarr);
