@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 35124 2019-04-12 09:03:41Z seb $
+ *  $Id: yocto_spiport.php 35465 2019-05-16 14:40:41Z seb $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -48,6 +48,7 @@ if(!defined('Y_VOLTAGELEVEL_TTL5V'))         define('Y_VOLTAGELEVEL_TTL5V',     
 if(!defined('Y_VOLTAGELEVEL_TTL5VR'))        define('Y_VOLTAGELEVEL_TTL5VR',       4);
 if(!defined('Y_VOLTAGELEVEL_RS232'))         define('Y_VOLTAGELEVEL_RS232',        5);
 if(!defined('Y_VOLTAGELEVEL_RS485'))         define('Y_VOLTAGELEVEL_RS485',        6);
+if(!defined('Y_VOLTAGELEVEL_TTL1V8'))        define('Y_VOLTAGELEVEL_TTL1V8',       7);
 if(!defined('Y_VOLTAGELEVEL_INVALID'))       define('Y_VOLTAGELEVEL_INVALID',      -1);
 if(!defined('Y_SSPOLARITY_ACTIVE_LOW'))      define('Y_SSPOLARITY_ACTIVE_LOW',     0);
 if(!defined('Y_SSPOLARITY_ACTIVE_HIGH'))     define('Y_SSPOLARITY_ACTIVE_HIGH',    1);
@@ -98,6 +99,7 @@ class YSpiPort extends YFunction
     const VOLTAGELEVEL_TTL5VR            = 4;
     const VOLTAGELEVEL_RS232             = 5;
     const VOLTAGELEVEL_RS485             = 6;
+    const VOLTAGELEVEL_TTL1V8            = 7;
     const VOLTAGELEVEL_INVALID           = -1;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
     const SPIMODE_INVALID                = YAPI_INVALID_STRING;
@@ -397,8 +399,8 @@ class YSpiPort extends YFunction
      * Returns the voltage level used on the serial line.
      *
      * @return integer : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V, Y_VOLTAGELEVEL_TTL3VR,
-     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232 and Y_VOLTAGELEVEL_RS485
-     * corresponding to the voltage level used on the serial line
+     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232, Y_VOLTAGELEVEL_RS485 and
+     * Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage level used on the serial line
      *
      * On failure, throws an exception or returns Y_VOLTAGELEVEL_INVALID.
      */
@@ -422,8 +424,8 @@ class YSpiPort extends YFunction
      * Trying to set an invalid value will have no effect.
      *
      * @param integer $newval : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V,
-     * Y_VOLTAGELEVEL_TTL3VR, Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232 and
-     * Y_VOLTAGELEVEL_RS485 corresponding to the voltage type used on the serial line
+     * Y_VOLTAGELEVEL_TTL3VR, Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232,
+     * Y_VOLTAGELEVEL_RS485 and Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage type used on the serial line
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
