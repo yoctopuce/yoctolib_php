@@ -49,7 +49,7 @@
 /Sources/yocto_lightsensor.php (modif:Fri Nov  2 11:39:52 2018 size:11903)
 /Sources/yocto_oscontrol.php (modif:Fri Nov  2 11:39:52 2018 size:9625)
 /Sources/yocto_servo.php (modif:Fri Nov  2 11:39:52 2018 size:20090)
-/Sources/yocto_api.php (modif:Tue Jun  4 16:14:40 2019 size:399376)
+/Sources/yocto_api.php (modif:Tue Jun  4 18:28:45 2019 size:399376)
 /Sources/yocto_magnetometer.php (modif:Fri Nov  2 11:39:52 2018 size:13438)
 /Sources/yocto_gyro.php (modif:Fri Nov  2 11:39:52 2018 size:32655)
 /Sources/yocto_audioout.php (modif:Fri Nov  2 11:39:52 2018 size:14242)
