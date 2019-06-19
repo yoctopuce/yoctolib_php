@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 35620 2019-06-04 08:29:58Z seb $
+ * $Id: yocto_api.php 35696 2019-06-05 14:59:43Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3065,7 +3065,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.35652";
+        return "1.10.35838";
     }
 
     /**
@@ -6005,6 +6005,32 @@ class YFunction
         }
         return YAPI_SUCCESS;
     }
+
+    // Upload a file to the filesystem, to the specified full path name.
+    // If a file already exists with the same path name, its content is overwritten.
+    //
+    public function _uploadEx($str_path, $bin_content)
+    {
+        // get the device serial number
+        /** @noinspection PhpUndefinedMethodInspection */
+        $devid = $this->module()->get_serialNumber();
+        if ($devid == Y_SERIALNUMBER_INVALID) {
+            return $this->get_errorType();
+        }
+        if (is_array($bin_content)) {
+            $bin_content = call_user_func_array('pack', array_merge(array("C*"), $bin_content));
+        }
+        $httpreq = 'POST /upload.html';
+        $body = "Content-Disposition: form-data; name=\"$str_path\"; filename=\"api\"\r\n" .
+            "Content-Type: application/octet-stream\r\n" .
+            "Content-Transfer-Encoding: binary\r\n\r\n" . $bin_content;
+        $yreq = YAPI::devRequest($devid, $httpreq, false, $body);
+        if ($yreq->errorType != YAPI_SUCCESS) {
+            return $this->_throw($yreq->errorType, $yreq->errorMsg, '');
+        }
+        return $yreq->result;
+    }
+
 
     // Get a value from a JSON buffer
     //
