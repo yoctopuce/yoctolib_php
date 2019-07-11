@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 35465 2019-05-16 14:40:41Z seb $
+ * $Id: yocto_serialport.php 36048 2019-06-28 17:43:51Z mvuilleu $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -611,6 +611,208 @@ class YSerialPort extends YFunction
     }
 
     /**
+     * Reads a single line (or message) from the receive buffer, starting at current stream position.
+     * This function is intended to be used when the serial port is configured for a message protocol,
+     * such as 'Line' mode or frame protocols.
+     *
+     * If data at current stream position is not available anymore in the receive buffer,
+     * the function returns the oldest available line and moves the stream position just after.
+     * If no new full line is received, the function returns an empty line.
+     *
+     * @return string : a string with a single line of text
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function readLine()
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        // $res                    is a str;
+
+        $url = sprintf('rxmsg.json?pos=%d&len=1&maxw=1', $this->_rxptr);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return '';
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        if ($msglen == 0) {
+            return '';
+        }
+        $res = $this->_json_get_string($msgarr[0]);
+        return $res;
+    }
+
+    /**
+     * Searches for incoming messages in the serial port receive buffer matching a given pattern,
+     * starting at current position. This function will only compare and return printable characters
+     * in the message strings. Binary protocols are handled as hexadecimal strings.
+     *
+     * The search returns all messages matching the expression provided as argument in the buffer.
+     * If no matching message is found, the search waits for one up to the specified maximum timeout
+     * (in milliseconds).
+     *
+     * @param string $pattern : a limited regular expression describing the expected message format,
+     *         or an empty string if all messages should be returned (no filtering).
+     *         When using binary protocols, the format applies to the hexadecimal
+     *         representation of the message.
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
+     *         in the receive buffer.
+     *
+     * @return string[] : an array of strings containing the messages found, if any.
+     *         Binary messages are converted to hexadecimal representation.
+     *
+     * On failure, throws an exception or returns an empty array.
+     */
+    public function readMessages($pattern,$maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        $res = Array();         // strArr;
+        // $idx                    is a int;
+
+        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&pat=%s', $this->_rxptr, $maxWait, $pattern);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return $res;
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        $idx = 0;
+        while ($idx < $msglen) {
+            $res[] = $this->_json_get_string($msgarr[$idx]);
+            $idx = $idx + 1;
+        }
+        return $res;
+    }
+
+    /**
+     * Changes the current internal stream position to the specified value. This function
+     * does not affect the device, it only changes the value stored in the API object
+     * for the next read operations.
+     *
+     * @param integer $absPos : the absolute position index for next read operations.
+     *
+     * @return integer : nothing.
+     */
+    public function read_seek($absPos)
+    {
+        $this->_rxptr = $absPos;
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Returns the current absolute stream position pointer of the API object.
+     *
+     * @return integer : the absolute position index for next read operations.
+     */
+    public function read_tell()
+    {
+        return $this->_rxptr;
+    }
+
+    /**
+     * Returns the number of bytes available to read in the input buffer starting from the
+     * current absolute stream position pointer of the API object.
+     *
+     * @return integer : the number of bytes available to read
+     */
+    public function read_avail()
+    {
+        // $buff                   is a bin;
+        // $bufflen                is a int;
+        // $res                    is a int;
+
+        $buff = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
+        $bufflen = strlen($buff) - 1;
+        while (($bufflen > 0) && (ord($buff[$bufflen]) != 64)) {
+            $bufflen = $bufflen - 1;
+        }
+        $res = intVal(substr($buff,  0, $bufflen));
+        return $res;
+    }
+
+    /**
+     * Sends a text line query to the serial port, and reads the reply, if any.
+     * This function is intended to be used when the serial port is configured for 'Line' protocol.
+     *
+     * @param string $query : the line query to send (without CR/LF)
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a reply.
+     *
+     * @return string : the next text line received after sending the text query, as a string.
+     *         Additional lines can be obtained by calling readLine or readMessages.
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function queryLine($query,$maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        // $res                    is a str;
+
+        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return '';
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        if ($msglen == 0) {
+            return '';
+        }
+        $res = $this->_json_get_string($msgarr[0]);
+        return $res;
+    }
+
+    /**
+     * Saves the job definition string (JSON data) into a job file.
+     * The job file can be later enabled using selectJob().
+     *
+     * @param string $jobfile : name of the job file to save on the device filesystem
+     * @param string $jsonDef : a string containing a JSON definition of the job
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function uploadJob($jobfile,$jsonDef)
+    {
+        $this->_upload($jobfile, $jsonDef);
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Load and start processing the specified job file. The file must have
+     * been previously created using the user interface or uploaded on the
+     * device filesystem using the uploadJob() function.
+     *
+     * @param string $jobfile : name of the job file (on the device filesystem)
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function selectJob($jobfile)
+    {
+        return $this->set_currentJob($jobfile);
+    }
+
+    /**
      * Clears the serial port buffer and resets counters to zero.
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
@@ -946,7 +1148,7 @@ class YSerialPort extends YFunction
      *
      * @return Integer[] : a sequence of bytes with receive buffer contents
      *
-     * On failure, throws an exception or returns a negative error code.
+     * On failure, throws an exception or returns an empty array.
      */
     public function readArray($nChars)
     {
@@ -1025,208 +1227,6 @@ class YSerialPort extends YFunction
             $ofs = $ofs + 1;
         }
         return $res;
-    }
-
-    /**
-     * Reads a single line (or message) from the receive buffer, starting at current stream position.
-     * This function is intended to be used when the serial port is configured for a message protocol,
-     * such as 'Line' mode or frame protocols.
-     *
-     * If data at current stream position is not available anymore in the receive buffer,
-     * the function returns the oldest available line and moves the stream position just after.
-     * If no new full line is received, the function returns an empty line.
-     *
-     * @return string : a string with a single line of text
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function readLine()
-    {
-        // $url                    is a str;
-        // $msgbin                 is a bin;
-        $msgarr = Array();      // strArr;
-        // $msglen                 is a int;
-        // $res                    is a str;
-
-        $url = sprintf('rxmsg.json?pos=%d&len=1&maxw=1', $this->_rxptr);
-        $msgbin = $this->_download($url);
-        $msgarr = $this->_json_get_array($msgbin);
-        $msglen = sizeof($msgarr);
-        if ($msglen == 0) {
-            return '';
-        }
-        // last element of array is the new position
-        $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
-        if ($msglen == 0) {
-            return '';
-        }
-        $res = $this->_json_get_string($msgarr[0]);
-        return $res;
-    }
-
-    /**
-     * Searches for incoming messages in the serial port receive buffer matching a given pattern,
-     * starting at current position. This function will only compare and return printable characters
-     * in the message strings. Binary protocols are handled as hexadecimal strings.
-     *
-     * The search returns all messages matching the expression provided as argument in the buffer.
-     * If no matching message is found, the search waits for one up to the specified maximum timeout
-     * (in milliseconds).
-     *
-     * @param string $pattern : a limited regular expression describing the expected message format,
-     *         or an empty string if all messages should be returned (no filtering).
-     *         When using binary protocols, the format applies to the hexadecimal
-     *         representation of the message.
-     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
-     *         in the receive buffer.
-     *
-     * @return string[] : an array of strings containing the messages found, if any.
-     *         Binary messages are converted to hexadecimal representation.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function readMessages($pattern,$maxWait)
-    {
-        // $url                    is a str;
-        // $msgbin                 is a bin;
-        $msgarr = Array();      // strArr;
-        // $msglen                 is a int;
-        $res = Array();         // strArr;
-        // $idx                    is a int;
-
-        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&pat=%s', $this->_rxptr, $maxWait, $pattern);
-        $msgbin = $this->_download($url);
-        $msgarr = $this->_json_get_array($msgbin);
-        $msglen = sizeof($msgarr);
-        if ($msglen == 0) {
-            return $res;
-        }
-        // last element of array is the new position
-        $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
-        $idx = 0;
-        while ($idx < $msglen) {
-            $res[] = $this->_json_get_string($msgarr[$idx]);
-            $idx = $idx + 1;
-        }
-        return $res;
-    }
-
-    /**
-     * Changes the current internal stream position to the specified value. This function
-     * does not affect the device, it only changes the value stored in the API object
-     * for the next read operations.
-     *
-     * @param integer $absPos : the absolute position index for next read operations.
-     *
-     * @return integer : nothing.
-     */
-    public function read_seek($absPos)
-    {
-        $this->_rxptr = $absPos;
-        return YAPI_SUCCESS;
-    }
-
-    /**
-     * Returns the current absolute stream position pointer of the API object.
-     *
-     * @return integer : the absolute position index for next read operations.
-     */
-    public function read_tell()
-    {
-        return $this->_rxptr;
-    }
-
-    /**
-     * Returns the number of bytes available to read in the input buffer starting from the
-     * current absolute stream position pointer of the API object.
-     *
-     * @return integer : the number of bytes available to read
-     */
-    public function read_avail()
-    {
-        // $buff                   is a bin;
-        // $bufflen                is a int;
-        // $res                    is a int;
-
-        $buff = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
-        $bufflen = strlen($buff) - 1;
-        while (($bufflen > 0) && (ord($buff[$bufflen]) != 64)) {
-            $bufflen = $bufflen - 1;
-        }
-        $res = intVal(substr($buff,  0, $bufflen));
-        return $res;
-    }
-
-    /**
-     * Sends a text line query to the serial port, and reads the reply, if any.
-     * This function is intended to be used when the serial port is configured for 'Line' protocol.
-     *
-     * @param string $query : the line query to send (without CR/LF)
-     * @param integer $maxWait : the maximum number of milliseconds to wait for a reply.
-     *
-     * @return string : the next text line received after sending the text query, as a string.
-     *         Additional lines can be obtained by calling readLine or readMessages.
-     *
-     * On failure, throws an exception or returns an empty array.
-     */
-    public function queryLine($query,$maxWait)
-    {
-        // $url                    is a str;
-        // $msgbin                 is a bin;
-        $msgarr = Array();      // strArr;
-        // $msglen                 is a int;
-        // $res                    is a str;
-
-        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
-        $msgbin = $this->_download($url);
-        $msgarr = $this->_json_get_array($msgbin);
-        $msglen = sizeof($msgarr);
-        if ($msglen == 0) {
-            return '';
-        }
-        // last element of array is the new position
-        $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
-        if ($msglen == 0) {
-            return '';
-        }
-        $res = $this->_json_get_string($msgarr[0]);
-        return $res;
-    }
-
-    /**
-     * Saves the job definition string (JSON data) into a job file.
-     * The job file can be later enabled using selectJob().
-     *
-     * @param string $jobfile : name of the job file to save on the device filesystem
-     * @param string $jsonDef : a string containing a JSON definition of the job
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function uploadJob($jobfile,$jsonDef)
-    {
-        $this->_upload($jobfile, $jsonDef);
-        return YAPI_SUCCESS;
-    }
-
-    /**
-     * Load and start processing the specified job file. The file must have
-     * been previously created using the user interface or uploaded on the
-     * device filesystem using the uploadJob() function.
-     *
-     * @param string $jobfile : name of the job file (on the device filesystem)
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function selectJob($jobfile)
-    {
-        return $this->set_currentJob($jobfile);
     }
 
     /**
