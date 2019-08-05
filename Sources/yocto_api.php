@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 36141 2019-07-08 17:51:33Z mvuilleu $
+ * $Id: yocto_api.php 36629 2019-07-31 13:03:53Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1438,7 +1438,7 @@ class YDevice
         if ($yreq->errorType != YAPI_SUCCESS) {
             return $this->_throw($yreq->errorType, $yreq->errorMsg, $yreq->errorType);
         }
-        $loadval = $yreq->result;
+        $loadval = $yreq->obj_result;
         $reindex = false;
         if ($this->_productName == "") {
             // parse module and function names for the first time
@@ -3068,7 +3068,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.36218";
+        return "1.10.36692";
     }
 
     /**
@@ -4357,7 +4357,15 @@ class YDataStream
             $val = 0;
         }
         $this->_nRows = $val;
-        $this->_duration = $this->_nRows * $this->_dataSamplesInterval;
+        if ($this->_nRows > 0) {
+            if ($this->_firstMeasureDuration > 0) {
+                $this->_duration = $this->_firstMeasureDuration + ($this->_nRows - 1) * $this->_dataSamplesInterval;
+            } else {
+                $this->_duration = $this->_nRows * $this->_dataSamplesInterval;
+            }
+        } else {
+            $this->_duration = 0;
+        }
         // precompute decoding parameters
         $iCalib = $dataset->_get_calibration();
         $this->_caltyp = $iCalib[0];
@@ -7951,16 +7959,18 @@ class YModule extends YFunction
     }
 
     /**
-     * Returns the hardware release version of the module.
+     * Returns the release number of the module hardware, preprogrammed at the factory.
+     * The original hardware release returns value 1, revision B returns value 2, etc.
      *
-     * @return integer : an integer corresponding to the hardware release version of the module
+     * @return integer : an integer corresponding to the release number of the module hardware,
+     * preprogrammed at the factory
      *
      * On failure, throws an exception or returns Y_PRODUCTRELEASE_INVALID.
      */
     public function get_productRelease()
     {
         // $res                    is a int;
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+        if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_PRODUCTRELEASE_INVALID;
             }
@@ -8231,6 +8241,22 @@ class YModule extends YFunction
             YFunction::_AddToCache('Module', $cleanHwId, $obj);
         }
         return $obj;
+    }
+
+    public function get_productNameAndRevision()
+    {
+        // $prodname               is a str;
+        // $prodrel                is a int;
+        // $fullname               is a str;
+
+        $prodname = $this->get_productName();
+        $prodrel = $this->get_productRelease();
+        if ($prodrel > 1) {
+            $fullname = sprintf('%s rev. %c', $prodname, 64+$prodrel);
+        } else {
+            $fullname = $prodname;
+        }
+        return $fullname;
     }
 
     /**
