@@ -35,7 +35,7 @@
 
   // sample code reading MCP9804 temperature sensor
   $i2cport->set_i2cMode("400kbps");
-  $i2cport->set_voltageLevel(Y_VOLTAGELEVEL_TTL3V);
+  $i2cport->set_i2cVoltageLevel(Y_I2CVOLTAGELEVEL_3V3);
   $i2cport->reset();
   Print("****************************<br>\n");
   Print("* make sure voltage levels *<br>\n");

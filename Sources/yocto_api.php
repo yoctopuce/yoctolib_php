@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 36629 2019-07-31 13:03:53Z seb $
+ * $Id: yocto_api.php 37269 2019-09-24 13:45:24Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -139,7 +139,7 @@ define('Y_DETECT_ALL', Y_DETECT_USB | Y_DETECT_NET);
 define('YOCTO_CALIB_TYPE_OFS', 30);
 
 // Maximum device request timeout
-define('YAPI_BLOCKING_REQUEST_TIMEOUT', 30000);
+define('YAPI_BLOCKING_REQUEST_TIMEOUT', 20000);
 
 
 define('NOTIFY_NETPKT_NAME', '0');
@@ -1609,6 +1609,8 @@ class YDevice
 //--- (generated code: YAPIContext definitions)
 //--- (end of generated code: YAPIContext definitions)
 
+
+
 //--- (generated code: YAPIContext declaration)
 /**
  * YAPIContext Class: Control interface for the firmware update process
@@ -1620,6 +1622,7 @@ class YAPIContext
     //--- (end of generated code: YAPIContext declaration)
 
     public $_deviceListValidityMs = 10000;                        // ulong
+    public $_networkTimeoutMs = YAPI_BLOCKING_REQUEST_TIMEOUT;
     //--- (generated code: YAPIContext attributes)
     protected $_defaultCacheValidity     = 5;                            // ulong
     //--- (end of generated code: YAPIContext attributes)
@@ -1633,15 +1636,15 @@ class YAPIContext
     //--- (generated code: YAPIContext implementation)
 
     /**
-     * Change the time between each forced enumeration of the YoctoHub used.
-     * By default, the library performs a complete enumeration every 10 seconds.
-     * To reduce network traffic it is possible to increase this delay.
-     * This is particularly useful when a YoctoHub is connected to a GSM network
-     * where the traffic is charged. This setting does not affect modules connected by USB,
-     * nor the operation of arrival/removal callbacks.
-     * Note: This function must be called after yInitAPI.
+     * Modifies the delay between each forced enumeration of the used YoctoHubs.
+     * By default, the library performs a full enumeration every 10 seconds.
+     * To reduce network traffic, you can increase this delay.
+     * It's particularly useful when a YoctoHub is connected to the GSM network
+     * where traffic is billed. This parameter doesn't impact modules connected by USB,
+     * nor the working of module arrival/removal callbacks.
+     * Note: you must call this function after yInitAPI.
      *
-     * @param integer $deviceListValidity : number of seconds between each enumeration.
+     * @param integer $deviceListValidity : nubmer of seconds between each enumeration.
      * @noreturn
      */
     public function SetDeviceListValidity($deviceListValidity)
@@ -1653,8 +1656,8 @@ class YAPIContext
     //private function SetDeviceListValidity_internal($deviceListValidity)
 
     /**
-     * Returns the time between each forced enumeration of the YoctoHub used.
-     * Note: This function must be called after yInitAPI.
+     * Returns the delay between each forced enumeration of the used YoctoHubs.
+     * Note: you must call this function after yInitAPI.
      *
      * @return integer : the number of seconds between each enumeration.
      */
@@ -1665,6 +1668,41 @@ class YAPIContext
 
     //cannot be generated for PHP:
     //private function GetDeviceListValidity_internal()
+
+    /**
+     * Modifies the network connection delay for YAPI.RegisterHub() and
+     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * which are accessible through the network. By default, this delay is of 20000 milliseconds,
+     * but depending or you network you may want to change this delay.
+     * For example if your network infrastructure uses a GSM connection.
+     *
+     * @param integer $networkMsTimeout : the network connection delay in milliseconds.
+     * @noreturn
+     */
+    public function SetNetworkTimeout($networkMsTimeout)
+    {
+        $this->SetNetworkTimeout_internal($networkMsTimeout);
+    }
+
+    //cannot be generated for PHP:
+    //private function SetNetworkTimeout_internal($networkMsTimeout)
+
+    /**
+     * Returns the network connection delay for YAPI.RegisterHub() and
+     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * which are accessible through the network. By default, this delay is of 20000 milliseconds,
+     * but depending or you network you may want to change this delay.
+     * For example if your network infrastructure uses a GSM connection.
+     *
+     * @return integer : the network connection delay in milliseconds.
+     */
+    public function GetNetworkTimeout()
+    {
+        return $this->GetNetworkTimeout_internal();
+    }
+
+    //cannot be generated for PHP:
+    //private function GetNetworkTimeout_internal()
 
     /**
      * Change the validity period of the data loaded by the library.
@@ -1708,6 +1746,17 @@ class YAPIContext
     public function GetDeviceListValidity_internal()
     {
         return intval($this->_deviceListValidityMs / 1000);
+    }
+
+
+    public function SetNetworkTimeout_internal($networkMsTimeout)
+    {
+        $this->_networkTimeoutMs = $networkMsTimeout;
+    }
+
+    public function GetNetworkTimeout_internal()
+    {
+        return $this->_networkTimeoutMs;
     }
 
 
@@ -1863,7 +1912,7 @@ class YAPI
         $hubs = Array();
         foreach (self::$_hubs as $hub) {
             if ($hub->devListExpires <= $now) {
-                $tcpreq = new YTcpReq($hub, 'GET /api.json', false);
+                $tcpreq = new YTcpReq($hub, 'GET /api.json', false, YAPI::$_yapiContext->_networkTimeoutMs);
                 self::$_pendingRequests[] = $tcpreq;
                 $hubs[] = $hub;
                 $hub->devListReq = $tcpreq;
@@ -1883,7 +1932,7 @@ class YAPI
         }
 
         // Wait until all hubs are complete, and process replies as they come
-        $timeout = self::GetTickCount() + YAPI_BLOCKING_REQUEST_TIMEOUT;
+        $timeout = self::GetTickCount() + YAPI::$_yapiContext->_networkTimeoutMs;
         while (self::GetTickCount() < $timeout) {
             self::_handleEvents_internal(100);
             $alldone = true;
@@ -2765,7 +2814,7 @@ class YAPI
         self::$_pendingRequests[] = $tcpreq;
         if (!$async) {
             // normal query, wait for completion until timeout
-            $timeout = YAPI::GetTickCount() + YAPI_BLOCKING_REQUEST_TIMEOUT;
+            $timeout = YAPI::GetTickCount() +  YAPI::$_yapiContext->_networkTimeoutMs;
             do {
                 self::_handleEvents_internal(100);
             } while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout);
@@ -2992,15 +3041,15 @@ class YAPI
 
     //--- (generated code: YAPIContext yapiwrapper)
     /**
-     * Change the time between each forced enumeration of the YoctoHub used.
-     * By default, the library performs a complete enumeration every 10 seconds.
-     * To reduce network traffic it is possible to increase this delay.
-     * This is particularly useful when a YoctoHub is connected to a GSM network
-     * where the traffic is charged. This setting does not affect modules connected by USB,
-     * nor the operation of arrival/removal callbacks.
-     * Note: This function must be called after yInitAPI.
+     * Modifies the delay between each forced enumeration of the used YoctoHubs.
+     * By default, the library performs a full enumeration every 10 seconds.
+     * To reduce network traffic, you can increase this delay.
+     * It's particularly useful when a YoctoHub is connected to the GSM network
+     * where traffic is billed. This parameter doesn't impact modules connected by USB,
+     * nor the working of module arrival/removal callbacks.
+     * Note: you must call this function after yInitAPI.
      *
-     * @param integer $deviceListValidity : number of seconds between each enumeration.
+     * @param integer $deviceListValidity : nubmer of seconds between each enumeration.
      * @noreturn
      */
     public static function SetDeviceListValidity($deviceListValidity)
@@ -3008,14 +3057,41 @@ class YAPI
         self::$_yapiContext->SetDeviceListValidity($deviceListValidity);
     }
     /**
-     * Returns the time between each forced enumeration of the YoctoHub used.
-     * Note: This function must be called after yInitAPI.
+     * Returns the delay between each forced enumeration of the used YoctoHubs.
+     * Note: you must call this function after yInitAPI.
      *
      * @return integer : the number of seconds between each enumeration.
      */
     public static function GetDeviceListValidity()
     {
         return self::$_yapiContext->GetDeviceListValidity();
+    }
+    /**
+     * Modifies the network connection delay for YAPI.RegisterHub() and
+     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * which are accessible through the network. By default, this delay is of 20000 milliseconds,
+     * but depending or you network you may want to change this delay.
+     * For example if your network infrastructure uses a GSM connection.
+     *
+     * @param integer $networkMsTimeout : the network connection delay in milliseconds.
+     * @noreturn
+     */
+    public static function SetNetworkTimeout($networkMsTimeout)
+    {
+        self::$_yapiContext->SetNetworkTimeout($networkMsTimeout);
+    }
+    /**
+     * Returns the network connection delay for YAPI.RegisterHub() and
+     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * which are accessible through the network. By default, this delay is of 20000 milliseconds,
+     * but depending or you network you may want to change this delay.
+     * For example if your network infrastructure uses a GSM connection.
+     *
+     * @return integer : the network connection delay in milliseconds.
+     */
+    public static function GetNetworkTimeout()
+    {
+        return self::$_yapiContext->GetNetworkTimeout();
     }
     /**
      * Change the validity period of the data loaded by the library.
@@ -3068,7 +3144,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.36692";
+        return "1.10.37304";
     }
 
     /**
@@ -3294,12 +3370,13 @@ class YAPI
         if ($res < 0) {
             return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
         }
-        $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false);
+
+        $timeout = YAPI::GetTickCount() + YAPI::$_yapiContext->_networkTimeoutMs;
+        $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false, '', YAPI::$_yapiContext->_networkTimeoutMs);
         if ($tcpreq->process($errmsg) != YAPI_SUCCESS) {
             return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
         }
         self::$_pendingRequests[] = $tcpreq;
-        $timeout = YAPI::GetTickCount() + YAPI_BLOCKING_REQUEST_TIMEOUT;
         do {
             self::_handleEvents_internal(100);
         } while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout);
@@ -6806,6 +6883,7 @@ class YSensor extends YFunction
      * the value "OFF". Note that setting the  datalogger recording frequency
      * to a greater value than the sensor native sampling frequency is useless,
      * and even counterproductive: those two frequencies are not related.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @param string $newval : a string corresponding to the datalogger recording frequency for this function
      *
@@ -6849,6 +6927,7 @@ class YSensor extends YFunction
      * notification frequency to a greater value than the sensor native
      * sampling frequency is unless, and even counterproductive: those two
      * frequencies are not related.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @param string $newval : a string corresponding to the timed value notification frequency for this function
      *
@@ -6884,6 +6963,7 @@ class YSensor extends YFunction
 
     /**
      * Changes the measuring mode used for the advertised value pushed to the parent hub.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @param integer $newval : a value among Y_ADVMODE_IMMEDIATE, Y_ADVMODE_PERIOD_AVG,
      * Y_ADVMODE_PERIOD_MIN and Y_ADVMODE_PERIOD_MAX corresponding to the measuring mode used for the
@@ -6920,6 +7000,7 @@ class YSensor extends YFunction
     /**
      * Changes the resolution of the measured physical values. The resolution corresponds to the numerical precision
      * when displaying value. It does not change the precision of the measure itself.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @param double $newval : a floating point number corresponding to the resolution of the measured physical values
      *
@@ -6936,6 +7017,7 @@ class YSensor extends YFunction
     /**
      * Returns the resolution of the measured values. The resolution corresponds to the numerical precision
      * of the measures, which is not always the same as the actual precision of the sensor.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @return double : a floating point number corresponding to the resolution of the measured values
      *
@@ -8647,8 +8729,7 @@ class YModule extends YFunction
             }
         }
         // Apply settings a second time for file-dependent settings and dynamic sensor nodes
-        $this->set_allSettings($json_api);
-        return YAPI_SUCCESS;
+        return $this->set_allSettings($json_api);
     }
 
     /**
@@ -8936,6 +9017,30 @@ class YModule extends YFunction
         return $param;
     }
 
+    public function _tryExec($url)
+    {
+        // $res                    is a int;
+        // $done                   is a int;
+        $res = YAPI_SUCCESS;
+        $done = 1;
+        try {
+            $this->_download($url);
+        } catch (Exception $ex) {
+            $done = 0;
+        }
+        if ($done == 0) {
+            // retry silently after a short wait
+            try {
+                YAPI.Sleep(500);
+                $this->_download($url);
+            } catch (Exception $ex) {
+                // second failure, return error code
+                $res = $this->get_errorType();
+            }
+        }
+        return $res;
+    }
+
     /**
      * Restores all the settings of the device. Useful to restore all the logical names and calibrations parameters
      * of a module from a backup.Remember to call the saveToFlash() method of the module if the
@@ -8965,6 +9070,8 @@ class YModule extends YFunction
         // $leng                   is a int;
         // $i                      is a int;
         // $j                      is a int;
+        // $subres                 is a int;
+        // $res                    is a int;
         // $njpath                 is a str;
         // $jpath                  is a str;
         // $fun                    is a str;
@@ -8981,6 +9088,7 @@ class YModule extends YFunction
         // $each_str               is a str;
         // $do_update              is a bool;
         // $found                  is a bool;
+        $res = YAPI_SUCCESS;
         $tmp = $settings;
         $tmp = $this->_get_json_path($tmp, 'api');
         if (!($tmp == '')) {
@@ -9007,7 +9115,13 @@ class YModule extends YFunction
             $old_val_arr[] = $value;
         }
 
-        $actualSettings = $this->_download('api.json');
+        try {
+            $actualSettings = $this->_download('api.json');
+        } catch (Exception $ex) {
+            // retry silently after a short wait
+            YAPI.Sleep(500);
+            $actualSettings = $this->_download('api.json');
+        }
         $actualSettings = $this->_flattenJsonStruct($actualSettings);
         $new_dslist = $this->_json_get_array($actualSettings);
         foreach($new_dslist as $each) {
@@ -9096,6 +9210,9 @@ class YModule extends YFunction
             if (($do_update) && ($attr == 'message')) {
                 $do_update = false;
             }
+            if (($do_update) && ($attr == 'signalValue')) {
+                $do_update = false;
+            }
             if (($do_update) && ($attr == 'currentValue')) {
                 $do_update = false;
             }
@@ -9148,6 +9265,12 @@ class YModule extends YFunction
                 $do_update = false;
             }
             if (($do_update) && ($attr == 'msgCount')) {
+                $do_update = false;
+            }
+            if (($do_update) && ($attr == 'rxMsgCount')) {
+                $do_update = false;
+            }
+            if (($do_update) && ($attr == 'txMsgCount')) {
                 $do_update = false;
             }
             if ($do_update) {
@@ -9203,23 +9326,32 @@ class YModule extends YFunction
                     }
                     $newval = $this->calibConvert($old_calib, $new_val_arr[$i], $unit_name, $sensorType);
                     $url = 'api/' . $fun . '.json?' . $attr . '=' . $this->_escapeAttr($newval);
-                    $this->_download($url);
+                    $subres = $this->_tryExec($url);
+                    if (($res == YAPI_SUCCESS) && ($subres != YAPI_SUCCESS)) {
+                        $res = $subres;
+                    }
                 } else {
                     $url = 'api/' . $fun . '.json?' . $attr . '=' . $this->_escapeAttr($oldval);
                     if ($attr == 'resolution') {
                         $restoreLast[] = $url;
                     } else {
-                        $this->_download($url);
+                        $subres = $this->_tryExec($url);
+                        if (($res == YAPI_SUCCESS) && ($subres != YAPI_SUCCESS)) {
+                            $res = $subres;
+                        }
                     }
                 }
             }
             $i = $i + 1;
         }
         foreach($restoreLast as $each) {
-            $this->_download($each);
+            $subres = $this->_tryExec($each);
+            if (($res == YAPI_SUCCESS) && ($subres != YAPI_SUCCESS)) {
+                $res = $subres;
+            }
         }
         $this->clearCache();
-        return YAPI_SUCCESS;
+        return $res;
     }
 
     /**

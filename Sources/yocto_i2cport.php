@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 36207 2019-07-10 20:46:18Z mvuilleu $
+ *  $Id: yocto_i2cport.php 37168 2019-09-13 17:25:10Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -41,15 +41,10 @@
 //--- (YI2cPort return codes)
 //--- (end of YI2cPort return codes)
 //--- (YI2cPort definitions)
-if(!defined('Y_VOLTAGELEVEL_OFF'))           define('Y_VOLTAGELEVEL_OFF',          0);
-if(!defined('Y_VOLTAGELEVEL_TTL3V'))         define('Y_VOLTAGELEVEL_TTL3V',        1);
-if(!defined('Y_VOLTAGELEVEL_TTL3VR'))        define('Y_VOLTAGELEVEL_TTL3VR',       2);
-if(!defined('Y_VOLTAGELEVEL_TTL5V'))         define('Y_VOLTAGELEVEL_TTL5V',        3);
-if(!defined('Y_VOLTAGELEVEL_TTL5VR'))        define('Y_VOLTAGELEVEL_TTL5VR',       4);
-if(!defined('Y_VOLTAGELEVEL_RS232'))         define('Y_VOLTAGELEVEL_RS232',        5);
-if(!defined('Y_VOLTAGELEVEL_RS485'))         define('Y_VOLTAGELEVEL_RS485',        6);
-if(!defined('Y_VOLTAGELEVEL_TTL1V8'))        define('Y_VOLTAGELEVEL_TTL1V8',       7);
-if(!defined('Y_VOLTAGELEVEL_INVALID'))       define('Y_VOLTAGELEVEL_INVALID',      -1);
+if(!defined('Y_I2CVOLTAGELEVEL_OFF'))        define('Y_I2CVOLTAGELEVEL_OFF',       0);
+if(!defined('Y_I2CVOLTAGELEVEL_3V3'))        define('Y_I2CVOLTAGELEVEL_3V3',       1);
+if(!defined('Y_I2CVOLTAGELEVEL_1V8'))        define('Y_I2CVOLTAGELEVEL_1V8',       2);
+if(!defined('Y_I2CVOLTAGELEVEL_INVALID'))    define('Y_I2CVOLTAGELEVEL_INVALID',   -1);
 if(!defined('Y_RXCOUNT_INVALID'))            define('Y_RXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_TXCOUNT_INVALID'))            define('Y_TXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_ERRCOUNT_INVALID'))           define('Y_ERRCOUNT_INVALID',          YAPI_INVALID_UINT);
@@ -86,16 +81,11 @@ class YI2cPort extends YFunction
     const CURRENTJOB_INVALID             = YAPI_INVALID_STRING;
     const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
-    const VOLTAGELEVEL_OFF               = 0;
-    const VOLTAGELEVEL_TTL3V             = 1;
-    const VOLTAGELEVEL_TTL3VR            = 2;
-    const VOLTAGELEVEL_TTL5V             = 3;
-    const VOLTAGELEVEL_TTL5VR            = 4;
-    const VOLTAGELEVEL_RS232             = 5;
-    const VOLTAGELEVEL_RS485             = 6;
-    const VOLTAGELEVEL_TTL1V8            = 7;
-    const VOLTAGELEVEL_INVALID           = -1;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
+    const I2CVOLTAGELEVEL_OFF            = 0;
+    const I2CVOLTAGELEVEL_3V3            = 1;
+    const I2CVOLTAGELEVEL_1V8            = 2;
+    const I2CVOLTAGELEVEL_INVALID        = -1;
     const I2CMODE_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YI2cPort declaration)
 
@@ -109,8 +99,8 @@ class YI2cPort extends YFunction
     protected $_currentJob               = Y_CURRENTJOB_INVALID;         // Text
     protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
     protected $_command                  = Y_COMMAND_INVALID;            // Text
-    protected $_voltageLevel             = Y_VOLTAGELEVEL_INVALID;       // SerialVoltageLevel
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
+    protected $_i2cVoltageLevel          = Y_I2CVOLTAGELEVEL_INVALID;    // I2cVoltageLevel
     protected $_i2cMode                  = Y_I2CMODE_INVALID;            // I2cMode
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
@@ -158,11 +148,11 @@ class YI2cPort extends YFunction
         case 'command':
             $this->_command = $val;
             return 1;
-        case 'voltageLevel':
-            $this->_voltageLevel = intval($val);
-            return 1;
         case 'protocol':
             $this->_protocol = $val;
+            return 1;
+        case 'i2cVoltageLevel':
+            $this->_i2cVoltageLevel = intval($val);
             return 1;
         case 'i2cMode':
             $this->_i2cMode = $val;
@@ -305,11 +295,10 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Changes the job to use when the device is powered on.
-     * Remember to call the saveToFlash() method of the module if the
-     * modification must be kept.
+     * Selects a job file to run immediately. If an empty string is
+     * given as argument, stops running current job file.
      *
-     * @param string $newval : a string corresponding to the job to use when the device is powered on
+     * @param string $newval : a string
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -376,54 +365,12 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Returns the voltage level used on the serial line.
-     *
-     * @return integer : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V, Y_VOLTAGELEVEL_TTL3VR,
-     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232, Y_VOLTAGELEVEL_RS485 and
-     * Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage level used on the serial line
-     *
-     * On failure, throws an exception or returns Y_VOLTAGELEVEL_INVALID.
-     */
-    public function get_voltageLevel()
-    {
-        // $res                    is a enumSERIALVOLTAGELEVEL;
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
-            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
-                return Y_VOLTAGELEVEL_INVALID;
-            }
-        }
-        $res = $this->_voltageLevel;
-        return $res;
-    }
-
-    /**
-     * Changes the voltage type used on the serial line. Valid
-     * values  will depend on the Yoctopuce device model featuring
-     * the serial port feature.  Check your device documentation
-     * to find out which values are valid for that specific model.
-     * Trying to set an invalid value will have no effect.
-     *
-     * @param integer $newval : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V,
-     * Y_VOLTAGELEVEL_TTL3VR, Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232,
-     * Y_VOLTAGELEVEL_RS485 and Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage type used on the serial line
-     *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
-     */
-    public function set_voltageLevel($newval)
-    {
-        $rest_val = strval($newval);
-        return $this->_setAttr("voltageLevel",$rest_val);
-    }
-
-    /**
-     * Returns the type of protocol used over the serial line, as a string.
+     * Returns the type of protocol used to send I2C messages, as a string.
      * Possible values are
      * "Line" for messages separated by LF or
      * "Char" for continuous stream of codes.
      *
-     * @return string : a string corresponding to the type of protocol used over the serial line, as a string
+     * @return string : a string corresponding to the type of protocol used to send I2C messages, as a string
      *
      * On failure, throws an exception or returns Y_PROTOCOL_INVALID.
      */
@@ -440,14 +387,16 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Changes the type of protocol used over the serial line.
+     * Changes the type of protocol used to send I2C messages.
      * Possible values are
      * "Line" for messages separated by LF or
      * "Char" for continuous stream of codes.
      * The suffix "/[wait]ms" can be added to reduce the transmit rate so that there
      * is always at lest the specified number of milliseconds between each message sent.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
      *
-     * @param string $newval : a string corresponding to the type of protocol used over the serial line
+     * @param string $newval : a string corresponding to the type of protocol used to send I2C messages
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -460,12 +409,52 @@ class YI2cPort extends YFunction
     }
 
     /**
+     * Returns the voltage level used on the I2C bus.
+     *
+     * @return integer : a value among Y_I2CVOLTAGELEVEL_OFF, Y_I2CVOLTAGELEVEL_3V3 and
+     * Y_I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
+     *
+     * On failure, throws an exception or returns Y_I2CVOLTAGELEVEL_INVALID.
+     */
+    public function get_i2cVoltageLevel()
+    {
+        // $res                    is a enumI2CVOLTAGELEVEL;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_I2CVOLTAGELEVEL_INVALID;
+            }
+        }
+        $res = $this->_i2cVoltageLevel;
+        return $res;
+    }
+
+    /**
+     * Changes the voltage level used on the I2C bus.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param integer $newval : a value among Y_I2CVOLTAGELEVEL_OFF, Y_I2CVOLTAGELEVEL_3V3 and
+     * Y_I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_i2cVoltageLevel($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("i2cVoltageLevel",$rest_val);
+    }
+
+    /**
      * Returns the SPI port communication parameters, as a string such as
-     * "400kbps,2000ms". The string includes the baud rate and  th  e recovery delay
-     * after communications errors.
+     * "400kbps,2000ms,NoRestart". The string includes the baud rate, the
+     * recovery delay after communications errors, and if needed the option
+     * NoRestart to use a Stop/Start sequence instead of the
+     * Restart state when performing read on the I2C bus.
      *
      * @return string : a string corresponding to the SPI port communication parameters, as a string such as
-     *         "400kbps,2000ms"
+     *         "400kbps,2000ms,NoRestart"
      *
      * On failure, throws an exception or returns Y_I2CMODE_INVALID.
      */
@@ -483,8 +472,12 @@ class YI2cPort extends YFunction
 
     /**
      * Changes the SPI port communication parameters, with a string such as
-     * "400kbps,2000ms". The string includes the baud rate and the recovery delay
-     * after communications errors.
+     * "400kbps,2000ms". The string includes the baud rate, the
+     * recovery delay after communications errors, and if needed the option
+     * NoRestart to use a Stop/Start sequence instead of the
+     * Restart state when performing read on the I2C bus.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
      *
      * @param string $newval : a string corresponding to the SPI port communication parameters, with a string such as
      *         "400kbps,2000ms"
@@ -747,7 +740,7 @@ class YI2cPort extends YFunction
     /**
      * Clears the serial port buffer and resets counters to zero.
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -764,10 +757,10 @@ class YI2cPort extends YFunction
      * Sends a one-way message (provided as a a binary buffer) to a device on the I2C bus.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param slaveAddr : the 7-bit address of the slave device (without the direction bit)
-     * @param buff : the binary buffer to be sent
+     * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param string $buff : the binary buffer to be sent
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -788,11 +781,11 @@ class YI2cPort extends YFunction
         }
 
         $reply = $this->queryLine($msg,1000);
-        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'no response from device',YAPI_IO_ERROR);
+        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'No response from I2C device',YAPI_IO_ERROR);
         $idx = Ystrpos($reply,'[N]!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No ACK received',YAPI_IO_ERROR);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No I2C ACK received',YAPI_IO_ERROR);
         $idx = Ystrpos($reply,'!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'Protocol error',YAPI_IO_ERROR);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'I2C protocol error',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
     }
 
@@ -800,10 +793,10 @@ class YI2cPort extends YFunction
      * Sends a one-way message (provided as a list of integer) to a device on the I2C bus.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param slaveAddr : the 7-bit address of the slave device (without the direction bit)
-     * @param values : a list of data bytes to be sent
+     * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param Integer[] $values : a list of data bytes to be sent
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -824,11 +817,11 @@ class YI2cPort extends YFunction
         }
 
         $reply = $this->queryLine($msg,1000);
-        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'no response from device',YAPI_IO_ERROR);
+        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'No response from I2C device',YAPI_IO_ERROR);
         $idx = Ystrpos($reply,'[N]!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No ACK received',YAPI_IO_ERROR);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No I2C ACK received',YAPI_IO_ERROR);
         $idx = Ystrpos($reply,'!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'Protocol error',YAPI_IO_ERROR);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'I2C protocol error',YAPI_IO_ERROR);
         return YAPI_SUCCESS;
     }
 
@@ -837,11 +830,11 @@ class YI2cPort extends YFunction
      * then read back the specified number of bytes from device.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param slaveAddr : the 7-bit address of the slave device (without the direction bit)
-     * @param buff : the binary buffer to be sent
-     * @param rcvCount : the number of bytes to receive once the data bytes are sent
+     * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param string $buff : the binary buffer to be sent
+     * @param integer $rcvCount : the number of bytes to receive once the data bytes are sent
      *
-     * @return a list of bytes with the data received from slave device.
+     * @return string : a list of bytes with the data received from slave device.
      *
      * On failure, throws an exception or returns an empty binary buffer.
      */
@@ -869,11 +862,11 @@ class YI2cPort extends YFunction
 
         $reply = $this->queryLine($msg,1000);
         $rcvbytes = '';
-        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'no response from device',$rcvbytes);
+        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'No response from I2C device',$rcvbytes);
         $idx = Ystrpos($reply,'[N]!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No ACK received',$rcvbytes);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No I2C ACK received',$rcvbytes);
         $idx = Ystrpos($reply,'!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'Protocol error',$rcvbytes);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'I2C protocol error',$rcvbytes);
         $reply = substr($reply,  strlen($reply)-2*$rcvCount, 2*$rcvCount);
         $rcvbytes = YAPI::_hexStrToBin($reply);
         return $rcvbytes;
@@ -884,11 +877,11 @@ class YI2cPort extends YFunction
      * then read back the specified number of bytes from device.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param slaveAddr : the 7-bit address of the slave device (without the direction bit)
-     * @param values : a list of data bytes to be sent
-     * @param rcvCount : the number of bytes to receive once the data bytes are sent
+     * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param Integer[] $values : a list of data bytes to be sent
+     * @param integer $rcvCount : the number of bytes to receive once the data bytes are sent
      *
-     * @return a list of bytes with the data received from slave device.
+     * @return Integer[] : a list of bytes with the data received from slave device.
      *
      * On failure, throws an exception or returns an empty array.
      */
@@ -916,11 +909,11 @@ class YI2cPort extends YFunction
         }
 
         $reply = $this->queryLine($msg,1000);
-        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'no response from device',$res);
+        if (!(strlen($reply) > 0)) return $this->_throw( YAPI_IO_ERROR, 'No response from I2C device',$res);
         $idx = Ystrpos($reply,'[N]!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No ACK received',$res);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'No I2C ACK received',$res);
         $idx = Ystrpos($reply,'!');
-        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'Protocol error',$res);
+        if (!($idx < 0)) return $this->_throw( YAPI_IO_ERROR, 'I2C protocol error',$res);
         $reply = substr($reply,  strlen($reply)-2*$rcvCount, 2*$rcvCount);
         $rcvbytes = YAPI::_hexStrToBin($reply);
         while(sizeof($res) > 0) { array_pop($res); };
@@ -947,9 +940,9 @@ class YI2cPort extends YFunction
      * will be terminated and a newline will also be added to the
      * receive stream.
      *
-     * @param codes : the code stream to send
+     * @param string $codes : the code stream to send
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -995,9 +988,9 @@ class YI2cPort extends YFunction
      * At the end of the stream, a stop condition is added if missing
      * and a newline is added to the receive buffer as well.
      *
-     * @param codes : the code stream to send
+     * @param string $codes : the code stream to send
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1018,9 +1011,9 @@ class YI2cPort extends YFunction
      * Sends a single byte to the I2C bus. Depending on the I2C bus state, the byte
      * will be interpreted as an address byte or a data byte.
      *
-     * @param code : the byte to send
+     * @param integer $code : the byte to send
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1034,9 +1027,9 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted as an
      * address byte or a data byte.
      *
-     * @param hexString : a string of hexadecimal byte codes
+     * @param string $hexString : a string of hexadecimal byte codes
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1058,9 +1051,9 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted
      * as an address byte or a data byte.
      *
-     * @param buff : the binary buffer to send
+     * @param string $buff : the binary buffer to send
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1087,9 +1080,9 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted as an
      * address byte or a data byte.
      *
-     * @param byteList : a list of byte codes
+     * @param Integer[] $byteList : a list of byte codes
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1147,17 +1140,17 @@ class YI2cPort extends YFunction
     public function setCommand($newval)
     { return $this->set_command($newval); }
 
-    public function voltageLevel()
-    { return $this->get_voltageLevel(); }
-
-    public function setVoltageLevel($newval)
-    { return $this->set_voltageLevel($newval); }
-
     public function protocol()
     { return $this->get_protocol(); }
 
     public function setProtocol($newval)
     { return $this->set_protocol($newval); }
+
+    public function i2cVoltageLevel()
+    { return $this->get_i2cVoltageLevel(); }
+
+    public function setI2cVoltageLevel($newval)
+    { return $this->set_i2cVoltageLevel($newval); }
 
     public function i2cMode()
     { return $this->get_i2cMode(); }

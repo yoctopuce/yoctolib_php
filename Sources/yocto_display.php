@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 33877 2018-12-26 12:19:48Z seb $
+ * $Id: yocto_display.php 37000 2019-09-03 06:40:17Z mvuilleu $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -927,7 +927,7 @@ class YDisplay extends YFunction
     public function get_displayWidth()
     {
         // $res                    is a int;
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+        if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYWIDTH_INVALID;
             }
@@ -946,7 +946,7 @@ class YDisplay extends YFunction
     public function get_displayHeight()
     {
         // $res                    is a int;
-        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+        if ($this->_cacheExpiration == 0) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DISPLAYHEIGHT_INVALID;
             }
