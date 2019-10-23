@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 37269 2019-09-24 13:45:24Z seb $
+ * $Id: yocto_api.php 37692 2019-10-14 14:58:03Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -1670,8 +1670,8 @@ class YAPIContext
     //private function GetDeviceListValidity_internal()
 
     /**
-     * Modifies the network connection delay for YAPI.RegisterHub() and
-     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
+     * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
      * but depending or you network you may want to change this delay.
      * For example if your network infrastructure uses a GSM connection.
@@ -1688,8 +1688,8 @@ class YAPIContext
     //private function SetNetworkTimeout_internal($networkMsTimeout)
 
     /**
-     * Returns the network connection delay for YAPI.RegisterHub() and
-     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * Returns the network connection delay for yRegisterHub() and yUpdateDeviceList().
+     * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
      * but depending or you network you may want to change this delay.
      * For example if your network infrastructure uses a GSM connection.
@@ -3067,8 +3067,8 @@ class YAPI
         return self::$_yapiContext->GetDeviceListValidity();
     }
     /**
-     * Modifies the network connection delay for YAPI.RegisterHub() and
-     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
+     * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
      * but depending or you network you may want to change this delay.
      * For example if your network infrastructure uses a GSM connection.
@@ -3081,8 +3081,8 @@ class YAPI
         self::$_yapiContext->SetNetworkTimeout($networkMsTimeout);
     }
     /**
-     * Returns the network connection delay for YAPI.RegisterHub() and
-     * YAPI.UpdateDeviceList(). This delay impacts only the YoctoHubs and VirtualHub
+     * Returns the network connection delay for yRegisterHub() and yUpdateDeviceList().
+     * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
      * but depending or you network you may want to change this delay.
      * For example if your network infrastructure uses a GSM connection.
@@ -3144,7 +3144,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.37304";
+        return "1.10.37780";
     }
 
     /**

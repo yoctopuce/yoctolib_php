@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_motor.php 33716 2018-12-14 14:21:46Z seb $
+ *  $Id: yocto_motor.php 37619 2019-10-11 11:52:42Z mvuilleu $
  *
  *  Implements YMotor, the high-level API for Motor functions
  *
@@ -271,6 +271,8 @@ class YMotor extends YFunction
      * occur when drawing current from an "empty" battery.
      * Note that whatever the cutoff threshold, the controller switches to undervoltage
      * error state if the power supply goes under 3V, even for a very brief time.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param double $newval : a floating point number corresponding to the threshold voltage under which
      * the controller automatically switches to error state
@@ -309,16 +311,6 @@ class YMotor extends YFunction
         return $res;
     }
 
-    /**
-     * Returns the current threshold (in mA) above which the controller automatically
-     * switches to error state. A zero value means that there is no limit.
-     *
-     * @return integer : an integer corresponding to the current threshold (in mA) above which the
-     * controller automatically
-     *         switches to error state
-     *
-     * On failure, throws an exception or returns Y_OVERCURRENTLIMIT_INVALID.
-     */
     public function get_overCurrentLimit()
     {
         // $res                    is a int;
@@ -335,7 +327,8 @@ class YMotor extends YFunction
      * Changes the current threshold (in mA) above which the controller automatically
      * switches to error state. A zero value means that there is no limit. Note that whatever the
      * current limit is, the controller switches to OVERCURRENT status if the current
-     * goes above 32A, even for a very brief time.
+     * goes above 32A, even for a very brief time. Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to the current threshold (in mA) above which the
      * controller automatically
@@ -355,7 +348,8 @@ class YMotor extends YFunction
      * Changes the PWM frequency used to control the motor. Low frequency is usually
      * more efficient and may help the motor to start, but an audible noise might be
      * generated. A higher frequency reduces the noise, but more energy is converted
-     * into heat.
+     * into heat. Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param double $newval : a floating point number corresponding to the PWM frequency used to control the motor
      *
@@ -412,7 +406,8 @@ class YMotor extends YFunction
 
     /**
      * Changes the duration (in ms) during which the motor is driven at low frequency to help
-     * it start up.
+     * it start up. Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to the duration (in ms) during which the motor is
      * driven at low frequency to help
@@ -457,6 +452,8 @@ class YMotor extends YFunction
      * receiving any instruction from the control process. When this delay has elapsed,
      * the controller automatically stops the motor and switches to FAILSAFE error.
      * Failsafe security is disabled when the value is zero.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to the delay in milliseconds allowed for the
      * controller to run autonomously without

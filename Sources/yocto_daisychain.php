@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_daisychain.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_daisychain.php 37619 2019-10-11 11:52:42Z mvuilleu $
  *
  *  Implements YDaisyChain, the high-level API for DaisyChain functions
  *
@@ -169,7 +169,8 @@ class YDaisyChain extends YFunction
      * Changes the number of child nodes expected in normal conditions.
      * If the value is zero, no check is performed. If it is non-zero, the number
      * child nodes is checked on startup and the status will change to error if
-     * the count does not match.
+     * the count does not match. Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to the number of child nodes expected in normal conditions
      *

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioin.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_audioin.php 37619 2019-10-11 11:52:42Z mvuilleu $
  *
  *  Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -131,6 +131,8 @@ class YAudioIn extends YFunction
 
     /**
      * Changes audio input gain, in per cents.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to audio input gain, in per cents
      *

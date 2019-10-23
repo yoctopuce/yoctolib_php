@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_dualpower.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_dualpower.php 37609 2019-10-09 16:59:35Z mvuilleu $
  *
  *  Implements YDualPower, the high-level API for DualPower functions
  *
@@ -155,6 +155,7 @@ class YDualPower extends YFunction
 
     /**
      * Changes the selected power source for module functions that require lots of current.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @param integer $newval : a value among Y_POWERCONTROL_AUTO, Y_POWERCONTROL_FROM_USB,
      * Y_POWERCONTROL_FROM_EXT and Y_POWERCONTROL_OFF corresponding to the selected power source for

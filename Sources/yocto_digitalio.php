@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_digitalio.php 37149 2019-09-12 21:24:53Z mvuilleu $
+ *  $Id: yocto_digitalio.php 37653 2019-10-11 17:37:17Z mvuilleu $
  *
  *  Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -138,7 +138,7 @@ class YDigitalIO extends YFunction
 
     /**
      * Returns the digital IO port state as an integer with each bit
-     * representing a channel
+     * representing a channel.
      * value 0 = 0b00000000 -> all channels are OFF
      * value 1 = 0b00000001 -> channel #0 is ON
      * value 2 = 0b00000010 -> channel #1 is ON
@@ -148,12 +148,6 @@ class YDigitalIO extends YFunction
      *
      * @return integer : an integer corresponding to the digital IO port state as an integer with each bit
      *         representing a channel
-     *         value 0 = 0b00000000 -> all channels are OFF
-     *         value 1 = 0b00000001 -> channel #0 is ON
-     *         value 2 = 0b00000010 -> channel #1 is ON
-     *         value 3 = 0b00000011 -> channels #0 and #1 are ON
-     *         value 4 = 0b00000100 -> channel #2 is ON
-     *         and so on.
      *
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
@@ -170,20 +164,20 @@ class YDigitalIO extends YFunction
     }
 
     /**
-     * Changes the state of all digital IO port's channels at once,
-     * the parameter is an integer with  each bit representing a channel.
-     * Bit 0 matches channel #0. So:
+     * Changes the state of all digital IO port's channels at once: the parameter
+     * is an integer where each bit represents a channel, with bit 0 matching channel #0.
      * To set all channels to  0 -> 0b00000000 -> parameter = 0
      * To set channel #0 to 1 -> 0b00000001 -> parameter =  1
      * To set channel #1 to  1 -> 0b00000010 -> parameter = 2
      * To set channel #0 and #1 -> 0b00000011 -> parameter =  3
      * To set channel #2 to 1 -> 0b00000100 -> parameter =  4
      * an so on....
-     * Only channels configured as output, thanks to portDirection,
-     * are affected.
+     * Only channels configured as outputs will be affecter, according to the value
+     * configured using set_portDirection.
      *
-     * @param integer $newval : an integer corresponding to the state of all digital IO port's channels at once,
-     *         the parameter is an integer with  each bit representing a channel
+     * @param integer $newval : an integer corresponding to the state of all digital IO port's channels at
+     * once: the parameter
+     *         is an integer where each bit represents a channel, with bit 0 matching channel #0
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -196,9 +190,10 @@ class YDigitalIO extends YFunction
     }
 
     /**
-     * Returns the IO direction of all bits (i.e. channels) of the port: 0 makes a bit an input, 1 makes it an output.
+     * Returns the I/O direction of all channels of the port (bitmap): 0 makes a bit an input, 1 makes it an output.
      *
-     * @return integer : an integer corresponding to the IO direction of all bits (i.e
+     * @return integer : an integer corresponding to the I/O direction of all channels of the port
+     * (bitmap): 0 makes a bit an input, 1 makes it an output
      *
      * On failure, throws an exception or returns Y_PORTDIRECTION_INVALID.
      */
@@ -215,10 +210,11 @@ class YDigitalIO extends YFunction
     }
 
     /**
-     * Changes the IO direction of all bits (i.e. channels) of the port: 0 makes a bit an input, 1 makes it an output.
+     * Changes the I/O direction of all channels of the port (bitmap): 0 makes a bit an input, 1 makes it an output.
      * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
      *
-     * @param integer $newval : an integer corresponding to the IO direction of all bits (i.e
+     * @param integer $newval : an integer corresponding to the I/O direction of all channels of the port
+     * (bitmap): 0 makes a bit an input, 1 makes it an output
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

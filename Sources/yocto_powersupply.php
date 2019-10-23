@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 34115 2019-01-23 14:23:54Z seb $
+ *  $Id: yocto_powersupply.php 37653 2019-10-11 17:37:17Z mvuilleu $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -546,9 +546,9 @@ class YPowerSupply extends YFunction
      *
      * @param V_target   : new output voltage value at the end of the transition
      *         (floating-point number, representing the end voltage in V)
-     * @param ms_duration : total duration of the transition, in milliseconds
+     * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI_SUCCESS when the call succeeds.
      */
     public function voltageMove($V_target,$ms_duration)
     {
