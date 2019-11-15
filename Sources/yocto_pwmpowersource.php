@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmpowersource.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_pwmpowersource.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -54,8 +54,8 @@ if(!defined('Y_POWERMODE_INVALID'))          define('Y_POWERMODE_INVALID',      
 /**
  * YPwmPowerSource Class: PwmPowerSource function interface
  *
- * The Yoctopuce application programming interface allows you to configure
- * the voltage source used by all PWM on the same device.
+ * The YPwmPowerSource class allows you to configure
+ * the voltage source used by all PWM outputs on the same device, for instance using a Yocto-PWM-Tx.
  */
 class YPwmPowerSource extends YFunction
 {
@@ -156,7 +156,8 @@ class YPwmPowerSource extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the voltage source
+     * @param string $func : a string that uniquely characterizes the voltage source, for instance
+     *         YPWMTX01.pwmPowerSource.
      *
      * @return YPwmPowerSource : a YPwmPowerSource object allowing you to drive the voltage source.
      */
@@ -239,7 +240,8 @@ class YPwmPowerSource extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the voltage source
+ * @param string $func : a string that uniquely characterizes the voltage source, for instance
+ *         YPWMTX01.pwmPowerSource.
  *
  * @return YPwmPowerSource : a YPwmPowerSource object allowing you to drive the voltage source.
  */

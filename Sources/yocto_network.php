@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_network.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -96,7 +96,8 @@ if(!defined('Y_POECURRENT_INVALID'))         define('Y_POECURRENT_INVALID',     
  * YNetwork Class: Network function interface
  *
  * YNetwork objects provide access to TCP/IP parameters of Yoctopuce
- * modules that include a built-in network interface.
+ * devices that include a built-in network interface, for instance using a YoctoHub-Ethernet, a
+ * YoctoHub-Wireless-g, a YoctoHub-GSM-3G-NA or a YoctoHub-GSM-3G-EU.
  */
 class YNetwork extends YFunction
 {
@@ -1141,7 +1142,8 @@ class YNetwork extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the network interface
+     * @param string $func : a string that uniquely characterizes the network interface, for instance
+     *         YHUBETH1.network.
      *
      * @return YNetwork : a YNetwork object allowing you to drive the network interface.
      */
@@ -1446,7 +1448,8 @@ class YNetwork extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the network interface
+ * @param string $func : a string that uniquely characterizes the network interface, for instance
+ *         YHUBETH1.network.
  *
  * @return YNetwork : a YNetwork object allowing you to drive the network interface.
  */

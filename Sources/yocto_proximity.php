@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_proximity.php 37149 2019-09-12 21:24:53Z mvuilleu $
+ *  $Id: yocto_proximity.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YProximity, the high-level API for Proximity functions
  *
@@ -65,8 +65,9 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
 /**
  * YProximity Class: Proximity function interface
  *
- * The Yoctopuce class YProximity allows you to use and configure Yoctopuce proximity
- * sensors. It inherits from the YSensor class the core functions to read measurements,
+ * The YProximity class allows you to use and configure Yoctopuce proximity
+ * sensors, for instance using a Yocto-Proximity. It inherits from the YSensor class the core
+ * functions to read measurements,
  * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to easily perform a one-point linear calibration
  * to compensate the effect of a glass or filter placed in front of the sensor.
@@ -511,7 +512,8 @@ class YProximity extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the proximity sensor
+     * @param string $func : a string that uniquely characterizes the proximity sensor, for instance
+     *         YPROXIM1.proximity1.
      *
      * @return YProximity : a YProximity object allowing you to drive the proximity sensor.
      */
@@ -651,7 +653,8 @@ class YProximity extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the proximity sensor
+ * @param string $func : a string that uniquely characterizes the proximity sensor, for instance
+ *         YPROXIM1.proximity1.
  *
  * @return YProximity : a YProximity object allowing you to drive the proximity sensor.
  */

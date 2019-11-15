@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_pwmoutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -61,7 +61,9 @@ if(!defined('Y_DUTYCYCLEATPOWERON_INVALID')) define('Y_DUTYCYCLEATPOWERON_INVALI
 /**
  * YPwmOutput Class: PwmOutput function interface
  *
- * The Yoctopuce application programming interface allows you to configure, start, and stop the PWM.
+ * The YPwmOutput class allows you to drive a PWM output, for instance using a Yocto-PWM-Tx.
+ * You can configure the frequency as well as the duty cycle, and setup progressive
+ * transitions.
  */
 class YPwmOutput extends YFunction
 {
@@ -428,7 +430,8 @@ class YPwmOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the PWM
+     * @param string $func : a string that uniquely characterizes the PWM, for instance
+     *         YPWMTX01.pwmOutput1.
      *
      * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
      */
@@ -720,7 +723,8 @@ class YPwmOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the PWM
+ * @param string $func : a string that uniquely characterizes the PWM, for instance
+ *         YPWMTX01.pwmOutput1.
  *
  * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
  */

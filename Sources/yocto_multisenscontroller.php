@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multisenscontroller.php 34975 2019-04-04 17:01:43Z seb $
+ *  $Id: yocto_multisenscontroller.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *
@@ -55,8 +55,8 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YMultiSensController Class: MultiSensController function interface
  *
- * The Yoctopuce application programming interface allows you to setup a customized
- * sensor chain.
+ * The YMultiSensController class allows you to setup a customized
+ * sensor chain on devices featuring that functionality, for instance using a Yocto-Temperature-IR.
  */
 class YMultiSensController extends YFunction
 {
@@ -241,7 +241,8 @@ class YMultiSensController extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the multi-sensor controller
+     * @param string $func : a string that uniquely characterizes the multi-sensor controller, for instance
+     *         YTEMPIR1.multiSensController.
      *
      * @return YMultiSensController : a YMultiSensController object allowing you to drive the multi-sensor controller.
      */
@@ -360,7 +361,8 @@ class YMultiSensController extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the multi-sensor controller
+ * @param string $func : a string that uniquely characterizes the multi-sensor controller, for instance
+ *         YTEMPIR1.multiSensController.
  *
  * @return YMultiSensController : a YMultiSensController object allowing you to drive the multi-sensor controller.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ * $Id: yocto_gyro.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -47,8 +47,11 @@
 /**
  * YQt Class: Quaternion interface
  *
- * The Yoctopuce API YQt class provides direct access to the Yocto3D attitude estimation
- * using a quaternion. It is usually not needed to use the YQt class directly, as the
+ * The YQt class provides direct access to the 3D attitude estimation provided by Yoctopuce
+ * inertial sensors, for instance using a Yocto-3D-V2. The four instances of YQt provide direct access
+ * to the individual
+ * quaternion components representing the orientation.
+ * It is usually not needed to use the YQt class directly, as the
  * YGyro class provides a more convenient higher-level interface.
  */
 class YQt extends YSensor
@@ -92,7 +95,8 @@ class YQt extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the quaternion component
+     * @param string $func : a string that uniquely characterizes the quaternion component, for instance
+     *         Y3DMK002.qt1.
      *
      * @return YQt : a YQt object allowing you to drive the quaternion component.
      */
@@ -169,7 +173,8 @@ class YQt extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the quaternion component
+ * @param string $func : a string that uniquely characterizes the quaternion component, for instance
+ *         Y3DMK002.qt1.
  *
  * @return YQt : a YQt object allowing you to drive the quaternion component.
  */
@@ -197,7 +202,7 @@ function yFirstQt()
 //--- (generated code: YGyro return codes)
 //--- (end of generated code: YGyro return codes)
 //--- (generated code: YGyro definitions)
-if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_XVALUE_INVALID'))             define('Y_XVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_YVALUE_INVALID'))             define('Y_YVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',            YAPI_INVALID_DOUBLE);
@@ -215,26 +220,21 @@ function yInternalGyroCallback($YQt_obj, $str_value)
 /**
  * YGyro Class: Gyroscope function interface
  *
- * The YSensor class is the parent class for all Yoctopuce sensors. It can be
- * used to read the current value and unit of any sensor, read the min/max
- * value, configure autonomous recording frequency and access recorded data.
- * It also provide a function to register a callback invoked each time the
- * observed value changes, or at a predefined interval. Using this class rather
- * than a specific subclass makes it possible to create generic applications
- * that work with any Yoctopuce sensor, even those that do not yet exist.
- * Note: The YAnButton class is the only analog input which does not inherit
- * from YSensor.
+ * The YGyro class allows you to read and configure Yoctopuce angular velocity
+ * sensors, for instance using a Yocto-3D-V2. It inherits from YSensor class the core functions to
+ * read measurements,
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YGyro extends YSensor
 {
-    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
+    const BANDWIDTH_INVALID              = YAPI_INVALID_UINT;
     const XVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const YVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const ZVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     //--- (end of generated code: YGyro declaration)
 
     //--- (generated code: YGyro attributes)
-    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // UInt31
     protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
     protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
     protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
@@ -406,7 +406,8 @@ class YGyro extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the gyroscope
+     * @param string $func : a string that uniquely characterizes the gyroscope, for instance
+     *         Y3DMK002.gyro.
      *
      * @return YGyro : a YGyro object allowing you to drive the gyroscope.
      */
@@ -800,7 +801,8 @@ class YGyro extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the gyroscope
+ * @param string $func : a string that uniquely characterizes the gyroscope, for instance
+ *         Y3DMK002.gyro.
  *
  * @return YGyro : a YGyro object allowing you to drive the gyroscope.
  */

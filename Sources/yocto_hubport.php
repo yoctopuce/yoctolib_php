@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_hubport.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_hubport.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YHubPort, the high-level API for HubPort functions
  *
@@ -59,8 +59,9 @@ if(!defined('Y_BAUDRATE_INVALID'))           define('Y_BAUDRATE_INVALID',       
 /**
  * YHubPort Class: Yocto-hub port interface
  *
- * YHubPort objects provide control over the power supply for every
- * YoctoHub port and provide information about the device connected to it.
+ * The YHubPort class provides control over the power supply for every port
+ * on a YoctoHub, for instance using a YoctoHub-Ethernet, a YoctoHub-Wireless-g, a YoctoHub-Shield or
+ * a YoctoHub-GSM-3G-NA. It provide information about the device connected to it.
  * The logical name of a YHubPort is always automatically set to the
  * unique serial number of the Yoctopuce device connected to it.
  */
@@ -212,7 +213,8 @@ class YHubPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the Yocto-hub port
+     * @param string $func : a string that uniquely characterizes the Yocto-hub port, for instance
+     *         YHUBETH1.hubPort1.
      *
      * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
      */
@@ -301,7 +303,8 @@ class YHubPort extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the Yocto-hub port
+ * @param string $func : a string that uniquely characterizes the Yocto-hub port, for instance
+ *         YHUBETH1.hubPort1.
  *
  * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
  */

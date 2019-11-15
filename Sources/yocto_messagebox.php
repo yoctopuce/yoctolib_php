@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 34704 2019-03-19 15:22:53Z seb $
+ * $Id: yocto_messagebox.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -1321,8 +1321,9 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YMessageBox Class: MessageBox function interface
  *
- * YMessageBox functions provides SMS sending and receiving capability to
- * GSM-enabled Yoctopuce devices.
+ * The YMessageBox class provides SMS sending and receiving capability to
+ * GSM-enabled Yoctopuce devices, for instance using a YoctoHub-GSM-3G-NA, a YoctoHub-GSM-3G-EU or a
+ * YoctoHub-GSM-2G.
  */
 class YMessageBox extends YFunction
 {
@@ -1545,7 +1546,8 @@ class YMessageBox extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the MessageBox interface
+     * @param string $func : a string that uniquely characterizes the MessageBox interface, for instance
+     *         YHUBGSM4.messageBox.
      *
      * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
      */
@@ -2248,7 +2250,8 @@ class YMessageBox extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the MessageBox interface
+ * @param string $func : a string that uniquely characterizes the MessageBox interface, for instance
+ *         YHUBGSM4.messageBox.
  *
  * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
  */

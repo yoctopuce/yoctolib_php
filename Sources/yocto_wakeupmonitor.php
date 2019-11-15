@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupmonitor.php 37000 2019-09-03 06:40:17Z mvuilleu $
+ *  $Id: yocto_wakeupmonitor.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -51,8 +51,8 @@ if(!defined('Y_WAKEUPREASON_INVALID'))       define('Y_WAKEUPREASON_INVALID',   
 if(!defined('Y_WAKEUPSTATE_SLEEPING'))       define('Y_WAKEUPSTATE_SLEEPING',      0);
 if(!defined('Y_WAKEUPSTATE_AWAKE'))          define('Y_WAKEUPSTATE_AWAKE',         1);
 if(!defined('Y_WAKEUPSTATE_INVALID'))        define('Y_WAKEUPSTATE_INVALID',       -1);
-if(!defined('Y_POWERDURATION_INVALID'))      define('Y_POWERDURATION_INVALID',     YAPI_INVALID_INT);
-if(!defined('Y_SLEEPCOUNTDOWN_INVALID'))     define('Y_SLEEPCOUNTDOWN_INVALID',    YAPI_INVALID_INT);
+if(!defined('Y_POWERDURATION_INVALID'))      define('Y_POWERDURATION_INVALID',     YAPI_INVALID_UINT);
+if(!defined('Y_SLEEPCOUNTDOWN_INVALID'))     define('Y_SLEEPCOUNTDOWN_INVALID',    YAPI_INVALID_UINT);
 if(!defined('Y_NEXTWAKEUP_INVALID'))         define('Y_NEXTWAKEUP_INVALID',        YAPI_INVALID_LONG);
 if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',           YAPI_INVALID_LONG);
 //--- (end of YWakeUpMonitor definitions)
@@ -63,13 +63,14 @@ if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',        
 /**
  * YWakeUpMonitor Class: WakeUpMonitor function interface
  *
- * The WakeUpMonitor function handles globally all wake-up sources, as well
- * as automated sleep mode.
+ * The YWakeUpMonitor class handles globally all wake-up sources, as well
+ * as automated sleep mode, for instance using a YoctoHub-Wireless-g, a YoctoHub-GSM-3G-NA, a
+ * YoctoHub-GSM-3G-EU or a YoctoHub-Wireless-SR.
  */
 class YWakeUpMonitor extends YFunction
 {
-    const POWERDURATION_INVALID          = YAPI_INVALID_INT;
-    const SLEEPCOUNTDOWN_INVALID         = YAPI_INVALID_INT;
+    const POWERDURATION_INVALID          = YAPI_INVALID_UINT;
+    const SLEEPCOUNTDOWN_INVALID         = YAPI_INVALID_UINT;
     const NEXTWAKEUP_INVALID             = YAPI_INVALID_LONG;
     const WAKEUPREASON_USBPOWER          = 0;
     const WAKEUPREASON_EXTPOWER          = 1;
@@ -85,8 +86,8 @@ class YWakeUpMonitor extends YFunction
     //--- (end of YWakeUpMonitor declaration)
 
     //--- (YWakeUpMonitor attributes)
-    protected $_powerDuration            = Y_POWERDURATION_INVALID;      // Int
-    protected $_sleepCountdown           = Y_SLEEPCOUNTDOWN_INVALID;     // Int
+    protected $_powerDuration            = Y_POWERDURATION_INVALID;      // UInt31
+    protected $_sleepCountdown           = Y_SLEEPCOUNTDOWN_INVALID;     // UInt31
     protected $_nextWakeUp               = Y_NEXTWAKEUP_INVALID;         // UTCTime
     protected $_wakeUpReason             = Y_WAKEUPREASON_INVALID;       // WakeUpReason
     protected $_wakeUpState              = Y_WAKEUPSTATE_INVALID;        // WakeUpState
@@ -318,7 +319,8 @@ class YWakeUpMonitor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the monitor
+     * @param string $func : a string that uniquely characterizes the monitor, for instance
+     *         YHUBWLN3.wakeUpMonitor.
      *
      * @return YWakeUpMonitor : a YWakeUpMonitor object allowing you to drive the monitor.
      */
@@ -510,7 +512,8 @@ class YWakeUpMonitor extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the monitor
+ * @param string $func : a string that uniquely characterizes the monitor, for instance
+ *         YHUBWLN3.wakeUpMonitor.
  *
  * @return YWakeUpMonitor : a YWakeUpMonitor object allowing you to drive the monitor.
  */

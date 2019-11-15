@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_carbondioxide.php 33716 2018-12-14 14:21:46Z seb $
+ *  $Id: yocto_carbondioxide.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -41,7 +41,7 @@
 //--- (YCarbonDioxide return codes)
 //--- (end of YCarbonDioxide return codes)
 //--- (YCarbonDioxide definitions)
-if(!defined('Y_ABCPERIOD_INVALID'))          define('Y_ABCPERIOD_INVALID',         YAPI_INVALID_INT);
+if(!defined('Y_ABCPERIOD_INVALID'))          define('Y_ABCPERIOD_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YCarbonDioxide definitions)
     #--- (YCarbonDioxide yapiwrapper)
@@ -51,19 +51,20 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YCarbonDioxide Class: CarbonDioxide function interface
  *
- * The Yoctopuce class YCarbonDioxide allows you to read and configure Yoctopuce CO2
- * sensors. It inherits from YSensor class the core functions to read measurements,
+ * The YCarbonDioxide class allows you to read and configure Yoctopuce CO2
+ * sensors, for instance using a Yocto-CO2-V2. It inherits from YSensor class the core functions to
+ * read measurements,
  * to register callback functions,  to access the autonomous datalogger.
  * This class adds the ability to perform manual calibration if required.
  */
 class YCarbonDioxide extends YSensor
 {
-    const ABCPERIOD_INVALID              = YAPI_INVALID_INT;
+    const ABCPERIOD_INVALID              = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YCarbonDioxide declaration)
 
     //--- (YCarbonDioxide attributes)
-    protected $_abcPeriod                = Y_ABCPERIOD_INVALID;          // Int
+    protected $_abcPeriod                = Y_ABCPERIOD_INVALID;          // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YCarbonDioxide attributes)
 
@@ -171,7 +172,8 @@ class YCarbonDioxide extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the CO2 sensor
+     * @param string $func : a string that uniquely characterizes the CO2 sensor, for instance
+     *         YCO2MK02.carbonDioxide.
      *
      * @return YCarbonDioxide : a YCarbonDioxide object allowing you to drive the CO2 sensor.
      */
@@ -310,7 +312,8 @@ class YCarbonDioxide extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the CO2 sensor
+ * @param string $func : a string that uniquely characterizes the CO2 sensor, for instance
+ *         YCO2MK02.carbonDioxide.
  *
  * @return YCarbonDioxide : a YCarbonDioxide object allowing you to drive the CO2 sensor.
  */

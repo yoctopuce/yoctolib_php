@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_compass.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_compass.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YCompass, the high-level API for Compass functions
  *
@@ -45,7 +45,7 @@ if(!defined('Y_AXIS_X'))                     define('Y_AXIS_X',                 
 if(!defined('Y_AXIS_Y'))                     define('Y_AXIS_Y',                    1);
 if(!defined('Y_AXIS_Z'))                     define('Y_AXIS_Z',                    2);
 if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',              -1);
-if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_MAGNETICHEADING_INVALID'))    define('Y_MAGNETICHEADING_INVALID',   YAPI_INVALID_DOUBLE);
 //--- (end of YCompass definitions)
     #--- (YCompass yapiwrapper)
@@ -55,19 +55,14 @@ if(!defined('Y_MAGNETICHEADING_INVALID'))    define('Y_MAGNETICHEADING_INVALID',
 /**
  * YCompass Class: Compass function interface
  *
- * The YSensor class is the parent class for all Yoctopuce sensors. It can be
- * used to read the current value and unit of any sensor, read the min/max
- * value, configure autonomous recording frequency and access recorded data.
- * It also provide a function to register a callback invoked each time the
- * observed value changes, or at a predefined interval. Using this class rather
- * than a specific subclass makes it possible to create generic applications
- * that work with any Yoctopuce sensor, even those that do not yet exist.
- * Note: The YAnButton class is the only analog input which does not inherit
- * from YSensor.
+ * The YCompass class allows you to read and configure Yoctopuce compass
+ * sensors, for instance using a Yocto-3D-V2. It inherits from YSensor class the core functions to
+ * read measurements,
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YCompass extends YSensor
 {
-    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
+    const BANDWIDTH_INVALID              = YAPI_INVALID_UINT;
     const AXIS_X                         = 0;
     const AXIS_Y                         = 1;
     const AXIS_Z                         = 2;
@@ -76,7 +71,7 @@ class YCompass extends YSensor
     //--- (end of YCompass declaration)
 
     //--- (YCompass attributes)
-    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // UInt31
     protected $_axis                     = Y_AXIS_INVALID;               // Axis
     protected $_magneticHeading          = Y_MAGNETICHEADING_INVALID;    // MeasureVal
     //--- (end of YCompass attributes)
@@ -201,7 +196,8 @@ class YCompass extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the compass
+     * @param string $func : a string that uniquely characterizes the compass, for instance
+     *         Y3DMK002.compass.
      *
      * @return YCompass : a YCompass object allowing you to drive the compass.
      */
@@ -290,7 +286,8 @@ class YCompass extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the compass
+ * @param string $func : a string that uniquely characterizes the compass, for instance
+ *         Y3DMK002.compass.
  *
  * @return YCompass : a YCompass object allowing you to drive the compass.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 33716 2018-12-14 14:21:46Z seb $
+ *  $Id: yocto_voltageoutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_VOLTAGEATSTARTUP_INVALID'))   define('Y_VOLTAGEATSTARTUP_INVALID'
 /**
  * YVoltageOutput Class: VoltageOutput function interface
  *
- * The Yoctopuce application programming interface allows you to change the value of the voltage output.
+ * The YVoltageOutput class allows you to drive a voltage output, for instance using a Yocto-0-10V-Tx.
  */
 class YVoltageOutput extends YFunction
 {
@@ -204,7 +204,8 @@ class YVoltageOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the voltage output
+     * @param string $func : a string that uniquely characterizes the voltage output, for instance
+     *         TX010V01.voltageOutput1.
      *
      * @return YVoltageOutput : a YVoltageOutput object allowing you to drive the voltage output.
      */
@@ -323,7 +324,8 @@ class YVoltageOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the voltage output
+ * @param string $func : a string that uniquely characterizes the voltage output, for instance
+ *         TX010V01.voltageOutput1.
  *
  * @return YVoltageOutput : a YVoltageOutput object allowing you to drive the voltage output.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 36554 2019-07-29 12:21:31Z mvuilleu $
+ *  $Id: yocto_buzzer.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -55,8 +55,8 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YBuzzer Class: Buzzer function interface
  *
- * The Yoctopuce application programming interface allows you to
- * choose the frequency and volume at which the buzzer must sound.
+ * The YBuzzer class allows you to drive a buzzer, for instance using a Yocto-Buzzer. You can
+ * choose the frequency and the volume at which the buzzer must sound.
  * You can also pre-program a play sequence.
  */
 class YBuzzer extends YFunction
@@ -285,7 +285,8 @@ class YBuzzer extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the buzzer
+     * @param string $func : a string that uniquely characterizes the buzzer, for instance
+     *         YBUZZER2.buzzer.
      *
      * @return YBuzzer : a YBuzzer object allowing you to drive the buzzer.
      */
@@ -743,7 +744,8 @@ class YBuzzer extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the buzzer
+ * @param string $func : a string that uniquely characterizes the buzzer, for instance
+ *         YBUZZER2.buzzer.
  *
  * @return YBuzzer : a YBuzzer object allowing you to drive the buzzer.
  */

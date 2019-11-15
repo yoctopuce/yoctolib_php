@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 37692 2019-10-14 14:58:03Z seb $
+ * $Id: yocto_api.php 38137 2019-11-14 10:23:36Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3144,7 +3144,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.37780";
+        return "1.10.38155";
     }
 
     /**
@@ -5482,7 +5482,7 @@ class YDataSet
 class YConsolidatedDataSet
 {
     //--- (end of generated code: YConsolidatedDataSet declaration)
- 
+
     //--- (generated code: YConsolidatedDataSet attributes)
     protected $_start                    = 0;                            // float
     protected $_end                      = 0;                            // float
@@ -5498,12 +5498,12 @@ class YConsolidatedDataSet
     {
         //--- (generated code: YConsolidatedDataSet constructor)
         //--- (end of generated code: YConsolidatedDataSet constructor)
-        $this->_init($float_startTime, $float_endTime, $obj_sensorList);
+        $this->imm_init($float_startTime, $float_endTime, $obj_sensorList);
     }
 
     //--- (generated code: YConsolidatedDataSet implementation)
 
-    public function _init($startt,$endt,$sensorList)
+    public function imm_init($startt,$endt,$sensorList)
     {
         $this->_start = $startt;
         $this->_end = $endt;
@@ -5804,7 +5804,8 @@ class YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the function
+     * @param string $func : a string that uniquely characterizes the function, for instance
+     *         MyDevice..
      *
      * @return YFunction : a YFunction object allowing you to drive the function.
      */
@@ -6595,7 +6596,7 @@ class YFunction
 /**
  * YSensor Class: Sensor function interface
  *
- * The YSensor class is the parent class for all Yoctopuce sensors. It can be
+ * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max
  * value, configure autonomous recording frequency and access recorded data.
  * It also provide a function to register a callback invoked each time the
@@ -7080,7 +7081,8 @@ class YSensor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the sensor
+     * @param string $func : a string that uniquely characterizes the sensor, for instance
+     *         MyDevice..
      *
      * @return YSensor : a YSensor object allowing you to drive the sensor.
      */
@@ -7699,7 +7701,7 @@ class YSensor extends YFunction
 /**
  * YModule Class: Module control interface
  *
- * This interface is identical for all Yoctopuce USB modules.
+ * The YModule class can be used with all Yoctopuce USB devices.
  * It can be used to control the module global parameters, and
  * to enumerate the functions provided by each module.
  */
@@ -9970,7 +9972,8 @@ yRegisterCalibrationHandler(YOCTO_CALIB_TYPE_OFS, 'yLinearCalibrationHandler');
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the function
+ * @param string $func : a string that uniquely characterizes the function, for instance
+ *         MyDevice..
  *
  * @return YFunction : a YFunction object allowing you to drive the function.
  */
@@ -10015,7 +10018,8 @@ function yFirstFunction()
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the sensor
+ * @param string $func : a string that uniquely characterizes the sensor, for instance
+ *         MyDevice..
  *
  * @return YSensor : a YSensor object allowing you to drive the sensor.
  */
@@ -10110,9 +10114,11 @@ if(!defined('Y_USAGE_INVALID'))              define('Y_USAGE_INVALID',          
 /**
  * YDataLogger Class: DataLogger function interface
  *
- * Yoctopuce sensors include a non-volatile memory capable of storing ongoing measured
- * data automatically, without requiring a permanent connection to a computer.
- * The DataLogger function controls the global parameters of the internal data
+ * A non-volatile memory for storing ongoing measured data is available on most Yoctopuce
+ * sensors, for instance using a Yocto-Light-V3, a Yocto-Meteo-V2, a Yocto-Watt or a Yocto-3D-V2.
+ * Recording can happen automatically, without requiring a permanent
+ * connection to a computer.
+ * The YDataLogger class controls the global parameters of the internal data
  * logger. Recording control (start/stop) as well as data retreival is done at
  * sensor objects level.
  */
@@ -10446,7 +10452,8 @@ class YDataLogger extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the data logger
+     * @param string $func : a string that uniquely characterizes the data logger, for instance
+     *         LIGHTMK3.dataLogger.
      *
      * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
      */
@@ -10604,7 +10611,8 @@ class YDataLogger extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the data logger
+ * @param string $func : a string that uniquely characterizes the data logger, for instance
+ *         LIGHTMK3.dataLogger.
  *
  * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
  */

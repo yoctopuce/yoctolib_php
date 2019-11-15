@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_quadraturedecoder.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -53,8 +53,9 @@ if(!defined('Y_SPEED_INVALID'))              define('Y_SPEED_INVALID',          
 /**
  * YQuadratureDecoder Class: QuadratureDecoder function interface
  *
- * The class YQuadratureDecoder allows you to decode a two-wire signal produced by a
- * quadrature encoder. It inherits from YSensor class the core functions to read measurements,
+ * The YQuadratureDecoder class allows you to decode a two-wire signal produced by a
+ * quadrature encoder, for instance using a Yocto-PWM-Rx. It inherits from YSensor class the core
+ * functions to read measurements,
  * to register callback functions, to access the autonomous datalogger.
  */
 class YQuadratureDecoder extends YSensor
@@ -191,7 +192,8 @@ class YQuadratureDecoder extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the quadrature decoder
+     * @param string $func : a string that uniquely characterizes the quadrature decoder, for instance
+     *         YPWMRX01.quadratureDecoder.
      *
      * @return YQuadratureDecoder : a YQuadratureDecoder object allowing you to drive the quadrature decoder.
      */
@@ -280,7 +282,8 @@ class YQuadratureDecoder extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the quadrature decoder
+ * @param string $func : a string that uniquely characterizes the quadrature decoder, for instance
+ *         YPWMRX01.quadratureDecoder.
  *
  * @return YQuadratureDecoder : a YQuadratureDecoder object allowing you to drive the quadrature decoder.
  */

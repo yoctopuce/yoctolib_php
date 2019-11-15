@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_oscontrol.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -50,8 +50,8 @@ if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID'))  define('Y_SHUTDOWNCOUNTDOWN_INVALID
 /**
  * YOsControl Class: OS control
  *
- * The OScontrol object allows some control over the operating system running a VirtualHub.
- * OsControl is available on the VirtualHub software only. This feature must be activated at the VirtualHub
+ * The YOScontrol class provides some control over the operating system running a VirtualHub.
+ * YOsControl is available on VirtualHub software only. This feature must be activated at the VirtualHub
  * start up with -o option.
  */
 class YOsControl extends YFunction
@@ -135,7 +135,8 @@ class YOsControl extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the OS control
+     * @param string $func : a string that uniquely characterizes the OS control, for instance
+     *         MyDevice.osControl.
      *
      * @return YOsControl : a YOsControl object allowing you to drive the OS control.
      */
@@ -232,7 +233,8 @@ class YOsControl extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the OS control
+ * @param string $func : a string that uniquely characterizes the OS control, for instance
+ *         MyDevice.osControl.
  *
  * @return YOsControl : a YOsControl object allowing you to drive the OS control.
  */

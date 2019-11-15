@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 37000 2019-09-03 06:40:17Z mvuilleu $
+ *  $Id: yocto_realtimeclock.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -55,7 +55,9 @@ if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',      
 /**
  * YRealTimeClock Class: Real Time Clock function interface
  *
- * The RealTimeClock function maintains and provides current date and time, even accross power cut
+ * The YRealTimeClock class provide access to the embedded real-time clock available on some Yoctopuce
+ * devices, for instance using a YoctoHub-Wireless-g, a YoctoHub-GSM-3G-NA, a YoctoHub-GSM-3G-EU or a
+ * YoctoHub-Wireless-SR. It can provide current date and time, even after a power outage
  * lasting several days. It is the base for automated wake-up functions provided by the WakeUpScheduler.
  * The current time may represent a local time as well as an UTC time, but no automatic time change
  * will occur to account for daylight saving time.
@@ -243,7 +245,8 @@ class YRealTimeClock extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the clock
+     * @param string $func : a string that uniquely characterizes the clock, for instance
+     *         YHUBWLN3.realTimeClock.
      *
      * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
      */
@@ -338,7 +341,8 @@ class YRealTimeClock extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the clock
+ * @param string $func : a string that uniquely characterizes the clock, for instance
+ *         YHUBWLN3.realTimeClock.
  *
  * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
  */

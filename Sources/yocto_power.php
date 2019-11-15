@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_power.php 32907 2018-11-02 10:18:55Z seb $
+ *  $Id: yocto_power.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YPower, the high-level API for Power functions
  *
@@ -52,8 +52,9 @@ if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',     
 /**
  * YPower Class: Power function interface
  *
- * The Yoctopuce class YPower allows you to read and configure Yoctopuce power
- * sensors. It inherits from YSensor class the core functions to read measurements,
+ * The YPower class allows you to read and configure Yoctopuce power
+ * sensors, for instance using a Yocto-Watt. It inherits from YSensor class the core functions to read
+ * measurements,
  * to register callback functions, to access the autonomous datalogger.
  * This class adds the ability to access the energy counter and the power factor.
  */
@@ -188,7 +189,8 @@ class YPower extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the electrical power sensor
+     * @param string $func : a string that uniquely characterizes the electrical power sensor, for instance
+     *         YWATTMK1.power.
      *
      * @return YPower : a YPower object allowing you to drive the electrical power sensor.
      */
@@ -289,7 +291,8 @@ class YPower extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the electrical power sensor
+ * @param string $func : a string that uniquely characterizes the electrical power sensor, for instance
+ *         YWATTMK1.power.
  *
  * @return YPower : a YPower object allowing you to drive the electrical power sensor.
  */

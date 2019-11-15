@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_accelerometer.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_accelerometer.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -44,7 +44,7 @@
 if(!defined('Y_GRAVITYCANCELLATION_OFF'))    define('Y_GRAVITYCANCELLATION_OFF',   0);
 if(!defined('Y_GRAVITYCANCELLATION_ON'))     define('Y_GRAVITYCANCELLATION_ON',    1);
 if(!defined('Y_GRAVITYCANCELLATION_INVALID')) define('Y_GRAVITYCANCELLATION_INVALID', -1);
-if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_UINT);
 if(!defined('Y_XVALUE_INVALID'))             define('Y_XVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_YVALUE_INVALID'))             define('Y_YVALUE_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',            YAPI_INVALID_DOUBLE);
@@ -56,19 +56,14 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
 /**
  * YAccelerometer Class: Accelerometer function interface
  *
- * The YSensor class is the parent class for all Yoctopuce sensors. It can be
- * used to read the current value and unit of any sensor, read the min/max
- * value, configure autonomous recording frequency and access recorded data.
- * It also provide a function to register a callback invoked each time the
- * observed value changes, or at a predefined interval. Using this class rather
- * than a specific subclass makes it possible to create generic applications
- * that work with any Yoctopuce sensor, even those that do not yet exist.
- * Note: The YAnButton class is the only analog input which does not inherit
- * from YSensor.
+ * The YAccelerometer class allows you to read and configure Yoctopuce acceleration
+ * sensors, for instance using a Yocto-3D-V2. It inherits from YSensor class the core functions to
+ * read measurements,
+ * to register callback functions, to access the autonomous datalogger.
  */
 class YAccelerometer extends YSensor
 {
-    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
+    const BANDWIDTH_INVALID              = YAPI_INVALID_UINT;
     const XVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const YVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
     const ZVALUE_INVALID                 = YAPI_INVALID_DOUBLE;
@@ -78,7 +73,7 @@ class YAccelerometer extends YSensor
     //--- (end of YAccelerometer declaration)
 
     //--- (YAccelerometer attributes)
-    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // UInt31
     protected $_xValue                   = Y_XVALUE_INVALID;             // MeasureVal
     protected $_yValue                   = Y_YVALUE_INVALID;             // MeasureVal
     protected $_zValue                   = Y_ZVALUE_INVALID;             // MeasureVal
@@ -257,7 +252,8 @@ class YAccelerometer extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the accelerometer
+     * @param string $func : a string that uniquely characterizes the accelerometer, for instance
+     *         Y3DMK002.accelerometer.
      *
      * @return YAccelerometer : a YAccelerometer object allowing you to drive the accelerometer.
      */
@@ -355,7 +351,8 @@ class YAccelerometer extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the accelerometer
+ * @param string $func : a string that uniquely characterizes the accelerometer, for instance
+ *         Y3DMK002.accelerometer.
  *
  * @return YAccelerometer : a YAccelerometer object allowing you to drive the accelerometer.
  */

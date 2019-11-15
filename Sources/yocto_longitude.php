@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_longitude.php 33716 2018-12-14 14:21:46Z seb $
+ *  $Id: yocto_longitude.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YLongitude, the high-level API for Longitude functions
  *
@@ -49,8 +49,8 @@
 /**
  * YLongitude Class: Longitude function interface
  *
- * The Yoctopuce class YLongitude allows you to read the longitude from Yoctopuce
- * geolocation sensors. It inherits from the YSensor class the core functions to
+ * The YLongitude class allows you to read the longitude from Yoctopuce
+ * geolocation sensors, for instance using a Yocto-GPS. It inherits from the YSensor class the core functions to
  * read measurements, register callback functions, access the autonomous
  * datalogger.
  */
@@ -95,7 +95,8 @@ class YLongitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the longitude sensor
+     * @param string $func : a string that uniquely characterizes the longitude sensor, for instance
+     *         YGNSSMK1.longitude.
      *
      * @return YLongitude : a YLongitude object allowing you to drive the longitude sensor.
      */
@@ -172,7 +173,8 @@ class YLongitude extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the longitude sensor
+ * @param string $func : a string that uniquely characterizes the longitude sensor, for instance
+ *         YGNSSMK1.longitude.
  *
  * @return YLongitude : a YLongitude object allowing you to drive the longitude sensor.
  */

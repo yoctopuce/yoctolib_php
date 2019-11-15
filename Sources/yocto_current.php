@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_current.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_current.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YCurrent, the high-level API for Current functions
  *
@@ -52,8 +52,9 @@ if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',        
 /**
  * YCurrent Class: Current function interface
  *
- * The Yoctopuce class YCurrent allows you to read and configure Yoctopuce current
- * sensors. It inherits from YSensor class the core functions to read measurements,
+ * The YCurrent class allows you to read and configure Yoctopuce current
+ * sensors, for instance using a Yocto-Watt, a Yocto-Amp or a Yocto-Motor-DC. It inherits from YSensor
+ * class the core functions to read measurements,
  * to register callback functions, to access the autonomous datalogger.
  */
 class YCurrent extends YSensor
@@ -151,7 +152,8 @@ class YCurrent extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the current sensor
+     * @param string $func : a string that uniquely characterizes the current sensor, for instance
+     *         YWATTMK1.current1.
      *
      * @return YCurrent : a YCurrent object allowing you to drive the current sensor.
      */
@@ -234,7 +236,8 @@ class YCurrent extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the current sensor
+ * @param string $func : a string that uniquely characterizes the current sensor, for instance
+ *         YWATTMK1.current1.
  *
  * @return YCurrent : a YCurrent object allowing you to drive the current sensor.
  */

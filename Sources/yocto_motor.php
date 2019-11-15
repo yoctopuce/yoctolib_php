@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_motor.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_motor.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YMotor, the high-level API for Motor functions
  *
@@ -53,9 +53,9 @@ if(!defined('Y_MOTORSTATUS_INVALID'))        define('Y_MOTORSTATUS_INVALID',    
 if(!defined('Y_DRIVINGFORCE_INVALID'))       define('Y_DRIVINGFORCE_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_BRAKINGFORCE_INVALID'))       define('Y_BRAKINGFORCE_INVALID',      YAPI_INVALID_DOUBLE);
 if(!defined('Y_CUTOFFVOLTAGE_INVALID'))      define('Y_CUTOFFVOLTAGE_INVALID',     YAPI_INVALID_DOUBLE);
-if(!defined('Y_OVERCURRENTLIMIT_INVALID'))   define('Y_OVERCURRENTLIMIT_INVALID',  YAPI_INVALID_INT);
+if(!defined('Y_OVERCURRENTLIMIT_INVALID'))   define('Y_OVERCURRENTLIMIT_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_FREQUENCY_INVALID'))          define('Y_FREQUENCY_INVALID',         YAPI_INVALID_DOUBLE);
-if(!defined('Y_STARTERTIME_INVALID'))        define('Y_STARTERTIME_INVALID',       YAPI_INVALID_INT);
+if(!defined('Y_STARTERTIME_INVALID'))        define('Y_STARTERTIME_INVALID',       YAPI_INVALID_UINT);
 if(!defined('Y_FAILSAFETIMEOUT_INVALID'))    define('Y_FAILSAFETIMEOUT_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YMotor definitions)
@@ -66,7 +66,8 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 /**
  * YMotor Class: Motor function interface
  *
- * Yoctopuce application programming interface allows you to drive the
+ * The YMotor class allows you to drive a DC motor, for instance using a Yocto-Motor-DC. It can be
+ * used to configure the
  * power sent to the motor to make it turn both ways, but also to drive accelerations
  * and decelerations. The motor will then accelerate automatically: you will not
  * have to monitor it. The API also allows to slow down the motor by shortening
@@ -86,9 +87,9 @@ class YMotor extends YFunction
     const DRIVINGFORCE_INVALID           = YAPI_INVALID_DOUBLE;
     const BRAKINGFORCE_INVALID           = YAPI_INVALID_DOUBLE;
     const CUTOFFVOLTAGE_INVALID          = YAPI_INVALID_DOUBLE;
-    const OVERCURRENTLIMIT_INVALID       = YAPI_INVALID_INT;
+    const OVERCURRENTLIMIT_INVALID       = YAPI_INVALID_UINT;
     const FREQUENCY_INVALID              = YAPI_INVALID_DOUBLE;
-    const STARTERTIME_INVALID            = YAPI_INVALID_INT;
+    const STARTERTIME_INVALID            = YAPI_INVALID_UINT;
     const FAILSAFETIMEOUT_INVALID        = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YMotor declaration)
@@ -98,9 +99,9 @@ class YMotor extends YFunction
     protected $_drivingForce             = Y_DRIVINGFORCE_INVALID;       // MeasureVal
     protected $_brakingForce             = Y_BRAKINGFORCE_INVALID;       // MeasureVal
     protected $_cutOffVoltage            = Y_CUTOFFVOLTAGE_INVALID;      // MeasureVal
-    protected $_overCurrentLimit         = Y_OVERCURRENTLIMIT_INVALID;   // Int
+    protected $_overCurrentLimit         = Y_OVERCURRENTLIMIT_INVALID;   // UInt31
     protected $_frequency                = Y_FREQUENCY_INVALID;          // MeasureVal
-    protected $_starterTime              = Y_STARTERTIME_INVALID;        // Int
+    protected $_starterTime              = Y_STARTERTIME_INVALID;        // UInt31
     protected $_failSafeTimeout          = Y_FAILSAFETIMEOUT_INVALID;    // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YMotor attributes)
@@ -311,6 +312,16 @@ class YMotor extends YFunction
         return $res;
     }
 
+    /**
+     * Returns the current threshold (in mA) above which the controller automatically
+     * switches to error state. A zero value means that there is no limit.
+     *
+     * @return integer : an integer corresponding to the current threshold (in mA) above which the
+     * controller automatically
+     *         switches to error state
+     *
+     * On failure, throws an exception or returns Y_OVERCURRENTLIMIT_INVALID.
+     */
     public function get_overCurrentLimit()
     {
         // $res                    is a int;
@@ -510,7 +521,8 @@ class YMotor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the motor
+     * @param string $func : a string that uniquely characterizes the motor, for instance
+     *         MOTORCTL.motor.
      *
      * @return YMotor : a YMotor object allowing you to drive the motor.
      */
@@ -691,7 +703,8 @@ class YMotor extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the motor
+ * @param string $func : a string that uniquely characterizes the motor, for instance
+ *         MOTORCTL.motor.
  *
  * @return YMotor : a YMotor object allowing you to drive the motor.
  */

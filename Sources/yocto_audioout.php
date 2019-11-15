@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioout.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_audioout.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -56,7 +56,7 @@ if(!defined('Y_NOSIGNALFOR_INVALID'))        define('Y_NOSIGNALFOR_INVALID',    
 /**
  * YAudioOut Class: AudioOut function interface
  *
- * The Yoctopuce application programming interface allows you to configure the volume of the outout.
+ * The YAudioOut class allows you to configure the volume of an audio outout.
  */
 class YAudioOut extends YFunction
 {
@@ -264,7 +264,8 @@ class YAudioOut extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the audio output
+     * @param string $func : a string that uniquely characterizes the audio output, for instance
+     *         MyDevice.audioOut1.
      *
      * @return YAudioOut : a YAudioOut object allowing you to drive the audio output.
      */
@@ -362,7 +363,8 @@ class YAudioOut extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the audio output
+ * @param string $func : a string that uniquely characterizes the audio output, for instance
+ *         MyDevice.audioOut1.
  *
  * @return YAudioOut : a YAudioOut object allowing you to drive the audio output.
  */

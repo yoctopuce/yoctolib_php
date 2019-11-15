@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_bluetoothlink.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_bluetoothlink.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YBluetoothLink, the high-level API for BluetoothLink functions
  *
@@ -456,7 +456,8 @@ class YBluetoothLink extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the cellular interface
+     * @param string $func : a string that uniquely characterizes the cellular interface, for instance
+     *         MyDevice.bluetoothLink1.
      *
      * @return YBluetoothLink : a YBluetoothLink object allowing you to drive the cellular interface.
      */
@@ -605,7 +606,8 @@ class YBluetoothLink extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the cellular interface
+ * @param string $func : a string that uniquely characterizes the cellular interface, for instance
+ *         MyDevice.bluetoothLink1.
  *
  * @return YBluetoothLink : a YBluetoothLink object allowing you to drive the cellular interface.
  */

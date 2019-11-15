@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 37619 2019-10-11 11:52:42Z mvuilleu $
+ *  $Id: yocto_tilt.php 38030 2019-11-04 17:56:01Z mvuilleu $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *
@@ -45,7 +45,7 @@ if(!defined('Y_AXIS_X'))                     define('Y_AXIS_X',                 
 if(!defined('Y_AXIS_Y'))                     define('Y_AXIS_Y',                    1);
 if(!defined('Y_AXIS_Z'))                     define('Y_AXIS_Z',                    2);
 if(!defined('Y_AXIS_INVALID'))               define('Y_AXIS_INVALID',              -1);
-if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_INT);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_UINT);
 //--- (end of YTilt definitions)
     #--- (YTilt yapiwrapper)
    #--- (end of YTilt yapiwrapper)
@@ -54,7 +54,7 @@ if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',      
 /**
  * YTilt Class: Tilt function interface
  *
- * The YSensor class is the parent class for all Yoctopuce sensors. It can be
+ * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max
  * value, configure autonomous recording frequency and access recorded data.
  * It also provide a function to register a callback invoked each time the
@@ -66,7 +66,7 @@ if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',      
  */
 class YTilt extends YSensor
 {
-    const BANDWIDTH_INVALID              = YAPI_INVALID_INT;
+    const BANDWIDTH_INVALID              = YAPI_INVALID_UINT;
     const AXIS_X                         = 0;
     const AXIS_Y                         = 1;
     const AXIS_Z                         = 2;
@@ -74,7 +74,7 @@ class YTilt extends YSensor
     //--- (end of YTilt declaration)
 
     //--- (YTilt attributes)
-    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // Int
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // UInt31
     protected $_axis                     = Y_AXIS_INVALID;               // Axis
     //--- (end of YTilt attributes)
 
@@ -175,7 +175,8 @@ class YTilt extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the tilt sensor
+     * @param string $func : a string that uniquely characterizes the tilt sensor, for instance
+     *         Y3DMK002.tilt1.
      *
      * @return YTilt : a YTilt object allowing you to drive the tilt sensor.
      */
@@ -261,7 +262,8 @@ class YTilt extends YSensor
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the tilt sensor
+ * @param string $func : a string that uniquely characterizes the tilt sensor, for instance
+ *         Y3DMK002.tilt1.
  *
  * @return YTilt : a YTilt object allowing you to drive the tilt sensor.
  */

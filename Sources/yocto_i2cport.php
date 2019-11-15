@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 37168 2019-09-13 17:25:10Z mvuilleu $
+ *  $Id: yocto_i2cport.php 37827 2019-10-25 13:07:48Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -64,8 +64,8 @@ if(!defined('Y_I2CMODE_INVALID'))            define('Y_I2CMODE_INVALID',        
 /**
  * YI2cPort Class: I2C Port function interface
  *
- * The I2cPort function interface allows you to fully drive a Yoctopuce
- * I2C port, to send and receive data, and to configure communication
+ * The YI2cPort classe allows you to fully drive a Yoctopuce I2C port, for instance using a Yocto-I2C.
+ * It can be used to send and receive data, and to configure communication
  * parameters (baud rate, etc).
  * Note that Yoctopuce I2C ports are not exposed as virtual COM ports.
  * They are meant to be used in the same way as all Yoctopuce devices.
@@ -515,7 +515,8 @@ class YI2cPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the I2C port
+     * @param string $func : a string that uniquely characterizes the I2C port, for instance
+     *         YI2CMK01.i2cPort.
      *
      * @return YI2cPort : a YI2cPort object allowing you to drive the I2C port.
      */
@@ -1220,7 +1221,8 @@ class YI2cPort extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the I2C port
+ * @param string $func : a string that uniquely characterizes the I2C port, for instance
+ *         YI2CMK01.i2cPort.
  *
  * @return YI2cPort : a YI2cPort object allowing you to drive the I2C port.
  */
