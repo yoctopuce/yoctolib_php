@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_oscontrol.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -48,7 +48,7 @@ if(!defined('Y_SHUTDOWNCOUNTDOWN_INVALID'))  define('Y_SHUTDOWNCOUNTDOWN_INVALID
 
 //--- (YOsControl declaration)
 /**
- * YOsControl Class: OS control
+ * YOsControl Class: Operating system control interface via the VirtualHub application
  *
  * The YOScontrol class provides some control over the operating system running a VirtualHub.
  * YOsControl is available on VirtualHub software only. This feature must be activated at the VirtualHub

@@ -2,13 +2,13 @@
     include('../../Sources/yocto_api.php');
 
     // Setup the API to use the VirtualHub on local machine
-    if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+    if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
         die("Cannot contact VirtualHub on 127.0.0.1");
     }
 
     // Enumerate all connected sensors
     $sensorList = [];
-    $sensor = yFirstSensor();
+    $sensor = YSensor::FirstSensor();
     while(!is_null($sensor)) {
         $sensorList[] = $sensor;
         $sensor = $sensor->nextSensor();

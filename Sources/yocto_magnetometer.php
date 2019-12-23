@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 38030 2019-11-04 17:56:01Z mvuilleu $
+ *  $Id: yocto_magnetometer.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -51,7 +51,7 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
 
 //--- (YMagnetometer declaration)
 /**
- * YMagnetometer Class: Magnetometer function interface
+ * YMagnetometer Class: magnetometer control interface, available for instance in the Yocto-3D-V2
  *
  * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max

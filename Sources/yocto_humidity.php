@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_humidity.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_humidity.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YHumidity, the high-level API for Humidity functions
  *
@@ -49,12 +49,12 @@ if(!defined('Y_ABSHUM_INVALID'))             define('Y_ABSHUM_INVALID',         
 
 //--- (YHumidity declaration)
 /**
- * YHumidity Class: Humidity function interface
+ * YHumidity Class: humidity sensor control interface, available for instance in the Yocto-CO2-V2, the
+ * Yocto-Meteo-V2 or the Yocto-VOC-V3
  *
- * The YHumidity class allows you to read and configure Yoctopuce humidity
- * sensors, for instance using a Yocto-Meteo-V2, a Yocto-VOC-V3 or a Yocto-CO2-V2. It inherits from
- * YSensor class the core functions to read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YHumidity class allows you to read and configure Yoctopuce humidity sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  */
 class YHumidity extends YSensor
 {
@@ -175,7 +175,7 @@ class YHumidity extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the humidity sensor, for instance
-     *         METEOMK2.humidity.
+     *         YCO2MK02.humidity.
      *
      * @return YHumidity : a YHumidity object allowing you to drive the humidity sensor.
      */
@@ -262,7 +262,7 @@ class YHumidity extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the humidity sensor, for instance
- *         METEOMK2.humidity.
+ *         YCO2MK02.humidity.
  *
  * @return YHumidity : a YHumidity object allowing you to drive the humidity sensor.
  */

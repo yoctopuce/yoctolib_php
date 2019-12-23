@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_relay.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_relay.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YRelay, the high-level API for Relay functions
  *
@@ -62,12 +62,12 @@ if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',      
 
 //--- (YRelay declaration)
 /**
- * YRelay Class: Relay function interface
+ * YRelay Class: relay control interface, available for instance in the Yocto-MaxiCoupler-V2, the
+ * Yocto-MaxiPowerRelay, the Yocto-PowerRelay-V3 or the Yocto-Relay
  *
- * The YRelay class allows you to drive a Yoctopuce Relay, for instance using a Yocto-PowerRelay-V3, a
- * Yocto-Relay, a Yocto-MaxiPowerRelay or a Yocto-MaxiCoupler-V2.
- * It can be used to simply switch the relay, but also to automatically generate short pulses of
- * determined duration.
+ * The YRelay class allows you to drive a Yoctopuce relay or optocoupled output.
+ * It can be used to simply switch the output on or off, but also to automatically generate short
+ * pulses of determined duration.
  * On devices with two output for each relay (double throw), the two outputs are named A and B,
  * with output A corresponding to the idle position (normally closed) and the output B corresponding to the
  * active state (normally open).
@@ -182,12 +182,12 @@ class YRelay extends YFunction
     }
 
     /**
-     * Returns the state of the relays at device startup (A for the idle position, B for the active
-     * position, UNCHANGED for no change).
+     * Returns the state of the relays at device startup (A for the idle position,
+     * B for the active position, UNCHANGED to leave the relay state as is).
      *
      * @return integer : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and
-     * Y_STATEATPOWERON_B corresponding to the state of the relays at device startup (A for the idle
-     * position, B for the active position, UNCHANGED for no change)
+     * Y_STATEATPOWERON_B corresponding to the state of the relays at device startup (A for the idle position,
+     *         B for the active position, UNCHANGED to leave the relay state as is)
      *
      * On failure, throws an exception or returns Y_STATEATPOWERON_INVALID.
      */
@@ -205,13 +205,13 @@ class YRelay extends YFunction
 
     /**
      * Changes the state of the relays at device startup (A for the idle position,
-     * B for the active position, UNCHANGED for no modification).
+     * B for the active position, UNCHANGED to leave the relay state as is).
      * Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
      * @param integer $newval : a value among Y_STATEATPOWERON_UNCHANGED, Y_STATEATPOWERON_A and
      * Y_STATEATPOWERON_B corresponding to the state of the relays at device startup (A for the idle position,
-     *         B for the active position, UNCHANGED for no modification)
+     *         B for the active position, UNCHANGED to leave the relay state as is)
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -224,10 +224,10 @@ class YRelay extends YFunction
     }
 
     /**
-     * Returns the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state
+     * Returns the maximum time (ms) allowed for the relay to stay in state
      * A before automatically switching back in to B state. Zero means no time limit.
      *
-     * @return integer : an integer corresponding to the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state
+     * @return integer : an integer corresponding to the maximum time (ms) allowed for the relay to stay in state
      *         A before automatically switching back in to B state
      *
      * On failure, throws an exception or returns Y_MAXTIMEONSTATEA_INVALID.
@@ -245,13 +245,13 @@ class YRelay extends YFunction
     }
 
     /**
-     * Changes the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state A
+     * Changes the maximum time (ms) allowed for the relay to stay in state A
      * before automatically switching back in to B state. Use zero for no time limit.
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : an integer corresponding to the maximum time (ms) allowed for
-     * $THEFUNCTIONS$ to stay in state A
+     * @param integer $newval : an integer corresponding to the maximum time (ms) allowed for the relay to
+     * stay in state A
      *         before automatically switching back in to B state
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
@@ -265,7 +265,7 @@ class YRelay extends YFunction
     }
 
     /**
-     * Retourne the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B
+     * Retourne the maximum time (ms) allowed for the relay to stay in state B
      * before automatically switching back in to A state. Zero means no time limit.
      *
      * @return integer : an integer
@@ -285,13 +285,13 @@ class YRelay extends YFunction
     }
 
     /**
-     * Changes the maximum time (ms) allowed for $THEFUNCTIONS$ to stay in state B before
+     * Changes the maximum time (ms) allowed for the relay to stay in state B before
      * automatically switching back in to A state. Use zero for no time limit.
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : an integer corresponding to the maximum time (ms) allowed for
-     * $THEFUNCTIONS$ to stay in state B before
+     * @param integer $newval : an integer corresponding to the maximum time (ms) allowed for the relay to
+     * stay in state B before
      *         automatically switching back in to A state
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
@@ -464,7 +464,7 @@ class YRelay extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the relay, for instance
-     *         RELAYHI3.relay1.
+     *         MXCOUPL2.relay1.
      *
      * @return YRelay : a YRelay object allowing you to drive the relay.
      */
@@ -623,7 +623,7 @@ class YRelay extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the relay, for instance
- *         RELAYHI3.relay1.
+ *         MXCOUPL2.relay1.
  *
  * @return YRelay : a YRelay object allowing you to drive the relay.
  */

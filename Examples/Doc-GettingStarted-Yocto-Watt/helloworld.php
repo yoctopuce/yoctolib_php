@@ -8,23 +8,23 @@
   include('../../Sources/yocto_power.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $powersensor = yFindPower("$serial.Power");
+      $powersensor = YPower::FindPower("$serial.Power");
       if (!$powersensor->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $powersensor = yFirstPower();
+      $powersensor = YPower::FirstPower();
       if(is_null($powersensor)) {
           die("No module connected (check USB cable)");
       } else {
@@ -35,7 +35,7 @@
 
   $tvalue = $powersensor->get_currentValue();
   Print("Power: $tvalue W<br>");
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

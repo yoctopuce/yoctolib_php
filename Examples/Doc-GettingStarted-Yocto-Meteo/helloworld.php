@@ -10,23 +10,23 @@
   include('../../Sources/yocto_temperature.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $press = yFindPressure("$serial.pressure");
+      $press = YPressure::FindPressure("$serial.pressure");
       if (!$press->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $press = yFirstPressure();
+      $press = YPressure::FirstPressure();
       if(is_null($press)) {
           die("No module connected (check USB cable)");
       } else {
@@ -36,8 +36,8 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   // Get humidity and temperature as well
-  $hum  = yFindHumidity("$serial.humidity");
-  $temp = yFindTemperature("$serial.temperature");
+  $hum  = YHumidity::FindHumidity("$serial.humidity");
+  $temp = YTemperature::FindTemperature("$serial.temperature");
 
   $hvalue = $hum->get_currentValue();
   $pvalue = $press->get_currentValue();
@@ -45,7 +45,7 @@
   Print("Temperature: $tvalue °C<br>");
   Print("Humidity: $hvalue %RH<br>");
   Print("Pressure: $pvalue hPa<br>");
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

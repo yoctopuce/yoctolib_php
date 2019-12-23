@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_realtimeclock.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -53,11 +53,11 @@ if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',      
 
 //--- (YRealTimeClock declaration)
 /**
- * YRealTimeClock Class: Real Time Clock function interface
+ * YRealTimeClock Class: real-time clock control interface, available for instance in the
+ * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-SR or the YoctoHub-Wireless-g
  *
  * The YRealTimeClock class provide access to the embedded real-time clock available on some Yoctopuce
- * devices, for instance using a YoctoHub-Wireless-g, a YoctoHub-GSM-3G-NA, a YoctoHub-GSM-3G-EU or a
- * YoctoHub-Wireless-SR. It can provide current date and time, even after a power outage
+ * devices. It can provide current date and time, even after a power outage
  * lasting several days. It is the base for automated wake-up functions provided by the WakeUpScheduler.
  * The current time may represent a local time as well as an UTC time, but no automatic time change
  * will occur to account for daylight saving time.
@@ -223,7 +223,7 @@ class YRealTimeClock extends YFunction
     }
 
     /**
-     * Retrieves a clock for a given identifier.
+     * Retrieves a real-time clock for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -233,11 +233,11 @@ class YRealTimeClock extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the clock is online at the time
+     * This function does not require that the real-time clock is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YRealTimeClock.isOnline() to test if the clock is
+     * Use the method YRealTimeClock.isOnline() to test if the real-time clock is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a clock by logical name, no error is notified: the first instance
+     * a real-time clock by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -245,10 +245,10 @@ class YRealTimeClock extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the clock, for instance
-     *         YHUBWLN3.realTimeClock.
+     * @param string $func : a string that uniquely characterizes the real-time clock, for instance
+     *         YHUBGSM3.realTimeClock.
      *
-     * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
+     * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the real-time clock.
      */
     public static function FindRealTimeClock($func)
     {
@@ -280,14 +280,14 @@ class YRealTimeClock extends YFunction
     { return $this->get_timeSet(); }
 
     /**
-     * Continues the enumeration of clocks started using yFirstRealTimeClock().
-     * Caution: You can't make any assumption about the returned clocks order.
-     * If you want to find a specific a clock, use RealTimeClock.findRealTimeClock()
+     * Continues the enumeration of real-time clocks started using yFirstRealTimeClock().
+     * Caution: You can't make any assumption about the returned real-time clocks order.
+     * If you want to find a specific a real-time clock, use RealTimeClock.findRealTimeClock()
      * and a hardwareID or a logical name.
      *
      * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
-     *         a clock currently online, or a null pointer
-     *         if there are no more clocks to enumerate.
+     *         a real-time clock currently online, or a null pointer
+     *         if there are no more real-time clocks to enumerate.
      */
     public function nextRealTimeClock()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -298,12 +298,12 @@ class YRealTimeClock extends YFunction
     }
 
     /**
-     * Starts the enumeration of clocks currently accessible.
+     * Starts the enumeration of real-time clocks currently accessible.
      * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
-     * next clocks.
+     * next real-time clocks.
      *
      * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
-     *         the first clock currently online, or a null pointer
+     *         the first real-time clock currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstRealTimeClock()
@@ -319,7 +319,7 @@ class YRealTimeClock extends YFunction
 //--- (YRealTimeClock functions)
 
 /**
- * Retrieves a clock for a given identifier.
+ * Retrieves a real-time clock for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -329,11 +329,11 @@ class YRealTimeClock extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the clock is online at the time
+ * This function does not require that the real-time clock is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YRealTimeClock.isOnline() to test if the clock is
+ * Use the method YRealTimeClock.isOnline() to test if the real-time clock is
  * indeed online at a given time. In case of ambiguity when looking for
- * a clock by logical name, no error is notified: the first instance
+ * a real-time clock by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -341,10 +341,10 @@ class YRealTimeClock extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the clock, for instance
- *         YHUBWLN3.realTimeClock.
+ * @param string $func : a string that uniquely characterizes the real-time clock, for instance
+ *         YHUBGSM3.realTimeClock.
  *
- * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the clock.
+ * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the real-time clock.
  */
 function yFindRealTimeClock($func)
 {
@@ -352,12 +352,12 @@ function yFindRealTimeClock($func)
 }
 
 /**
- * Starts the enumeration of clocks currently accessible.
+ * Starts the enumeration of real-time clocks currently accessible.
  * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
- * next clocks.
+ * next real-time clocks.
  *
  * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
- *         the first clock currently online, or a null pointer
+ *         the first real-time clock currently online, or a null pointer
  *         if there are none.
  */
 function yFirstRealTimeClock()

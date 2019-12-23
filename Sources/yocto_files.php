@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ * $Id: yocto_files.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -51,7 +51,7 @@ if(!defined('Y_FREESPACE_INVALID'))          define('Y_FREESPACE_INVALID',      
 
 //--- (generated code: YFileRecord declaration)
 /**
- * YFileRecord Class: Description of a file on the device filesystem
+ * YFileRecord Class: Description of a file on the device filesystem, returned by files.get_list
  *
  * YFileRecord objects are used to describe a file that is stored on a Yoctopuce device.
  * These objects are used in particular in conjunction with the YFiles class.
@@ -120,11 +120,11 @@ class YFileRecord
 
 //--- (generated code: YFiles declaration)
 /**
- * YFiles Class: Files function interface
+ * YFiles Class: filesystem control interface, available for instance in the Yocto-Color-V2, the
+ * Yocto-RS232, the YoctoHub-Ethernet or the YoctoHub-Wireless-g
  *
  * The YFiles class is used to access the filesystem embedded on
- * some Yoctopuce devices, for instance using a YoctoHub-Ethernet, a Yocto-Color-V2, a
- * YoctoHub-Wireless-g or a Yocto-RS232. This filesystem makes it
+ * some Yoctopuce devices. This filesystem makes it
  * possible for instance to design a custom web UI
  * (for networked devices) or to add fonts (on display devices).
  */
@@ -225,7 +225,7 @@ class YFiles extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the filesystem, for instance
-     *         YHUBETH1.files.
+     *         YRGBLED2.files.
      *
      * @return YFiles : a YFiles object allowing you to drive the filesystem.
      */
@@ -439,7 +439,7 @@ class YFiles extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the filesystem, for instance
- *         YHUBETH1.files.
+ *         YRGBLED2.files.
  *
  * @return YFiles : a YFiles object allowing you to drive the filesystem.
  */

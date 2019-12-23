@@ -9,25 +9,25 @@
   include('../../Sources/yocto_relay.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $relay1 = yFindRelay("$serial.relay1");
-      $relay2 = yFindRelay("$serial.relay2");
+      $relay1 = YRelay::FindRelay("$serial.relay1");
+      $relay2 = YRelay::FindRelay("$serial.relay2");
       if (!$relay1->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
       // (note that the order of enumeration may vary)
-      $relay1 = yFirstRelay();
+      $relay1 = YRelay::FirstRelay();
       if(is_null($relay1)) {
           die("No module connected (check USB cable)");
       } else {
@@ -48,7 +48,7 @@
       if ($state=='A') $relay2->set_state(Y_STATE_A);
       if ($state=='B') $relay2->set_state(Y_STATE_B);
   }
-  yFreeAPI();
+  YAPI::FreeAPI();
 ?>
 Relay 1: <input type='radio' name='state1' value='A'>Output A
          <input type='radio' name='state1' value='B'>Output B<br>

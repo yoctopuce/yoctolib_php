@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_network.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -93,11 +93,11 @@ if(!defined('Y_POECURRENT_INVALID'))         define('Y_POECURRENT_INVALID',     
 
 //--- (YNetwork declaration)
 /**
- * YNetwork Class: Network function interface
+ * YNetwork Class: network interface control interface, available for instance in the
+ * YoctoHub-Ethernet, the YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA or the YoctoHub-Wireless-g
  *
  * YNetwork objects provide access to TCP/IP parameters of Yoctopuce
- * devices that include a built-in network interface, for instance using a YoctoHub-Ethernet, a
- * YoctoHub-Wireless-g, a YoctoHub-GSM-3G-NA or a YoctoHub-GSM-3G-EU.
+ * devices that include a built-in network interface.
  */
 class YNetwork extends YFunction
 {

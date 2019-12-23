@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_hubport.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_hubport.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YHubPort, the high-level API for HubPort functions
  *
@@ -57,11 +57,11 @@ if(!defined('Y_BAUDRATE_INVALID'))           define('Y_BAUDRATE_INVALID',       
 
 //--- (YHubPort declaration)
 /**
- * YHubPort Class: Yocto-hub port interface
+ * YHubPort Class: YoctoHub slave port control interface, available for instance in the
+ * YoctoHub-Ethernet, the YoctoHub-GSM-3G-NA, the YoctoHub-Shield or the YoctoHub-Wireless-g
  *
- * The YHubPort class provides control over the power supply for every port
- * on a YoctoHub, for instance using a YoctoHub-Ethernet, a YoctoHub-Wireless-g, a YoctoHub-Shield or
- * a YoctoHub-GSM-3G-NA. It provide information about the device connected to it.
+ * The YHubPort class provides control over the power supply for slave ports
+ * on a YoctoHub. It provide information about the device connected to it.
  * The logical name of a YHubPort is always automatically set to the
  * unique serial number of the Yoctopuce device connected to it.
  */
@@ -113,9 +113,9 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Returns true if the Yocto-hub port is powered, false otherwise.
+     * Returns true if the YoctoHub port is powered, false otherwise.
      *
-     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the Yocto-hub port
+     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the YoctoHub port
      * is powered, false otherwise
      *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
@@ -133,11 +133,11 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Changes the activation of the Yocto-hub port. If the port is enabled, the
+     * Changes the activation of the YoctoHub port. If the port is enabled, the
      * connected module is powered. Otherwise, port power is shut down.
      *
      * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation of
-     * the Yocto-hub port
+     * the YoctoHub port
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -150,10 +150,10 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Returns the current state of the Yocto-hub port.
+     * Returns the current state of the YoctoHub port.
      *
      * @return integer : a value among Y_PORTSTATE_OFF, Y_PORTSTATE_OVRLD, Y_PORTSTATE_ON, Y_PORTSTATE_RUN
-     * and Y_PORTSTATE_PROG corresponding to the current state of the Yocto-hub port
+     * and Y_PORTSTATE_PROG corresponding to the current state of the YoctoHub port
      *
      * On failure, throws an exception or returns Y_PORTSTATE_INVALID.
      */
@@ -170,11 +170,11 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Returns the current baud rate used by this Yocto-hub port, in kbps.
+     * Returns the current baud rate used by this YoctoHub port, in kbps.
      * The default value is 1000 kbps, but a slower rate may be used if communication
      * problems are encountered.
      *
-     * @return integer : an integer corresponding to the current baud rate used by this Yocto-hub port, in kbps
+     * @return integer : an integer corresponding to the current baud rate used by this YoctoHub port, in kbps
      *
      * On failure, throws an exception or returns Y_BAUDRATE_INVALID.
      */
@@ -191,7 +191,7 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Retrieves a Yocto-hub port for a given identifier.
+     * Retrieves a YoctoHub slave port for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -201,11 +201,11 @@ class YHubPort extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the Yocto-hub port is online at the time
+     * This function does not require that the YoctoHub slave port is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YHubPort.isOnline() to test if the Yocto-hub port is
+     * Use the method YHubPort.isOnline() to test if the YoctoHub slave port is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a Yocto-hub port by logical name, no error is notified: the first instance
+     * a YoctoHub slave port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -213,10 +213,10 @@ class YHubPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the Yocto-hub port, for instance
+     * @param string $func : a string that uniquely characterizes the YoctoHub slave port, for instance
      *         YHUBETH1.hubPort1.
      *
-     * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
+     * @return YHubPort : a YHubPort object allowing you to drive the YoctoHub slave port.
      */
     public static function FindHubPort($func)
     {
@@ -242,14 +242,14 @@ class YHubPort extends YFunction
     { return $this->get_baudRate(); }
 
     /**
-     * Continues the enumeration of Yocto-hub ports started using yFirstHubPort().
-     * Caution: You can't make any assumption about the returned Yocto-hub ports order.
-     * If you want to find a specific a Yocto-hub port, use HubPort.findHubPort()
+     * Continues the enumeration of YoctoHub slave ports started using yFirstHubPort().
+     * Caution: You can't make any assumption about the returned YoctoHub slave ports order.
+     * If you want to find a specific a YoctoHub slave port, use HubPort.findHubPort()
      * and a hardwareID or a logical name.
      *
      * @return YHubPort : a pointer to a YHubPort object, corresponding to
-     *         a Yocto-hub port currently online, or a null pointer
-     *         if there are no more Yocto-hub ports to enumerate.
+     *         a YoctoHub slave port currently online, or a null pointer
+     *         if there are no more YoctoHub slave ports to enumerate.
      */
     public function nextHubPort()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -260,12 +260,12 @@ class YHubPort extends YFunction
     }
 
     /**
-     * Starts the enumeration of Yocto-hub ports currently accessible.
+     * Starts the enumeration of YoctoHub slave ports currently accessible.
      * Use the method YHubPort.nextHubPort() to iterate on
-     * next Yocto-hub ports.
+     * next YoctoHub slave ports.
      *
      * @return YHubPort : a pointer to a YHubPort object, corresponding to
-     *         the first Yocto-hub port currently online, or a null pointer
+     *         the first YoctoHub slave port currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstHubPort()
@@ -281,7 +281,7 @@ class YHubPort extends YFunction
 //--- (YHubPort functions)
 
 /**
- * Retrieves a Yocto-hub port for a given identifier.
+ * Retrieves a YoctoHub slave port for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -291,11 +291,11 @@ class YHubPort extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the Yocto-hub port is online at the time
+ * This function does not require that the YoctoHub slave port is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YHubPort.isOnline() to test if the Yocto-hub port is
+ * Use the method YHubPort.isOnline() to test if the YoctoHub slave port is
  * indeed online at a given time. In case of ambiguity when looking for
- * a Yocto-hub port by logical name, no error is notified: the first instance
+ * a YoctoHub slave port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -303,10 +303,10 @@ class YHubPort extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the Yocto-hub port, for instance
+ * @param string $func : a string that uniquely characterizes the YoctoHub slave port, for instance
  *         YHUBETH1.hubPort1.
  *
- * @return YHubPort : a YHubPort object allowing you to drive the Yocto-hub port.
+ * @return YHubPort : a YHubPort object allowing you to drive the YoctoHub slave port.
  */
 function yFindHubPort($func)
 {
@@ -314,12 +314,12 @@ function yFindHubPort($func)
 }
 
 /**
- * Starts the enumeration of Yocto-hub ports currently accessible.
+ * Starts the enumeration of YoctoHub slave ports currently accessible.
  * Use the method YHubPort.nextHubPort() to iterate on
- * next Yocto-hub ports.
+ * next YoctoHub slave ports.
  *
  * @return YHubPort : a pointer to a YHubPort object, corresponding to
- *         the first Yocto-hub port currently online, or a null pointer
+ *         the first YoctoHub slave port currently online, or a null pointer
  *         if there are none.
  */
 function yFirstHubPort()

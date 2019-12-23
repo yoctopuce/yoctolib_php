@@ -4,17 +4,17 @@
  <STYLE type='text/css'>
   table td {white-space: nowrap;}
  </STYLE>
-</HEAD> 
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
     include('../../Sources/yocto_api.php');
 
     // Use explicit error handling rather than exceptions
-    yDisableExceptions();
+    YAPI::DisableExceptions();
 
     // Setup the API to use the VirtualHub on local machine
-    if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+    if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
         die("Cannot contact VirtualHub on 127.0.0.1");
     }
 
@@ -29,7 +29,7 @@
         $dataset->loadMore();
         $summary = $dataset->get_summary();
         Print("<table border=1>\n");
-        Printf("<td>%s</td><td>%s</td><td>%.3f</td><td>%.3f</td><td>%.3f</td><br>\n", 
+        Printf("<td>%s</td><td>%s</td><td>%.3f</td><td>%.3f</td><td>%.3f</td><br>\n",
                 date("Y-m-d H:i:s", $summary->get_startTimeUTC()),
                 date("Y-m-d H:i:s", $summary->get_endTimeUTC()),
                 $summary->get_minValue(),$summary->get_averageValue(),$summary->get_maxValue());
@@ -49,7 +49,7 @@
         Print("<table border=1>\n");
         Print("<tr><th>from</th><th>to</th><th>min</th><th>avg</th><th>max</th>\n");
         foreach($details as $measure) {
-            Printf("<tr><td>%s</td><td>%s</td><td>%.3f</td><td>%.3f</td><td>%.3f</td></tr>", 
+            Printf("<tr><td>%s</td><td>%s</td><td>%.3f</td><td>%.3f</td><td>%.3f</td></tr>",
                    date("Y-m-d H:i:s", $measure->get_startTimeUTC()),
                    date("Y-m-d H:i:s", $measure->get_endTimeUTC()),
                    $measure->get_minValue(),$measure->get_averageValue(),$measure->get_maxValue());
@@ -60,13 +60,13 @@
     @$hwid = $_GET['hwid'];
     if ($hwid != '') {
         // Check if a specified module is available online
-        $sensor = yFindSensor($hwid);
-        if (!$sensor->isOnline()) { 
+        $sensor = YSensor::FindSensor($hwid);
+        if (!$sensor->isOnline()) {
             die("Module not connected (check serial and USB cable)");
         }
     } else {
         // or use any connected module suitable for the demo
-        $sensor = yFirstSensor();
+        $sensor = YSensor::FirstSensor();
         if(is_null($sensor)) {
             die("No sensor connected (check USB cable and firmware version)");
         } else {
@@ -78,7 +78,7 @@
     Print("Sensor to use: <input name='hwid' value='$hwid' size='32'><br><br>");
 
     dumpSensor($sensor);
-?>  
+?>
 </FORM>
 </BODY>
-</HTML> 
+</HTML>

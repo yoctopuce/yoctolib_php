@@ -10,23 +10,23 @@
     include('../../Sources/yocto_led.php');
     include('../../Sources/yocto_anbutton.php');
     // Use explicit error handling rather than exceptions
-    yDisableExceptions();
+    YAPI::DisableExceptions();
 
     // Setup the API to use the VirtualHub on local machine
-    if(yRegisterHub('http://127.0.0.1:4444/', $errmsg) != YAPI_SUCCESS) {
+    if(YAPI::RegisterHub('http://127.0.0.1:4444/', $errmsg) != YAPI::SUCCESS) {
         die("Cannot contact VirtualHub on 127.0.0.1");
     }
 
     @$serial = $_GET['serial'];
     if($serial != '') {
         // Check if a specified module is available online
-        $buz = yFindBuzzer("$serial.buzzer");
+        $buz = YBuzzer::FindBuzzer("$serial.buzzer");
         if(!$buz->isOnline()) {
             die("Module not connected (check serial and USB cable)");
         }
     } else {
         // or use any connected module suitable for the demo
-        $buz = yFirstbuzzer();
+        $buz = YBuzzer::FirstBuzzer();
         if(is_null($buz)) {
             die("No module connected (check USB cable)");
         } else {
@@ -66,7 +66,7 @@
     } else {
         print ("Module offline");
     }
-    yFreeAPI();
+    YAPI::FreeAPI();
 
     ?>
     Frequency: <input name='freq' value='1000'>

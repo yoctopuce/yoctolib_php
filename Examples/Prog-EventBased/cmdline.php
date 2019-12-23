@@ -69,8 +69,8 @@ function deviceRemoval($module)
 function handleHotPlug()
 {
     while (true) {
-        ySleep(100);
-        yUpdateDeviceList();
+        YAPI::Sleep(100);
+        YAPI::UpdateDeviceList();
     }
 }
 

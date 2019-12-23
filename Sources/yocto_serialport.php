@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ * $Id: yocto_serialport.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -58,6 +58,8 @@ if(!defined('Y_TXMSGCOUNT_INVALID'))         define('Y_TXMSGCOUNT_INVALID',     
 if(!defined('Y_LASTMSG_INVALID'))            define('Y_LASTMSG_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_CURRENTJOB_INVALID'))         define('Y_CURRENTJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_JOBMAXTASK_INVALID'))         define('Y_JOBMAXTASK_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_JOBMAXSIZE_INVALID'))         define('Y_JOBMAXSIZE_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',        YAPI_INVALID_STRING);
@@ -69,7 +71,7 @@ if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',     
 
 //--- (generated code: YSnoopingRecord declaration)
 /**
- * YSnoopingRecord Class: Description of a message intercepted
+ * YSnoopingRecord Class: Intercepted message description, returned by serialPort.snoopMessages method
  *
  *
  */
@@ -96,16 +98,31 @@ class YSnoopingRecord
 
     //--- (generated code: YSnoopingRecord implementation)
 
+    /**
+     * Returns the elapsed time, in ms, since the beginning of the preceding message.
+     *
+     * @return integer : the elapsed time, in ms, since the beginning of the preceding message.
+     */
     public function get_time()
     {
         return $this->_tim;
     }
 
+    /**
+     * Returns the message direction (RX=0 , TX=1) .
+     *
+     * @return integer : the message direction (RX=0 , TX=1) .
+     */
     public function get_direction()
     {
         return $this->_dir;
     }
 
+    /**
+     * Returns the message content.
+     *
+     * @return string : the message content.
+     */
     public function get_message()
     {
         return $this->_msg;
@@ -117,10 +134,10 @@ class YSnoopingRecord
 
 //--- (generated code: YSerialPort declaration)
 /**
- * YSerialPort Class: SerialPort function interface
+ * YSerialPort Class: serial port control interface, available for instance in the Yocto-RS232, the
+ * Yocto-RS485-V2 or the Yocto-Serial
  *
- * The YSerialPort class allows you to fully drive a Yoctopuce serial port, for instance using a
- * Yocto-RS232, a Yocto-RS485 or a Yocto-Serial.
+ * The YSerialPort class allows you to fully drive a Yoctopuce serial port.
  * It can be used to send and receive data, and to configure communication
  * parameters (baud rate, bit count, parity, flow control and protocol).
  * Note that Yoctopuce serial ports are not exposed as virtual COM ports.
@@ -136,6 +153,8 @@ class YSerialPort extends YFunction
     const LASTMSG_INVALID                = YAPI_INVALID_STRING;
     const CURRENTJOB_INVALID             = YAPI_INVALID_STRING;
     const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
+    const JOBMAXTASK_INVALID             = YAPI_INVALID_UINT;
+    const JOBMAXSIZE_INVALID             = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
     const VOLTAGELEVEL_OFF               = 0;
@@ -159,6 +178,8 @@ class YSerialPort extends YFunction
     protected $_lastMsg                  = Y_LASTMSG_INVALID;            // Text
     protected $_currentJob               = Y_CURRENTJOB_INVALID;         // Text
     protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
+    protected $_jobMaxTask               = Y_JOBMAXTASK_INVALID;         // UInt31
+    protected $_jobMaxSize               = Y_JOBMAXSIZE_INVALID;         // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
     protected $_voltageLevel             = Y_VOLTAGELEVEL_INVALID;       // SerialVoltageLevel
@@ -205,6 +226,12 @@ class YSerialPort extends YFunction
             return 1;
         case 'startupJob':
             $this->_startupJob = $val;
+            return 1;
+        case 'jobMaxTask':
+            $this->_jobMaxTask = intval($val);
+            return 1;
+        case 'jobMaxSize':
+            $this->_jobMaxSize = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -406,6 +433,44 @@ class YSerialPort extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("startupJob",$rest_val);
+    }
+
+    /**
+     * Returns the maximum number of tasks in a job that the device can handle.
+     *
+     * @return integer : an integer corresponding to the maximum number of tasks in a job that the device can handle
+     *
+     * On failure, throws an exception or returns Y_JOBMAXTASK_INVALID.
+     */
+    public function get_jobMaxTask()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXTASK_INVALID;
+            }
+        }
+        $res = $this->_jobMaxTask;
+        return $res;
+    }
+
+    /**
+     * Returns maximum size allowed for job files.
+     *
+     * @return integer : an integer corresponding to maximum size allowed for job files
+     *
+     * On failure, throws an exception or returns Y_JOBMAXSIZE_INVALID.
+     */
+    public function get_jobMaxSize()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXSIZE_INVALID;
+            }
+        }
+        $res = $this->_jobMaxSize;
+        return $res;
     }
 
     public function get_command()
@@ -1873,6 +1938,12 @@ class YSerialPort extends YFunction
 
     public function setStartupJob($newval)
     { return $this->set_startupJob($newval); }
+
+    public function jobMaxTask()
+    { return $this->get_jobMaxTask(); }
+
+    public function jobMaxSize()
+    { return $this->get_jobMaxSize(); }
 
     public function command()
     { return $this->get_command(); }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_pwmoutput.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -59,9 +59,9 @@ if(!defined('Y_DUTYCYCLEATPOWERON_INVALID')) define('Y_DUTYCYCLEATPOWERON_INVALI
 
 //--- (YPwmOutput declaration)
 /**
- * YPwmOutput Class: PwmOutput function interface
+ * YPwmOutput Class: PWM generator control interface, available for instance in the Yocto-PWM-Tx
  *
- * The YPwmOutput class allows you to drive a PWM output, for instance using a Yocto-PWM-Tx.
+ * The YPwmOutput class allows you to drive a pulse-width modulated output (PWM).
  * You can configure the frequency as well as the duty cycle, and setup progressive
  * transitions.
  */
@@ -135,9 +135,9 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the state of the PWMs.
+     * Returns the state of the PWM generators.
      *
-     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the PWMs
+     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the PWM generators
      *
      * On failure, throws an exception or returns Y_ENABLED_INVALID.
      */
@@ -388,10 +388,10 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Returns the PWMs duty cycle at device power on as a floating point number between 0 and 100.
+     * Returns the PWM generators duty cycle at device power on as a floating point number between 0 and 100.
      *
-     * @return double : a floating point number corresponding to the PWMs duty cycle at device power on as
-     * a floating point number between 0 and 100
+     * @return double : a floating point number corresponding to the PWM generators duty cycle at device
+     * power on as a floating point number between 0 and 100
      *
      * On failure, throws an exception or returns Y_DUTYCYCLEATPOWERON_INVALID.
      */
@@ -408,7 +408,7 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Retrieves a PWM for a given identifier.
+     * Retrieves a PWM generator for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -418,11 +418,11 @@ class YPwmOutput extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the PWM is online at the time
+     * This function does not require that the PWM generator is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPwmOutput.isOnline() to test if the PWM is
+     * Use the method YPwmOutput.isOnline() to test if the PWM generator is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a PWM by logical name, no error is notified: the first instance
+     * a PWM generator by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -430,10 +430,10 @@ class YPwmOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the PWM, for instance
+     * @param string $func : a string that uniquely characterizes the PWM generator, for instance
      *         YPWMTX01.pwmOutput1.
      *
-     * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
+     * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM generator.
      */
     public static function FindPwmOutput($func)
     {
@@ -662,14 +662,14 @@ class YPwmOutput extends YFunction
     { return $this->get_dutyCycleAtPowerOn(); }
 
     /**
-     * Continues the enumeration of PWMs started using yFirstPwmOutput().
-     * Caution: You can't make any assumption about the returned PWMs order.
-     * If you want to find a specific a PWM, use PwmOutput.findPwmOutput()
+     * Continues the enumeration of PWM generators started using yFirstPwmOutput().
+     * Caution: You can't make any assumption about the returned PWM generators order.
+     * If you want to find a specific a PWM generator, use PwmOutput.findPwmOutput()
      * and a hardwareID or a logical name.
      *
      * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
-     *         a PWM currently online, or a null pointer
-     *         if there are no more PWMs to enumerate.
+     *         a PWM generator currently online, or a null pointer
+     *         if there are no more PWM generators to enumerate.
      */
     public function nextPwmOutput()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -680,12 +680,12 @@ class YPwmOutput extends YFunction
     }
 
     /**
-     * Starts the enumeration of PWMs currently accessible.
+     * Starts the enumeration of PWM generators currently accessible.
      * Use the method YPwmOutput.nextPwmOutput() to iterate on
-     * next PWMs.
+     * next PWM generators.
      *
      * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
-     *         the first PWM currently online, or a null pointer
+     *         the first PWM generator currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstPwmOutput()
@@ -701,7 +701,7 @@ class YPwmOutput extends YFunction
 //--- (YPwmOutput functions)
 
 /**
- * Retrieves a PWM for a given identifier.
+ * Retrieves a PWM generator for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -711,11 +711,11 @@ class YPwmOutput extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the PWM is online at the time
+ * This function does not require that the PWM generator is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPwmOutput.isOnline() to test if the PWM is
+ * Use the method YPwmOutput.isOnline() to test if the PWM generator is
  * indeed online at a given time. In case of ambiguity when looking for
- * a PWM by logical name, no error is notified: the first instance
+ * a PWM generator by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -723,10 +723,10 @@ class YPwmOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the PWM, for instance
+ * @param string $func : a string that uniquely characterizes the PWM generator, for instance
  *         YPWMTX01.pwmOutput1.
  *
- * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM.
+ * @return YPwmOutput : a YPwmOutput object allowing you to drive the PWM generator.
  */
 function yFindPwmOutput($func)
 {
@@ -734,12 +734,12 @@ function yFindPwmOutput($func)
 }
 
 /**
- * Starts the enumeration of PWMs currently accessible.
+ * Starts the enumeration of PWM generators currently accessible.
  * Use the method YPwmOutput.nextPwmOutput() to iterate on
- * next PWMs.
+ * next PWM generators.
  *
  * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
- *         the first PWM currently online, or a null pointer
+ *         the first PWM generator currently online, or a null pointer
  *         if there are none.
  */
 function yFirstPwmOutput()

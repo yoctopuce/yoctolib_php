@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tvoc.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_tvoc.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YTvoc, the high-level API for Tvoc functions
  *
@@ -47,12 +47,12 @@
 
 //--- (YTvoc declaration)
 /**
- * YTvoc Class: Tvoc function interface
+ * YTvoc Class: Total Volatile Organic Compound sensor control interface, available for instance in
+ * the Yocto-VOC-V3
  *
- * The YTvoc class allows you to read and configure Yoctopuce Total Volatile Organic
- * Compound sensors, for instance using a Yocto-VOC-V3. It inherits from YSensor class the core
- * functions to read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YTvoc class allows you to read and configure Yoctopuce Total Volatile Organic Compound sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  */
 class YTvoc extends YSensor
 {

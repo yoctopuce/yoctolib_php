@@ -9,28 +9,28 @@
   include('../../Sources/yocto_currentLoopOutput.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $loop = yFindCurrentLoopOutput("$serial.currentLoopOutput");
+      $loop = YCurrentLoopOutput::FindCurrentLoopOutput("$serial.currentLoopOutput");
       if (!$loop->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $loop = yFirstCurrentLoopOutput();
+      $loop = YCurrentLoopOutput::FirstCurrentLoopOutput();
       if(is_null($loop)) {
           die("No module connected (check USB cable)");
       } else {
           $serial = $loop->module()->get_serialnumber();
-          $loop = yFindCurrentLoopOutput("$serial.currentLoopOutput");
+          $loop = YCurrentLoopOutput::FindCurrentLoopOutput("$serial.currentLoopOutput");
       }
   }
 
@@ -53,7 +53,7 @@
         print('Loop is not Powered<br>');
         break;
     }
-  yFreeAPI();
+  YAPI::FreeAPI();
 
 ?>
 <input type='radio' name='value' value='4'>Change current loop to 4mA<br>

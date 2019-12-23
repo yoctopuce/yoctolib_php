@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_refframe.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -68,11 +68,10 @@ if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID'
 
 //--- (YRefFrame declaration)
 /**
- * YRefFrame Class: Reference frame configuration
+ * YRefFrame Class: 3D reference frame configuration interface, available for instance in the Yocto-3D-V2
  *
  * The YRefFrame class is used to setup the base orientation of the Yoctopuce inertial
- * sensors, for instance using a Yocto-3D-V2. Thanks to this, orientation functions relative to the
- * earth surface plane
+ * sensors. Thanks to this, orientation functions relative to the earth surface plane
  * can use the proper reference frame. The class also implements a tridimensional
  * sensor calibration process, which can compensate for local variations
  * of standard gravity and improve the precision of the tilt sensors.

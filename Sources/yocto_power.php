@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_power.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_power.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YPower, the high-level API for Power functions
  *
@@ -50,12 +50,11 @@ if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',     
 
 //--- (YPower declaration)
 /**
- * YPower Class: Power function interface
+ * YPower Class: electrical power sensor control interface, available for instance in the Yocto-Watt
  *
- * The YPower class allows you to read and configure Yoctopuce power
- * sensors, for instance using a Yocto-Watt. It inherits from YSensor class the core functions to read
- * measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YPower class allows you to read and configure Yoctopuce electrical power sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  * This class adds the ability to access the energy counter and the power factor.
  */
 class YPower extends YSensor

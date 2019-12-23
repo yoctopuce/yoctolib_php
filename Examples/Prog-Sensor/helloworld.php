@@ -1,20 +1,20 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
-  $sensor = yFirstSensor();
+  $sensor = YSensor::FirstSensor();
   if(is_null($sensor)) {
       die("No sensor connected (check USB cable and firmware version)");
   }
@@ -27,6 +27,6 @@
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");
   Print("setTimeout('window.location.reload()',1000);");
   Print("</script>\n");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

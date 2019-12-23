@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ * $Id: yocto_messagebox.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -45,9 +45,9 @@
 
 //--- (generated code: YSms declaration)
 /**
- * YSms Class: SMS message sent or received
+ * YSms Class: SMS message sent or received, returned by messageBox.get_messages or messageBox.newMessage
  *
- * YSms objects are used to describe a SMS.
+ * YSms objects are used to describe an SMS message, received or to be sent.
  * These objects are used in particular in conjunction with the YMessageBox class.
  */
 class YSms
@@ -1319,11 +1319,11 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (generated code: YMessageBox declaration)
 /**
- * YMessageBox Class: MessageBox function interface
+ * YMessageBox Class: SMS message box interface control interface, available for instance in the
+ * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU or the YoctoHub-GSM-3G-NA
  *
- * The YMessageBox class provides SMS sending and receiving capability to
- * GSM-enabled Yoctopuce devices, for instance using a YoctoHub-GSM-3G-NA, a YoctoHub-GSM-3G-EU or a
- * YoctoHub-GSM-2G.
+ * The YMessageBox class provides SMS sending and receiving capability for
+ * GSM-enabled Yoctopuce devices.
  */
 class YMessageBox extends YFunction
 {
@@ -1524,7 +1524,7 @@ class YMessageBox extends YFunction
     }
 
     /**
-     * Retrieves a MessageBox interface for a given identifier.
+     * Retrieves a SMS message box interface for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -1534,11 +1534,11 @@ class YMessageBox extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the MessageBox interface is online at the time
+     * This function does not require that the SMS message box interface is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YMessageBox.isOnline() to test if the MessageBox interface is
+     * Use the method YMessageBox.isOnline() to test if the SMS message box interface is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a MessageBox interface by logical name, no error is notified: the first instance
+     * a SMS message box interface by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -1546,10 +1546,10 @@ class YMessageBox extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the MessageBox interface, for instance
-     *         YHUBGSM4.messageBox.
+     * @param string $func : a string that uniquely characterizes the SMS message box interface, for instance
+     *         YHUBGSM1.messageBox.
      *
-     * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
+     * @return YMessageBox : a YMessageBox object allowing you to drive the SMS message box interface.
      */
     public static function FindMessageBox($func)
     {
@@ -2189,14 +2189,14 @@ class YMessageBox extends YFunction
     { return $this->set_command($newval); }
 
     /**
-     * Continues the enumeration of MessageBox interfaces started using yFirstMessageBox().
-     * Caution: You can't make any assumption about the returned MessageBox interfaces order.
-     * If you want to find a specific a MessageBox interface, use MessageBox.findMessageBox()
+     * Continues the enumeration of SMS message box interfaces started using yFirstMessageBox().
+     * Caution: You can't make any assumption about the returned SMS message box interfaces order.
+     * If you want to find a specific a SMS message box interface, use MessageBox.findMessageBox()
      * and a hardwareID or a logical name.
      *
      * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
-     *         a MessageBox interface currently online, or a null pointer
-     *         if there are no more MessageBox interfaces to enumerate.
+     *         a SMS message box interface currently online, or a null pointer
+     *         if there are no more SMS message box interfaces to enumerate.
      */
     public function nextMessageBox()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -2207,12 +2207,12 @@ class YMessageBox extends YFunction
     }
 
     /**
-     * Starts the enumeration of MessageBox interfaces currently accessible.
+     * Starts the enumeration of SMS message box interfaces currently accessible.
      * Use the method YMessageBox.nextMessageBox() to iterate on
-     * next MessageBox interfaces.
+     * next SMS message box interfaces.
      *
      * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
-     *         the first MessageBox interface currently online, or a null pointer
+     *         the first SMS message box interface currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstMessageBox()
@@ -2228,7 +2228,7 @@ class YMessageBox extends YFunction
 //--- (generated code: YMessageBox functions)
 
 /**
- * Retrieves a MessageBox interface for a given identifier.
+ * Retrieves a SMS message box interface for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -2238,11 +2238,11 @@ class YMessageBox extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the MessageBox interface is online at the time
+ * This function does not require that the SMS message box interface is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YMessageBox.isOnline() to test if the MessageBox interface is
+ * Use the method YMessageBox.isOnline() to test if the SMS message box interface is
  * indeed online at a given time. In case of ambiguity when looking for
- * a MessageBox interface by logical name, no error is notified: the first instance
+ * a SMS message box interface by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -2250,10 +2250,10 @@ class YMessageBox extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the MessageBox interface, for instance
- *         YHUBGSM4.messageBox.
+ * @param string $func : a string that uniquely characterizes the SMS message box interface, for instance
+ *         YHUBGSM1.messageBox.
  *
- * @return YMessageBox : a YMessageBox object allowing you to drive the MessageBox interface.
+ * @return YMessageBox : a YMessageBox object allowing you to drive the SMS message box interface.
  */
 function yFindMessageBox($func)
 {
@@ -2261,12 +2261,12 @@ function yFindMessageBox($func)
 }
 
 /**
- * Starts the enumeration of MessageBox interfaces currently accessible.
+ * Starts the enumeration of SMS message box interfaces currently accessible.
  * Use the method YMessageBox.nextMessageBox() to iterate on
- * next MessageBox interfaces.
+ * next SMS message box interfaces.
  *
  * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
- *         the first MessageBox interface currently online, or a null pointer
+ *         the first SMS message box interface currently online, or a null pointer
  *         if there are none.
  */
 function yFirstMessageBox()

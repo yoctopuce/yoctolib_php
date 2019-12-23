@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltage.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_voltage.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YVoltage, the high-level API for Voltage functions
  *
@@ -50,12 +50,12 @@ if(!defined('Y_ENABLED_INVALID'))            define('Y_ENABLED_INVALID',        
 
 //--- (YVoltage declaration)
 /**
- * YVoltage Class: Voltage function interface
+ * YVoltage Class: voltage sensor control interface, available for instance in the Yocto-Motor-DC, the
+ * Yocto-Volt or the Yocto-Watt
  *
- * The YVoltage class allows you to read and configure Yoctopuce voltage
- * sensors, for instance using a Yocto-Watt, a Yocto-Volt or a Yocto-Motor-DC. It inherits from
- * YSensor class the core functions to read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YVoltage class allows you to read and configure Yoctopuce voltage sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  */
 class YVoltage extends YSensor
 {
@@ -153,7 +153,7 @@ class YVoltage extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the voltage sensor, for instance
-     *         YWATTMK1.voltage1.
+     *         MOTORCTL.voltage.
      *
      * @return YVoltage : a YVoltage object allowing you to drive the voltage sensor.
      */
@@ -237,7 +237,7 @@ class YVoltage extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the voltage sensor, for instance
- *         YWATTMK1.voltage1.
+ *         MOTORCTL.voltage.
  *
  * @return YVoltage : a YVoltage object allowing you to drive the voltage sensor.
  */

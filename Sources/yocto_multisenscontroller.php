@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multisenscontroller.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_multisenscontroller.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *
@@ -53,10 +53,11 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YMultiSensController declaration)
 /**
- * YMultiSensController Class: MultiSensController function interface
+ * YMultiSensController Class: Sensor chain configuration interface, available for instance in the
+ * Yocto-Temperature-IR
  *
  * The YMultiSensController class allows you to setup a customized
- * sensor chain on devices featuring that functionality, for instance using a Yocto-Temperature-IR.
+ * sensor chain on devices featuring that functionality.
  */
 class YMultiSensController extends YFunction
 {

@@ -8,23 +8,23 @@
   include('../../Sources/yocto_pwminput.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $pwm= yFindPwmInput("$serial.pwmInput1");
+      $pwm= YPwmInput::FindPwmInput("$serial.pwmInput1");
       if (!$pwm->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $pwm = yFirstPwmInput();
+      $pwm = YPwmInput::FirstPwmInput();
       if(is_null($pwm)) {
           die("No module connected (check USB cable)");
       }
@@ -34,8 +34,8 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
   if ($pwm->isOnline())
-   {  $pwm1 = yFindPwmInput($serial.".pwmInput1");
-      $pwm2 = yFindPwmInput($serial.".pwmInput2");
+   {  $pwm1 = YPwmInput::FindPwmInput($serial.".pwmInput1");
+      $pwm2 = YPwmInput::FindPwmInput($serial.".pwmInput2");
       $freq1   = $pwm1->get_frequency();
       $dcycle1 = $pwm1->get_dutyCycle();
       $count1  = $pwm1->get_pulseCounter();
@@ -46,7 +46,7 @@
       Printf("PWM1: %.1fHz %.1f%% %d pulse edges<br>",$freq1,$dcycle1,$count1);
       Printf("PWM2: %.1fHz %.1f%% %d pulse edges<br>",$freq2,$dcycle2,$count2);
    }
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

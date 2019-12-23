@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multicellweighscale.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_multicellweighscale.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
@@ -59,11 +59,11 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YMultiCellWeighScale declaration)
 /**
- * YMultiCellWeighScale Class: MultiCellWeighScale function interface
+ * YMultiCellWeighScale Class: multi-cell weighing scale sensor control interface, available for
+ * instance in the Yocto-MaxiBridge
  *
  * The YMultiCellWeighScale class provides a weight measurement from a set of ratiometric
- * sensors, for instance using a Yocto-MaxiBridge. It can be used to control the bridge excitation
- * parameters, in order to avoid
+ * sensors. It can be used to control the bridge excitation parameters, in order to avoid
  * measure shifts caused by temperature variation in the electronics, and can also
  * automatically apply an additional correction factor based on temperature to
  * compensate for offsets in the load cells themselves.

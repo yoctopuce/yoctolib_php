@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pressure.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_pressure.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YPressure, the high-level API for Pressure functions
  *
@@ -47,12 +47,12 @@
 
 //--- (YPressure declaration)
 /**
- * YPressure Class: Pressure function interface
+ * YPressure Class: pressure sensor control interface, available for instance in the
+ * Yocto-Altimeter-V2, the Yocto-CO2-V2, the Yocto-Meteo-V2 or the Yocto-Pressure
  *
- * The YPressure class allows you to read and configure Yoctopuce pressure
- * sensors, for instance using a Yocto-Meteo-V2, a Yocto-Pressure, a Yocto-CO2-V2 or a
- * Yocto-Altimeter-V2. It inherits from YSensor class the core functions to read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YPressure class allows you to read and configure Yoctopuce pressure sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  */
 class YPressure extends YSensor
 {
@@ -96,7 +96,7 @@ class YPressure extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the pressure sensor, for instance
-     *         METEOMK2.pressure.
+     *         YALTIMK2.pressure.
      *
      * @return YPressure : a YPressure object allowing you to drive the pressure sensor.
      */
@@ -174,7 +174,7 @@ class YPressure extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the pressure sensor, for instance
- *         METEOMK2.pressure.
+ *         YALTIMK2.pressure.
  *
  * @return YPressure : a YPressure object allowing you to drive the pressure sensor.
  */

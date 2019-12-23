@@ -1,21 +1,21 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <?php
   include('../../Sources/yocto_api.php');
   include('../../Sources/yocto_colorLed.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
-  $led = yFirstColorLed();
+  $led = YColorLed::FirstColorLed();
   if(is_null($led)) {
       die("No led connected (check USB cable and firmware version)");
   }
@@ -31,9 +31,9 @@
   $led->addRgbMoveToBlinkSeq(0xFF0000,  100);  // stays red for 100ms
   $led->addRgbMoveToBlinkSeq(0x000000,    0);  // switch to black instantaneously
   $led->addRgbMoveToBlinkSeq(0x000000, 1000);  // stays black for 1s
-  $led->startBlinkSeq();                       // starts sequence 
-  
+  $led->startBlinkSeq();                       // starts sequence
+
   Print("The Yocto-Color is now blinking autonomously");
-?>  
+?>
 </BODY>
-</HTML> 
+</HTML>

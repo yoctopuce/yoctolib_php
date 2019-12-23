@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_gps.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_gps.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YGps, the high-level API for Gps functions
  *
@@ -48,15 +48,17 @@ if(!defined('Y_COORDSYSTEM_GPS_DMS'))        define('Y_COORDSYSTEM_GPS_DMS',    
 if(!defined('Y_COORDSYSTEM_GPS_DM'))         define('Y_COORDSYSTEM_GPS_DM',        1);
 if(!defined('Y_COORDSYSTEM_GPS_D'))          define('Y_COORDSYSTEM_GPS_D',         2);
 if(!defined('Y_COORDSYSTEM_INVALID'))        define('Y_COORDSYSTEM_INVALID',       -1);
-if(!defined('Y_CONSTELLATION_GPS'))          define('Y_CONSTELLATION_GPS',         0);
-if(!defined('Y_CONSTELLATION_GLONASS'))      define('Y_CONSTELLATION_GLONASS',     1);
-if(!defined('Y_CONSTELLATION_GALLILEO'))     define('Y_CONSTELLATION_GALLILEO',    2);
-if(!defined('Y_CONSTELLATION_GNSS'))         define('Y_CONSTELLATION_GNSS',        3);
+if(!defined('Y_CONSTELLATION_GNSS'))         define('Y_CONSTELLATION_GNSS',        0);
+if(!defined('Y_CONSTELLATION_GPS'))          define('Y_CONSTELLATION_GPS',         1);
+if(!defined('Y_CONSTELLATION_GLONASS'))      define('Y_CONSTELLATION_GLONASS',     2);
+if(!defined('Y_CONSTELLATION_GALILEO'))      define('Y_CONSTELLATION_GALILEO',     3);
 if(!defined('Y_CONSTELLATION_GPS_GLONASS'))  define('Y_CONSTELLATION_GPS_GLONASS', 4);
-if(!defined('Y_CONSTELLATION_GPS_GALLILEO')) define('Y_CONSTELLATION_GPS_GALLILEO', 5);
-if(!defined('Y_CONSTELLATION_GLONASS_GALLELIO')) define('Y_CONSTELLATION_GLONASS_GALLELIO', 6);
+if(!defined('Y_CONSTELLATION_GPS_GALILEO'))  define('Y_CONSTELLATION_GPS_GALILEO', 5);
+if(!defined('Y_CONSTELLATION_GLONASS_GALILEO')) define('Y_CONSTELLATION_GLONASS_GALILEO', 6);
 if(!defined('Y_CONSTELLATION_INVALID'))      define('Y_CONSTELLATION_INVALID',     -1);
 if(!defined('Y_SATCOUNT_INVALID'))           define('Y_SATCOUNT_INVALID',          YAPI_INVALID_LONG);
+if(!defined('Y_SATPERCONST_INVALID'))        define('Y_SATPERCONST_INVALID',       YAPI_INVALID_LONG);
+if(!defined('Y_GPSREFRESHRATE_INVALID'))     define('Y_GPSREFRESHRATE_INVALID',    YAPI_INVALID_DOUBLE);
 if(!defined('Y_LATITUDE_INVALID'))           define('Y_LATITUDE_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_LONGITUDE_INVALID'))          define('Y_LONGITUDE_INVALID',         YAPI_INVALID_STRING);
 if(!defined('Y_DILUTION_INVALID'))           define('Y_DILUTION_INVALID',          YAPI_INVALID_DOUBLE);
@@ -73,10 +75,10 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YGps declaration)
 /**
- * YGps Class: GPS function interface
+ * YGps Class: Geolocalization control interface (GPS, GNSS, ...), available for instance in the Yocto-GPS
  *
  * The YGps class allows you to retrieve positioning
- * data from a GPS sensor, for instance using a Yocto-GPS. This class can provides
+ * data from a GPS/GNSS sensor. This class can provides
  * complete positioning information. However, if you
  * wish to define callbacks on position changes or record
  * the position in the datalogger, you
@@ -88,17 +90,19 @@ class YGps extends YFunction
     const ISFIXED_TRUE                   = 1;
     const ISFIXED_INVALID                = -1;
     const SATCOUNT_INVALID               = YAPI_INVALID_LONG;
+    const SATPERCONST_INVALID            = YAPI_INVALID_LONG;
+    const GPSREFRESHRATE_INVALID         = YAPI_INVALID_DOUBLE;
     const COORDSYSTEM_GPS_DMS            = 0;
     const COORDSYSTEM_GPS_DM             = 1;
     const COORDSYSTEM_GPS_D              = 2;
     const COORDSYSTEM_INVALID            = -1;
-    const CONSTELLATION_GPS              = 0;
-    const CONSTELLATION_GLONASS          = 1;
-    const CONSTELLATION_GALLILEO         = 2;
-    const CONSTELLATION_GNSS             = 3;
+    const CONSTELLATION_GNSS             = 0;
+    const CONSTELLATION_GPS              = 1;
+    const CONSTELLATION_GLONASS          = 2;
+    const CONSTELLATION_GALILEO          = 3;
     const CONSTELLATION_GPS_GLONASS      = 4;
-    const CONSTELLATION_GPS_GALLILEO     = 5;
-    const CONSTELLATION_GLONASS_GALLELIO = 6;
+    const CONSTELLATION_GPS_GALILEO      = 5;
+    const CONSTELLATION_GLONASS_GALILEO  = 6;
     const CONSTELLATION_INVALID          = -1;
     const LATITUDE_INVALID               = YAPI_INVALID_STRING;
     const LONGITUDE_INVALID              = YAPI_INVALID_STRING;
@@ -115,6 +119,8 @@ class YGps extends YFunction
     //--- (YGps attributes)
     protected $_isFixed                  = Y_ISFIXED_INVALID;            // Bool
     protected $_satCount                 = Y_SATCOUNT_INVALID;           // UInt
+    protected $_satPerConst              = Y_SATPERCONST_INVALID;        // UInt
+    protected $_gpsRefreshRate           = Y_GPSREFRESHRATE_INVALID;     // MeasureVal
     protected $_coordSystem              = Y_COORDSYSTEM_INVALID;        // GPSCoordinateSystem
     protected $_constellation            = Y_CONSTELLATION_INVALID;      // GPSConstellation
     protected $_latitude                 = Y_LATITUDE_INVALID;           // Text
@@ -148,6 +154,12 @@ class YGps extends YFunction
             return 1;
         case 'satCount':
             $this->_satCount = intval($val);
+            return 1;
+        case 'satPerConst':
+            $this->_satPerConst = intval($val);
+            return 1;
+        case 'gpsRefreshRate':
+            $this->_gpsRefreshRate = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'coordSystem':
             $this->_coordSystem = intval($val);
@@ -210,9 +222,9 @@ class YGps extends YFunction
     }
 
     /**
-     * Returns the count of visible satellites.
+     * Returns the total count of satellites used to compute GPS position.
      *
-     * @return integer : an integer corresponding to the count of visible satellites
+     * @return integer : an integer corresponding to the total count of satellites used to compute GPS position
      *
      * On failure, throws an exception or returns Y_SATCOUNT_INVALID.
      */
@@ -225,6 +237,48 @@ class YGps extends YFunction
             }
         }
         $res = $this->_satCount;
+        return $res;
+    }
+
+    /**
+     * Returns the count of visible satellites per constellation encoded
+     * on a 32 bit integer: bits 0..5: GPS satellites count,  bits 6..11 : Glonass, bits 12..17 : Galileo.
+     * this value is refreshed every 5 seconds only.
+     *
+     * @return integer : an integer corresponding to the count of visible satellites per constellation encoded
+     *         on a 32 bit integer: bits 0.
+     *
+     * On failure, throws an exception or returns Y_SATPERCONST_INVALID.
+     */
+    public function get_satPerConst()
+    {
+        // $res                    is a long;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_SATPERCONST_INVALID;
+            }
+        }
+        $res = $this->_satPerConst;
+        return $res;
+    }
+
+    /**
+     * Returns effective GPS data refresh frequency.
+     * this value is refreshed every 5 seconds only.
+     *
+     * @return double : a floating point number corresponding to effective GPS data refresh frequency
+     *
+     * On failure, throws an exception or returns Y_GPSREFRESHRATE_INVALID.
+     */
+    public function get_gpsRefreshRate()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_GPSREFRESHRATE_INVALID;
+            }
+        }
+        $res = $this->_gpsRefreshRate;
         return $res;
     }
 
@@ -270,10 +324,9 @@ class YGps extends YFunction
      * Returns the the satellites constellation used to compute
      * positioning data.
      *
-     * @return integer : a value among Y_CONSTELLATION_GPS, Y_CONSTELLATION_GLONASS,
-     * Y_CONSTELLATION_GALLILEO, Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS_GLONASS,
-     * Y_CONSTELLATION_GPS_GALLILEO and Y_CONSTELLATION_GLONASS_GALLELIO corresponding to the the
-     * satellites constellation used to compute
+     * @return integer : a value among Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS, Y_CONSTELLATION_GLONASS,
+     * Y_CONSTELLATION_GALILEO, Y_CONSTELLATION_GPS_GLONASS, Y_CONSTELLATION_GPS_GALILEO and
+     * Y_CONSTELLATION_GLONASS_GALILEO corresponding to the the satellites constellation used to compute
      *         positioning data
      *
      * On failure, throws an exception or returns Y_CONSTELLATION_INVALID.
@@ -292,12 +345,12 @@ class YGps extends YFunction
 
     /**
      * Changes the satellites constellation used to compute
-     * positioning data. Possible  constellations are GPS, Glonass, Galileo ,
-     * GNSS ( = GPS + Glonass + Galileo) and the 3 possible pairs. This seeting has effect on Yocto-GPS rev A.
+     * positioning data. Possible  constellations are GNSS ( = all supported constellations),
+     * GPS, Glonass, Galileo , and the 3 possible pairs. This setting has  no effect on Yocto-GPS (V1).
      *
-     * @param integer $newval : a value among Y_CONSTELLATION_GPS, Y_CONSTELLATION_GLONASS,
-     * Y_CONSTELLATION_GALLILEO, Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS_GLONASS,
-     * Y_CONSTELLATION_GPS_GALLILEO and Y_CONSTELLATION_GLONASS_GALLELIO corresponding to the satellites
+     * @param integer $newval : a value among Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS,
+     * Y_CONSTELLATION_GLONASS, Y_CONSTELLATION_GALILEO, Y_CONSTELLATION_GPS_GLONASS,
+     * Y_CONSTELLATION_GPS_GALILEO and Y_CONSTELLATION_GLONASS_GALILEO corresponding to the satellites
      * constellation used to compute
      *         positioning data
      *
@@ -529,7 +582,7 @@ class YGps extends YFunction
     }
 
     /**
-     * Retrieves a GPS for a given identifier.
+     * Retrieves a geolocalization module for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -539,11 +592,11 @@ class YGps extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the GPS is online at the time
+     * This function does not require that the geolocalization module is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YGps.isOnline() to test if the GPS is
+     * Use the method YGps.isOnline() to test if the geolocalization module is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a GPS by logical name, no error is notified: the first instance
+     * a geolocalization module by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -551,10 +604,10 @@ class YGps extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the GPS, for instance
+     * @param string $func : a string that uniquely characterizes the geolocalization module, for instance
      *         YGNSSMK1.gps.
      *
-     * @return YGps : a YGps object allowing you to drive the GPS.
+     * @return YGps : a YGps object allowing you to drive the geolocalization module.
      */
     public static function FindGps($func)
     {
@@ -572,6 +625,12 @@ class YGps extends YFunction
 
     public function satCount()
     { return $this->get_satCount(); }
+
+    public function satPerConst()
+    { return $this->get_satPerConst(); }
+
+    public function gpsRefreshRate()
+    { return $this->get_gpsRefreshRate(); }
 
     public function coordSystem()
     { return $this->get_coordSystem(); }
@@ -622,14 +681,14 @@ class YGps extends YFunction
     { return $this->set_command($newval); }
 
     /**
-     * Continues the enumeration of GPS started using yFirstGps().
-     * Caution: You can't make any assumption about the returned GPS order.
-     * If you want to find a specific a GPS, use Gps.findGps()
+     * Continues the enumeration of geolocalization modules started using yFirstGps().
+     * Caution: You can't make any assumption about the returned geolocalization modules order.
+     * If you want to find a specific a geolocalization module, use Gps.findGps()
      * and a hardwareID or a logical name.
      *
      * @return YGps : a pointer to a YGps object, corresponding to
-     *         a GPS currently online, or a null pointer
-     *         if there are no more GPS to enumerate.
+     *         a geolocalization module currently online, or a null pointer
+     *         if there are no more geolocalization modules to enumerate.
      */
     public function nextGps()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -640,12 +699,12 @@ class YGps extends YFunction
     }
 
     /**
-     * Starts the enumeration of GPS currently accessible.
+     * Starts the enumeration of geolocalization modules currently accessible.
      * Use the method YGps.nextGps() to iterate on
-     * next GPS.
+     * next geolocalization modules.
      *
      * @return YGps : a pointer to a YGps object, corresponding to
-     *         the first GPS currently online, or a null pointer
+     *         the first geolocalization module currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstGps()
@@ -661,7 +720,7 @@ class YGps extends YFunction
 //--- (YGps functions)
 
 /**
- * Retrieves a GPS for a given identifier.
+ * Retrieves a geolocalization module for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -671,11 +730,11 @@ class YGps extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the GPS is online at the time
+ * This function does not require that the geolocalization module is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YGps.isOnline() to test if the GPS is
+ * Use the method YGps.isOnline() to test if the geolocalization module is
  * indeed online at a given time. In case of ambiguity when looking for
- * a GPS by logical name, no error is notified: the first instance
+ * a geolocalization module by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -683,10 +742,10 @@ class YGps extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the GPS, for instance
+ * @param string $func : a string that uniquely characterizes the geolocalization module, for instance
  *         YGNSSMK1.gps.
  *
- * @return YGps : a YGps object allowing you to drive the GPS.
+ * @return YGps : a YGps object allowing you to drive the geolocalization module.
  */
 function yFindGps($func)
 {
@@ -694,12 +753,12 @@ function yFindGps($func)
 }
 
 /**
- * Starts the enumeration of GPS currently accessible.
+ * Starts the enumeration of geolocalization modules currently accessible.
  * Use the method YGps.nextGps() to iterate on
- * next GPS.
+ * next geolocalization modules.
  *
  * @return YGps : a pointer to a YGps object, corresponding to
- *         the first GPS currently online, or a null pointer
+ *         the first geolocalization module currently online, or a null pointer
  *         if there are none.
  */
 function yFirstGps()

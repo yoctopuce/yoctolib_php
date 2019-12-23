@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_currentloopoutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_currentloopoutput.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  *  Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -54,9 +54,10 @@ if(!defined('Y_CURRENTATSTARTUP_INVALID'))   define('Y_CURRENTATSTARTUP_INVALID'
 
 //--- (YCurrentLoopOutput declaration)
 /**
- * YCurrentLoopOutput Class: CurrentLoopOutput function interface
+ * YCurrentLoopOutput Class: 4-20mA output control interface, available for instance in the Yocto-4-20mA-Tx
  *
- * The YCurrentLoopOutput class allows you to drive a 4-20mA output, for instance using a Yocto-4-20mA-Tx.
+ * The YCurrentLoopOutput class allows you to drive a 4-20mA output
+ * by regulating the current flowing through the current loop.
  * It can also provide information about the power state of the current loop.
  */
 class YCurrentLoopOutput extends YFunction

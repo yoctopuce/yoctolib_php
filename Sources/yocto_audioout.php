@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioout.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_audioout.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -54,9 +54,9 @@ if(!defined('Y_NOSIGNALFOR_INVALID'))        define('Y_NOSIGNALFOR_INVALID',    
 
 //--- (YAudioOut declaration)
 /**
- * YAudioOut Class: AudioOut function interface
+ * YAudioOut Class: audio output control interface
  *
- * The YAudioOut class allows you to configure the volume of an audio outout.
+ * The YAudioOut class allows you to configure the volume of an audio output.
  */
 class YAudioOut extends YFunction
 {

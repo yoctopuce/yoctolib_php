@@ -8,23 +8,23 @@
   include('../../Sources/yocto_i2cport.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $i2cport = yFindI2cPort("$serial.i2cPort");
+      $i2cport = YI2cPort::FindI2cPort("$serial.i2cPort");
       if (!$i2cport->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $i2cport = yFirstI2cPort();
+      $i2cport = YI2cPort::FirstI2cPort();
       if(is_null($i2cport)) {
           die("No module connected (check USB cable)");
       } else {
@@ -50,7 +50,7 @@
     $tempReg &= 0x0fff;   // clear status bits
   }
   Printf("Temperature: %.3f &deg;C<br>\n", ($tempReg / 16.0));
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_poweroutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_poweroutput.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  *  Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -53,10 +53,11 @@ if(!defined('Y_VOLTAGE_INVALID'))            define('Y_VOLTAGE_INVALID',        
 
 //--- (YPowerOutput declaration)
 /**
- * YPowerOutput Class: External power supply control interface
+ * YPowerOutput Class: power output control interface, available for instance in the Yocto-I2C, the
+ * Yocto-MaxiMicroVolt-Rx, the Yocto-SPI or the Yocto-Serial
  *
- * Yoctopuce application programming interface allows you to control
- * the power output featured on some devices such as the Yocto-Serial.
+ * The YPowerOutput class allows you to control
+ * the power output featured on some Yoctopuce devices.
  */
 class YPowerOutput extends YFunction
 {
@@ -133,7 +134,7 @@ class YPowerOutput extends YFunction
     }
 
     /**
-     * Retrieves a dual power  output control for a given identifier.
+     * Retrieves a power output for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
      * <li>FunctionLogicalName</li>
@@ -143,11 +144,11 @@ class YPowerOutput extends YFunction
      * <li>ModuleLogicalName.FunctionLogicalName</li>
      * </ul>
      *
-     * This function does not require that the power output control is online at the time
+     * This function does not require that the power output is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPowerOutput.isOnline() to test if the power output control is
+     * Use the method YPowerOutput.isOnline() to test if the power output is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a dual power  output control by logical name, no error is notified: the first instance
+     * a power output by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -155,10 +156,10 @@ class YPowerOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func : a string that uniquely characterizes the power output control, for instance
-     *         YSPIMK01.powerOutput.
+     * @param string $func : a string that uniquely characterizes the power output, for instance
+     *         YI2CMK01.powerOutput.
      *
-     * @return YPowerOutput : a YPowerOutput object allowing you to drive the power output control.
+     * @return YPowerOutput : a YPowerOutput object allowing you to drive the power output.
      */
     public static function FindPowerOutput($func)
     {
@@ -178,14 +179,14 @@ class YPowerOutput extends YFunction
     { return $this->set_voltage($newval); }
 
     /**
-     * Continues the enumeration of dual power output controls started using yFirstPowerOutput().
-     * Caution: You can't make any assumption about the returned dual power output controls order.
-     * If you want to find a specific a dual power  output control, use PowerOutput.findPowerOutput()
+     * Continues the enumeration of power output started using yFirstPowerOutput().
+     * Caution: You can't make any assumption about the returned power output order.
+     * If you want to find a specific a power output, use PowerOutput.findPowerOutput()
      * and a hardwareID or a logical name.
      *
      * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
-     *         a dual power  output control currently online, or a null pointer
-     *         if there are no more dual power output controls to enumerate.
+     *         a power output currently online, or a null pointer
+     *         if there are no more power output to enumerate.
      */
     public function nextPowerOutput()
     {   $resolve = YAPI::resolveFunction($this->_className, $this->_func);
@@ -196,12 +197,12 @@ class YPowerOutput extends YFunction
     }
 
     /**
-     * Starts the enumeration of dual power output controls currently accessible.
+     * Starts the enumeration of power output currently accessible.
      * Use the method YPowerOutput.nextPowerOutput() to iterate on
-     * next dual power output controls.
+     * next power output.
      *
      * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
-     *         the first dual power output control currently online, or a null pointer
+     *         the first power output currently online, or a null pointer
      *         if there are none.
      */
     public static function FirstPowerOutput()
@@ -217,7 +218,7 @@ class YPowerOutput extends YFunction
 //--- (YPowerOutput functions)
 
 /**
- * Retrieves a dual power  output control for a given identifier.
+ * Retrieves a power output for a given identifier.
  * The identifier can be specified using several formats:
  * <ul>
  * <li>FunctionLogicalName</li>
@@ -227,11 +228,11 @@ class YPowerOutput extends YFunction
  * <li>ModuleLogicalName.FunctionLogicalName</li>
  * </ul>
  *
- * This function does not require that the power output control is online at the time
+ * This function does not require that the power output is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPowerOutput.isOnline() to test if the power output control is
+ * Use the method YPowerOutput.isOnline() to test if the power output is
  * indeed online at a given time. In case of ambiguity when looking for
- * a dual power  output control by logical name, no error is notified: the first instance
+ * a power output by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *
@@ -239,10 +240,10 @@ class YPowerOutput extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func : a string that uniquely characterizes the power output control, for instance
- *         YSPIMK01.powerOutput.
+ * @param string $func : a string that uniquely characterizes the power output, for instance
+ *         YI2CMK01.powerOutput.
  *
- * @return YPowerOutput : a YPowerOutput object allowing you to drive the power output control.
+ * @return YPowerOutput : a YPowerOutput object allowing you to drive the power output.
  */
 function yFindPowerOutput($func)
 {
@@ -250,12 +251,12 @@ function yFindPowerOutput($func)
 }
 
 /**
- * Starts the enumeration of dual power output controls currently accessible.
+ * Starts the enumeration of power output currently accessible.
  * Use the method YPowerOutput.nextPowerOutput() to iterate on
- * next dual power output controls.
+ * next power output.
  *
  * @return YPowerOutput : a pointer to a YPowerOutput object, corresponding to
- *         the first dual power output control currently online, or a null pointer
+ *         the first power output currently online, or a null pointer
  *         if there are none.
  */
 function yFirstPowerOutput()

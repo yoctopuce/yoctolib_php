@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_spiport.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -64,6 +64,8 @@ if(!defined('Y_TXMSGCOUNT_INVALID'))         define('Y_TXMSGCOUNT_INVALID',     
 if(!defined('Y_LASTMSG_INVALID'))            define('Y_LASTMSG_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_CURRENTJOB_INVALID'))         define('Y_CURRENTJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_JOBMAXTASK_INVALID'))         define('Y_JOBMAXTASK_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_JOBMAXSIZE_INVALID'))         define('Y_JOBMAXSIZE_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_SPIMODE_INVALID'))            define('Y_SPIMODE_INVALID',           YAPI_INVALID_STRING);
@@ -73,9 +75,9 @@ if(!defined('Y_SPIMODE_INVALID'))            define('Y_SPIMODE_INVALID',        
 
 //--- (YSpiPort declaration)
 /**
- * YSpiPort Class: SPI Port function interface
+ * YSpiPort Class: SPI port control interface, available for instance in the Yocto-SPI
  *
- * The YSpiPort class allows you to fully drive a Yoctopuce SPI port, for instance using a Yocto-SPI.
+ * The YSpiPort class allows you to fully drive a Yoctopuce SPI port.
  * It can be used to send and receive data, and to configure communication
  * parameters (baud rate, bit count, parity, flow control and protocol).
  * Note that Yoctopuce SPI ports are not exposed as virtual COM ports.
@@ -91,6 +93,8 @@ class YSpiPort extends YFunction
     const LASTMSG_INVALID                = YAPI_INVALID_STRING;
     const CURRENTJOB_INVALID             = YAPI_INVALID_STRING;
     const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
+    const JOBMAXTASK_INVALID             = YAPI_INVALID_UINT;
+    const JOBMAXSIZE_INVALID             = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
     const VOLTAGELEVEL_OFF               = 0;
@@ -120,6 +124,8 @@ class YSpiPort extends YFunction
     protected $_lastMsg                  = Y_LASTMSG_INVALID;            // Text
     protected $_currentJob               = Y_CURRENTJOB_INVALID;         // Text
     protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
+    protected $_jobMaxTask               = Y_JOBMAXTASK_INVALID;         // UInt31
+    protected $_jobMaxSize               = Y_JOBMAXSIZE_INVALID;         // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
     protected $_voltageLevel             = Y_VOLTAGELEVEL_INVALID;       // SerialVoltageLevel
@@ -168,6 +174,12 @@ class YSpiPort extends YFunction
             return 1;
         case 'startupJob':
             $this->_startupJob = $val;
+            return 1;
+        case 'jobMaxTask':
+            $this->_jobMaxTask = intval($val);
+            return 1;
+        case 'jobMaxSize':
+            $this->_jobMaxSize = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -374,6 +386,44 @@ class YSpiPort extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("startupJob",$rest_val);
+    }
+
+    /**
+     * Returns the maximum number of tasks in a job that the device can handle.
+     *
+     * @return integer : an integer corresponding to the maximum number of tasks in a job that the device can handle
+     *
+     * On failure, throws an exception or returns Y_JOBMAXTASK_INVALID.
+     */
+    public function get_jobMaxTask()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXTASK_INVALID;
+            }
+        }
+        $res = $this->_jobMaxTask;
+        return $res;
+    }
+
+    /**
+     * Returns maximum size allowed for job files.
+     *
+     * @return integer : an integer corresponding to maximum size allowed for job files
+     *
+     * On failure, throws an exception or returns Y_JOBMAXSIZE_INVALID.
+     */
+    public function get_jobMaxSize()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXSIZE_INVALID;
+            }
+        }
+        $res = $this->_jobMaxSize;
+        return $res;
     }
 
     public function get_command()
@@ -1310,6 +1360,12 @@ class YSpiPort extends YFunction
 
     public function setStartupJob($newval)
     { return $this->set_startupJob($newval); }
+
+    public function jobMaxTask()
+    { return $this->get_jobMaxTask(); }
+
+    public function jobMaxSize()
+    { return $this->get_jobMaxSize(); }
 
     public function command()
     { return $this->get_command(); }

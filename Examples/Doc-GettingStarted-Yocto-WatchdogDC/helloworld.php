@@ -9,23 +9,23 @@
   include('../../Sources/yocto_watchdog.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $watchdog = yFindWatchdog("$serial.watchdog1");
+      $watchdog = YWatchdog::FindWatchdog("$serial.watchdog1");
       if (!$watchdog->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $watchdog = yFirstWatchdog();
+      $watchdog = YWatchdog::FirstWatchdog();
       if(is_null($watchdog)) {
           die("No module connected (check USB cable)");
       } else {
@@ -41,7 +41,7 @@
       if ($state=='OFF') $watchdog->set_running(Y_RUNNING_OFF);
       if ($state=='RESET') $watchdog->resetWatchdog();
   }
-  yFreeAPI();
+  YAPI::FreeAPI();
 ?>
 <input type='radio' name='state' value='ON'>Start Watchdog
 <input type='radio' name='state' value='RESET'>Reset Watchdog

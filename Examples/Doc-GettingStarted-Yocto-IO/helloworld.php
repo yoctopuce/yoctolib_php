@@ -9,17 +9,17 @@
   include('../../Sources/yocto_digitalio.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '')
    {  // Check if a specified module is available online
-      $io = yFindDigitalIO("$serial.digitalIO");
+      $io = YDigitalIO::FindDigitalIO("$serial.digitalIO");
       if (!$io->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
@@ -27,7 +27,7 @@
   {
       // or use any connected module suitable for the demo
       // (note that the order of enumeration may vary)
-      $io = yFirstDigitalIO();
+      $io = YDigitalIO::FirstDigitalIO();
       if(is_null($io)) {
           die("No module connected (check USB cable)");
       }  $serial = $io->module()->get_serialnumber();
@@ -55,7 +55,7 @@
 
   Print("Module to use: <input name='serial' value='$serial'><br>");
   Print("<input type='hidden' name='outputdata' value='$outputdata'><br>");
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

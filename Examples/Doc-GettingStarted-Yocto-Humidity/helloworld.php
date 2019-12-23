@@ -8,23 +8,23 @@
   include('../../Sources/yocto_humidity.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $hum = yFindHumidity("$serial.humidity");
+      $hum = YHumidity::FindHumidity("$serial.humidity");
       if (!$hum->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $hum = yFirstHumidity();
+      $hum = YHumidity::FirstHumidity();
       if(is_null($hum)) {
           die("No module connected (check USB cable)");
       } else {
@@ -35,7 +35,7 @@
 
   $value = $hum->get_currentValue();
   Print("Humidity: $value %RH<br>");
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

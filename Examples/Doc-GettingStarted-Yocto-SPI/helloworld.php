@@ -9,23 +9,23 @@
     include('../../Sources/yocto_spiport.php');
 
     // Use explicit error handling rather than exceptions
-    yDisableExceptions();
+    YAPI::DisableExceptions();
 
     // Setup the API to use the VirtualHub on local machine
-    if (yRegisterHub('http://127.0.0.1:4444/', $errmsg) != YAPI_SUCCESS) {
+    if (YAPI::RegisterHub('http://127.0.0.1:4444/', $errmsg) != YAPI::SUCCESS) {
         die("Cannot contact VirtualHub on 127.0.0.1");
     }
 
     @$serial = $_GET['serial'];
     if ($serial != '') {
         // Check if a specified module is available online
-        $spiport = yFindSpiPort("$serial.spiPort");
+        $spiport = YSpiPort::FindSpiPort("$serial.spiPort");
         if (!$spiport->isOnline()) {
             die("Module not connected (check serial and USB cable)");
         }
     } else {
         // or use any connected module suitable for the demo
-        $spiport = yFirstSpiPort();
+        $spiport = YSpiPort::FirstSpiPort();
         if (is_null($spiport)) {
             die("No module connected (check USB cable)");
         } else {
@@ -58,7 +58,7 @@
             $value = intVal($value / 10);
         }
     }
-    yFreeAPI();
+    YAPI::FreeAPI();
     ?>
     Value to display: <input name='value' value='12345678'><br>
     <input type='submit'>

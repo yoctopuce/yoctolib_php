@@ -19,8 +19,8 @@ function deviceArrival($obj_module)
 function handleHotPlug()
 {
     while(true) {
-        ySleep(100);
-        yUpdateDeviceList();
+        YAPI::Sleep(100);
+        YAPI::UpdateDeviceList();
     }
 }
 

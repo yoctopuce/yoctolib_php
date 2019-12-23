@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_i2cport.php 38913 2019-12-20 18:59:49Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -53,6 +53,8 @@ if(!defined('Y_TXMSGCOUNT_INVALID'))         define('Y_TXMSGCOUNT_INVALID',     
 if(!defined('Y_LASTMSG_INVALID'))            define('Y_LASTMSG_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_CURRENTJOB_INVALID'))         define('Y_CURRENTJOB_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_STARTUPJOB_INVALID'))         define('Y_STARTUPJOB_INVALID',        YAPI_INVALID_STRING);
+if(!defined('Y_JOBMAXTASK_INVALID'))         define('Y_JOBMAXTASK_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_JOBMAXSIZE_INVALID'))         define('Y_JOBMAXSIZE_INVALID',        YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_I2CMODE_INVALID'))            define('Y_I2CMODE_INVALID',           YAPI_INVALID_STRING);
@@ -62,9 +64,9 @@ if(!defined('Y_I2CMODE_INVALID'))            define('Y_I2CMODE_INVALID',        
 
 //--- (YI2cPort declaration)
 /**
- * YI2cPort Class: I2C Port function interface
+ * YI2cPort Class: I2C port control interface, available for instance in the Yocto-I2C
  *
- * The YI2cPort classe allows you to fully drive a Yoctopuce I2C port, for instance using a Yocto-I2C.
+ * The YI2cPort classe allows you to fully drive a Yoctopuce I2C port.
  * It can be used to send and receive data, and to configure communication
  * parameters (baud rate, etc).
  * Note that Yoctopuce I2C ports are not exposed as virtual COM ports.
@@ -80,6 +82,8 @@ class YI2cPort extends YFunction
     const LASTMSG_INVALID                = YAPI_INVALID_STRING;
     const CURRENTJOB_INVALID             = YAPI_INVALID_STRING;
     const STARTUPJOB_INVALID             = YAPI_INVALID_STRING;
+    const JOBMAXTASK_INVALID             = YAPI_INVALID_UINT;
+    const JOBMAXSIZE_INVALID             = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     const PROTOCOL_INVALID               = YAPI_INVALID_STRING;
     const I2CVOLTAGELEVEL_OFF            = 0;
@@ -98,6 +102,8 @@ class YI2cPort extends YFunction
     protected $_lastMsg                  = Y_LASTMSG_INVALID;            // Text
     protected $_currentJob               = Y_CURRENTJOB_INVALID;         // Text
     protected $_startupJob               = Y_STARTUPJOB_INVALID;         // Text
+    protected $_jobMaxTask               = Y_JOBMAXTASK_INVALID;         // UInt31
+    protected $_jobMaxSize               = Y_JOBMAXSIZE_INVALID;         // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_protocol                 = Y_PROTOCOL_INVALID;           // Protocol
     protected $_i2cVoltageLevel          = Y_I2CVOLTAGELEVEL_INVALID;    // I2cVoltageLevel
@@ -144,6 +150,12 @@ class YI2cPort extends YFunction
             return 1;
         case 'startupJob':
             $this->_startupJob = $val;
+            return 1;
+        case 'jobMaxTask':
+            $this->_jobMaxTask = intval($val);
+            return 1;
+        case 'jobMaxSize':
+            $this->_jobMaxSize = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -346,6 +358,44 @@ class YI2cPort extends YFunction
         return $this->_setAttr("startupJob",$rest_val);
     }
 
+    /**
+     * Returns the maximum number of tasks in a job that the device can handle.
+     *
+     * @return integer : an integer corresponding to the maximum number of tasks in a job that the device can handle
+     *
+     * On failure, throws an exception or returns Y_JOBMAXTASK_INVALID.
+     */
+    public function get_jobMaxTask()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXTASK_INVALID;
+            }
+        }
+        $res = $this->_jobMaxTask;
+        return $res;
+    }
+
+    /**
+     * Returns maximum size allowed for job files.
+     *
+     * @return integer : an integer corresponding to maximum size allowed for job files
+     *
+     * On failure, throws an exception or returns Y_JOBMAXSIZE_INVALID.
+     */
+    public function get_jobMaxSize()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_JOBMAXSIZE_INVALID;
+            }
+        }
+        $res = $this->_jobMaxSize;
+        return $res;
+    }
+
     public function get_command()
     {
         // $res                    is a string;
@@ -545,7 +595,7 @@ class YI2cPort extends YFunction
      * the function returns the oldest available line and moves the stream position just after.
      * If no new full line is received, the function returns an empty line.
      *
-     * @return a string with a single line of text
+     * @return string : a string with a single line of text
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -583,14 +633,14 @@ class YI2cPort extends YFunction
      * If no matching message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param pattern : a limited regular expression describing the expected message format,
+     * @param string $pattern : a limited regular expression describing the expected message format,
      *         or an empty string if all messages should be returned (no filtering).
      *         When using binary protocols, the format applies to the hexadecimal
      *         representation of the message.
-     * @param maxWait : the maximum number of milliseconds to wait for a message if none is found
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
-     * @return an array of strings containing the messages found, if any.
+     * @return string[] : an array of strings containing the messages found, if any.
      *         Binary messages are converted to hexadecimal representation.
      *
      * On failure, throws an exception or returns an empty array.
@@ -627,9 +677,9 @@ class YI2cPort extends YFunction
      * does not affect the device, it only changes the value stored in the API object
      * for the next read operations.
      *
-     * @param absPos : the absolute position index for next read operations.
+     * @param integer $absPos : the absolute position index for next read operations.
      *
-     * @return nothing.
+     * @return integer : nothing.
      */
     public function read_seek($absPos)
     {
@@ -640,7 +690,7 @@ class YI2cPort extends YFunction
     /**
      * Returns the current absolute stream position pointer of the API object.
      *
-     * @return the absolute position index for next read operations.
+     * @return integer : the absolute position index for next read operations.
      */
     public function read_tell()
     {
@@ -651,7 +701,7 @@ class YI2cPort extends YFunction
      * Returns the number of bytes available to read in the input buffer starting from the
      * current absolute stream position pointer of the API object.
      *
-     * @return the number of bytes available to read
+     * @return integer : the number of bytes available to read
      */
     public function read_avail()
     {
@@ -672,10 +722,10 @@ class YI2cPort extends YFunction
      * Sends a text line query to the serial port, and reads the reply, if any.
      * This function is intended to be used when the serial port is configured for 'Line' protocol.
      *
-     * @param query : the line query to send (without CR/LF)
-     * @param maxWait : the maximum number of milliseconds to wait for a reply.
+     * @param string $query : the line query to send (without CR/LF)
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a reply.
      *
-     * @return the next text line received after sending the text query, as a string.
+     * @return string : the next text line received after sending the text query, as a string.
      *         Additional lines can be obtained by calling readLine or readMessages.
      *
      * On failure, throws an exception or returns an empty string.
@@ -709,10 +759,10 @@ class YI2cPort extends YFunction
      * Saves the job definition string (JSON data) into a job file.
      * The job file can be later enabled using selectJob().
      *
-     * @param jobfile : name of the job file to save on the device filesystem
-     * @param jsonDef : a string containing a JSON definition of the job
+     * @param string $jobfile : name of the job file to save on the device filesystem
+     * @param string $jsonDef : a string containing a JSON definition of the job
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -727,9 +777,9 @@ class YI2cPort extends YFunction
      * been previously created using the user interface or uploaded on the
      * device filesystem using the uploadJob() function.
      *
-     * @param jobfile : name of the job file (on the device filesystem)
+     * @param string $jobfile : name of the job file (on the device filesystem)
      *
-     * @return YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI_SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1134,6 +1184,12 @@ class YI2cPort extends YFunction
 
     public function setStartupJob($newval)
     { return $this->set_startupJob($newval); }
+
+    public function jobMaxTask()
+    { return $this->get_jobMaxTask(); }
+
+    public function jobMaxSize()
+    { return $this->get_jobMaxSize(); }
 
     public function command()
     { return $this->get_command(); }

@@ -13,16 +13,16 @@
   include('../../Sources/yocto_temperature.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
   @$power = $_GET['power'];
   @$serial = $_GET['serial'];
   if ($serial == '') {
-    $motor = yFirstMotor();
+    $motor = YMotor::FirstMotor();
     if(is_null($motor)) {
       die("No module connected (check USB cable)");
     }
@@ -48,7 +48,7 @@
   } else {
     Printf("Module is not connected, check cable.<br>");
   }
-  yFreeAPI();
+  YAPI::FreeAPI();
 
 ?>
 

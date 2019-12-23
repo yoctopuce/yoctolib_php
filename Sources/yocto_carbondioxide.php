@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_carbondioxide.php 38030 2019-11-04 17:56:01Z mvuilleu $
+ *  $Id: yocto_carbondioxide.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -49,12 +49,11 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YCarbonDioxide declaration)
 /**
- * YCarbonDioxide Class: CarbonDioxide function interface
+ * YCarbonDioxide Class: CO2 sensor control interface, available for instance in the Yocto-CO2-V2
  *
- * The YCarbonDioxide class allows you to read and configure Yoctopuce CO2
- * sensors, for instance using a Yocto-CO2-V2. It inherits from YSensor class the core functions to
- * read measurements,
- * to register callback functions,  to access the autonomous datalogger.
+ * The YCarbonDioxide class allows you to read and configure Yoctopuce CO2 sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  * This class adds the ability to perform manual calibration if required.
  */
 class YCarbonDioxide extends YSensor

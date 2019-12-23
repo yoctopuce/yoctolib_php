@@ -8,23 +8,23 @@
   include('../../Sources/yocto_lightsensor.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $lux = yFindLightSensor("$serial.lightSensor");
+      $lux = YLightSensor::FindLightSensor("$serial.lightSensor");
       if (!$lux->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $lux = yFirstLightSensor();
+      $lux = YLightSensor::FirstLightSensor();
       if(is_null($lux)) {
           die("No module connected (check USB cable)");
       } else {
@@ -35,7 +35,7 @@
 
   $value = $lux->get_currentValue();
   Print("Ambient light: $value lx<br>");
-  yFreeAPI();
+  YAPI::FreeAPI();
 
   // trigger auto-refresh after one second
   Print("<script language='javascript1.5' type='text/JavaScript'>\n");

@@ -9,12 +9,12 @@
     include('../../Sources/yocto_serialport.php');
 
     // Use explicit error handling rather than exceptions
-    yDisableExceptions();
+    YAPI::DisableExceptions();
 
     $address = '127.0.0.1';
 
     // Setup the API to use the VirtualHub on local machine,
-    if(yRegisterHub($address, $errmsg) != YAPI_SUCCESS) {
+    if(YAPI::RegisterHub($address, $errmsg) != YAPI::SUCCESS) {
         die("Cannot contact $address");
     }
 
@@ -38,7 +38,7 @@
         $serialPort->set_protocol("Line");
         $serialPort->reset();
     }
-    yFreeAPI();
+    YAPI::FreeAPI();
     ?>
     <input type='submit'>
 

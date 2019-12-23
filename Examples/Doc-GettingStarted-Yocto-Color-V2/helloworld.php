@@ -9,24 +9,24 @@
   include('../../Sources/yocto_colorled.php');
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $led1 = yFindColorLed("$serial.colorLed1");
-      $led2 = yFindColorLed("$serial.colorLed2");
+      $led1 = YColorLed::FindColorLed("$serial.colorLed1");
+      $led2 = YColorLed::FindColorLed("$serial.colorLed2");
       if (!$led1->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $led1 = yFirstColorLed();
+      $led1 = YColorLed::FirstColorLed();
       if(is_null($led1)) {
           die("No module connected (check USB cable)");
       } else {
@@ -43,7 +43,7 @@
       $led1->set_rgbColor($color);  // immediate switch
       $led2->rgbMove($color,1000);  // smooth transition
   }
-  yFreeAPI();
+  YAPI::FreeAPI();
 ?>
 <input type='radio' name='color' value='0xFF0000'>Red
 <input type='radio' name='color' value='0x00FF00'>Green

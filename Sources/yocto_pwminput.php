@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwminput.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_pwminput.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -65,12 +65,11 @@ if(!defined('Y_DEBOUNCEPERIOD_INVALID'))     define('Y_DEBOUNCEPERIOD_INVALID', 
 
 //--- (YPwmInput declaration)
 /**
- * YPwmInput Class: PwmInput function interface
+ * YPwmInput Class: PWM input control interface, available for instance in the Yocto-PWM-Rx
  *
- * The YPwmInput class allows you to read and configure Yoctopuce PWM
- * sensors, for instance using a Yocto-PWM-Rx. It inherits from YSensor class the core functions to
- * read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YPwmInput class allows you to read and configure Yoctopuce PWM inputs.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  * This class adds the ability to configure the signal parameter used to transmit
  * information: the duty cycle, the frequency or the pulse width.
  */

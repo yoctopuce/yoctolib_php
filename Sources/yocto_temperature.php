@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_temperature.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_temperature.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YTemperature, the high-level API for Temperature functions
  *
@@ -68,14 +68,14 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YTemperature declaration)
 /**
- * YTemperature Class: Temperature function interface
+ * YTemperature Class: temperature sensor control interface, available for instance in the
+ * Yocto-Meteo-V2, the Yocto-PT100, the Yocto-Temperature or the Yocto-Thermocouple
  *
- * The YTemperature class allows you to read and configure Yoctopuce temperature
- * sensors, for instance using a Yocto-Meteo-V2, a Yocto-Thermocouple, a Yocto-PT100 or a
- * Yocto-Temperature. It inherits from YSensor class the core functions to read measurements, to
- * register callback functions, to access the autonomous datalogger.
- * This class adds the ability to configure some specific parameters for some
- * sensors (connection type, temperature mapping table).
+ * The YTemperature class allows you to read and configure Yoctopuce temperature sensors.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
+ * This class adds the ability to configure some specific parameters
+ * for some sensors (connection type, temperature mapping table).
  */
 class YTemperature extends YSensor
 {

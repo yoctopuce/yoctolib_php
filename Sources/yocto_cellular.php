@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ * $Id: yocto_cellular.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -45,9 +45,11 @@
 
 //--- (generated code: YCellRecord declaration)
 /**
- * YCellRecord Class: Description of a cellular antenna
+ * YCellRecord Class: Cellular antenna description, returned by cellular.quickCellSurvey method
  *
- *
+ * YCellRecord objects are used to describe a wireless network.
+ * These objects are used in particular in conjunction with the
+ * YCellular class.
  */
 class YCellRecord
 {
@@ -78,36 +80,76 @@ class YCellRecord
 
     //--- (generated code: YCellRecord implementation)
 
+    /**
+     * Returns the name of the the cell operator, as received from the network.
+     *
+     * @return string : a string with the name of the the cell operator.
+     */
     public function get_cellOperator()
     {
         return $this->_oper;
     }
 
+    /**
+     * Returns the Mobile Country Code (MCC). The MCC is a unique identifier for each country.
+     *
+     * @return integer : an integer corresponding to the Mobile Country Code (MCC).
+     */
     public function get_mobileCountryCode()
     {
         return $this->_mcc;
     }
 
+    /**
+     * Returns the Mobile Network Code (MNC). The MNC is a unique identifier for each phone
+     * operator within a country.
+     *
+     * @return integer : an integer corresponding to the Mobile Network Code (MNC).
+     */
     public function get_mobileNetworkCode()
     {
         return $this->_mnc;
     }
 
+    /**
+     * Returns the Location Area Code (LAC). The LAC is a unique identifier for each
+     * place within a country.
+     *
+     * @return integer : an integer corresponding to the Location Area Code (LAC).
+     */
     public function get_locationAreaCode()
     {
         return $this->_lac;
     }
 
+    /**
+     * Returns the Cell ID. The Cell ID is a unique identifier for each
+     * base transmission station within a LAC.
+     *
+     * @return integer : an integer corresponding to the Cell Id.
+     */
     public function get_cellId()
     {
         return $this->_cid;
     }
 
+    /**
+     * Returns the signal strength, measured in dBm.
+     *
+     * @return integer : an integer corresponding to the signal strength.
+     */
     public function get_signalStrength()
     {
         return $this->_dbm;
     }
 
+    /**
+     * Returns the Timing Advance (TA). The TA corresponds to the time necessary
+     * for the signal to reach the base station from the device.
+     * Each increment corresponds about to 550m of distance.
+     *
+     * @return integer : an integer corresponding to the Timing Advance (TA).
+     */
     public function get_timingAdvance()
     {
         return $this->_tad;
@@ -156,11 +198,12 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (generated code: YCellular declaration)
 /**
- * YCellular Class: Cellular function interface
+ * YCellular Class: cellular interface control interface, available for instance in the
+ * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU or the YoctoHub-GSM-3G-NA
  *
  * The YCellular class provides control over cellular network parameters
- * and status for devices that are GSM-enabled, for instance using a YoctoHub-GSM-3G-NA, a
- * YoctoHub-GSM-3G-EU or a YoctoHub-GSM-2G.
+ * and status for devices that are GSM-enabled.
+ * Note that TCP/IP parameters are configured separately, using class YNetwork.
  */
 class YCellular extends YFunction
 {
@@ -786,7 +829,7 @@ class YCellular extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the cellular interface, for instance
-     *         YHUBGSM4.cellular.
+     *         YHUBGSM1.cellular.
      *
      * @return YCellular : a YCellular object allowing you to drive the cellular interface.
      */
@@ -1190,7 +1233,7 @@ class YCellular extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the cellular interface, for instance
- *         YHUBGSM4.cellular.
+ *         YHUBGSM1.cellular.
  *
  * @return YCellular : a YCellular object allowing you to drive the cellular interface.
  */

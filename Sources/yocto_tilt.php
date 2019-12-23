@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 38030 2019-11-04 17:56:01Z mvuilleu $
+ *  $Id: yocto_tilt.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',      
 
 //--- (YTilt declaration)
 /**
- * YTilt Class: Tilt function interface
+ * YTilt Class: tilt sensor control interface, available for instance in the Yocto-3D-V2
  *
  * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max

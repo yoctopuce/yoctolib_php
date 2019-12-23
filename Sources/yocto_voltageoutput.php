@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_voltageoutput.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -50,9 +50,9 @@ if(!defined('Y_VOLTAGEATSTARTUP_INVALID'))   define('Y_VOLTAGEATSTARTUP_INVALID'
 
 //--- (YVoltageOutput declaration)
 /**
- * YVoltageOutput Class: VoltageOutput function interface
+ * YVoltageOutput Class: voltage output control interface, available for instance in the Yocto-0-10V-Tx
  *
- * The YVoltageOutput class allows you to drive a voltage output, for instance using a Yocto-0-10V-Tx.
+ * The YVoltageOutput class allows you to drive a voltage output.
  */
 class YVoltageOutput extends YFunction
 {

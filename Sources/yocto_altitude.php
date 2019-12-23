@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_altitude.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_altitude.php 38899 2019-12-20 17:21:03Z mvuilleu $
  *
  *  Implements YAltitude, the high-level API for Altitude functions
  *
@@ -49,12 +49,11 @@ if(!defined('Y_TECHNOLOGY_INVALID'))         define('Y_TECHNOLOGY_INVALID',     
 
 //--- (YAltitude declaration)
 /**
- * YAltitude Class: Altitude function interface
+ * YAltitude Class: altimeter control interface, available for instance in the Yocto-Altimeter-V2 or the Yocto-GPS
  *
- * The YAltitude class allows you to read and configure Yoctopuce altitude
- * sensors, for instance using a Yocto-GPS or a Yocto-Altimeter-V2. It inherits from the YSensor class
- * the core functions to read measurements,
- * to register callback functions, to access the autonomous datalogger.
+ * The YAltitude class allows you to read and configure Yoctopuce altimeters.
+ * It inherits from YSensor class the core functions to read measurements,
+ * to register callback functions, and to access the autonomous datalogger.
  * This class adds the ability to configure the barometric pressure adjusted to
  * sea level (QNH) for barometric sensors.
  */
@@ -199,7 +198,7 @@ class YAltitude extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the altimeter, for instance
-     *         YGNSSMK1.altitude.
+     *         YALTIMK2.altitude.
      *
      * @return YAltitude : a YAltitude object allowing you to drive the altimeter.
      */
@@ -289,7 +288,7 @@ class YAltitude extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the altimeter, for instance
- *         YGNSSMK1.altitude.
+ *         YALTIMK2.altitude.
  *
  * @return YAltitude : a YAltitude object allowing you to drive the altimeter.
  */

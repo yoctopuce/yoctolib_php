@@ -2,44 +2,44 @@
 <HTML>
 <HEAD>
  <TITLE>Hello World</TITLE>
-</HEAD>  
+</HEAD>
 <BODY>
 <FORM method='get'>
 <?php
   include('../../Sources/yocto_api.php');
   include('../../Sources/yocto_display.php');
-    
-  
+
+
 
   // Use explicit error handling rather than exceptions
-  yDisableExceptions();
+  YAPI::DisableExceptions();
 
   // Setup the API to use the VirtualHub on local machine
-  if(yRegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI_SUCCESS) {
+  if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {
       die("Cannot contact VirtualHub on 127.0.0.1");
   }
 
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $disp = yFindDisplay("$serial.display");   
-      if (!$disp->isOnline()) { 
+      $disp = YDisplay::FindDisplay("$serial.display");
+      if (!$disp->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $disp = yFirstDisplay();
+      $disp = YDisplay::FirstDisplay();
       if(is_null($disp)) {
           die("No module connected (check USB cable)");
-      }  
+      }
    }
-  $serial = $disp->get_module()->get_serialNumber(); 
+  $serial = $disp->get_module()->get_serialNumber();
   Print("Module to use: <input name='serial' value='$serial'><br>");
 
-  
+
   $disp->resetAll();
   // retreive the display size
-  
+
   $w=$disp->get_displayWidth();
   $h=$disp->get_displayHeight();
 
@@ -49,20 +49,20 @@
   $coord = array(2*$count);
 
   // precompute the "leds" position
- 
+
   $ledwidth = intVal($w / $count);
   for ($i=0 ; $i<$count ;$i++)
   {  $coord[$i] = $i *$ledwidth;
      $coord[2*$count-$i-2] = $coord[$i] ;
   }
-  
+
   $framesCount =  2*$count-2;
 
   // start recording
   $disp->newSequence();
 
   // build one loop for recording
-  for ($i=0;$i<$framesCount;$i++) 
+  for ($i=0;$i<$framesCount;$i++)
     {  $l0->selectColorPen(0);
        $l0->drawBar($coord[($i+$framesCount-1) % $framesCount], $h-1,$coord[($i+$framesCount-1) % $framesCount]+$ledwidth, $h-4);
        $l0->selectColorPen(0xffffff);
@@ -76,12 +76,12 @@
 
   // play the sequence
   $disp->playSequence("K2000.seq");
-    
+
 
 ?>
 <br><input type='submit'>
 </FORM>
 This animation is running in background
 </BODY>
-</HTML> 
+</HTML>
 
