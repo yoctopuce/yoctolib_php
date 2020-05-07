@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_altitude.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_altitude.php 39658 2020-03-12 15:36:29Z seb $
  *
  *  Implements YAltitude, the high-level API for Altitude functions
  *
@@ -49,7 +49,8 @@ if(!defined('Y_TECHNOLOGY_INVALID'))         define('Y_TECHNOLOGY_INVALID',     
 
 //--- (YAltitude declaration)
 /**
- * YAltitude Class: altimeter control interface, available for instance in the Yocto-Altimeter-V2 or the Yocto-GPS
+ * YAltitude Class: altimeter control interface, available for instance in the Yocto-Altimeter-V2 or
+ * the Yocto-GPS-V2
  *
  * The YAltitude class allows you to read and configure Yoctopuce altimeters.
  * It inherits from YSensor class the core functions to read measurements,

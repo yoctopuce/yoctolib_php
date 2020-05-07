@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 38913 2019-12-20 18:59:49Z mvuilleu $
+ *  $Id: yocto_i2cport.php 39333 2020-01-30 10:05:40Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -497,13 +497,13 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Returns the SPI port communication parameters, as a string such as
+     * Returns the I2C port communication parameters, as a string such as
      * "400kbps,2000ms,NoRestart". The string includes the baud rate, the
      * recovery delay after communications errors, and if needed the option
      * NoRestart to use a Stop/Start sequence instead of the
      * Restart state when performing read on the I2C bus.
      *
-     * @return string : a string corresponding to the SPI port communication parameters, as a string such as
+     * @return string : a string corresponding to the I2C port communication parameters, as a string such as
      *         "400kbps,2000ms,NoRestart"
      *
      * On failure, throws an exception or returns Y_I2CMODE_INVALID.
@@ -521,7 +521,7 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Changes the SPI port communication parameters, with a string such as
+     * Changes the I2C port communication parameters, with a string such as
      * "400kbps,2000ms". The string includes the baud rate, the
      * recovery delay after communications errors, and if needed the option
      * NoRestart to use a Stop/Start sequence instead of the
@@ -529,7 +529,7 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval : a string corresponding to the SPI port communication parameters, with a string such as
+     * @param string $newval : a string corresponding to the I2C port communication parameters, with a string such as
      *         "400kbps,2000ms"
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
@@ -739,6 +739,44 @@ class YI2cPort extends YFunction
         // $res                    is a str;
 
         $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return '';
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        if ($msglen == 0) {
+            return '';
+        }
+        $res = $this->_json_get_string($msgarr[0]);
+        return $res;
+    }
+
+    /**
+     * Sends a binary message to the serial port, and reads the reply, if any.
+     * This function is intended to be used when the serial port is configured for
+     * Frame-based protocol.
+     *
+     * @param string $hexString : the message to send, coded in hexadecimal
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a reply.
+     *
+     * @return string : the next frame received after sending the message, as a hex string.
+     *         Additional frames can be obtained by calling readHex or readMessages.
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function queryHex($hexString,$maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        // $res                    is a str;
+
+        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=$%s', $maxWait, $hexString);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
         $msglen = sizeof($msgarr);

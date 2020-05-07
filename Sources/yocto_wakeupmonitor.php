@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupmonitor.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_wakeupmonitor.php 39434 2020-02-25 08:53:55Z seb $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -62,7 +62,7 @@ if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',        
 //--- (YWakeUpMonitor declaration)
 /**
  * YWakeUpMonitor Class: wake-up monitor control interface, available for instance in the
- * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-SR or the YoctoHub-Wireless-g
+ * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
  *
  * The YWakeUpMonitor class handles globally all wake-up sources, as well
  * as automated sleep mode.

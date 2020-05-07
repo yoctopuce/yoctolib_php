@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ * $Id: yocto_cellular.php 40298 2020-05-05 08:37:49Z seb $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -172,6 +172,9 @@ if(!defined('Y_CELLTYPE_WCDMA'))             define('Y_CELLTYPE_WCDMA',         
 if(!defined('Y_CELLTYPE_HSDPA'))             define('Y_CELLTYPE_HSDPA',            3);
 if(!defined('Y_CELLTYPE_NONE'))              define('Y_CELLTYPE_NONE',             4);
 if(!defined('Y_CELLTYPE_CDMA'))              define('Y_CELLTYPE_CDMA',             5);
+if(!defined('Y_CELLTYPE_LTE_M'))             define('Y_CELLTYPE_LTE_M',            6);
+if(!defined('Y_CELLTYPE_NB_IOT'))            define('Y_CELLTYPE_NB_IOT',           7);
+if(!defined('Y_CELLTYPE_EC_GSM_IOT'))        define('Y_CELLTYPE_EC_GSM_IOT',       8);
 if(!defined('Y_CELLTYPE_INVALID'))           define('Y_CELLTYPE_INVALID',          -1);
 if(!defined('Y_AIRPLANEMODE_OFF'))           define('Y_AIRPLANEMODE_OFF',          0);
 if(!defined('Y_AIRPLANEMODE_ON'))            define('Y_AIRPLANEMODE_ON',           1);
@@ -187,6 +190,7 @@ if(!defined('Y_CELLIDENTIFIER_INVALID'))     define('Y_CELLIDENTIFIER_INVALID', 
 if(!defined('Y_IMSI_INVALID'))               define('Y_IMSI_INVALID',              YAPI_INVALID_STRING);
 if(!defined('Y_MESSAGE_INVALID'))            define('Y_MESSAGE_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PIN_INVALID'))                define('Y_PIN_INVALID',               YAPI_INVALID_STRING);
+if(!defined('Y_RADIOCONFIG_INVALID'))        define('Y_RADIOCONFIG_INVALID',       YAPI_INVALID_STRING);
 if(!defined('Y_LOCKEDOPERATOR_INVALID'))     define('Y_LOCKEDOPERATOR_INVALID',    YAPI_INVALID_STRING);
 if(!defined('Y_APN_INVALID'))                define('Y_APN_INVALID',               YAPI_INVALID_STRING);
 if(!defined('Y_APNSECRET_INVALID'))          define('Y_APNSECRET_INVALID',         YAPI_INVALID_STRING);
@@ -216,10 +220,14 @@ class YCellular extends YFunction
     const CELLTYPE_HSDPA                 = 3;
     const CELLTYPE_NONE                  = 4;
     const CELLTYPE_CDMA                  = 5;
+    const CELLTYPE_LTE_M                 = 6;
+    const CELLTYPE_NB_IOT                = 7;
+    const CELLTYPE_EC_GSM_IOT            = 8;
     const CELLTYPE_INVALID               = -1;
     const IMSI_INVALID                   = YAPI_INVALID_STRING;
     const MESSAGE_INVALID                = YAPI_INVALID_STRING;
     const PIN_INVALID                    = YAPI_INVALID_STRING;
+    const RADIOCONFIG_INVALID            = YAPI_INVALID_STRING;
     const LOCKEDOPERATOR_INVALID         = YAPI_INVALID_STRING;
     const AIRPLANEMODE_OFF               = 0;
     const AIRPLANEMODE_ON                = 1;
@@ -245,6 +253,7 @@ class YCellular extends YFunction
     protected $_imsi                     = Y_IMSI_INVALID;               // IMSI
     protected $_message                  = Y_MESSAGE_INVALID;            // YFSText
     protected $_pin                      = Y_PIN_INVALID;                // PinPassword
+    protected $_radioConfig              = Y_RADIOCONFIG_INVALID;        // RadioConfig
     protected $_lockedOperator           = Y_LOCKEDOPERATOR_INVALID;     // Text
     protected $_airplaneMode             = Y_AIRPLANEMODE_INVALID;       // OnOff
     protected $_enableData               = Y_ENABLEDATA_INVALID;         // ServiceScope
@@ -290,6 +299,9 @@ class YCellular extends YFunction
             return 1;
         case 'pin':
             $this->_pin = $val;
+            return 1;
+        case 'radioConfig':
+            $this->_radioConfig = $val;
             return 1;
         case 'lockedOperator':
             $this->_lockedOperator = $val;
@@ -384,7 +396,8 @@ class YCellular extends YFunction
      * Active cellular connection type.
      *
      * @return integer : a value among Y_CELLTYPE_GPRS, Y_CELLTYPE_EGPRS, Y_CELLTYPE_WCDMA,
-     * Y_CELLTYPE_HSDPA, Y_CELLTYPE_NONE and Y_CELLTYPE_CDMA
+     * Y_CELLTYPE_HSDPA, Y_CELLTYPE_NONE, Y_CELLTYPE_CDMA, Y_CELLTYPE_LTE_M, Y_CELLTYPE_NB_IOT and
+     * Y_CELLTYPE_EC_GSM_IOT
      *
      * On failure, throws an exception or returns Y_CELLTYPE_INVALID.
      */
@@ -401,14 +414,14 @@ class YCellular extends YFunction
     }
 
     /**
-     * Returns an opaque string if a PIN code has been configured in the device to access
-     * the SIM card, or an empty string if none has been configured or if the code provided
-     * was rejected by the SIM card.
+     * Returns the International Mobile Subscriber Identity (MSI) that uniquely identifies
+     * the SIM card. The first 3 digits represent the mobile country code (MCC), which
+     * is followed by the mobile network code (MNC), either 2-digit (European standard)
+     * or 3-digit (North American standard)
      *
-     * @return string : a string corresponding to an opaque string if a PIN code has been configured in
-     * the device to access
-     *         the SIM card, or an empty string if none has been configured or if the code provided
-     *         was rejected by the SIM card
+     * @return string : a string corresponding to the International Mobile Subscriber Identity (MSI) that
+     * uniquely identifies
+     *         the SIM card
      *
      * On failure, throws an exception or returns Y_IMSI_INVALID.
      */
@@ -490,6 +503,52 @@ class YCellular extends YFunction
     {
         $rest_val = $newval;
         return $this->_setAttr("pin",$rest_val);
+    }
+
+    /**
+     * Returns the type of protocol used over the serial line, as a string.
+     * Possible values are "Line" for ASCII messages separated by CR and/or LF,
+     * "Frame:[timeout]ms" for binary messages separated by a delay time,
+     * "Char" for a continuous ASCII stream or
+     * "Byte" for a continuous binary stream.
+     *
+     * @return string : a string corresponding to the type of protocol used over the serial line, as a string
+     *
+     * On failure, throws an exception or returns Y_RADIOCONFIG_INVALID.
+     */
+    public function get_radioConfig()
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_RADIOCONFIG_INVALID;
+            }
+        }
+        $res = $this->_radioConfig;
+        return $res;
+    }
+
+    /**
+     * Changes the type of protocol used over the serial line.
+     * Possible values are "Line" for ASCII messages separated by CR and/or LF,
+     * "Frame:[timeout]ms" for binary messages separated by a delay time,
+     * "Char" for a continuous ASCII stream or
+     * "Byte" for a continuous binary stream.
+     * The suffix "/[wait]ms" can be added to reduce the transmit rate so that there
+     * is always at lest the specified number of milliseconds between each bytes sent.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param string $newval : a string corresponding to the type of protocol used over the serial line
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_radioConfig($newval)
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("radioConfig",$rest_val);
     }
 
     /**
@@ -1115,6 +1174,12 @@ class YCellular extends YFunction
 
     public function setPin($newval)
     { return $this->set_pin($newval); }
+
+    public function radioConfig()
+    { return $this->get_radioConfig(); }
+
+    public function setRadioConfig($newval)
+    { return $this->set_radioConfig($newval); }
 
     public function lockedOperator()
     { return $this->get_lockedOperator(); }

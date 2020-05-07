@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_relay.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_relay.php 39434 2020-02-25 08:53:55Z seb $
  *
  *  Implements YRelay, the high-level API for Relay functions
  *

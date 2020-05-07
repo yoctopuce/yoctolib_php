@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_groundspeed.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_groundspeed.php 39658 2020-03-12 15:36:29Z seb $
  *
  *  Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *
@@ -47,7 +47,7 @@
 
 //--- (YGroundSpeed declaration)
 /**
- * YGroundSpeed Class: ground speed sensor control interface, available for instance in the Yocto-GPS
+ * YGroundSpeed Class: ground speed sensor control interface, available for instance in the Yocto-GPS-V2
  *
  * The YGroundSpeed class allows you to read and configure Yoctopuce ground speed sensors.
  * It inherits from YSensor class the core functions to read measurements,
@@ -95,7 +95,7 @@ class YGroundSpeed extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the ground speed sensor, for instance
-     *         YGNSSMK1.groundSpeed.
+     *         YGNSSMK2.groundSpeed.
      *
      * @return YGroundSpeed : a YGroundSpeed object allowing you to drive the ground speed sensor.
      */
@@ -173,7 +173,7 @@ class YGroundSpeed extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the ground speed sensor, for instance
- *         YGNSSMK1.groundSpeed.
+ *         YGNSSMK2.groundSpeed.
  *
  * @return YGroundSpeed : a YGroundSpeed object allowing you to drive the ground speed sensor.
  */

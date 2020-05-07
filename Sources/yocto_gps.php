@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_gps.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_gps.php 39658 2020-03-12 15:36:29Z seb $
  *
  *  Implements YGps, the high-level API for Gps functions
  *
@@ -75,7 +75,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YGps declaration)
 /**
- * YGps Class: Geolocalization control interface (GPS, GNSS, ...), available for instance in the Yocto-GPS
+ * YGps Class: Geolocalization control interface (GPS, GNSS, ...), available for instance in the Yocto-GPS-V2
  *
  * The YGps class allows you to retrieve positioning
  * data from a GPS/GNSS sensor. This class can provides
@@ -605,7 +605,7 @@ class YGps extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the geolocalization module, for instance
-     *         YGNSSMK1.gps.
+     *         YGNSSMK2.gps.
      *
      * @return YGps : a YGps object allowing you to drive the geolocalization module.
      */
@@ -743,7 +743,7 @@ class YGps extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the geolocalization module, for instance
- *         YGNSSMK1.gps.
+ *         YGNSSMK2.gps.
  *
  * @return YGps : a YGps object allowing you to drive the geolocalization module.
  */

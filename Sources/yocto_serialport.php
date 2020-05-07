@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ * $Id: yocto_serialport.php 40298 2020-05-05 08:37:49Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -835,6 +835,44 @@ class YSerialPort extends YFunction
         // $res                    is a str;
 
         $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return '';
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        if ($msglen == 0) {
+            return '';
+        }
+        $res = $this->_json_get_string($msgarr[0]);
+        return $res;
+    }
+
+    /**
+     * Sends a binary message to the serial port, and reads the reply, if any.
+     * This function is intended to be used when the serial port is configured for
+     * Frame-based protocol.
+     *
+     * @param string $hexString : the message to send, coded in hexadecimal
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a reply.
+     *
+     * @return string : the next frame received after sending the message, as a hex string.
+     *         Additional frames can be obtained by calling readHex or readMessages.
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function queryHex($hexString,$maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        // $res                    is a str;
+
+        $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=$%s', $maxWait, $hexString);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
         $msglen = sizeof($msgarr);

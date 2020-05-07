@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_temperature.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_temperature.php 39648 2020-03-12 13:56:10Z mvuilleu $
  *
  *  Implements YTemperature, the high-level API for Temperature functions
  *
@@ -58,6 +58,7 @@ if(!defined('Y_SENSORTYPE_RES_LINEAR'))      define('Y_SENSORTYPE_RES_LINEAR',  
 if(!defined('Y_SENSORTYPE_RES_INTERNAL'))    define('Y_SENSORTYPE_RES_INTERNAL',   14);
 if(!defined('Y_SENSORTYPE_IR'))              define('Y_SENSORTYPE_IR',             15);
 if(!defined('Y_SENSORTYPE_RES_PT1000'))      define('Y_SENSORTYPE_RES_PT1000',     16);
+if(!defined('Y_SENSORTYPE_CHANNEL_OFF'))     define('Y_SENSORTYPE_CHANNEL_OFF',    17);
 if(!defined('Y_SENSORTYPE_INVALID'))         define('Y_SENSORTYPE_INVALID',        -1);
 if(!defined('Y_SIGNALVALUE_INVALID'))        define('Y_SIGNALVALUE_INVALID',       YAPI_INVALID_DOUBLE);
 if(!defined('Y_SIGNALUNIT_INVALID'))         define('Y_SIGNALUNIT_INVALID',        YAPI_INVALID_STRING);
@@ -96,6 +97,7 @@ class YTemperature extends YSensor
     const SENSORTYPE_RES_INTERNAL        = 14;
     const SENSORTYPE_IR                  = 15;
     const SENSORTYPE_RES_PT1000          = 16;
+    const SENSORTYPE_CHANNEL_OFF         = 17;
     const SENSORTYPE_INVALID             = -1;
     const SIGNALVALUE_INVALID            = YAPI_INVALID_DOUBLE;
     const SIGNALUNIT_INVALID             = YAPI_INVALID_STRING;
@@ -169,8 +171,8 @@ class YTemperature extends YSensor
      * Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R, Y_SENSORTYPE_TYPE_S,
      * Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
      * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR,
-     * Y_SENSORTYPE_RES_INTERNAL, Y_SENSORTYPE_IR and Y_SENSORTYPE_RES_PT1000 corresponding to the
-     * temperature sensor type
+     * Y_SENSORTYPE_RES_INTERNAL, Y_SENSORTYPE_IR, Y_SENSORTYPE_RES_PT1000 and Y_SENSORTYPE_CHANNEL_OFF
+     * corresponding to the temperature sensor type
      *
      * On failure, throws an exception or returns Y_SENSORTYPE_INVALID.
      */
@@ -197,8 +199,8 @@ class YTemperature extends YSensor
      * Y_SENSORTYPE_TYPE_E, Y_SENSORTYPE_TYPE_J, Y_SENSORTYPE_TYPE_N, Y_SENSORTYPE_TYPE_R,
      * Y_SENSORTYPE_TYPE_S, Y_SENSORTYPE_TYPE_T, Y_SENSORTYPE_PT100_4WIRES, Y_SENSORTYPE_PT100_3WIRES,
      * Y_SENSORTYPE_PT100_2WIRES, Y_SENSORTYPE_RES_OHM, Y_SENSORTYPE_RES_NTC, Y_SENSORTYPE_RES_LINEAR,
-     * Y_SENSORTYPE_RES_INTERNAL, Y_SENSORTYPE_IR and Y_SENSORTYPE_RES_PT1000 corresponding to the
-     * temperature sensor type
+     * Y_SENSORTYPE_RES_INTERNAL, Y_SENSORTYPE_IR, Y_SENSORTYPE_RES_PT1000 and Y_SENSORTYPE_CHANNEL_OFF
+     * corresponding to the temperature sensor type
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

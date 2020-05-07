@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 38913 2019-12-20 18:59:49Z mvuilleu $
+ * $Id: yocto_files.php 38934 2019-12-23 09:29:53Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -120,8 +120,8 @@ class YFileRecord
 
 //--- (generated code: YFiles declaration)
 /**
- * YFiles Class: filesystem control interface, available for instance in the Yocto-Color-V2, the
- * Yocto-RS232, the YoctoHub-Ethernet or the YoctoHub-Wireless-g
+ * YFiles Class: filesystem control interface, available for instance in the Yocto-Buzzer, the
+ * Yocto-Color-V2, the YoctoHub-Ethernet or the YoctoHub-Wireless-g
  *
  * The YFiles class is used to access the filesystem embedded on
  * some Yoctopuce devices. This filesystem makes it
@@ -225,7 +225,7 @@ class YFiles extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the filesystem, for instance
-     *         YRGBLED2.files.
+     *         YBUZZER2.files.
      *
      * @return YFiles : a YFiles object allowing you to drive the filesystem.
      */
@@ -439,7 +439,7 @@ class YFiles extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the filesystem, for instance
- *         YRGBLED2.files.
+ *         YBUZZER2.files.
  *
  * @return YFiles : a YFiles object allowing you to drive the filesystem.
  */

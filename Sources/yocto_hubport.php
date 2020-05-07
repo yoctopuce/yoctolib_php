@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_hubport.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_hubport.php 39333 2020-01-30 10:05:40Z mvuilleu $
  *
  *  Implements YHubPort, the high-level API for HubPort functions
  *
@@ -58,7 +58,7 @@ if(!defined('Y_BAUDRATE_INVALID'))           define('Y_BAUDRATE_INVALID',       
 //--- (YHubPort declaration)
 /**
  * YHubPort Class: YoctoHub slave port control interface, available for instance in the
- * YoctoHub-Ethernet, the YoctoHub-GSM-3G-NA, the YoctoHub-Shield or the YoctoHub-Wireless-g
+ * YoctoHub-Ethernet, the YoctoHub-GSM-3G-EU, the YoctoHub-Shield or the YoctoHub-Wireless-g
  *
  * The YHubPort class provides control over the power supply for slave ports
  * on a YoctoHub. It provide information about the device connected to it.
