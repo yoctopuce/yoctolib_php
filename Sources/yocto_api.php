@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 38914 2019-12-20 19:14:33Z mvuilleu $
+ * $Id: yocto_api.php 40891 2020-06-09 16:29:38Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3144,7 +3144,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.40411";
+        return "1.10.40924";
     }
 
     /**
@@ -3232,10 +3232,22 @@ class YAPI
     }
 
     /**
-     * Frees dynamically allocated memory blocks used by the Yoctopuce library.
-     * It is generally not required to call this function, unless you
-     * want to free all dynamically allocated memory blocks in order to
-     * track a memory leak for instance.
+     * Waits for all pending communications with Yoctopuce devices to be
+     * completed then frees dynamically allocated resources used by
+     * the Yoctopuce library.
+     *
+     * From an operating system standpoint, it is generally not required to call
+     * this function since the OS will automatically free allocated resources
+     * once your program is completed. However there are two situations when
+     * you may really want to use that function:
+     *
+     * - Free all dynamically allocated memory blocks in order to
+     * track a memory leak.
+     *
+     * - Send commands to devices right before the end
+     * of the program. Since commands are sent in an asynchronous way
+     * the program could exit before all commands are effectively sent.
+     *
      * You should not call any other library function after calling
      * yFreeAPI(), or your program will crash.
      */
@@ -8746,6 +8758,9 @@ class YModule extends YFunction
         // $json_api               is a str;
         // $json_files             is a str;
         // $json_extra             is a str;
+        // $fuperror               is a int;
+        // $globalres              is a int;
+        $fuperror = 0;
         $json = $settings;
         $json_api = $this->_get_json_path($json, 'api');
         if ($json_api == '') {
@@ -8772,11 +8787,17 @@ class YModule extends YFunction
                 $name = $this->_decode_json_string($name);
                 $data = $this->_get_json_path($each, 'data');
                 $data = $this->_decode_json_string($data);
-                $this->_upload($name, YAPI::_hexStrToBin($data));
+                if ($name == '') {
+                    $fuperror = $fuperror + 1;
+                } else {
+                    $this->_upload($name, YAPI::_hexStrToBin($data));
+                }
             }
         }
         // Apply settings a second time for file-dependent settings and dynamic sensor nodes
-        return $this->set_allSettings($json_api);
+        $globalres = $this->set_allSettings($json_api);
+        if (!($fuperror == 0)) return $this->_throw( YAPI_IO_ERROR, 'Error during file upload',YAPI_IO_ERROR);
+        return $globalres;
     }
 
     /**
@@ -9686,10 +9707,22 @@ function yInitAPI($mode = 0, &$errmsg = "")
 }
 
 /**
- * Frees dynamically allocated memory blocks used by the Yoctopuce library.
- * It is generally not required to call this function, unless you
- * want to free all dynamically allocated memory blocks in order to
- * track a memory leak for instance.
+ * Waits for all pending communications with Yoctopuce devices to be
+ * completed then frees dynamically allocated resources used by
+ * the Yoctopuce library.
+ *
+ * From an operating system standpoint, it is generally not required to call
+ * this function since the OS will automatically free allocated resources
+ * once your program is completed. However there are two situations when
+ * you may really want to use that function:
+ *
+ * - Free all dynamically allocated memory blocks in order to
+ * track a memory leak.
+ *
+ * - Send commands to devices right before the end
+ * of the program. Since commands are sent in an asynchronous way
+ * the program could exit before all commands are effectively sent.
+ *
  * You should not call any other library function after calling
  * yFreeAPI(), or your program will crash.
  */
