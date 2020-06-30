@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 38934 2019-12-23 09:29:53Z seb $
+ * $Id: yocto_files.php 41109 2020-06-29 12:40:42Z seb $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -121,7 +121,7 @@ class YFileRecord
 //--- (generated code: YFiles declaration)
 /**
  * YFiles Class: filesystem control interface, available for instance in the Yocto-Buzzer, the
- * Yocto-Color-V2, the YoctoHub-Ethernet or the YoctoHub-Wireless-g
+ * Yocto-Color-V2, the Yocto-RS485-V2 or the YoctoHub-Ethernet
  *
  * The YFiles class is used to access the filesystem embedded on
  * some Yoctopuce devices. This filesystem makes it

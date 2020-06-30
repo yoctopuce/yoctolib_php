@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 40891 2020-06-09 16:29:38Z seb $
+ * $Id: yocto_api.php 41062 2020-06-25 10:16:20Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -140,6 +140,9 @@ define('YOCTO_CALIB_TYPE_OFS', 30);
 
 // Maximum device request timeout
 define('YAPI_BLOCKING_REQUEST_TIMEOUT', 20000);
+define('YIO_DEFAULT_TCP_TIMEOUT',20000);
+define('YIO_1_MINUTE_TCP_TIMEOUT',60000);
+define('YIO_10_MINUTES_TCP_TIMEOUT',600000);
 
 
 define('NOTIFY_NETPKT_NAME', '0');
@@ -2814,7 +2817,28 @@ class YAPI
         self::$_pendingRequests[] = $tcpreq;
         if (!$async) {
             // normal query, wait for completion until timeout
-            $timeout = YAPI::GetTickCount() +  YAPI::$_yapiContext->_networkTimeoutMs;
+            $mstimeout = YIO_DEFAULT_TCP_TIMEOUT;
+            if (strpos($devUrl,'/testcb.txt') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/logger.json') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/rxmsg.json') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/rxdata.bin') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/at.txt') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/files.json') !== false) {
+                $mstimeout = YIO_1_MINUTE_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/upload.html') !== false) {
+                $mstimeout = YIO_10_MINUTES_TCP_TIMEOUT;
+            } else if (strpos($devUrl,'/flash.json') !== false) {
+                $mstimeout = YIO_10_MINUTES_TCP_TIMEOUT;
+            }            
+            if ($mstimeout < YAPI::$_yapiContext->_networkTimeoutMs){
+                $mstimeout = YAPI::$_yapiContext->_networkTimeoutMs;
+            }
+            $timeout = YAPI::GetTickCount() +  $mstimeout;
             do {
                 self::_handleEvents_internal(100);
             } while (!$tcpreq->eof() && YAPI::GetTickCount() < $timeout);
@@ -3144,7 +3168,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.40924";
+        return "1.10.41115";
     }
 
     /**

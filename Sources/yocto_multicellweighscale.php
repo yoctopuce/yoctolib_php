@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multicellweighscale.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_multicellweighscale.php 41108 2020-06-29 12:29:07Z seb $
  *
  *  Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
@@ -478,7 +478,8 @@ class YMultiCellWeighScale extends YSensor
 
     /**
      * Adapts the load cell signal bias (stored in the corresponding genericSensor)
-     * so that the current signal corresponds to a zero weight.
+     * so that the current signal corresponds to a zero weight. Remember to call the
+     * saveToFlash() method of the module if the modification must be kept.
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

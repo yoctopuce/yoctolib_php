@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_relay.php 39434 2020-02-25 08:53:55Z seb $
+ *  $Id: yocto_relay.php 41109 2020-06-29 12:40:42Z seb $
  *
  *  Implements YRelay, the high-level API for Relay functions
  *
@@ -62,7 +62,7 @@ if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',      
 
 //--- (YRelay declaration)
 /**
- * YRelay Class: relay control interface, available for instance in the Yocto-MaxiCoupler-V2, the
+ * YRelay Class: relay control interface, available for instance in the Yocto-LatchedRelay, the
  * Yocto-MaxiPowerRelay, the Yocto-PowerRelay-V3 or the Yocto-Relay
  *
  * The YRelay class allows you to drive a Yoctopuce relay or optocoupled output.
@@ -464,7 +464,7 @@ class YRelay extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the relay, for instance
-     *         MXCOUPL2.relay1.
+     *         YLTCHRL1.relay1.
      *
      * @return YRelay : a YRelay object allowing you to drive the relay.
      */
@@ -623,7 +623,7 @@ class YRelay extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the relay, for instance
- *         MXCOUPL2.relay1.
+ *         YLTCHRL1.relay1.
  *
  * @return YRelay : a YRelay object allowing you to drive the relay.
  */

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_colorledcluster.php 41109 2020-06-29 12:40:42Z seb $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -55,7 +55,8 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 
 //--- (YColorLedCluster declaration)
 /**
- * YColorLedCluster Class: RGB LED cluster control interface, available for instance in the Yocto-Color-V2
+ * YColorLedCluster Class: RGB LED cluster control interface, available for instance in the
+ * Yocto-Color-V2 or the Yocto-MaxiBuzzer
  *
  * The YColorLedCluster class allows you to drive a
  * color LED cluster. Unlike the ColorLed class, the YColorLedCluster
