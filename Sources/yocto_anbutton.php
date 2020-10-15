@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_anbutton.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_anbutton.php 42060 2020-10-14 10:02:12Z seb $
  *
  *  Implements YAnButton, the high-level API for AnButton functions
  *
@@ -47,6 +47,9 @@ if(!defined('Y_ANALOGCALIBRATION_INVALID'))  define('Y_ANALOGCALIBRATION_INVALID
 if(!defined('Y_ISPRESSED_FALSE'))            define('Y_ISPRESSED_FALSE',           0);
 if(!defined('Y_ISPRESSED_TRUE'))             define('Y_ISPRESSED_TRUE',            1);
 if(!defined('Y_ISPRESSED_INVALID'))          define('Y_ISPRESSED_INVALID',         -1);
+if(!defined('Y_INPUTTYPE_ANALOG'))           define('Y_INPUTTYPE_ANALOG',          0);
+if(!defined('Y_INPUTTYPE_DIGITAL4'))         define('Y_INPUTTYPE_DIGITAL4',        1);
+if(!defined('Y_INPUTTYPE_INVALID'))          define('Y_INPUTTYPE_INVALID',         -1);
 if(!defined('Y_CALIBRATEDVALUE_INVALID'))    define('Y_CALIBRATEDVALUE_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_RAWVALUE_INVALID'))           define('Y_RAWVALUE_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_CALIBRATIONMAX_INVALID'))     define('Y_CALIBRATIONMAX_INVALID',    YAPI_INVALID_UINT);
@@ -63,7 +66,7 @@ if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',     
 //--- (YAnButton declaration)
 /**
  * YAnButton Class: analog input control interface, available for instance in the Yocto-Buzzer, the
- * Yocto-Display, the Yocto-Knob or the Yocto-MaxiDisplay
+ * Yocto-Knob, the Yocto-MaxiBuzzer or the Yocto-MaxiDisplay
  *
  * The YAnButton class provide access to basic resistive inputs.
  * Such inputs can be used to measure the state
@@ -90,6 +93,9 @@ class YAnButton extends YFunction
     const LASTTIMERELEASED_INVALID       = YAPI_INVALID_LONG;
     const PULSECOUNTER_INVALID           = YAPI_INVALID_LONG;
     const PULSETIMER_INVALID             = YAPI_INVALID_LONG;
+    const INPUTTYPE_ANALOG               = 0;
+    const INPUTTYPE_DIGITAL4             = 1;
+    const INPUTTYPE_INVALID              = -1;
     //--- (end of YAnButton declaration)
 
     //--- (YAnButton attributes)
@@ -104,6 +110,7 @@ class YAnButton extends YFunction
     protected $_lastTimeReleased         = Y_LASTTIMERELEASED_INVALID;   // Time
     protected $_pulseCounter             = Y_PULSECOUNTER_INVALID;       // UInt
     protected $_pulseTimer               = Y_PULSETIMER_INVALID;         // Time
+    protected $_inputType                = Y_INPUTTYPE_INVALID;          // InputType
     //--- (end of YAnButton attributes)
 
     function __construct($str_func)
@@ -152,6 +159,9 @@ class YAnButton extends YFunction
             return 1;
         case 'pulseTimer':
             $this->_pulseTimer = intval($val);
+            return 1;
+        case 'inputType':
+            $this->_inputType = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -461,6 +471,43 @@ class YAnButton extends YFunction
     }
 
     /**
+     * Returns the decoding method applied to the input (analog or multiplexed binary switches).
+     *
+     * @return integer : either Y_INPUTTYPE_ANALOG or Y_INPUTTYPE_DIGITAL4, according to the decoding
+     * method applied to the input (analog or multiplexed binary switches)
+     *
+     * On failure, throws an exception or returns Y_INPUTTYPE_INVALID.
+     */
+    public function get_inputType()
+    {
+        // $res                    is a enumINPUTTYPE;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_INPUTTYPE_INVALID;
+            }
+        }
+        $res = $this->_inputType;
+        return $res;
+    }
+
+    /**
+     * Changes the decoding method applied to the input (analog or multiplexed binary switches).
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
+     *
+     * @param integer $newval : either Y_INPUTTYPE_ANALOG or Y_INPUTTYPE_DIGITAL4, according to the
+     * decoding method applied to the input (analog or multiplexed binary switches)
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_inputType($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("inputType",$rest_val);
+    }
+
+    /**
      * Retrieves an analog input for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -558,6 +605,12 @@ class YAnButton extends YFunction
 
     public function pulseTimer()
     { return $this->get_pulseTimer(); }
+
+    public function inputType()
+    { return $this->get_inputType(); }
+
+    public function setInputType($newval)
+    { return $this->set_inputType($newval); }
 
     /**
      * Continues the enumeration of analog inputs started using yFirstAnButton().

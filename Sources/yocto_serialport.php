@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 40298 2020-05-05 08:37:49Z seb $
+ * $Id: yocto_serialport.php 41171 2020-07-02 17:49:00Z mvuilleu $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -71,7 +71,7 @@ if(!defined('Y_SERIALMODE_INVALID'))         define('Y_SERIALMODE_INVALID',     
 
 //--- (generated code: YSnoopingRecord declaration)
 /**
- * YSnoopingRecord Class: Intercepted message description, returned by serialPort.snoopMessages method
+ * YSnoopingRecord Class: Intercepted serial message description, returned by serialPort.snoopMessages method
  *
  *
  */
@@ -109,9 +109,9 @@ class YSnoopingRecord
     }
 
     /**
-     * Returns the message direction (RX=0 , TX=1) .
+     * Returns the message direction (RX=0, TX=1).
      *
-     * @return integer : the message direction (RX=0 , TX=1) .
+     * @return integer : the message direction (RX=0, TX=1).
      */
     public function get_direction()
     {
@@ -494,6 +494,7 @@ class YSerialPort extends YFunction
     /**
      * Returns the type of protocol used over the serial line, as a string.
      * Possible values are "Line" for ASCII messages separated by CR and/or LF,
+     * "StxEtx" for ASCII messages delimited by STX/ETX codes,
      * "Frame:[timeout]ms" for binary messages separated by a delay time,
      * "Modbus-ASCII" for MODBUS messages in ASCII mode,
      * "Modbus-RTU" for MODBUS messages in RTU mode,
@@ -521,6 +522,7 @@ class YSerialPort extends YFunction
     /**
      * Changes the type of protocol used over the serial line.
      * Possible values are "Line" for ASCII messages separated by CR and/or LF,
+     * "StxEtx" for ASCII messages delimited by STX/ETX codes,
      * "Frame:[timeout]ms" for binary messages separated by a delay time,
      * "Modbus-ASCII" for MODBUS messages in ASCII mode,
      * "Modbus-RTU" for MODBUS messages in RTU mode,
@@ -1414,6 +1416,24 @@ class YSerialPort extends YFunction
             $idx = $idx + 1;
         }
         return $res;
+    }
+
+    /**
+     * Sends an ASCII string to the serial port, preceeded with an STX code and
+     * followed by an ETX code.
+     *
+     * @param string $text : the text string to send
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function writeStxEtx($text)
+    {
+        // $buff                   is a bin;
+        $buff = sprintf('%c%s%c', 2, $text, 3);
+        // send string using file upload
+        return $this->_upload('txdata', $buff);
     }
 
     /**

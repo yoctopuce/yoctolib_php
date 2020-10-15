@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_power.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_power.php 41290 2020-07-24 10:02:23Z mvuilleu $
  *
  *  Implements YPower, the high-level API for Power functions
  *
@@ -43,6 +43,8 @@
 //--- (YPower definitions)
 if(!defined('Y_COSPHI_INVALID'))             define('Y_COSPHI_INVALID',            YAPI_INVALID_DOUBLE);
 if(!defined('Y_METER_INVALID'))              define('Y_METER_INVALID',             YAPI_INVALID_DOUBLE);
+if(!defined('Y_DELIVEREDENERGYMETER_INVALID')) define('Y_DELIVEREDENERGYMETER_INVALID', YAPI_INVALID_DOUBLE);
+if(!defined('Y_RECEIVEDENERGYMETER_INVALID')) define('Y_RECEIVEDENERGYMETER_INVALID', YAPI_INVALID_DOUBLE);
 if(!defined('Y_METERTIMER_INVALID'))         define('Y_METERTIMER_INVALID',        YAPI_INVALID_UINT);
 //--- (end of YPower definitions)
     #--- (YPower yapiwrapper)
@@ -61,12 +63,16 @@ class YPower extends YSensor
 {
     const COSPHI_INVALID                 = YAPI_INVALID_DOUBLE;
     const METER_INVALID                  = YAPI_INVALID_DOUBLE;
+    const DELIVEREDENERGYMETER_INVALID   = YAPI_INVALID_DOUBLE;
+    const RECEIVEDENERGYMETER_INVALID    = YAPI_INVALID_DOUBLE;
     const METERTIMER_INVALID             = YAPI_INVALID_UINT;
     //--- (end of YPower declaration)
 
     //--- (YPower attributes)
     protected $_cosPhi                   = Y_COSPHI_INVALID;             // MeasureVal
     protected $_meter                    = Y_METER_INVALID;              // MeasureVal
+    protected $_deliveredEnergyMeter     = Y_DELIVEREDENERGYMETER_INVALID; // MeasureVal
+    protected $_receivedEnergyMeter      = Y_RECEIVEDENERGYMETER_INVALID; // MeasureVal
     protected $_meterTimer               = Y_METERTIMER_INVALID;         // UInt31
     //--- (end of YPower attributes)
 
@@ -89,6 +95,12 @@ class YPower extends YSensor
             return 1;
         case 'meter':
             $this->_meter = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'deliveredEnergyMeter':
+            $this->_deliveredEnergyMeter = round($val * 1000.0 / 65536.0) / 1000.0;
+            return 1;
+        case 'receivedEnergyMeter':
+            $this->_receivedEnergyMeter = round($val * 1000.0 / 65536.0) / 1000.0;
             return 1;
         case 'meterTimer':
             $this->_meterTimer = intval($val);
@@ -126,11 +138,12 @@ class YPower extends YSensor
     }
 
     /**
-     * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time.
-     * Note that this counter is reset at each start of the device.
+     * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time,
+     * but only when positive. Note that this counter is reset at each start of the device.
      *
      * @return double : a floating point number corresponding to the energy counter, maintained by the
-     * wattmeter by integrating the power consumption over time
+     * wattmeter by integrating the power consumption over time,
+     *         but only when positive
      *
      * On failure, throws an exception or returns Y_METER_INVALID.
      */
@@ -143,6 +156,50 @@ class YPower extends YSensor
             }
         }
         $res = $this->_meter;
+        return $res;
+    }
+
+    /**
+     * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time,
+     * but only when positive. Note that this counter is reset at each start of the device.
+     *
+     * @return double : a floating point number corresponding to the energy counter, maintained by the
+     * wattmeter by integrating the power consumption over time,
+     *         but only when positive
+     *
+     * On failure, throws an exception or returns Y_DELIVEREDENERGYMETER_INVALID.
+     */
+    public function get_deliveredEnergyMeter()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_DELIVEREDENERGYMETER_INVALID;
+            }
+        }
+        $res = $this->_deliveredEnergyMeter;
+        return $res;
+    }
+
+    /**
+     * Returns the energy counter, maintained by the wattmeter by integrating the power consumption over time,
+     * but only when negative. Note that this counter is reset at each start of the device.
+     *
+     * @return double : a floating point number corresponding to the energy counter, maintained by the
+     * wattmeter by integrating the power consumption over time,
+     *         but only when negative
+     *
+     * On failure, throws an exception or returns Y_RECEIVEDENERGYMETER_INVALID.
+     */
+    public function get_receivedEnergyMeter()
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_RECEIVEDENERGYMETER_INVALID;
+            }
+        }
+        $res = $this->_receivedEnergyMeter;
         return $res;
     }
 
@@ -205,7 +262,7 @@ class YPower extends YSensor
     }
 
     /**
-     * Resets the energy counter.
+     * Resets the energy counters.
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -224,6 +281,12 @@ class YPower extends YSensor
 
     public function meter()
     { return $this->get_meter(); }
+
+    public function deliveredEnergyMeter()
+    { return $this->get_deliveredEnergyMeter(); }
+
+    public function receivedEnergyMeter()
+    { return $this->get_receivedEnergyMeter(); }
 
     public function meterTimer()
     { return $this->get_meterTimer(); }

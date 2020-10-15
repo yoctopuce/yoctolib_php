@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 39333 2020-01-30 10:05:40Z mvuilleu $
+ *  $Id: yocto_i2cport.php 41171 2020-07-02 17:49:00Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -38,9 +38,9 @@
  *
  *********************************************************************/
 
-//--- (YI2cPort return codes)
-//--- (end of YI2cPort return codes)
-//--- (YI2cPort definitions)
+//--- (generated code: YI2cPort return codes)
+//--- (end of generated code: YI2cPort return codes)
+//--- (generated code: YI2cPort definitions)
 if(!defined('Y_I2CVOLTAGELEVEL_OFF'))        define('Y_I2CVOLTAGELEVEL_OFF',       0);
 if(!defined('Y_I2CVOLTAGELEVEL_3V3'))        define('Y_I2CVOLTAGELEVEL_3V3',       1);
 if(!defined('Y_I2CVOLTAGELEVEL_1V8'))        define('Y_I2CVOLTAGELEVEL_1V8',       2);
@@ -58,11 +58,76 @@ if(!defined('Y_JOBMAXSIZE_INVALID'))         define('Y_JOBMAXSIZE_INVALID',     
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_I2CMODE_INVALID'))            define('Y_I2CMODE_INVALID',           YAPI_INVALID_STRING);
-//--- (end of YI2cPort definitions)
-    #--- (YI2cPort yapiwrapper)
-   #--- (end of YI2cPort yapiwrapper)
+//--- (end of generated code: YI2cPort definitions)
 
-//--- (YI2cPort declaration)
+//--- (generated code: YI2cSnoopingRecord definitions)
+//--- (end of generated code: YI2cSnoopingRecord definitions)
+
+//--- (generated code: YI2cSnoopingRecord declaration)
+/**
+ * YI2cSnoopingRecord Class: Intercepted I2C message description, returned by i2cPort.snoopMessages method
+ *
+ *
+ */
+class YI2cSnoopingRecord
+{
+    //--- (end of generated code: YI2cSnoopingRecord declaration)
+
+    //--- (generated code: YI2cSnoopingRecord attributes)
+    protected $_tim                      = 0;                            // int
+    protected $_dir                      = 0;                            // int
+    protected $_msg                      = "";                           // str
+    //--- (end of generated code: YI2cSnoopingRecord attributes)
+
+    function __construct($str_json)
+    {
+        //--- (generated code: YI2cSnoopingRecord constructor)
+        //--- (end of generated code: YI2cSnoopingRecord constructor)
+
+        $loadval = json_decode($str_json, TRUE);
+        $this->_tim = $loadval['t'];
+        $this->_dir = $loadval['m'][0] == '<' ? 1 : 0;
+        $this->_msg = substr($loadval['m'], 1);
+    }
+
+    //--- (generated code: YI2cSnoopingRecord implementation)
+
+    /**
+     * Returns the elapsed time, in ms, since the beginning of the preceding message.
+     *
+     * @return integer : the elapsed time, in ms, since the beginning of the preceding message.
+     */
+    public function get_time()
+    {
+        return $this->_tim;
+    }
+
+    /**
+     * Returns the message direction (RX=0, TX=1).
+     *
+     * @return integer : the message direction (RX=0, TX=1).
+     */
+    public function get_direction()
+    {
+        return $this->_dir;
+    }
+
+    /**
+     * Returns the message content.
+     *
+     * @return string : the message content.
+     */
+    public function get_message()
+    {
+        return $this->_msg;
+    }
+
+    //--- (end of generated code: YI2cSnoopingRecord implementation)
+}
+
+
+
+//--- (generated code: YI2cPort declaration)
 /**
  * YI2cPort Class: I2C port control interface, available for instance in the Yocto-I2C
  *
@@ -91,9 +156,9 @@ class YI2cPort extends YFunction
     const I2CVOLTAGELEVEL_1V8            = 2;
     const I2CVOLTAGELEVEL_INVALID        = -1;
     const I2CMODE_INVALID                = YAPI_INVALID_STRING;
-    //--- (end of YI2cPort declaration)
+    //--- (end of generated code: YI2cPort declaration)
 
-    //--- (YI2cPort attributes)
+    //--- (generated code: YI2cPort attributes)
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
@@ -111,18 +176,18 @@ class YI2cPort extends YFunction
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
     protected $_rxbuffptr                = 0;                            // int
-    //--- (end of YI2cPort attributes)
+    //--- (end of generated code: YI2cPort attributes)
 
     function __construct($str_func)
     {
-        //--- (YI2cPort constructor)
+        //--- (generated code: YI2cPort constructor)
         parent::__construct($str_func);
         $this->_className = 'I2cPort';
 
-        //--- (end of YI2cPort constructor)
+        //--- (end of generated code: YI2cPort constructor)
     }
 
-    //--- (YI2cPort implementation)
+    //--- (generated code: YI2cPort implementation)
 
     function _parseAttr($name, $val)
     {
@@ -1193,6 +1258,46 @@ class YI2cPort extends YFunction
         return $this->writeHex($msg);
     }
 
+    /**
+     * Retrieves messages (both direction) in the I2C port buffer, starting at current position.
+     *
+     * If no message is found, the search waits for one up to the specified maximum timeout
+     * (in milliseconds).
+     *
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
+     *         in the receive buffer.
+     *
+     * @return YI2cSnoopingRecord[] : an array of YI2cSnoopingRecord objects containing the messages found, if any.
+     *
+     * On failure, throws an exception or returns an empty array.
+     */
+    public function snoopMessages($maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        $res = Array();         // YI2cSnoopingRecordArr;
+        // $idx                    is a int;
+
+        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&t=0', $this->_rxptr, $maxWait);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return $res;
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        $idx = 0;
+        while ($idx < $msglen) {
+            $res[] = new YI2cSnoopingRecord($msgarr[$idx]);
+            $idx = $idx + 1;
+        }
+        return $res;
+    }
+
     public function rxCount()
     { return $this->get_rxCount(); }
 
@@ -1286,11 +1391,11 @@ class YI2cPort extends YFunction
         return self::FindI2cPort($next_hwid);
     }
 
-    //--- (end of YI2cPort implementation)
+    //--- (end of generated code: YI2cPort implementation)
 
 };
 
-//--- (YI2cPort functions)
+//--- (generated code: YI2cPort functions)
 
 /**
  * Retrieves an I2C port for a given identifier.
@@ -1339,5 +1444,5 @@ function yFirstI2cPort()
     return YI2cPort::FirstI2cPort();
 }
 
-//--- (end of YI2cPort functions)
+//--- (end of generated code: YI2cPort functions)
 ?>

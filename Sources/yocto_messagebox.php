@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 38913 2019-12-20 18:59:49Z mvuilleu $
+ * $Id: yocto_messagebox.php 42060 2020-10-14 10:02:12Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -1320,7 +1320,7 @@ if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',        
 //--- (generated code: YMessageBox declaration)
 /**
  * YMessageBox Class: SMS message box interface control interface, available for instance in the
- * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU or the YoctoHub-GSM-3G-NA
+ * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA or the YoctoHub-GSM-4G
  *
  * The YMessageBox class provides SMS sending and receiving capability for
  * GSM-enabled Yoctopuce devices.

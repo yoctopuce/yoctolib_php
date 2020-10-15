@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 40298 2020-05-05 08:37:49Z seb $
+ *  $Id: yocto_spiport.php 41171 2020-07-02 17:49:00Z mvuilleu $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -38,9 +38,9 @@
  *
  *********************************************************************/
 
-//--- (YSpiPort return codes)
-//--- (end of YSpiPort return codes)
-//--- (YSpiPort definitions)
+//--- (generated code: YSpiPort return codes)
+//--- (end of generated code: YSpiPort return codes)
+//--- (generated code: YSpiPort definitions)
 if(!defined('Y_VOLTAGELEVEL_OFF'))           define('Y_VOLTAGELEVEL_OFF',          0);
 if(!defined('Y_VOLTAGELEVEL_TTL3V'))         define('Y_VOLTAGELEVEL_TTL3V',        1);
 if(!defined('Y_VOLTAGELEVEL_TTL3VR'))        define('Y_VOLTAGELEVEL_TTL3VR',       2);
@@ -69,11 +69,74 @@ if(!defined('Y_JOBMAXSIZE_INVALID'))         define('Y_JOBMAXSIZE_INVALID',     
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 if(!defined('Y_PROTOCOL_INVALID'))           define('Y_PROTOCOL_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_SPIMODE_INVALID'))            define('Y_SPIMODE_INVALID',           YAPI_INVALID_STRING);
-//--- (end of YSpiPort definitions)
-    #--- (YSpiPort yapiwrapper)
-   #--- (end of YSpiPort yapiwrapper)
+//--- (end of generated code: YSpiPort definitions)
+//--- (generated code: YSpiSnoopingRecord definitions)
+//--- (end of generated code: YSpiSnoopingRecord definitions)
 
-//--- (YSpiPort declaration)
+//--- (generated code: YSpiSnoopingRecord declaration)
+/**
+ * YSpiSnoopingRecord Class: Intercepted SPI message description, returned by spiPort.snoopMessages method
+ *
+ *
+ */
+class YSpiSnoopingRecord
+{
+    //--- (end of generated code: YSpiSnoopingRecord declaration)
+
+    //--- (generated code: YSpiSnoopingRecord attributes)
+    protected $_tim                      = 0;                            // int
+    protected $_dir                      = 0;                            // int
+    protected $_msg                      = "";                           // str
+    //--- (end of generated code: YSpiSnoopingRecord attributes)
+
+    function __construct($str_json)
+    {
+        //--- (generated code: YSpiSnoopingRecord constructor)
+        //--- (end of generated code: YSpiSnoopingRecord constructor)
+
+        $loadval = json_decode($str_json, TRUE);
+        $this->_tim = $loadval['t'];
+        $this->_dir = $loadval['m'][0] == '<' ? 1 : 0;
+        $this->_msg = substr($loadval['m'], 1);
+    }
+
+    //--- (generated code: YSpiSnoopingRecord implementation)
+
+    /**
+     * Returns the elapsed time, in ms, since the beginning of the preceding message.
+     *
+     * @return integer : the elapsed time, in ms, since the beginning of the preceding message.
+     */
+    public function get_time()
+    {
+        return $this->_tim;
+    }
+
+    /**
+     * Returns the message direction (RX=0, TX=1).
+     *
+     * @return integer : the message direction (RX=0, TX=1).
+     */
+    public function get_direction()
+    {
+        return $this->_dir;
+    }
+
+    /**
+     * Returns the message content.
+     *
+     * @return string : the message content.
+     */
+    public function get_message()
+    {
+        return $this->_msg;
+    }
+
+    //--- (end of generated code: YSpiSnoopingRecord implementation)
+}
+
+
+//--- (generated code: YSpiPort declaration)
 /**
  * YSpiPort Class: SPI port control interface, available for instance in the Yocto-SPI
  *
@@ -113,9 +176,9 @@ class YSpiPort extends YFunction
     const SHIFTSAMPLING_OFF              = 0;
     const SHIFTSAMPLING_ON               = 1;
     const SHIFTSAMPLING_INVALID          = -1;
-    //--- (end of YSpiPort declaration)
+    //--- (end of generated code: YSpiPort declaration)
 
-    //--- (YSpiPort attributes)
+    //--- (generated code: YSpiPort attributes)
     protected $_rxCount                  = Y_RXCOUNT_INVALID;            // UInt31
     protected $_txCount                  = Y_TXCOUNT_INVALID;            // UInt31
     protected $_errCount                 = Y_ERRCOUNT_INVALID;           // UInt31
@@ -135,18 +198,18 @@ class YSpiPort extends YFunction
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
     protected $_rxbuffptr                = 0;                            // int
-    //--- (end of YSpiPort attributes)
+    //--- (end of generated code: YSpiPort attributes)
 
     function __construct($str_func)
     {
-        //--- (YSpiPort constructor)
+        //--- (generated code: YSpiPort constructor)
         parent::__construct($str_func);
         $this->_className = 'SpiPort';
 
-        //--- (end of YSpiPort constructor)
+        //--- (end of generated code: YSpiPort constructor)
     }
 
-    //--- (YSpiPort implementation)
+    //--- (generated code: YSpiPort implementation)
 
     function _parseAttr($name, $val)
     {
@@ -1369,6 +1432,46 @@ class YSpiPort extends YFunction
         return $this->sendCommand(sprintf('S%d',$val));
     }
 
+    /**
+     * Retrieves messages (both direction) in the SPI port buffer, starting at current position.
+     *
+     * If no message is found, the search waits for one up to the specified maximum timeout
+     * (in milliseconds).
+     *
+     * @param integer $maxWait : the maximum number of milliseconds to wait for a message if none is found
+     *         in the receive buffer.
+     *
+     * @return YSpiSnoopingRecord[] : an array of YSpiSnoopingRecord objects containing the messages found, if any.
+     *
+     * On failure, throws an exception or returns an empty array.
+     */
+    public function snoopMessages($maxWait)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        $res = Array();         // YSpiSnoopingRecordArr;
+        // $idx                    is a int;
+
+        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&t=0', $this->_rxptr, $maxWait);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return $res;
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        $this->_rxptr = intVal($msgarr[$msglen]);
+        $idx = 0;
+        while ($idx < $msglen) {
+            $res[] = new YSpiSnoopingRecord($msgarr[$idx]);
+            $idx = $idx + 1;
+        }
+        return $res;
+    }
+
     public function rxCount()
     { return $this->get_rxCount(); }
 
@@ -1474,11 +1577,11 @@ class YSpiPort extends YFunction
         return self::FindSpiPort($next_hwid);
     }
 
-    //--- (end of YSpiPort implementation)
+    //--- (end of generated code: YSpiPort implementation)
 
 };
 
-//--- (YSpiPort functions)
+//--- (generated code: YSpiPort functions)
 
 /**
  * Retrieves a SPI port for a given identifier.
@@ -1527,5 +1630,5 @@ function yFirstSpiPort()
     return YSpiPort::FirstSpiPort();
 }
 
-//--- (end of YSpiPort functions)
+//--- (end of generated code: YSpiPort functions)
 ?>

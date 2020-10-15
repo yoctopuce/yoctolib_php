@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_led.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_led.php 42060 2020-10-14 10:02:12Z seb $
  *
  *  Implements YLed, the high-level API for Led functions
  *
@@ -58,7 +58,8 @@ if(!defined('Y_LUMINOSITY_INVALID'))         define('Y_LUMINOSITY_INVALID',     
 
 //--- (YLed declaration)
 /**
- * YLed Class: monochrome LED control interface, available for instance in the Yocto-Buzzer
+ * YLed Class: monochrome LED control interface, available for instance in the Yocto-Buzzer, the
+ * YoctoBox-Short-Thin-Black-Prox, the YoctoBox-Short-Thin-Transp or the YoctoBox-Short-Thin-Transp-Prox
  *
  * The YLed class allows you to drive a monocolor LED.
  * You can not only to drive the intensity of the LED, but also to

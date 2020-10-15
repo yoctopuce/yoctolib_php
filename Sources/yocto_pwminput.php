@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwminput.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_pwminput.php 41351 2020-08-10 15:14:25Z seb $
  *
  *  Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -51,6 +51,7 @@ if(!defined('Y_PWMREPORTMODE_PWM_CPM'))      define('Y_PWMREPORTMODE_PWM_CPM',  
 if(!defined('Y_PWMREPORTMODE_PWM_STATE'))    define('Y_PWMREPORTMODE_PWM_STATE',   7);
 if(!defined('Y_PWMREPORTMODE_PWM_FREQ_CPS')) define('Y_PWMREPORTMODE_PWM_FREQ_CPS', 8);
 if(!defined('Y_PWMREPORTMODE_PWM_FREQ_CPM')) define('Y_PWMREPORTMODE_PWM_FREQ_CPM', 9);
+if(!defined('Y_PWMREPORTMODE_PWM_PERIODCOUNT')) define('Y_PWMREPORTMODE_PWM_PERIODCOUNT', 10);
 if(!defined('Y_PWMREPORTMODE_INVALID'))      define('Y_PWMREPORTMODE_INVALID',     -1);
 if(!defined('Y_DUTYCYCLE_INVALID'))          define('Y_DUTYCYCLE_INVALID',         YAPI_INVALID_DOUBLE);
 if(!defined('Y_PULSEDURATION_INVALID'))      define('Y_PULSEDURATION_INVALID',     YAPI_INVALID_DOUBLE);
@@ -59,6 +60,8 @@ if(!defined('Y_PERIOD_INVALID'))             define('Y_PERIOD_INVALID',         
 if(!defined('Y_PULSECOUNTER_INVALID'))       define('Y_PULSECOUNTER_INVALID',      YAPI_INVALID_LONG);
 if(!defined('Y_PULSETIMER_INVALID'))         define('Y_PULSETIMER_INVALID',        YAPI_INVALID_LONG);
 if(!defined('Y_DEBOUNCEPERIOD_INVALID'))     define('Y_DEBOUNCEPERIOD_INVALID',    YAPI_INVALID_UINT);
+if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',         YAPI_INVALID_UINT);
+if(!defined('Y_EDGESPERPERIOD_INVALID'))     define('Y_EDGESPERPERIOD_INVALID',    YAPI_INVALID_UINT);
 //--- (end of YPwmInput definitions)
     #--- (YPwmInput yapiwrapper)
    #--- (end of YPwmInput yapiwrapper)
@@ -91,8 +94,11 @@ class YPwmInput extends YSensor
     const PWMREPORTMODE_PWM_STATE        = 7;
     const PWMREPORTMODE_PWM_FREQ_CPS     = 8;
     const PWMREPORTMODE_PWM_FREQ_CPM     = 9;
+    const PWMREPORTMODE_PWM_PERIODCOUNT  = 10;
     const PWMREPORTMODE_INVALID          = -1;
     const DEBOUNCEPERIOD_INVALID         = YAPI_INVALID_UINT;
+    const BANDWIDTH_INVALID              = YAPI_INVALID_UINT;
+    const EDGESPERPERIOD_INVALID         = YAPI_INVALID_UINT;
     //--- (end of YPwmInput declaration)
 
     //--- (YPwmInput attributes)
@@ -104,6 +110,8 @@ class YPwmInput extends YSensor
     protected $_pulseTimer               = Y_PULSETIMER_INVALID;         // Time
     protected $_pwmReportMode            = Y_PWMREPORTMODE_INVALID;      // PwmReportModeType
     protected $_debouncePeriod           = Y_DEBOUNCEPERIOD_INVALID;     // UInt31
+    protected $_bandwidth                = Y_BANDWIDTH_INVALID;          // UInt31
+    protected $_edgesPerPeriod           = Y_EDGESPERPERIOD_INVALID;     // UInt31
     //--- (end of YPwmInput attributes)
 
     function __construct($str_func)
@@ -143,6 +151,12 @@ class YPwmInput extends YSensor
             return 1;
         case 'debouncePeriod':
             $this->_debouncePeriod = intval($val);
+            return 1;
+        case 'bandwidth':
+            $this->_bandwidth = intval($val);
+            return 1;
+        case 'edgesPerPeriod':
+            $this->_edgesPerPeriod = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -297,8 +311,9 @@ class YPwmInput extends YSensor
      * @return integer : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE, Y_PWMREPORTMODE_PWM_FREQUENCY,
      * Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT, Y_PWMREPORTMODE_PWM_PULSECOUNT,
      * Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM, Y_PWMREPORTMODE_PWM_STATE,
-     * Y_PWMREPORTMODE_PWM_FREQ_CPS and Y_PWMREPORTMODE_PWM_FREQ_CPM corresponding to the parameter
-     * (frequency/duty cycle, pulse width, edges count) returned by the get_currentValue function and callbacks
+     * Y_PWMREPORTMODE_PWM_FREQ_CPS, Y_PWMREPORTMODE_PWM_FREQ_CPM and Y_PWMREPORTMODE_PWM_PERIODCOUNT
+     * corresponding to the parameter (frequency/duty cycle, pulse width, edges count) returned by the
+     * get_currentValue function and callbacks
      *
      * On failure, throws an exception or returns Y_PWMREPORTMODE_INVALID.
      */
@@ -324,9 +339,9 @@ class YPwmInput extends YSensor
      * @param integer $newval : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE,
      * Y_PWMREPORTMODE_PWM_FREQUENCY, Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT,
      * Y_PWMREPORTMODE_PWM_PULSECOUNT, Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM,
-     * Y_PWMREPORTMODE_PWM_STATE, Y_PWMREPORTMODE_PWM_FREQ_CPS and Y_PWMREPORTMODE_PWM_FREQ_CPM
-     * corresponding to the  parameter  type (frequency/duty cycle, pulse width, or edge count) returned
-     * by the get_currentValue function and callbacks
+     * Y_PWMREPORTMODE_PWM_STATE, Y_PWMREPORTMODE_PWM_FREQ_CPS, Y_PWMREPORTMODE_PWM_FREQ_CPM and
+     * Y_PWMREPORTMODE_PWM_PERIODCOUNT corresponding to the  parameter  type (frequency/duty cycle, pulse
+     * width, or edge count) returned by the get_currentValue function and callbacks
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
@@ -371,6 +386,64 @@ class YPwmInput extends YSensor
     {
         $rest_val = strval($newval);
         return $this->_setAttr("debouncePeriod",$rest_val);
+    }
+
+    /**
+     * Returns the input signal sampling rate, in kHz.
+     *
+     * @return integer : an integer corresponding to the input signal sampling rate, in kHz
+     *
+     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     */
+    public function get_bandwidth()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_BANDWIDTH_INVALID;
+            }
+        }
+        $res = $this->_bandwidth;
+        return $res;
+    }
+
+    /**
+     * Changes the input signal sampling rate, measured in kHz.
+     * A lower sampling frequency can be used to hide hide-frequency bounce effects,
+     * for instance on electromechanical contacts, but limits the measure resolution.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
+     *
+     * @param integer $newval : an integer corresponding to the input signal sampling rate, measured in kHz
+     *
+     * @return integer : YAPI_SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_bandwidth($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("bandwidth",$rest_val);
+    }
+
+    /**
+     * Returns the number of edges detected per preiod. For a clean PWM signal, this should be exactly two,
+     * but in cas the signal is created by a mechanical contact with bounces, it can get higher.
+     *
+     * @return integer : an integer corresponding to the number of edges detected per preiod
+     *
+     * On failure, throws an exception or returns Y_EDGESPERPERIOD_INVALID.
+     */
+    public function get_edgesPerPeriod()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_EDGESPERPERIOD_INVALID;
+            }
+        }
+        $res = $this->_edgesPerPeriod;
+        return $res;
     }
 
     /**
@@ -459,6 +532,15 @@ class YPwmInput extends YSensor
 
     public function setDebouncePeriod($newval)
     { return $this->set_debouncePeriod($newval); }
+
+    public function bandwidth()
+    { return $this->get_bandwidth(); }
+
+    public function setBandwidth($newval)
+    { return $this->set_bandwidth($newval); }
+
+    public function edgesPerPeriod()
+    { return $this->get_edgesPerPeriod(); }
 
     /**
      * Continues the enumeration of PWM inputs started using yFirstPwmInput().

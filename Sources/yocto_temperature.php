@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_temperature.php 39648 2020-03-12 13:56:10Z mvuilleu $
+ *  $Id: yocto_temperature.php 42054 2020-10-14 09:46:38Z seb $
  *
  *  Implements YTemperature, the high-level API for Temperature functions
  *
@@ -328,8 +328,8 @@ class YTemperature extends YSensor
         // $res100                 is a float;
         $tempValues = Array();  // floatArr;
         $resValues = Array();   // floatArr;
-        $t0 = 25.0+275.15;
-        $t1 = 100.0+275.15;
+        $t0 = 25.0+273.15;
+        $t1 = 100.0+273.15;
         $res100 = $res25 * exp($beta*(1.0/$t1 - 1.0/$t0));
         while(sizeof($tempValues) > 0) { array_pop($tempValues); };
         while(sizeof($resValues) > 0) { array_pop($resValues); };
