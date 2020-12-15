@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ * $Id: yocto_display.php 42092 2020-10-16 17:56:31Z mvuilleu $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -721,8 +721,8 @@ class YDisplay extends YFunction
     protected $_layerHeight              = Y_LAYERHEIGHT_INVALID;        // UInt31
     protected $_layerCount               = Y_LAYERCOUNT_INVALID;         // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
+    protected $_allDisplayLayers         = Array();                      // YDisplayLayerArr
     //--- (end of generated code: YDisplay attributes)
-    protected $_allDisplayLayers;
     protected $_recording;
     protected $_sequence;
 
@@ -1275,6 +1275,33 @@ class YDisplay extends YFunction
         return $this->sendCommand(sprintf('E%d,%d',$layerIdA,$layerIdB));
     }
 
+    /**
+     * Returns a YDisplayLayer object that can be used to draw on the specified
+     * layer. The content is displayed only when the layer is active on the
+     * screen (and not masked by other overlapping layers).
+     *
+     * @param integer $layerId : the identifier of the layer (a number in range 0..layerCount-1)
+     *
+     * @return YDisplayLayer : an YDisplayLayer object
+     *
+     * On failure, throws an exception or returns null.
+     */
+    public function get_displayLayer($layerId)
+    {
+        // $layercount             is a int;
+        // $idx                    is a int;
+        $layercount = $this->get_layerCount();
+        if (!(($layerId >= 0) && ($layerId < $layercount))) return $this->_throw( YAPI_INVALID_ARGUMENT, 'invalid DisplayLayer index',null);
+        if (sizeof($this->_allDisplayLayers) == 0) {
+            $idx = 0;
+            while ($idx < $layercount) {
+                $this->_allDisplayLayers[] = new YDisplayLayer($this, $idx);
+                $idx = $idx + 1;
+            }
+        }
+        return $this->_allDisplayLayers[$layerId];
+    }
+
     public function enabled()
     { return $this->get_enabled(); }
 
@@ -1357,32 +1384,6 @@ class YDisplay extends YFunction
     }
 
     //--- (end of generated code: YDisplay implementation)
-
-    /**
-     * Returns a YDisplayLayer object that can be used to draw on the specified
-     * layer. The content is displayed only when the layer is active on the
-     * screen (and not masked by other overlapping layers).
-     *
-     * @param integer $layerId : the identifier of the layer (a number in range 0..layerCount-1)
-     *
-     * @return YDisplayLayer : an YDisplayLayer object
-     *
-     * On failure, throws an exception or returns null.
-     */
-    public function get_displayLayer($layerId)
-    {
-        if ( is_null($this->_allDisplayLayers)) {
-            $layercount = $this->get_layerCount();
-            $this->_allDisplayLayers = array();
-            for($i=0; $i < $layercount; $i++) {
-                $this->_allDisplayLayers[$i] = new YDisplayLayer($this, $i);
-            }
-        }
-        if(!isset($this->_allDisplayLayers[$layerId])) {
-            $this->_throw(YAPI_INVALID_ARGUMENT, "Invalid layerId", null);
-        }
-        return $this->_allDisplayLayers[$layerId];
-    }
 
     public function flushLayers()
     {

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_lightsensor.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_lightsensor.php 42951 2020-12-14 09:43:29Z seb $
  *
  *  Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -46,6 +46,7 @@ if(!defined('Y_MEASURETYPE_WIDE_SPECTRUM'))  define('Y_MEASURETYPE_WIDE_SPECTRUM
 if(!defined('Y_MEASURETYPE_INFRARED'))       define('Y_MEASURETYPE_INFRARED',      2);
 if(!defined('Y_MEASURETYPE_HIGH_RATE'))      define('Y_MEASURETYPE_HIGH_RATE',     3);
 if(!defined('Y_MEASURETYPE_HIGH_ENERGY'))    define('Y_MEASURETYPE_HIGH_ENERGY',   4);
+if(!defined('Y_MEASURETYPE_HIGH_RESOLUTION')) define('Y_MEASURETYPE_HIGH_RESOLUTION', 5);
 if(!defined('Y_MEASURETYPE_INVALID'))        define('Y_MEASURETYPE_INVALID',       -1);
 //--- (end of YLightSensor definitions)
     #--- (YLightSensor yapiwrapper)
@@ -71,6 +72,7 @@ class YLightSensor extends YSensor
     const MEASURETYPE_INFRARED           = 2;
     const MEASURETYPE_HIGH_RATE          = 3;
     const MEASURETYPE_HIGH_ENERGY        = 4;
+    const MEASURETYPE_HIGH_RESOLUTION    = 5;
     const MEASURETYPE_INVALID            = -1;
     //--- (end of YLightSensor declaration)
 
@@ -128,8 +130,8 @@ class YLightSensor extends YSensor
      * Returns the type of light measure.
      *
      * @return integer : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
-     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the
-     * type of light measure
+     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE, Y_MEASURETYPE_HIGH_ENERGY and
+     * Y_MEASURETYPE_HIGH_RESOLUTION corresponding to the type of light measure
      *
      * On failure, throws an exception or returns Y_MEASURETYPE_INVALID.
      */
@@ -153,8 +155,8 @@ class YLightSensor extends YSensor
      * modification must be kept.
      *
      * @param integer $newval : a value among Y_MEASURETYPE_HUMAN_EYE, Y_MEASURETYPE_WIDE_SPECTRUM,
-     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE and Y_MEASURETYPE_HIGH_ENERGY corresponding to the
-     * light sensor type used in the device
+     * Y_MEASURETYPE_INFRARED, Y_MEASURETYPE_HIGH_RATE, Y_MEASURETYPE_HIGH_ENERGY and
+     * Y_MEASURETYPE_HIGH_RESOLUTION corresponding to the light sensor type used in the device
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

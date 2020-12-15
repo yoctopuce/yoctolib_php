@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_refframe.php 42951 2020-12-14 09:43:29Z seb $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -46,6 +46,9 @@ if(!defined('Y_FUSIONMODE_NDOF_FMC_OFF'))    define('Y_FUSIONMODE_NDOF_FMC_OFF',
 if(!defined('Y_FUSIONMODE_M4G'))             define('Y_FUSIONMODE_M4G',            2);
 if(!defined('Y_FUSIONMODE_COMPASS'))         define('Y_FUSIONMODE_COMPASS',        3);
 if(!defined('Y_FUSIONMODE_IMU'))             define('Y_FUSIONMODE_IMU',            4);
+if(!defined('Y_FUSIONMODE_INCLIN_90DEG_1G8')) define('Y_FUSIONMODE_INCLIN_90DEG_1G8', 5);
+if(!defined('Y_FUSIONMODE_INCLIN_90DEG_3G6')) define('Y_FUSIONMODE_INCLIN_90DEG_3G6', 6);
+if(!defined('Y_FUSIONMODE_INCLIN_10DEG'))    define('Y_FUSIONMODE_INCLIN_10DEG',   7);
 if(!defined('Y_FUSIONMODE_INVALID'))         define('Y_FUSIONMODE_INVALID',        -1);
 if(!defined('Y_MOUNTPOSITION_BOTTOM'))       define('Y_MOUNTPOSITION_BOTTOM',      0);
 if(!defined('Y_MOUNTPOSITION_TOP'))          define('Y_MOUNTPOSITION_TOP',         1);
@@ -72,8 +75,8 @@ if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID'
  *
  * The YRefFrame class is used to setup the base orientation of the Yoctopuce inertial
  * sensors. Thanks to this, orientation functions relative to the earth surface plane
- * can use the proper reference frame. The class also implements a tridimensional
- * sensor calibration process, which can compensate for local variations
+ * can use the proper reference frame. For some devices, the class also implements a
+ * tridimensional sensor calibration process, which can compensate for local variations
  * of standard gravity and improve the precision of the tilt sensors.
  */
 class YRefFrame extends YFunction
@@ -86,6 +89,9 @@ class YRefFrame extends YFunction
     const FUSIONMODE_M4G                 = 2;
     const FUSIONMODE_COMPASS             = 3;
     const FUSIONMODE_IMU                 = 4;
+    const FUSIONMODE_INCLIN_90DEG_1G8    = 5;
+    const FUSIONMODE_INCLIN_90DEG_3G6    = 6;
+    const FUSIONMODE_INCLIN_10DEG        = 7;
     const FUSIONMODE_INVALID             = -1;
     const MOUNTPOSITION_BOTTOM           = 0;
     const MOUNTPOSITION_TOP              = 1;
@@ -105,7 +111,7 @@ class YRefFrame extends YFunction
     protected $_mountPos                 = Y_MOUNTPOS_INVALID;           // UInt31
     protected $_bearing                  = Y_BEARING_INVALID;            // MeasureVal
     protected $_calibrationParam         = Y_CALIBRATIONPARAM_INVALID;   // CalibParams
-    protected $_fusionMode               = Y_FUSIONMODE_INVALID;         // FusionMode
+    protected $_fusionMode               = Y_FUSIONMODE_INVALID;         // FusionModeTypeAll
     protected $_calibV2                  = 0;                            // bool
     protected $_calibStage               = 0;                            // int
     protected $_calibStageHint           = "";                           // str
@@ -245,16 +251,17 @@ class YRefFrame extends YFunction
     }
 
     /**
-     * Returns the BNO055 fusion mode. Note this feature is only availabe on Yocto-3D-V2.
+     * Returns the sensor fusion mode. Note that available sensor fusion modes depend on the sensor type.
      *
      * @return integer : a value among Y_FUSIONMODE_NDOF, Y_FUSIONMODE_NDOF_FMC_OFF, Y_FUSIONMODE_M4G,
-     * Y_FUSIONMODE_COMPASS and Y_FUSIONMODE_IMU corresponding to the BNO055 fusion mode
+     * Y_FUSIONMODE_COMPASS, Y_FUSIONMODE_IMU, Y_FUSIONMODE_INCLIN_90DEG_1G8,
+     * Y_FUSIONMODE_INCLIN_90DEG_3G6 and Y_FUSIONMODE_INCLIN_10DEG corresponding to the sensor fusion mode
      *
      * On failure, throws an exception or returns Y_FUSIONMODE_INVALID.
      */
     public function get_fusionMode()
     {
-        // $res                    is a enumFUSIONMODE;
+        // $res                    is a enumFUSIONMODETYPEALL;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_FUSIONMODE_INVALID;
@@ -265,11 +272,12 @@ class YRefFrame extends YFunction
     }
 
     /**
-     * Change the BNO055 fusion mode. Note: this feature is only availabe on Yocto-3D-V2.
+     * Change the sensor fusion mode. Note that available sensor fusion modes depend on the sensor type.
      * Remember to call the matching module saveToFlash() method to save the setting permanently.
      *
      * @param integer $newval : a value among Y_FUSIONMODE_NDOF, Y_FUSIONMODE_NDOF_FMC_OFF,
-     * Y_FUSIONMODE_M4G, Y_FUSIONMODE_COMPASS and Y_FUSIONMODE_IMU
+     * Y_FUSIONMODE_M4G, Y_FUSIONMODE_COMPASS, Y_FUSIONMODE_IMU, Y_FUSIONMODE_INCLIN_90DEG_1G8,
+     * Y_FUSIONMODE_INCLIN_90DEG_3G6 and Y_FUSIONMODE_INCLIN_10DEG
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *

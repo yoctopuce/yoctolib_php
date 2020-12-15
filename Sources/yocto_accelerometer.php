@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_accelerometer.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_accelerometer.php 42951 2020-12-14 09:43:29Z seb $
  *
  *  Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -115,9 +115,9 @@ class YAccelerometer extends YSensor
     }
 
     /**
-     * Returns the measure update frequency, measured in Hz (Yocto-3D-V2 only).
+     * Returns the measure update frequency, measured in Hz.
      *
-     * @return integer : an integer corresponding to the measure update frequency, measured in Hz (Yocto-3D-V2 only)
+     * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
      * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
      */
@@ -134,13 +134,12 @@ class YAccelerometer extends YSensor
     }
 
     /**
-     * Changes the measure update frequency, measured in Hz (Yocto-3D-V2 only). When the
+     * Changes the measure update frequency, measured in Hz. When the
      * frequency is lower, the device performs averaging.
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
-     * (Yocto-3D-V2 only)
      *
      * @return integer : YAPI_SUCCESS if the call succeeds.
      *
