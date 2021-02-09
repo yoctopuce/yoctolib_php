@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 42951 2020-12-14 09:43:29Z seb $
+ *  $Id: yocto_refframe.php 43619 2021-01-29 09:14:45Z mvuilleu $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -71,7 +71,8 @@ if(!defined('Y_CALIBRATIONPARAM_INVALID'))   define('Y_CALIBRATIONPARAM_INVALID'
 
 //--- (YRefFrame declaration)
 /**
- * YRefFrame Class: 3D reference frame configuration interface, available for instance in the Yocto-3D-V2
+ * YRefFrame Class: 3D reference frame configuration interface, available for instance in the
+ * Yocto-3D-V2 or the Yocto-Inclinometer
  *
  * The YRefFrame class is used to setup the base orientation of the Yoctopuce inertial
  * sensors. Thanks to this, orientation functions relative to the earth surface plane
@@ -201,7 +202,7 @@ class YRefFrame extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the reference bearing used by the compass
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -218,7 +219,7 @@ class YRefFrame extends YFunction
      *
      * @return double : a floating point number corresponding to the reference bearing used by the compass
      *
-     * On failure, throws an exception or returns Y_BEARING_INVALID.
+     * On failure, throws an exception or returns YRefFrame::BEARING_INVALID.
      */
     public function get_bearing()
     {
@@ -253,11 +254,12 @@ class YRefFrame extends YFunction
     /**
      * Returns the sensor fusion mode. Note that available sensor fusion modes depend on the sensor type.
      *
-     * @return integer : a value among Y_FUSIONMODE_NDOF, Y_FUSIONMODE_NDOF_FMC_OFF, Y_FUSIONMODE_M4G,
-     * Y_FUSIONMODE_COMPASS, Y_FUSIONMODE_IMU, Y_FUSIONMODE_INCLIN_90DEG_1G8,
-     * Y_FUSIONMODE_INCLIN_90DEG_3G6 and Y_FUSIONMODE_INCLIN_10DEG corresponding to the sensor fusion mode
+     * @return integer : a value among YRefFrame::FUSIONMODE_NDOF, YRefFrame::FUSIONMODE_NDOF_FMC_OFF,
+     * YRefFrame::FUSIONMODE_M4G, YRefFrame::FUSIONMODE_COMPASS, YRefFrame::FUSIONMODE_IMU,
+     * YRefFrame::FUSIONMODE_INCLIN_90DEG_1G8, YRefFrame::FUSIONMODE_INCLIN_90DEG_3G6 and
+     * YRefFrame::FUSIONMODE_INCLIN_10DEG corresponding to the sensor fusion mode
      *
-     * On failure, throws an exception or returns Y_FUSIONMODE_INVALID.
+     * On failure, throws an exception or returns YRefFrame::FUSIONMODE_INVALID.
      */
     public function get_fusionMode()
     {
@@ -275,11 +277,12 @@ class YRefFrame extends YFunction
      * Change the sensor fusion mode. Note that available sensor fusion modes depend on the sensor type.
      * Remember to call the matching module saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : a value among Y_FUSIONMODE_NDOF, Y_FUSIONMODE_NDOF_FMC_OFF,
-     * Y_FUSIONMODE_M4G, Y_FUSIONMODE_COMPASS, Y_FUSIONMODE_IMU, Y_FUSIONMODE_INCLIN_90DEG_1G8,
-     * Y_FUSIONMODE_INCLIN_90DEG_3G6 and Y_FUSIONMODE_INCLIN_10DEG
+     * @param integer $newval : a value among YRefFrame::FUSIONMODE_NDOF,
+     * YRefFrame::FUSIONMODE_NDOF_FMC_OFF, YRefFrame::FUSIONMODE_M4G, YRefFrame::FUSIONMODE_COMPASS,
+     * YRefFrame::FUSIONMODE_IMU, YRefFrame::FUSIONMODE_INCLIN_90DEG_1G8,
+     * YRefFrame::FUSIONMODE_INCLIN_90DEG_3G6 and YRefFrame::FUSIONMODE_INCLIN_10DEG
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -302,7 +305,7 @@ class YRefFrame extends YFunction
      *
      * This function does not require that the reference frame is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YRefFrame.isOnline() to test if the reference frame is
+     * Use the method isOnline() to test if the reference frame is
      * indeed online at a given time. In case of ambiguity when looking for
      * a reference frame by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -333,13 +336,13 @@ class YRefFrame extends YFunction
      * in order to define the reference frame for the compass and the
      * pitch/roll tilt sensors.
      *
-     * @return MOUNTPOSITION : a value among the Y_MOUNTPOSITION enumeration
-     *         (Y_MOUNTPOSITION_BOTTOM,   Y_MOUNTPOSITION_TOP,
-     *         Y_MOUNTPOSITION_FRONT,    Y_MOUNTPOSITION_RIGHT,
-     *         Y_MOUNTPOSITION_REAR,     Y_MOUNTPOSITION_LEFT),
+     * @return MOUNTPOSITION : a value among the YRefFrame::MOUNTPOSITION enumeration
+     *         (YRefFrame::MOUNTPOSITION_BOTTOM,  YRefFrame::MOUNTPOSITION_TOP,
+     *         YRefFrame::MOUNTPOSITION_FRONT,    YRefFrame::MOUNTPOSITION_RIGHT,
+     *         YRefFrame::MOUNTPOSITION_REAR,     YRefFrame::MOUNTPOSITION_LEFT),
      *         corresponding to the installation in a box, on one of the six faces.
      *
-     * On failure, throws an exception or returns Y_MOUNTPOSITION_INVALID.
+     * On failure, throws an exception or returns YRefFrame::MOUNTPOSITION_INVALID.
      */
     public function get_mountPosition()
     {
@@ -356,15 +359,15 @@ class YRefFrame extends YFunction
      * in order to define the reference frame for the compass and the
      * pitch/roll tilt sensors.
      *
-     * @return MOUNTORIENTATION : a value among the enumeration Y_MOUNTORIENTATION
-     *         (Y_MOUNTORIENTATION_TWELVE, Y_MOUNTORIENTATION_THREE,
-     *         Y_MOUNTORIENTATION_SIX,     Y_MOUNTORIENTATION_NINE)
+     * @return MOUNTORIENTATION : a value among the enumeration YRefFrame::MOUNTORIENTATION
+     *         (YRefFrame::MOUNTORIENTATION_TWELVE, YRefFrame::MOUNTORIENTATION_THREE,
+     *         YRefFrame::MOUNTORIENTATION_SIX,     YRefFrame::MOUNTORIENTATION_NINE)
      *         corresponding to the orientation of the "X" arrow on the device,
      *         as on a clock dial seen from an observer in the center of the box.
      *         On the bottom face, the 12H orientation points to the front, while
      *         on the top face, the 12H orientation points to the rear.
      *
-     * On failure, throws an exception or returns Y_MOUNTORIENTATION_INVALID.
+     * On failure, throws an exception or returns YRefFrame::MOUNTORIENTATION_INVALID.
      */
     public function get_mountOrientation()
     {
@@ -383,14 +386,14 @@ class YRefFrame extends YFunction
      * and horizontally, you must select its reference orientation (parallel to
      * the earth surface) so that the measures are made relative to this position.
      *
-     * @param MOUNTPOSITION $position : a value among the Y_MOUNTPOSITION enumeration
-     *         (Y_MOUNTPOSITION_BOTTOM,   Y_MOUNTPOSITION_TOP,
-     *         Y_MOUNTPOSITION_FRONT,    Y_MOUNTPOSITION_RIGHT,
-     *         Y_MOUNTPOSITION_REAR,     Y_MOUNTPOSITION_LEFT),
+     * @param MOUNTPOSITION $position : a value among the YRefFrame::MOUNTPOSITION enumeration
+     *         (YRefFrame::MOUNTPOSITION_BOTTOM,  YRefFrame::MOUNTPOSITION_TOP,
+     *         YRefFrame::MOUNTPOSITION_FRONT,    YRefFrame::MOUNTPOSITION_RIGHT,
+     *         YRefFrame::MOUNTPOSITION_REAR,     YRefFrame::MOUNTPOSITION_LEFT),
      *         corresponding to the installation in a box, on one of the six faces.
-     * @param MOUNTORIENTATION $orientation : a value among the enumeration Y_MOUNTORIENTATION
-     *         (Y_MOUNTORIENTATION_TWELVE, Y_MOUNTORIENTATION_THREE,
-     *         Y_MOUNTORIENTATION_SIX,     Y_MOUNTORIENTATION_NINE)
+     * @param MOUNTORIENTATION $orientation : a value among the enumeration YRefFrame::MOUNTORIENTATION
+     *         (YRefFrame::MOUNTORIENTATION_TWELVE, YRefFrame::MOUNTORIENTATION_THREE,
+     *         YRefFrame::MOUNTORIENTATION_SIX,     YRefFrame::MOUNTORIENTATION_NINE)
      *         corresponding to the orientation of the "X" arrow on the device,
      *         as on a clock dial seen from an observer in the center of the box.
      *         On the bottom face, the 12H orientation points to the front, while
@@ -1034,7 +1037,7 @@ class YRefFrame extends YFunction
 
     /**
      * Starts the enumeration of reference frames currently accessible.
-     * Use the method YRefFrame.nextRefFrame() to iterate on
+     * Use the method YRefFrame::nextRefFrame() to iterate on
      * next reference frames.
      *
      * @return YRefFrame : a pointer to a YRefFrame object, corresponding to
@@ -1066,7 +1069,7 @@ class YRefFrame extends YFunction
  *
  * This function does not require that the reference frame is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YRefFrame.isOnline() to test if the reference frame is
+ * Use the method isOnline() to test if the reference frame is
  * indeed online at a given time. In case of ambiguity when looking for
  * a reference frame by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -1088,7 +1091,7 @@ function yFindRefFrame($func)
 
 /**
  * Starts the enumeration of reference frames currently accessible.
- * Use the method YRefFrame.nextRefFrame() to iterate on
+ * Use the method YRefFrame::nextRefFrame() to iterate on
  * next reference frames.
  *
  * @return YRefFrame : a pointer to a YRefFrame object, corresponding to

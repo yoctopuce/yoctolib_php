@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupschedule.php 39434 2020-02-25 08:53:55Z seb $
+ *  $Id: yocto_wakeupschedule.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -55,7 +55,7 @@ if(!defined('Y_NEXTOCCURENCE_INVALID'))      define('Y_NEXTOCCURENCE_INVALID',  
 //--- (YWakeUpSchedule declaration)
 /**
  * YWakeUpSchedule Class: wake up schedule control interface, available for instance in the
- * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
  *
  * The YWakeUpSchedule class implements a wake up condition. The wake up time is
  * specified as a set of months and/or days and/or hours and/or minutes when the
@@ -127,7 +127,7 @@ class YWakeUpSchedule extends YFunction
      * @return integer : an integer corresponding to the minutes in the 00-29 interval of each hour
      * scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_MINUTESA_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::MINUTESA_INVALID.
      */
     public function get_minutesA()
     {
@@ -149,7 +149,7 @@ class YWakeUpSchedule extends YFunction
      * @param integer $newval : an integer corresponding to the minutes in the 00-29 interval when a wake
      * up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -165,7 +165,7 @@ class YWakeUpSchedule extends YFunction
      * @return integer : an integer corresponding to the minutes in the 30-59 interval of each hour
      * scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_MINUTESB_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::MINUTESB_INVALID.
      */
     public function get_minutesB()
     {
@@ -187,7 +187,7 @@ class YWakeUpSchedule extends YFunction
      * @param integer $newval : an integer corresponding to the minutes in the 30-59 interval when a wake
      * up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -202,7 +202,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @return integer : an integer corresponding to the hours scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_HOURS_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::HOURS_INVALID.
      */
     public function get_hours()
     {
@@ -223,7 +223,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @param integer $newval : an integer corresponding to the hours when a wake up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -238,7 +238,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @return integer : an integer corresponding to the days of the week scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_WEEKDAYS_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::WEEKDAYS_INVALID.
      */
     public function get_weekDays()
     {
@@ -259,7 +259,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @param integer $newval : an integer corresponding to the days of the week when a wake up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -274,7 +274,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @return integer : an integer corresponding to the days of the month scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_MONTHDAYS_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::MONTHDAYS_INVALID.
      */
     public function get_monthDays()
     {
@@ -295,7 +295,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @param integer $newval : an integer corresponding to the days of the month when a wake up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -310,7 +310,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @return integer : an integer corresponding to the months scheduled for wake up
      *
-     * On failure, throws an exception or returns Y_MONTHS_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::MONTHS_INVALID.
      */
     public function get_months()
     {
@@ -331,7 +331,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @param integer $newval : an integer corresponding to the months when a wake up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -346,7 +346,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @return integer : an integer corresponding to the date/time (seconds) of the next wake up occurrence
      *
-     * On failure, throws an exception or returns Y_NEXTOCCURENCE_INVALID.
+     * On failure, throws an exception or returns YWakeUpSchedule::NEXTOCCURENCE_INVALID.
      */
     public function get_nextOccurence()
     {
@@ -373,7 +373,7 @@ class YWakeUpSchedule extends YFunction
      *
      * This function does not require that the wake up schedule is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWakeUpSchedule.isOnline() to test if the wake up schedule is
+     * Use the method isOnline() to test if the wake up schedule is
      * indeed online at a given time. In case of ambiguity when looking for
      * a wake up schedule by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -417,7 +417,7 @@ class YWakeUpSchedule extends YFunction
      *
      * @param integer $bitmap : Minutes 00-59 of each hour scheduled for wake up.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -487,7 +487,7 @@ class YWakeUpSchedule extends YFunction
 
     /**
      * Starts the enumeration of wake up schedules currently accessible.
-     * Use the method YWakeUpSchedule.nextWakeUpSchedule() to iterate on
+     * Use the method YWakeUpSchedule::nextWakeUpSchedule() to iterate on
      * next wake up schedules.
      *
      * @return YWakeUpSchedule : a pointer to a YWakeUpSchedule object, corresponding to
@@ -519,7 +519,7 @@ class YWakeUpSchedule extends YFunction
  *
  * This function does not require that the wake up schedule is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YWakeUpSchedule.isOnline() to test if the wake up schedule is
+ * Use the method isOnline() to test if the wake up schedule is
  * indeed online at a given time. In case of ambiguity when looking for
  * a wake up schedule by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -541,7 +541,7 @@ function yFindWakeUpSchedule($func)
 
 /**
  * Starts the enumeration of wake up schedules currently accessible.
- * Use the method YWakeUpSchedule.nextWakeUpSchedule() to iterate on
+ * Use the method YWakeUpSchedule::nextWakeUpSchedule() to iterate on
  * next wake up schedules.
  *
  * @return YWakeUpSchedule : a pointer to a YWakeUpSchedule object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_quadraturedecoder.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -101,7 +101,7 @@ class YQuadratureDecoder extends YSensor
      * @param double $newval : a floating point number corresponding to the current expected position of
      * the quadrature decoder
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -116,7 +116,7 @@ class YQuadratureDecoder extends YSensor
      *
      * @return double : a floating point number corresponding to the increments frequency, in Hz
      *
-     * On failure, throws an exception or returns Y_SPEED_INVALID.
+     * On failure, throws an exception or returns YQuadratureDecoder::SPEED_INVALID.
      */
     public function get_speed()
     {
@@ -133,10 +133,10 @@ class YQuadratureDecoder extends YSensor
     /**
      * Returns the current activation state of the quadrature decoder.
      *
-     * @return integer : either Y_DECODING_OFF or Y_DECODING_ON, according to the current activation state
-     * of the quadrature decoder
+     * @return integer : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
+     * according to the current activation state of the quadrature decoder
      *
-     * On failure, throws an exception or returns Y_DECODING_INVALID.
+     * On failure, throws an exception or returns YQuadratureDecoder::DECODING_INVALID.
      */
     public function get_decoding()
     {
@@ -155,10 +155,10 @@ class YQuadratureDecoder extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : either Y_DECODING_OFF or Y_DECODING_ON, according to the activation state
-     * of the quadrature decoder
+     * @param integer $newval : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
+     * according to the activation state of the quadrature decoder
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -181,7 +181,7 @@ class YQuadratureDecoder extends YSensor
      *
      * This function does not require that the quadrature decoder is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YQuadratureDecoder.isOnline() to test if the quadrature decoder is
+     * Use the method isOnline() to test if the quadrature decoder is
      * indeed online at a given time. In case of ambiguity when looking for
      * a quadrature decoder by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -239,7 +239,7 @@ class YQuadratureDecoder extends YSensor
 
     /**
      * Starts the enumeration of quadrature decoders currently accessible.
-     * Use the method YQuadratureDecoder.nextQuadratureDecoder() to iterate on
+     * Use the method YQuadratureDecoder::nextQuadratureDecoder() to iterate on
      * next quadrature decoders.
      *
      * @return YQuadratureDecoder : a pointer to a YQuadratureDecoder object, corresponding to
@@ -271,7 +271,7 @@ class YQuadratureDecoder extends YSensor
  *
  * This function does not require that the quadrature decoder is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YQuadratureDecoder.isOnline() to test if the quadrature decoder is
+ * Use the method isOnline() to test if the quadrature decoder is
  * indeed online at a given time. In case of ambiguity when looking for
  * a quadrature decoder by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -293,7 +293,7 @@ function yFindQuadratureDecoder($func)
 
 /**
  * Starts the enumeration of quadrature decoders currently accessible.
- * Use the method YQuadratureDecoder.nextQuadratureDecoder() to iterate on
+ * Use the method YQuadratureDecoder::nextQuadratureDecoder() to iterate on
  * next quadrature decoders.
  *
  * @return YQuadratureDecoder : a pointer to a YQuadratureDecoder object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioin.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_audioin.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YAudioIn, the high-level API for AudioIn functions
  *
@@ -115,7 +115,7 @@ class YAudioIn extends YFunction
      *
      * @return integer : an integer corresponding to audio input gain, in per cents
      *
-     * On failure, throws an exception or returns Y_VOLUME_INVALID.
+     * On failure, throws an exception or returns YAudioIn::VOLUME_INVALID.
      */
     public function get_volume()
     {
@@ -136,7 +136,7 @@ class YAudioIn extends YFunction
      *
      * @param integer $newval : an integer corresponding to audio input gain, in per cents
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -149,9 +149,9 @@ class YAudioIn extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either YAudioIn::MUTE_FALSE or YAudioIn::MUTE_TRUE, according to the state of the mute function
      *
-     * On failure, throws an exception or returns Y_MUTE_INVALID.
+     * On failure, throws an exception or returns YAudioIn::MUTE_INVALID.
      */
     public function get_mute()
     {
@@ -169,9 +169,10 @@ class YAudioIn extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either YAudioIn::MUTE_FALSE or YAudioIn::MUTE_TRUE, according to the state
+     * of the mute function
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -189,7 +190,7 @@ class YAudioIn extends YFunction
      *
      * @return string : a string corresponding to the supported volume range
      *
-     * On failure, throws an exception or returns Y_VOLUMERANGE_INVALID.
+     * On failure, throws an exception or returns YAudioIn::VOLUMERANGE_INVALID.
      */
     public function get_volumeRange()
     {
@@ -208,7 +209,7 @@ class YAudioIn extends YFunction
      *
      * @return integer : an integer corresponding to the detected input signal level
      *
-     * On failure, throws an exception or returns Y_SIGNAL_INVALID.
+     * On failure, throws an exception or returns YAudioIn::SIGNAL_INVALID.
      */
     public function get_signal()
     {
@@ -227,7 +228,7 @@ class YAudioIn extends YFunction
      *
      * @return integer : an integer corresponding to the number of seconds elapsed without detecting a signal
      *
-     * On failure, throws an exception or returns Y_NOSIGNALFOR_INVALID.
+     * On failure, throws an exception or returns YAudioIn::NOSIGNALFOR_INVALID.
      */
     public function get_noSignalFor()
     {
@@ -254,7 +255,7 @@ class YAudioIn extends YFunction
      *
      * This function does not require that the audio input is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YAudioIn.isOnline() to test if the audio input is
+     * Use the method isOnline() to test if the audio input is
      * indeed online at a given time. In case of ambiguity when looking for
      * an audio input by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -321,7 +322,7 @@ class YAudioIn extends YFunction
 
     /**
      * Starts the enumeration of audio inputs currently accessible.
-     * Use the method YAudioIn.nextAudioIn() to iterate on
+     * Use the method YAudioIn::nextAudioIn() to iterate on
      * next audio inputs.
      *
      * @return YAudioIn : a pointer to a YAudioIn object, corresponding to
@@ -353,7 +354,7 @@ class YAudioIn extends YFunction
  *
  * This function does not require that the audio input is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YAudioIn.isOnline() to test if the audio input is
+ * Use the method isOnline() to test if the audio input is
  * indeed online at a given time. In case of ambiguity when looking for
  * an audio input by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -375,7 +376,7 @@ function yFindAudioIn($func)
 
 /**
  * Starts the enumeration of audio inputs currently accessible.
- * Use the method YAudioIn.nextAudioIn() to iterate on
+ * Use the method YAudioIn::nextAudioIn() to iterate on
  * next audio inputs.
  *
  * @return YAudioIn : a pointer to a YAudioIn object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_groundspeed.php 39658 2020-03-12 15:36:29Z seb $
+ *  $Id: yocto_groundspeed.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *
@@ -84,7 +84,7 @@ class YGroundSpeed extends YSensor
      *
      * This function does not require that the ground speed sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YGroundSpeed.isOnline() to test if the ground speed sensor is
+     * Use the method isOnline() to test if the ground speed sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a ground speed sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -130,7 +130,7 @@ class YGroundSpeed extends YSensor
 
     /**
      * Starts the enumeration of ground speed sensors currently accessible.
-     * Use the method YGroundSpeed.nextGroundSpeed() to iterate on
+     * Use the method YGroundSpeed::nextGroundSpeed() to iterate on
      * next ground speed sensors.
      *
      * @return YGroundSpeed : a pointer to a YGroundSpeed object, corresponding to
@@ -162,7 +162,7 @@ class YGroundSpeed extends YSensor
  *
  * This function does not require that the ground speed sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YGroundSpeed.isOnline() to test if the ground speed sensor is
+ * Use the method isOnline() to test if the ground speed sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a ground speed sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -184,7 +184,7 @@ function yFindGroundSpeed($func)
 
 /**
  * Starts the enumeration of ground speed sensors currently accessible.
- * Use the method YGroundSpeed.nextGroundSpeed() to iterate on
+ * Use the method YGroundSpeed::nextGroundSpeed() to iterate on
  * next ground speed sensors.
  *
  * @return YGroundSpeed : a pointer to a YGroundSpeed object, corresponding to

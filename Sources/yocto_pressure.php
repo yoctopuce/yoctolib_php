@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pressure.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_pressure.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YPressure, the high-level API for Pressure functions
  *
@@ -85,7 +85,7 @@ class YPressure extends YSensor
      *
      * This function does not require that the pressure sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPressure.isOnline() to test if the pressure sensor is
+     * Use the method isOnline() to test if the pressure sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a pressure sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -131,7 +131,7 @@ class YPressure extends YSensor
 
     /**
      * Starts the enumeration of pressure sensors currently accessible.
-     * Use the method YPressure.nextPressure() to iterate on
+     * Use the method YPressure::nextPressure() to iterate on
      * next pressure sensors.
      *
      * @return YPressure : a pointer to a YPressure object, corresponding to
@@ -163,7 +163,7 @@ class YPressure extends YSensor
  *
  * This function does not require that the pressure sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPressure.isOnline() to test if the pressure sensor is
+ * Use the method isOnline() to test if the pressure sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a pressure sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -185,7 +185,7 @@ function yFindPressure($func)
 
 /**
  * Starts the enumeration of pressure sensors currently accessible.
- * Use the method YPressure.nextPressure() to iterate on
+ * Use the method YPressure::nextPressure() to iterate on
  * next pressure sensors.
  *
  * @return YPressure : a pointer to a YPressure object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_oscontrol.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -92,7 +92,7 @@ class YOsControl extends YFunction
      * shutdown, or zero when no
      *         shutdown has been scheduled
      *
-     * On failure, throws an exception or returns Y_SHUTDOWNCOUNTDOWN_INVALID.
+     * On failure, throws an exception or returns YOsControl::SHUTDOWNCOUNTDOWN_INVALID.
      */
     public function get_shutdownCountdown()
     {
@@ -125,7 +125,7 @@ class YOsControl extends YFunction
      *
      * This function does not require that the OS control is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YOsControl.isOnline() to test if the OS control is
+     * Use the method isOnline() to test if the OS control is
      * indeed online at a given time. In case of ambiguity when looking for
      * OS control by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -156,7 +156,7 @@ class YOsControl extends YFunction
      *
      * @param integer $secBeforeShutDown : number of seconds before shutdown
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -191,7 +191,7 @@ class YOsControl extends YFunction
 
     /**
      * Starts the enumeration of OS control currently accessible.
-     * Use the method YOsControl.nextOsControl() to iterate on
+     * Use the method YOsControl::nextOsControl() to iterate on
      * next OS control.
      *
      * @return YOsControl : a pointer to a YOsControl object, corresponding to
@@ -223,7 +223,7 @@ class YOsControl extends YFunction
  *
  * This function does not require that the OS control is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YOsControl.isOnline() to test if the OS control is
+ * Use the method isOnline() to test if the OS control is
  * indeed online at a given time. In case of ambiguity when looking for
  * OS control by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -245,7 +245,7 @@ function yFindOsControl($func)
 
 /**
  * Starts the enumeration of OS control currently accessible.
- * Use the method YOsControl.nextOsControl() to iterate on
+ * Use the method YOsControl::nextOsControl() to iterate on
  * next OS control.
  *
  * @return YOsControl : a pointer to a YOsControl object, corresponding to

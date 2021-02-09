@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltage.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_voltage.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YVoltage, the high-level API for Voltage functions
  *
@@ -92,9 +92,10 @@ class YVoltage extends YSensor
     /**
      * Returns the activation state of this input.
      *
-     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation state of this input
+     * @return integer : either YVoltage::ENABLED_FALSE or YVoltage::ENABLED_TRUE, according to the
+     * activation state of this input
      *
-     * On failure, throws an exception or returns Y_ENABLED_INVALID.
+     * On failure, throws an exception or returns YVoltage::ENABLED_INVALID.
      */
     public function get_enabled()
     {
@@ -116,10 +117,10 @@ class YVoltage extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the activation
-     * state of this voltage input
+     * @param integer $newval : either YVoltage::ENABLED_FALSE or YVoltage::ENABLED_TRUE, according to the
+     * activation state of this voltage input
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -142,7 +143,7 @@ class YVoltage extends YSensor
      *
      * This function does not require that the voltage sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YVoltage.isOnline() to test if the voltage sensor is
+     * Use the method isOnline() to test if the voltage sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a voltage sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -194,7 +195,7 @@ class YVoltage extends YSensor
 
     /**
      * Starts the enumeration of voltage sensors currently accessible.
-     * Use the method YVoltage.nextVoltage() to iterate on
+     * Use the method YVoltage::nextVoltage() to iterate on
      * next voltage sensors.
      *
      * @return YVoltage : a pointer to a YVoltage object, corresponding to
@@ -226,7 +227,7 @@ class YVoltage extends YSensor
  *
  * This function does not require that the voltage sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YVoltage.isOnline() to test if the voltage sensor is
+ * Use the method isOnline() to test if the voltage sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a voltage sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -248,7 +249,7 @@ function yFindVoltage($func)
 
 /**
  * Starts the enumeration of voltage sensors currently accessible.
- * Use the method YVoltage.nextVoltage() to iterate on
+ * Use the method YVoltage::nextVoltage() to iterate on
  * next voltage sensors.
  *
  * @return YVoltage : a pointer to a YVoltage object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_weighscale.php 41112 2020-06-29 13:21:58Z seb $
+ *  $Id: yocto_weighscale.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -142,7 +142,7 @@ class YWeighScale extends YSensor
      *
      * @param string $newval : a string corresponding to the measuring unit for the weight
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -155,10 +155,10 @@ class YWeighScale extends YSensor
     /**
      * Returns the current load cell bridge excitation method.
      *
-     * @return integer : a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC corresponding
-     * to the current load cell bridge excitation method
+     * @return integer : a value among YWeighScale::EXCITATION_OFF, YWeighScale::EXCITATION_DC and
+     * YWeighScale::EXCITATION_AC corresponding to the current load cell bridge excitation method
      *
-     * On failure, throws an exception or returns Y_EXCITATION_INVALID.
+     * On failure, throws an exception or returns YWeighScale::EXCITATION_INVALID.
      */
     public function get_excitation()
     {
@@ -177,10 +177,10 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param integer $newval : a value among Y_EXCITATION_OFF, Y_EXCITATION_DC and Y_EXCITATION_AC
-     * corresponding to the current load cell bridge excitation method
+     * @param integer $newval : a value among YWeighScale::EXCITATION_OFF, YWeighScale::EXCITATION_DC and
+     * YWeighScale::EXCITATION_AC corresponding to the current load cell bridge excitation method
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -202,7 +202,7 @@ class YWeighScale extends YSensor
      * @param double $newval : a floating point number corresponding to the averaged temperature update
      * rate, in per mille
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -221,7 +221,7 @@ class YWeighScale extends YSensor
      *
      * @return double : a floating point number corresponding to the averaged temperature update rate, in per mille
      *
-     * On failure, throws an exception or returns Y_TEMPAVGADAPTRATIO_INVALID.
+     * On failure, throws an exception or returns YWeighScale::TEMPAVGADAPTRATIO_INVALID.
      */
     public function get_tempAvgAdaptRatio()
     {
@@ -246,7 +246,7 @@ class YWeighScale extends YSensor
      * @param double $newval : a floating point number corresponding to the temperature change update
      * rate, in per mille
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -264,7 +264,7 @@ class YWeighScale extends YSensor
      *
      * @return double : a floating point number corresponding to the temperature change update rate, in per mille
      *
-     * On failure, throws an exception or returns Y_TEMPCHGADAPTRATIO_INVALID.
+     * On failure, throws an exception or returns YWeighScale::TEMPCHGADAPTRATIO_INVALID.
      */
     public function get_tempChgAdaptRatio()
     {
@@ -284,7 +284,7 @@ class YWeighScale extends YSensor
      * @return double : a floating point number corresponding to the current averaged temperature, used
      * for thermal compensation
      *
-     * On failure, throws an exception or returns Y_COMPTEMPAVG_INVALID.
+     * On failure, throws an exception or returns YWeighScale::COMPTEMPAVG_INVALID.
      */
     public function get_compTempAvg()
     {
@@ -304,7 +304,7 @@ class YWeighScale extends YSensor
      * @return double : a floating point number corresponding to the current temperature variation, used
      * for thermal compensation
      *
-     * On failure, throws an exception or returns Y_COMPTEMPCHG_INVALID.
+     * On failure, throws an exception or returns YWeighScale::COMPTEMPCHG_INVALID.
      */
     public function get_compTempChg()
     {
@@ -323,7 +323,7 @@ class YWeighScale extends YSensor
      *
      * @return double : a floating point number corresponding to the current current thermal compensation value
      *
-     * On failure, throws an exception or returns Y_COMPENSATION_INVALID.
+     * On failure, throws an exception or returns YWeighScale::COMPENSATION_INVALID.
      */
     public function get_compensation()
     {
@@ -346,7 +346,7 @@ class YWeighScale extends YSensor
      *
      * @param double $newval : a floating point number corresponding to the zero tracking threshold value
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -363,7 +363,7 @@ class YWeighScale extends YSensor
      *
      * @return double : a floating point number corresponding to the zero tracking threshold value
      *
-     * On failure, throws an exception or returns Y_ZEROTRACKING_INVALID.
+     * On failure, throws an exception or returns YWeighScale::ZEROTRACKING_INVALID.
      */
     public function get_zeroTracking()
     {
@@ -408,7 +408,7 @@ class YWeighScale extends YSensor
      *
      * This function does not require that the weighing scale sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWeighScale.isOnline() to test if the weighing scale sensor is
+     * Use the method isOnline() to test if the weighing scale sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a weighing scale sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -439,7 +439,7 @@ class YWeighScale extends YSensor
      * so that the current signal corresponds to a zero weight. Remember to call the
      * saveToFlash() method of the module if the modification must be kept.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -455,7 +455,7 @@ class YWeighScale extends YSensor
      * @param double $currWeight : reference weight presently on the load cell.
      * @param double $maxWeight : maximum weight to be expected on the load cell.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -546,7 +546,7 @@ class YWeighScale extends YSensor
      *         to apply for each of the temperature included in the first
      *         argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -566,7 +566,7 @@ class YWeighScale extends YSensor
      *         with the offset correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -586,7 +586,7 @@ class YWeighScale extends YSensor
      *         to apply for each of the temperature variation included in the first
      *         argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -606,7 +606,7 @@ class YWeighScale extends YSensor
      *         with the offset correction applied for each of the temperature
      *         variation included in the first argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -626,7 +626,7 @@ class YWeighScale extends YSensor
      *         (in percents) to apply for each of the temperature included in the first
      *         argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -646,7 +646,7 @@ class YWeighScale extends YSensor
      *         with the span correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -666,7 +666,7 @@ class YWeighScale extends YSensor
      *         (in percents) to apply for each of the temperature variation included
      *         in the first argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -686,7 +686,7 @@ class YWeighScale extends YSensor
      *         with the span correction applied for each of variation of temperature
      *         included in the first argument, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -757,7 +757,7 @@ class YWeighScale extends YSensor
 
     /**
      * Starts the enumeration of weighing scale sensors currently accessible.
-     * Use the method YWeighScale.nextWeighScale() to iterate on
+     * Use the method YWeighScale::nextWeighScale() to iterate on
      * next weighing scale sensors.
      *
      * @return YWeighScale : a pointer to a YWeighScale object, corresponding to
@@ -789,7 +789,7 @@ class YWeighScale extends YSensor
  *
  * This function does not require that the weighing scale sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YWeighScale.isOnline() to test if the weighing scale sensor is
+ * Use the method isOnline() to test if the weighing scale sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a weighing scale sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -811,7 +811,7 @@ function yFindWeighScale($func)
 
 /**
  * Starts the enumeration of weighing scale sensors currently accessible.
- * Use the method YWeighScale.nextWeighScale() to iterate on
+ * Use the method YWeighScale::nextWeighScale() to iterate on
  * next weighing scale sensors.
  *
  * @return YWeighScale : a pointer to a YWeighScale object, corresponding to

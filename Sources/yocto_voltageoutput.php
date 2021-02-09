@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_voltageoutput.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -99,7 +99,7 @@ class YVoltageOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the output voltage, in V
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -114,7 +114,7 @@ class YVoltageOutput extends YFunction
      *
      * @return double : a floating point number corresponding to the output voltage set point, in V
      *
-     * On failure, throws an exception or returns Y_CURRENTVOLTAGE_INVALID.
+     * On failure, throws an exception or returns YVoltageOutput::CURRENTVOLTAGE_INVALID.
      */
     public function get_currentVoltage()
     {
@@ -152,7 +152,7 @@ class YVoltageOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the output voltage at device start up
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -167,7 +167,7 @@ class YVoltageOutput extends YFunction
      *
      * @return double : a floating point number corresponding to the selected voltage output at device startup, in V
      *
-     * On failure, throws an exception or returns Y_VOLTAGEATSTARTUP_INVALID.
+     * On failure, throws an exception or returns YVoltageOutput::VOLTAGEATSTARTUP_INVALID.
      */
     public function get_voltageAtStartUp()
     {
@@ -194,7 +194,7 @@ class YVoltageOutput extends YFunction
      *
      * This function does not require that the voltage output is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YVoltageOutput.isOnline() to test if the voltage output is
+     * Use the method isOnline() to test if the voltage output is
      * indeed online at a given time. In case of ambiguity when looking for
      * a voltage output by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -228,7 +228,7 @@ class YVoltageOutput extends YFunction
      *         (floating-point number, representing the end voltage in V)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      */
     public function voltageMove($V_target,$ms_duration)
     {
@@ -282,7 +282,7 @@ class YVoltageOutput extends YFunction
 
     /**
      * Starts the enumeration of voltage outputs currently accessible.
-     * Use the method YVoltageOutput.nextVoltageOutput() to iterate on
+     * Use the method YVoltageOutput::nextVoltageOutput() to iterate on
      * next voltage outputs.
      *
      * @return YVoltageOutput : a pointer to a YVoltageOutput object, corresponding to
@@ -314,7 +314,7 @@ class YVoltageOutput extends YFunction
  *
  * This function does not require that the voltage output is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YVoltageOutput.isOnline() to test if the voltage output is
+ * Use the method isOnline() to test if the voltage output is
  * indeed online at a given time. In case of ambiguity when looking for
  * a voltage output by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -336,7 +336,7 @@ function yFindVoltageOutput($func)
 
 /**
  * Starts the enumeration of voltage outputs currently accessible.
- * Use the method YVoltageOutput.nextVoltageOutput() to iterate on
+ * Use the method YVoltageOutput::nextVoltageOutput() to iterate on
  * next voltage outputs.
  *
  * @return YVoltageOutput : a pointer to a YVoltageOutput object, corresponding to

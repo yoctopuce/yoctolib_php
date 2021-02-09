@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_audioout.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_audioout.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YAudioOut, the high-level API for AudioOut functions
  *
@@ -115,7 +115,7 @@ class YAudioOut extends YFunction
      *
      * @return integer : an integer corresponding to audio output volume, in per cents
      *
-     * On failure, throws an exception or returns Y_VOLUME_INVALID.
+     * On failure, throws an exception or returns YAudioOut::VOLUME_INVALID.
      */
     public function get_volume()
     {
@@ -136,7 +136,7 @@ class YAudioOut extends YFunction
      *
      * @param integer $newval : an integer corresponding to audio output volume, in per cents
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -149,9 +149,10 @@ class YAudioOut extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either YAudioOut::MUTE_FALSE or YAudioOut::MUTE_TRUE, according to the state of the
+     * mute function
      *
-     * On failure, throws an exception or returns Y_MUTE_INVALID.
+     * On failure, throws an exception or returns YAudioOut::MUTE_INVALID.
      */
     public function get_mute()
     {
@@ -169,9 +170,10 @@ class YAudioOut extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either YAudioOut::MUTE_FALSE or YAudioOut::MUTE_TRUE, according to the state
+     * of the mute function
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -189,7 +191,7 @@ class YAudioOut extends YFunction
      *
      * @return string : a string corresponding to the supported volume range
      *
-     * On failure, throws an exception or returns Y_VOLUMERANGE_INVALID.
+     * On failure, throws an exception or returns YAudioOut::VOLUMERANGE_INVALID.
      */
     public function get_volumeRange()
     {
@@ -208,7 +210,7 @@ class YAudioOut extends YFunction
      *
      * @return integer : an integer corresponding to the detected output current level
      *
-     * On failure, throws an exception or returns Y_SIGNAL_INVALID.
+     * On failure, throws an exception or returns YAudioOut::SIGNAL_INVALID.
      */
     public function get_signal()
     {
@@ -227,7 +229,7 @@ class YAudioOut extends YFunction
      *
      * @return integer : an integer corresponding to the number of seconds elapsed without detecting a signal
      *
-     * On failure, throws an exception or returns Y_NOSIGNALFOR_INVALID.
+     * On failure, throws an exception or returns YAudioOut::NOSIGNALFOR_INVALID.
      */
     public function get_noSignalFor()
     {
@@ -254,7 +256,7 @@ class YAudioOut extends YFunction
      *
      * This function does not require that the audio output is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YAudioOut.isOnline() to test if the audio output is
+     * Use the method isOnline() to test if the audio output is
      * indeed online at a given time. In case of ambiguity when looking for
      * an audio output by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -321,7 +323,7 @@ class YAudioOut extends YFunction
 
     /**
      * Starts the enumeration of audio outputs currently accessible.
-     * Use the method YAudioOut.nextAudioOut() to iterate on
+     * Use the method YAudioOut::nextAudioOut() to iterate on
      * next audio outputs.
      *
      * @return YAudioOut : a pointer to a YAudioOut object, corresponding to
@@ -353,7 +355,7 @@ class YAudioOut extends YFunction
  *
  * This function does not require that the audio output is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YAudioOut.isOnline() to test if the audio output is
+ * Use the method isOnline() to test if the audio output is
  * indeed online at a given time. In case of ambiguity when looking for
  * an audio output by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -375,7 +377,7 @@ function yFindAudioOut($func)
 
 /**
  * Starts the enumeration of audio outputs currently accessible.
- * Use the method YAudioOut.nextAudioOut() to iterate on
+ * Use the method YAudioOut::nextAudioOut() to iterate on
  * next audio outputs.
  *
  * @return YAudioOut : a pointer to a YAudioOut object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorled.php 41109 2020-06-29 12:40:42Z seb $
+ *  $Id: yocto_colorled.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -141,7 +141,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer corresponding to the current RGB color of the LED
      *
-     * On failure, throws an exception or returns Y_RGBCOLOR_INVALID.
+     * On failure, throws an exception or returns YColorLed::RGBCOLOR_INVALID.
      */
     public function get_rgbColor()
     {
@@ -160,7 +160,7 @@ class YColorLed extends YFunction
      *
      * @param integer $newval : an integer corresponding to the current color of the LED, using an RGB color
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -175,7 +175,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer corresponding to the current HSL color of the LED
      *
-     * On failure, throws an exception or returns Y_HSLCOLOR_INVALID.
+     * On failure, throws an exception or returns YColorLed::HSLCOLOR_INVALID.
      */
     public function get_hslColor()
     {
@@ -194,7 +194,7 @@ class YColorLed extends YFunction
      *
      * @param integer $newval : an integer corresponding to the current color of the LED, using a color HSL
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -228,7 +228,7 @@ class YColorLed extends YFunction
      * @param rgb_target  : desired RGB color at the end of the transition
      * @param integer $ms_duration : duration of the transition, in millisecond
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -262,7 +262,7 @@ class YColorLed extends YFunction
      * @param hsl_target  : desired HSL color at the end of the transition
      * @param integer $ms_duration : duration of the transition, in millisecond
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -277,7 +277,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer corresponding to the configured color to be displayed when the module is turned on
      *
-     * On failure, throws an exception or returns Y_RGBCOLORATPOWERON_INVALID.
+     * On failure, throws an exception or returns YColorLed::RGBCOLORATPOWERON_INVALID.
      */
     public function get_rgbColorAtPowerOn()
     {
@@ -299,7 +299,7 @@ class YColorLed extends YFunction
      * @param integer $newval : an integer corresponding to the color that the LED displays by default
      * when the module is turned on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -314,7 +314,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer corresponding to the current length of the blinking sequence
      *
-     * On failure, throws an exception or returns Y_BLINKSEQSIZE_INVALID.
+     * On failure, throws an exception or returns YColorLed::BLINKSEQSIZE_INVALID.
      */
     public function get_blinkSeqSize()
     {
@@ -333,7 +333,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer corresponding to the maximum length of the blinking sequence
      *
-     * On failure, throws an exception or returns Y_BLINKSEQMAXSIZE_INVALID.
+     * On failure, throws an exception or returns YColorLed::BLINKSEQMAXSIZE_INVALID.
      */
     public function get_blinkSeqMaxSize()
     {
@@ -355,7 +355,7 @@ class YColorLed extends YFunction
      *
      * @return integer : an integer
      *
-     * On failure, throws an exception or returns Y_BLINKSEQSIGNATURE_INVALID.
+     * On failure, throws an exception or returns YColorLed::BLINKSEQSIGNATURE_INVALID.
      */
     public function get_blinkSeqSignature()
     {
@@ -400,7 +400,7 @@ class YColorLed extends YFunction
      *
      * This function does not require that the RGB LED is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YColorLed.isOnline() to test if the RGB LED is
+     * Use the method isOnline() to test if the RGB LED is
      * indeed online at a given time. In case of ambiguity when looking for
      * an RGB LED by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -438,7 +438,7 @@ class YColorLed extends YFunction
      * @param integer $HSLcolor : desired HSL color when the transition is completed
      * @param integer $msDelay : duration of the color transition, in milliseconds.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function addHslMoveToBlinkSeq($HSLcolor,$msDelay)
@@ -453,7 +453,7 @@ class YColorLed extends YFunction
      * @param integer $RGBcolor : desired RGB color when the transition is completed
      * @param integer $msDelay : duration of the color transition, in milliseconds.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function addRgbMoveToBlinkSeq($RGBcolor,$msDelay)
@@ -466,7 +466,7 @@ class YColorLed extends YFunction
      * run in a loop until it is stopped by stopBlinkSeq or an explicit
      * change.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function startBlinkSeq()
@@ -477,7 +477,7 @@ class YColorLed extends YFunction
     /**
      * Stops the preprogrammed blinking sequence.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function stopBlinkSeq()
@@ -488,7 +488,7 @@ class YColorLed extends YFunction
     /**
      * Resets the preprogrammed blinking sequence.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function resetBlinkSeq()
@@ -555,7 +555,7 @@ class YColorLed extends YFunction
 
     /**
      * Starts the enumeration of RGB LEDs currently accessible.
-     * Use the method YColorLed.nextColorLed() to iterate on
+     * Use the method YColorLed::nextColorLed() to iterate on
      * next RGB LEDs.
      *
      * @return YColorLed : a pointer to a YColorLed object, corresponding to
@@ -587,7 +587,7 @@ class YColorLed extends YFunction
  *
  * This function does not require that the RGB LED is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YColorLed.isOnline() to test if the RGB LED is
+ * Use the method isOnline() to test if the RGB LED is
  * indeed online at a given time. In case of ambiguity when looking for
  * an RGB LED by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -609,7 +609,7 @@ function yFindColorLed($func)
 
 /**
  * Starts the enumeration of RGB LEDs currently accessible.
- * Use the method YColorLed.nextColorLed() to iterate on
+ * Use the method YColorLed::nextColorLed() to iterate on
  * next RGB LEDs.
  *
  * @return YColorLed : a pointer to a YColorLed object, corresponding to

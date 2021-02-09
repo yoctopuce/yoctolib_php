@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 41171 2020-07-02 17:49:00Z mvuilleu $
+ * $Id: yocto_serialport.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -254,7 +254,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of bytes received since last reset
      *
-     * On failure, throws an exception or returns Y_RXCOUNT_INVALID.
+     * On failure, throws an exception or returns YSerialPort::RXCOUNT_INVALID.
      */
     public function get_rxCount()
     {
@@ -273,7 +273,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of bytes transmitted since last reset
      *
-     * On failure, throws an exception or returns Y_TXCOUNT_INVALID.
+     * On failure, throws an exception or returns YSerialPort::TXCOUNT_INVALID.
      */
     public function get_txCount()
     {
@@ -292,7 +292,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of communication errors detected since last reset
      *
-     * On failure, throws an exception or returns Y_ERRCOUNT_INVALID.
+     * On failure, throws an exception or returns YSerialPort::ERRCOUNT_INVALID.
      */
     public function get_errCount()
     {
@@ -311,7 +311,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of messages received since last reset
      *
-     * On failure, throws an exception or returns Y_RXMSGCOUNT_INVALID.
+     * On failure, throws an exception or returns YSerialPort::RXMSGCOUNT_INVALID.
      */
     public function get_rxMsgCount()
     {
@@ -330,7 +330,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of messages send since last reset
      *
-     * On failure, throws an exception or returns Y_TXMSGCOUNT_INVALID.
+     * On failure, throws an exception or returns YSerialPort::TXMSGCOUNT_INVALID.
      */
     public function get_txMsgCount()
     {
@@ -350,7 +350,7 @@ class YSerialPort extends YFunction
      * @return string : a string corresponding to the latest message fully received (for Line, Frame and
      * Modbus protocols)
      *
-     * On failure, throws an exception or returns Y_LASTMSG_INVALID.
+     * On failure, throws an exception or returns YSerialPort::LASTMSG_INVALID.
      */
     public function get_lastMsg()
     {
@@ -369,7 +369,7 @@ class YSerialPort extends YFunction
      *
      * @return string : a string corresponding to the name of the job file currently in use
      *
-     * On failure, throws an exception or returns Y_CURRENTJOB_INVALID.
+     * On failure, throws an exception or returns YSerialPort::CURRENTJOB_INVALID.
      */
     public function get_currentJob()
     {
@@ -389,7 +389,7 @@ class YSerialPort extends YFunction
      *
      * @param string $newval : a string
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -404,7 +404,7 @@ class YSerialPort extends YFunction
      *
      * @return string : a string corresponding to the job file to use when the device is powered on
      *
-     * On failure, throws an exception or returns Y_STARTUPJOB_INVALID.
+     * On failure, throws an exception or returns YSerialPort::STARTUPJOB_INVALID.
      */
     public function get_startupJob()
     {
@@ -425,7 +425,7 @@ class YSerialPort extends YFunction
      *
      * @param string $newval : a string corresponding to the job to use when the device is powered on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -440,7 +440,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to the maximum number of tasks in a job that the device can handle
      *
-     * On failure, throws an exception or returns Y_JOBMAXTASK_INVALID.
+     * On failure, throws an exception or returns YSerialPort::JOBMAXTASK_INVALID.
      */
     public function get_jobMaxTask()
     {
@@ -459,7 +459,7 @@ class YSerialPort extends YFunction
      *
      * @return integer : an integer corresponding to maximum size allowed for job files
      *
-     * On failure, throws an exception or returns Y_JOBMAXSIZE_INVALID.
+     * On failure, throws an exception or returns YSerialPort::JOBMAXSIZE_INVALID.
      */
     public function get_jobMaxSize()
     {
@@ -505,7 +505,7 @@ class YSerialPort extends YFunction
      *
      * @return string : a string corresponding to the type of protocol used over the serial line, as a string
      *
-     * On failure, throws an exception or returns Y_PROTOCOL_INVALID.
+     * On failure, throws an exception or returns YSerialPort::PROTOCOL_INVALID.
      */
     public function get_protocol()
     {
@@ -537,7 +537,7 @@ class YSerialPort extends YFunction
      *
      * @param string $newval : a string corresponding to the type of protocol used over the serial line
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -550,11 +550,12 @@ class YSerialPort extends YFunction
     /**
      * Returns the voltage level used on the serial line.
      *
-     * @return integer : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V, Y_VOLTAGELEVEL_TTL3VR,
-     * Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232, Y_VOLTAGELEVEL_RS485 and
-     * Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage level used on the serial line
+     * @return integer : a value among YSerialPort::VOLTAGELEVEL_OFF, YSerialPort::VOLTAGELEVEL_TTL3V,
+     * YSerialPort::VOLTAGELEVEL_TTL3VR, YSerialPort::VOLTAGELEVEL_TTL5V, YSerialPort::VOLTAGELEVEL_TTL5VR,
+     * YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485 and YSerialPort::VOLTAGELEVEL_TTL1V8
+     * corresponding to the voltage level used on the serial line
      *
-     * On failure, throws an exception or returns Y_VOLTAGELEVEL_INVALID.
+     * On failure, throws an exception or returns YSerialPort::VOLTAGELEVEL_INVALID.
      */
     public function get_voltageLevel()
     {
@@ -577,11 +578,12 @@ class YSerialPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param integer $newval : a value among Y_VOLTAGELEVEL_OFF, Y_VOLTAGELEVEL_TTL3V,
-     * Y_VOLTAGELEVEL_TTL3VR, Y_VOLTAGELEVEL_TTL5V, Y_VOLTAGELEVEL_TTL5VR, Y_VOLTAGELEVEL_RS232,
-     * Y_VOLTAGELEVEL_RS485 and Y_VOLTAGELEVEL_TTL1V8 corresponding to the voltage type used on the serial line
+     * @param integer $newval : a value among YSerialPort::VOLTAGELEVEL_OFF,
+     * YSerialPort::VOLTAGELEVEL_TTL3V, YSerialPort::VOLTAGELEVEL_TTL3VR, YSerialPort::VOLTAGELEVEL_TTL5V,
+     * YSerialPort::VOLTAGELEVEL_TTL5VR, YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485 and
+     * YSerialPort::VOLTAGELEVEL_TTL1V8 corresponding to the voltage type used on the serial line
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -602,7 +604,7 @@ class YSerialPort extends YFunction
      * @return string : a string corresponding to the serial port communication parameters, as a string such as
      *         "9600,8N1"
      *
-     * On failure, throws an exception or returns Y_SERIALMODE_INVALID.
+     * On failure, throws an exception or returns YSerialPort::SERIALMODE_INVALID.
      */
     public function get_serialMode()
     {
@@ -630,7 +632,7 @@ class YSerialPort extends YFunction
      * string such as
      *         "9600,8N1"
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -653,7 +655,7 @@ class YSerialPort extends YFunction
      *
      * This function does not require that the serial port is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YSerialPort.isOnline() to test if the serial port is
+     * Use the method isOnline() to test if the serial port is
      * indeed online at a given time. In case of ambiguity when looking for
      * a serial port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -898,7 +900,7 @@ class YSerialPort extends YFunction
      * @param string $jobfile : name of the job file to save on the device filesystem
      * @param string $jsonDef : a string containing a JSON definition of the job
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -915,7 +917,7 @@ class YSerialPort extends YFunction
      *
      * @param string $jobfile : name of the job file (on the device filesystem)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -927,7 +929,7 @@ class YSerialPort extends YFunction
     /**
      * Clears the serial port buffer and resets counters to zero.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -945,7 +947,7 @@ class YSerialPort extends YFunction
      *
      * @param integer $code : the byte to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -959,7 +961,7 @@ class YSerialPort extends YFunction
      *
      * @param string $text : the text string to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -996,7 +998,7 @@ class YSerialPort extends YFunction
      *
      * @param string $buff : the binary buffer to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1010,7 +1012,7 @@ class YSerialPort extends YFunction
      *
      * @param Integer[] $byteList : a list of byte codes
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1039,7 +1041,7 @@ class YSerialPort extends YFunction
      *
      * @param string $hexString : a string of hexadecimal byte codes
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1072,7 +1074,7 @@ class YSerialPort extends YFunction
      *
      * @param string $text : the text string to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1107,7 +1109,7 @@ class YSerialPort extends YFunction
     /**
      * Reads one byte from the receive buffer, starting at current stream position.
      * If data at current stream position is not available anymore in the receive buffer,
-     * or if there is no data available yet, the function returns YAPI_NO_MORE_DATA.
+     * or if there is no data available yet, the function returns YAPI::NO_MORE_DATA.
      *
      * @return integer : the next byte
      *
@@ -1347,7 +1349,7 @@ class YSerialPort extends YFunction
      *
      * @param integer $val : 1 to turn RTS on, 0 to turn RTS off
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1424,7 +1426,7 @@ class YSerialPort extends YFunction
      *
      * @param string $text : the text string to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1443,7 +1445,7 @@ class YSerialPort extends YFunction
      *
      * @param string $hexString : a hexadecimal message string, including device address but no CRC/LRC
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2047,7 +2049,7 @@ class YSerialPort extends YFunction
 
     /**
      * Starts the enumeration of serial ports currently accessible.
-     * Use the method YSerialPort.nextSerialPort() to iterate on
+     * Use the method YSerialPort::nextSerialPort() to iterate on
      * next serial ports.
      *
      * @return YSerialPort : a pointer to a YSerialPort object, corresponding to
@@ -2079,7 +2081,7 @@ class YSerialPort extends YFunction
  *
  * This function does not require that the serial port is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YSerialPort.isOnline() to test if the serial port is
+ * Use the method isOnline() to test if the serial port is
  * indeed online at a given time. In case of ambiguity when looking for
  * a serial port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -2101,7 +2103,7 @@ function yFindSerialPort($func)
 
 /**
  * Starts the enumeration of serial ports currently accessible.
- * Use the method YSerialPort.nextSerialPort() to iterate on
+ * Use the method YSerialPort::nextSerialPort() to iterate on
  * next serial ports.
  *
  * @return YSerialPort : a pointer to a YSerialPort object, corresponding to

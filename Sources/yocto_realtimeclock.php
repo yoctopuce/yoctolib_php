@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 39434 2020-02-25 08:53:55Z seb $
+ *  $Id: yocto_realtimeclock.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -54,7 +54,7 @@ if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',      
 //--- (YRealTimeClock declaration)
 /**
  * YRealTimeClock Class: real-time clock control interface, available for instance in the
- * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
  *
  * The YRealTimeClock class provide access to the embedded real-time clock available on some Yoctopuce
  * devices. It can provide current date and time, even after a power outage
@@ -115,7 +115,7 @@ class YRealTimeClock extends YFunction
      * @return integer : an integer corresponding to the current time in Unix format (number of elapsed
      * seconds since Jan 1st, 1970)
      *
-     * On failure, throws an exception or returns Y_UNIXTIME_INVALID.
+     * On failure, throws an exception or returns YRealTimeClock::UNIXTIME_INVALID.
      */
     public function get_unixTime()
     {
@@ -134,7 +134,7 @@ class YRealTimeClock extends YFunction
      *
      * @param integer $newval : an integer corresponding to the current time
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -149,7 +149,7 @@ class YRealTimeClock extends YFunction
      *
      * @return string : a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
-     * On failure, throws an exception or returns Y_DATETIME_INVALID.
+     * On failure, throws an exception or returns YRealTimeClock::DATETIME_INVALID.
      */
     public function get_dateTime()
     {
@@ -169,7 +169,7 @@ class YRealTimeClock extends YFunction
      * @return integer : an integer corresponding to the number of seconds between current time and UTC
      * time (time zone)
      *
-     * On failure, throws an exception or returns Y_UTCOFFSET_INVALID.
+     * On failure, throws an exception or returns YRealTimeClock::UTCOFFSET_INVALID.
      */
     public function get_utcOffset()
     {
@@ -192,7 +192,7 @@ class YRealTimeClock extends YFunction
      * @param integer $newval : an integer corresponding to the number of seconds between current time and
      * UTC time (time zone)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -205,10 +205,10 @@ class YRealTimeClock extends YFunction
     /**
      * Returns true if the clock has been set, and false otherwise.
      *
-     * @return integer : either Y_TIMESET_FALSE or Y_TIMESET_TRUE, according to true if the clock has been
-     * set, and false otherwise
+     * @return integer : either YRealTimeClock::TIMESET_FALSE or YRealTimeClock::TIMESET_TRUE, according to
+     * true if the clock has been set, and false otherwise
      *
-     * On failure, throws an exception or returns Y_TIMESET_INVALID.
+     * On failure, throws an exception or returns YRealTimeClock::TIMESET_INVALID.
      */
     public function get_timeSet()
     {
@@ -235,7 +235,7 @@ class YRealTimeClock extends YFunction
      *
      * This function does not require that the real-time clock is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YRealTimeClock.isOnline() to test if the real-time clock is
+     * Use the method isOnline() to test if the real-time clock is
      * indeed online at a given time. In case of ambiguity when looking for
      * a real-time clock by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -299,7 +299,7 @@ class YRealTimeClock extends YFunction
 
     /**
      * Starts the enumeration of real-time clocks currently accessible.
-     * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
+     * Use the method YRealTimeClock::nextRealTimeClock() to iterate on
      * next real-time clocks.
      *
      * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to
@@ -331,7 +331,7 @@ class YRealTimeClock extends YFunction
  *
  * This function does not require that the real-time clock is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YRealTimeClock.isOnline() to test if the real-time clock is
+ * Use the method isOnline() to test if the real-time clock is
  * indeed online at a given time. In case of ambiguity when looking for
  * a real-time clock by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -353,7 +353,7 @@ function yFindRealTimeClock($func)
 
 /**
  * Starts the enumeration of real-time clocks currently accessible.
- * Use the method YRealTimeClock.nextRealTimeClock() to iterate on
+ * Use the method YRealTimeClock::nextRealTimeClock() to iterate on
  * next real-time clocks.
  *
  * @return YRealTimeClock : a pointer to a YRealTimeClock object, corresponding to

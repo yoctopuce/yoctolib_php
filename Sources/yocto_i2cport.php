@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 41171 2020-07-02 17:49:00Z mvuilleu $
+ *  $Id: yocto_i2cport.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -243,7 +243,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of bytes received since last reset
      *
-     * On failure, throws an exception or returns Y_RXCOUNT_INVALID.
+     * On failure, throws an exception or returns YI2cPort::RXCOUNT_INVALID.
      */
     public function get_rxCount()
     {
@@ -262,7 +262,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of bytes transmitted since last reset
      *
-     * On failure, throws an exception or returns Y_TXCOUNT_INVALID.
+     * On failure, throws an exception or returns YI2cPort::TXCOUNT_INVALID.
      */
     public function get_txCount()
     {
@@ -281,7 +281,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of communication errors detected since last reset
      *
-     * On failure, throws an exception or returns Y_ERRCOUNT_INVALID.
+     * On failure, throws an exception or returns YI2cPort::ERRCOUNT_INVALID.
      */
     public function get_errCount()
     {
@@ -300,7 +300,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of messages received since last reset
      *
-     * On failure, throws an exception or returns Y_RXMSGCOUNT_INVALID.
+     * On failure, throws an exception or returns YI2cPort::RXMSGCOUNT_INVALID.
      */
     public function get_rxMsgCount()
     {
@@ -319,7 +319,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the total number of messages send since last reset
      *
-     * On failure, throws an exception or returns Y_TXMSGCOUNT_INVALID.
+     * On failure, throws an exception or returns YI2cPort::TXMSGCOUNT_INVALID.
      */
     public function get_txMsgCount()
     {
@@ -338,7 +338,7 @@ class YI2cPort extends YFunction
      *
      * @return string : a string corresponding to the latest message fully received (for Line and Frame protocols)
      *
-     * On failure, throws an exception or returns Y_LASTMSG_INVALID.
+     * On failure, throws an exception or returns YI2cPort::LASTMSG_INVALID.
      */
     public function get_lastMsg()
     {
@@ -357,7 +357,7 @@ class YI2cPort extends YFunction
      *
      * @return string : a string corresponding to the name of the job file currently in use
      *
-     * On failure, throws an exception or returns Y_CURRENTJOB_INVALID.
+     * On failure, throws an exception or returns YI2cPort::CURRENTJOB_INVALID.
      */
     public function get_currentJob()
     {
@@ -377,7 +377,7 @@ class YI2cPort extends YFunction
      *
      * @param string $newval : a string
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -392,7 +392,7 @@ class YI2cPort extends YFunction
      *
      * @return string : a string corresponding to the job file to use when the device is powered on
      *
-     * On failure, throws an exception or returns Y_STARTUPJOB_INVALID.
+     * On failure, throws an exception or returns YI2cPort::STARTUPJOB_INVALID.
      */
     public function get_startupJob()
     {
@@ -413,7 +413,7 @@ class YI2cPort extends YFunction
      *
      * @param string $newval : a string corresponding to the job to use when the device is powered on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -428,7 +428,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to the maximum number of tasks in a job that the device can handle
      *
-     * On failure, throws an exception or returns Y_JOBMAXTASK_INVALID.
+     * On failure, throws an exception or returns YI2cPort::JOBMAXTASK_INVALID.
      */
     public function get_jobMaxTask()
     {
@@ -447,7 +447,7 @@ class YI2cPort extends YFunction
      *
      * @return integer : an integer corresponding to maximum size allowed for job files
      *
-     * On failure, throws an exception or returns Y_JOBMAXSIZE_INVALID.
+     * On failure, throws an exception or returns YI2cPort::JOBMAXSIZE_INVALID.
      */
     public function get_jobMaxSize()
     {
@@ -487,7 +487,7 @@ class YI2cPort extends YFunction
      *
      * @return string : a string corresponding to the type of protocol used to send I2C messages, as a string
      *
-     * On failure, throws an exception or returns Y_PROTOCOL_INVALID.
+     * On failure, throws an exception or returns YI2cPort::PROTOCOL_INVALID.
      */
     public function get_protocol()
     {
@@ -513,7 +513,7 @@ class YI2cPort extends YFunction
      *
      * @param string $newval : a string corresponding to the type of protocol used to send I2C messages
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -526,10 +526,10 @@ class YI2cPort extends YFunction
     /**
      * Returns the voltage level used on the I2C bus.
      *
-     * @return integer : a value among Y_I2CVOLTAGELEVEL_OFF, Y_I2CVOLTAGELEVEL_3V3 and
-     * Y_I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
+     * @return integer : a value among YI2cPort::I2CVOLTAGELEVEL_OFF, YI2cPort::I2CVOLTAGELEVEL_3V3 and
+     * YI2cPort::I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
      *
-     * On failure, throws an exception or returns Y_I2CVOLTAGELEVEL_INVALID.
+     * On failure, throws an exception or returns YI2cPort::I2CVOLTAGELEVEL_INVALID.
      */
     public function get_i2cVoltageLevel()
     {
@@ -548,10 +548,10 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param integer $newval : a value among Y_I2CVOLTAGELEVEL_OFF, Y_I2CVOLTAGELEVEL_3V3 and
-     * Y_I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
+     * @param integer $newval : a value among YI2cPort::I2CVOLTAGELEVEL_OFF, YI2cPort::I2CVOLTAGELEVEL_3V3
+     * and YI2cPort::I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -571,7 +571,7 @@ class YI2cPort extends YFunction
      * @return string : a string corresponding to the I2C port communication parameters, as a string such as
      *         "400kbps,2000ms,NoRestart"
      *
-     * On failure, throws an exception or returns Y_I2CMODE_INVALID.
+     * On failure, throws an exception or returns YI2cPort::I2CMODE_INVALID.
      */
     public function get_i2cMode()
     {
@@ -597,7 +597,7 @@ class YI2cPort extends YFunction
      * @param string $newval : a string corresponding to the I2C port communication parameters, with a string such as
      *         "400kbps,2000ms"
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -620,7 +620,7 @@ class YI2cPort extends YFunction
      *
      * This function does not require that the I2C port is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YI2cPort.isOnline() to test if the I2C port is
+     * Use the method isOnline() to test if the I2C port is
      * indeed online at a given time. In case of ambiguity when looking for
      * an I2C port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -865,7 +865,7 @@ class YI2cPort extends YFunction
      * @param string $jobfile : name of the job file to save on the device filesystem
      * @param string $jsonDef : a string containing a JSON definition of the job
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -882,7 +882,7 @@ class YI2cPort extends YFunction
      *
      * @param string $jobfile : name of the job file (on the device filesystem)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -894,7 +894,7 @@ class YI2cPort extends YFunction
     /**
      * Clears the serial port buffer and resets counters to zero.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -914,7 +914,7 @@ class YI2cPort extends YFunction
      * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
      * @param string $buff : the binary buffer to be sent
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -950,7 +950,7 @@ class YI2cPort extends YFunction
      * @param integer $slaveAddr : the 7-bit address of the slave device (without the direction bit)
      * @param Integer[] $values : a list of data bytes to be sent
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1096,7 +1096,7 @@ class YI2cPort extends YFunction
      *
      * @param string $codes : the code stream to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1144,7 +1144,7 @@ class YI2cPort extends YFunction
      *
      * @param string $codes : the code stream to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1167,7 +1167,7 @@ class YI2cPort extends YFunction
      *
      * @param integer $code : the byte to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1183,7 +1183,7 @@ class YI2cPort extends YFunction
      *
      * @param string $hexString : a string of hexadecimal byte codes
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1207,7 +1207,7 @@ class YI2cPort extends YFunction
      *
      * @param string $buff : the binary buffer to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1236,7 +1236,7 @@ class YI2cPort extends YFunction
      *
      * @param Integer[] $byteList : a list of byte codes
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1378,7 +1378,7 @@ class YI2cPort extends YFunction
 
     /**
      * Starts the enumeration of I2C ports currently accessible.
-     * Use the method YI2cPort.nextI2cPort() to iterate on
+     * Use the method YI2cPort::nextI2cPort() to iterate on
      * next I2C ports.
      *
      * @return YI2cPort : a pointer to a YI2cPort object, corresponding to
@@ -1410,7 +1410,7 @@ class YI2cPort extends YFunction
  *
  * This function does not require that the I2C port is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YI2cPort.isOnline() to test if the I2C port is
+ * Use the method isOnline() to test if the I2C port is
  * indeed online at a given time. In case of ambiguity when looking for
  * an I2C port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -1432,7 +1432,7 @@ function yFindI2cPort($func)
 
 /**
  * Starts the enumeration of I2C ports currently accessible.
- * Use the method YI2cPort.nextI2cPort() to iterate on
+ * Use the method YI2cPort::nextI2cPort() to iterate on
  * next I2C ports.
  *
  * @return YI2cPort : a pointer to a YI2cPort object, corresponding to

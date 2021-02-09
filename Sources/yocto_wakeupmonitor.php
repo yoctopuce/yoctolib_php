@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupmonitor.php 39434 2020-02-25 08:53:55Z seb $
+ *  $Id: yocto_wakeupmonitor.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -62,7 +62,7 @@ if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',        
 //--- (YWakeUpMonitor declaration)
 /**
  * YWakeUpMonitor Class: wake-up monitor control interface, available for instance in the
- * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
  *
  * The YWakeUpMonitor class handles globally all wake-up sources, as well
  * as automated sleep mode.
@@ -137,7 +137,7 @@ class YWakeUpMonitor extends YFunction
      * @return integer : an integer corresponding to the maximal wake up time (in seconds) before
      * automatically going to sleep
      *
-     * On failure, throws an exception or returns Y_POWERDURATION_INVALID.
+     * On failure, throws an exception or returns YWakeUpMonitor::POWERDURATION_INVALID.
      */
     public function get_powerDuration()
     {
@@ -159,7 +159,7 @@ class YWakeUpMonitor extends YFunction
      * @param integer $newval : an integer corresponding to the maximal wake up time (seconds) before
      * automatically going to sleep
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -174,7 +174,7 @@ class YWakeUpMonitor extends YFunction
      *
      * @return integer : an integer corresponding to the delay before the  next sleep period
      *
-     * On failure, throws an exception or returns Y_SLEEPCOUNTDOWN_INVALID.
+     * On failure, throws an exception or returns YWakeUpMonitor::SLEEPCOUNTDOWN_INVALID.
      */
     public function get_sleepCountdown()
     {
@@ -193,7 +193,7 @@ class YWakeUpMonitor extends YFunction
      *
      * @param integer $newval : an integer corresponding to the delay before the next sleep period
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -208,7 +208,7 @@ class YWakeUpMonitor extends YFunction
      *
      * @return integer : an integer corresponding to the next scheduled wake up date/time (UNIX format)
      *
-     * On failure, throws an exception or returns Y_NEXTWAKEUP_INVALID.
+     * On failure, throws an exception or returns YWakeUpMonitor::NEXTWAKEUP_INVALID.
      */
     public function get_nextWakeUp()
     {
@@ -227,7 +227,7 @@ class YWakeUpMonitor extends YFunction
      *
      * @param integer $newval : an integer corresponding to the days of the week when a wake up must take place
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -240,11 +240,12 @@ class YWakeUpMonitor extends YFunction
     /**
      * Returns the latest wake up reason.
      *
-     * @return integer : a value among Y_WAKEUPREASON_USBPOWER, Y_WAKEUPREASON_EXTPOWER,
-     * Y_WAKEUPREASON_ENDOFSLEEP, Y_WAKEUPREASON_EXTSIG1, Y_WAKEUPREASON_SCHEDULE1 and
-     * Y_WAKEUPREASON_SCHEDULE2 corresponding to the latest wake up reason
+     * @return integer : a value among YWakeUpMonitor::WAKEUPREASON_USBPOWER,
+     * YWakeUpMonitor::WAKEUPREASON_EXTPOWER, YWakeUpMonitor::WAKEUPREASON_ENDOFSLEEP,
+     * YWakeUpMonitor::WAKEUPREASON_EXTSIG1, YWakeUpMonitor::WAKEUPREASON_SCHEDULE1 and
+     * YWakeUpMonitor::WAKEUPREASON_SCHEDULE2 corresponding to the latest wake up reason
      *
-     * On failure, throws an exception or returns Y_WAKEUPREASON_INVALID.
+     * On failure, throws an exception or returns YWakeUpMonitor::WAKEUPREASON_INVALID.
      */
     public function get_wakeUpReason()
     {
@@ -261,10 +262,10 @@ class YWakeUpMonitor extends YFunction
     /**
      * Returns  the current state of the monitor.
      *
-     * @return integer : either Y_WAKEUPSTATE_SLEEPING or Y_WAKEUPSTATE_AWAKE, according to  the current
-     * state of the monitor
+     * @return integer : either YWakeUpMonitor::WAKEUPSTATE_SLEEPING or YWakeUpMonitor::WAKEUPSTATE_AWAKE,
+     * according to  the current state of the monitor
      *
-     * On failure, throws an exception or returns Y_WAKEUPSTATE_INVALID.
+     * On failure, throws an exception or returns YWakeUpMonitor::WAKEUPSTATE_INVALID.
      */
     public function get_wakeUpState()
     {
@@ -309,7 +310,7 @@ class YWakeUpMonitor extends YFunction
      *
      * This function does not require that the wake-up monitor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YWakeUpMonitor.isOnline() to test if the wake-up monitor is
+     * Use the method isOnline() to test if the wake-up monitor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a wake-up monitor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -349,7 +350,7 @@ class YWakeUpMonitor extends YFunction
      *
      * @param integer $secBeforeSleep : number of seconds before going into sleep mode,
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -371,7 +372,7 @@ class YWakeUpMonitor extends YFunction
      * @param integer $secUntilWakeUp : number of seconds before next wake up
      * @param integer $secBeforeSleep : number of seconds before going into sleep mode
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -393,7 +394,7 @@ class YWakeUpMonitor extends YFunction
      * @param integer $wakeUpTime : wake-up datetime (UNIX format)
      * @param integer $secBeforeSleep : number of seconds before going into sleep mode
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -410,7 +411,7 @@ class YWakeUpMonitor extends YFunction
     /**
      * Resets the sleep countdown.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function resetSleepCountDown()
@@ -470,7 +471,7 @@ class YWakeUpMonitor extends YFunction
 
     /**
      * Starts the enumeration of wake-up monitors currently accessible.
-     * Use the method YWakeUpMonitor.nextWakeUpMonitor() to iterate on
+     * Use the method YWakeUpMonitor::nextWakeUpMonitor() to iterate on
      * next wake-up monitors.
      *
      * @return YWakeUpMonitor : a pointer to a YWakeUpMonitor object, corresponding to
@@ -502,7 +503,7 @@ class YWakeUpMonitor extends YFunction
  *
  * This function does not require that the wake-up monitor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YWakeUpMonitor.isOnline() to test if the wake-up monitor is
+ * Use the method isOnline() to test if the wake-up monitor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a wake-up monitor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -524,7 +525,7 @@ function yFindWakeUpMonitor($func)
 
 /**
  * Starts the enumeration of wake-up monitors currently accessible.
- * Use the method YWakeUpMonitor.nextWakeUpMonitor() to iterate on
+ * Use the method YWakeUpMonitor::nextWakeUpMonitor() to iterate on
  * next wake-up monitors.
  *
  * @return YWakeUpMonitor : a pointer to a YWakeUpMonitor object, corresponding to

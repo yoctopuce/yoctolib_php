@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_longitude.php 39658 2020-03-12 15:36:29Z seb $
+ *  $Id: yocto_longitude.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YLongitude, the high-level API for Longitude functions
  *
@@ -84,7 +84,7 @@ class YLongitude extends YSensor
      *
      * This function does not require that the longitude sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YLongitude.isOnline() to test if the longitude sensor is
+     * Use the method isOnline() to test if the longitude sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a longitude sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -130,7 +130,7 @@ class YLongitude extends YSensor
 
     /**
      * Starts the enumeration of longitude sensors currently accessible.
-     * Use the method YLongitude.nextLongitude() to iterate on
+     * Use the method YLongitude::nextLongitude() to iterate on
      * next longitude sensors.
      *
      * @return YLongitude : a pointer to a YLongitude object, corresponding to
@@ -162,7 +162,7 @@ class YLongitude extends YSensor
  *
  * This function does not require that the longitude sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YLongitude.isOnline() to test if the longitude sensor is
+ * Use the method isOnline() to test if the longitude sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a longitude sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -184,7 +184,7 @@ function yFindLongitude($func)
 
 /**
  * Starts the enumeration of longitude sensors currently accessible.
- * Use the method YLongitude.nextLongitude() to iterate on
+ * Use the method YLongitude::nextLongitude() to iterate on
  * next longitude sensors.
  *
  * @return YLongitude : a pointer to a YLongitude object, corresponding to

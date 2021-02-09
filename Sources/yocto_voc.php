@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voc.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_voc.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YVoc, the high-level API for Voc functions
  *
@@ -84,7 +84,7 @@ class YVoc extends YSensor
      *
      * This function does not require that the Volatile Organic Compound sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YVoc.isOnline() to test if the Volatile Organic Compound sensor is
+     * Use the method isOnline() to test if the Volatile Organic Compound sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a Volatile Organic Compound sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -130,7 +130,7 @@ class YVoc extends YSensor
 
     /**
      * Starts the enumeration of Volatile Organic Compound sensors currently accessible.
-     * Use the method YVoc.nextVoc() to iterate on
+     * Use the method YVoc::nextVoc() to iterate on
      * next Volatile Organic Compound sensors.
      *
      * @return YVoc : a pointer to a YVoc object, corresponding to
@@ -162,7 +162,7 @@ class YVoc extends YSensor
  *
  * This function does not require that the Volatile Organic Compound sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YVoc.isOnline() to test if the Volatile Organic Compound sensor is
+ * Use the method isOnline() to test if the Volatile Organic Compound sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a Volatile Organic Compound sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -184,7 +184,7 @@ function yFindVoc($func)
 
 /**
  * Starts the enumeration of Volatile Organic Compound sensors currently accessible.
- * Use the method YVoc.nextVoc() to iterate on
+ * Use the method YVoc::nextVoc() to iterate on
  * next Volatile Organic Compound sensors.
  *
  * @return YVoc : a pointer to a YVoc object, corresponding to

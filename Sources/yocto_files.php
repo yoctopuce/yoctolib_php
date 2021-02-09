@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 42060 2020-10-14 10:02:12Z seb $
+ * $Id: yocto_files.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -120,8 +120,8 @@ class YFileRecord
 
 //--- (generated code: YFiles declaration)
 /**
- * YFiles Class: filesystem control interface, available for instance in the Yocto-Buzzer, the
- * Yocto-Color-V2, the YoctoHub-Ethernet or the YoctoHub-Wireless-n
+ * YFiles Class: filesystem control interface, available for instance in the Yocto-Color-V2, the
+ * Yocto-Serial, the YoctoHub-Ethernet or the YoctoHub-Wireless-n
  *
  * The YFiles class is used to access the filesystem embedded on
  * some Yoctopuce devices. This filesystem makes it
@@ -168,7 +168,7 @@ class YFiles extends YFunction
      *
      * @return integer : an integer corresponding to the number of files currently loaded in the filesystem
      *
-     * On failure, throws an exception or returns Y_FILESCOUNT_INVALID.
+     * On failure, throws an exception or returns YFiles::FILESCOUNT_INVALID.
      */
     public function get_filesCount()
     {
@@ -187,7 +187,7 @@ class YFiles extends YFunction
      *
      * @return integer : an integer corresponding to the free space for uploading new files to the filesystem, in bytes
      *
-     * On failure, throws an exception or returns Y_FREESPACE_INVALID.
+     * On failure, throws an exception or returns YFiles::FREESPACE_INVALID.
      */
     public function get_freeSpace()
     {
@@ -214,7 +214,7 @@ class YFiles extends YFunction
      *
      * This function does not require that the filesystem is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YFiles.isOnline() to test if the filesystem is
+     * Use the method isOnline() to test if the filesystem is
      * indeed online at a given time. In case of ambiguity when looking for
      * a filesystem by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -225,7 +225,7 @@ class YFiles extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the filesystem, for instance
-     *         YBUZZER2.files.
+     *         YRGBLED2.files.
      *
      * @return YFiles : a YFiles object allowing you to drive the filesystem.
      */
@@ -252,7 +252,7 @@ class YFiles extends YFunction
      * Reinitialize the filesystem to its clean, unfragmented, empty state.
      * All files previously uploaded are permanently lost.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -338,7 +338,7 @@ class YFiles extends YFunction
      * @param string $pathname : path and name of the new file to create
      * @param string $content : binary buffer with the content to set
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -357,7 +357,7 @@ class YFiles extends YFunction
      *
      * @param string $pathname : path and name of the file to remove.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -397,7 +397,7 @@ class YFiles extends YFunction
 
     /**
      * Starts the enumeration of filesystems currently accessible.
-     * Use the method YFiles.nextFiles() to iterate on
+     * Use the method YFiles::nextFiles() to iterate on
      * next filesystems.
      *
      * @return YFiles : a pointer to a YFiles object, corresponding to
@@ -428,7 +428,7 @@ class YFiles extends YFunction
  *
  * This function does not require that the filesystem is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YFiles.isOnline() to test if the filesystem is
+ * Use the method isOnline() to test if the filesystem is
  * indeed online at a given time. In case of ambiguity when looking for
  * a filesystem by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -439,7 +439,7 @@ class YFiles extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the filesystem, for instance
- *         YBUZZER2.files.
+ *         YRGBLED2.files.
  *
  * @return YFiles : a YFiles object allowing you to drive the filesystem.
  */
@@ -450,7 +450,7 @@ function yFindFiles($func)
 
 /**
  * Starts the enumeration of filesystems currently accessible.
- * Use the method YFiles.nextFiles() to iterate on
+ * Use the method YFiles::nextFiles() to iterate on
  * next filesystems.
  *
  * @return YFiles : a pointer to a YFiles object, corresponding to

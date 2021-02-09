@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 42060 2020-10-14 10:02:12Z seb $
+ * $Id: yocto_cellular.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -339,7 +339,7 @@ class YCellular extends YFunction
      *
      * @return integer : an integer corresponding to the link quality, expressed in percent
      *
-     * On failure, throws an exception or returns Y_LINKQUALITY_INVALID.
+     * On failure, throws an exception or returns YCellular::LINKQUALITY_INVALID.
      */
     public function get_linkQuality()
     {
@@ -358,7 +358,7 @@ class YCellular extends YFunction
      *
      * @return string : a string corresponding to the name of the cell operator currently in use
      *
-     * On failure, throws an exception or returns Y_CELLOPERATOR_INVALID.
+     * On failure, throws an exception or returns YCellular::CELLOPERATOR_INVALID.
      */
     public function get_cellOperator()
     {
@@ -378,7 +378,7 @@ class YCellular extends YFunction
      * @return string : a string corresponding to the unique identifier of the cellular antenna in use:
      * MCC, MNC, LAC and Cell ID
      *
-     * On failure, throws an exception or returns Y_CELLIDENTIFIER_INVALID.
+     * On failure, throws an exception or returns YCellular::CELLIDENTIFIER_INVALID.
      */
     public function get_cellIdentifier()
     {
@@ -395,11 +395,11 @@ class YCellular extends YFunction
     /**
      * Active cellular connection type.
      *
-     * @return integer : a value among Y_CELLTYPE_GPRS, Y_CELLTYPE_EGPRS, Y_CELLTYPE_WCDMA,
-     * Y_CELLTYPE_HSDPA, Y_CELLTYPE_NONE, Y_CELLTYPE_CDMA, Y_CELLTYPE_LTE_M, Y_CELLTYPE_NB_IOT and
-     * Y_CELLTYPE_EC_GSM_IOT
+     * @return integer : a value among YCellular::CELLTYPE_GPRS, YCellular::CELLTYPE_EGPRS,
+     * YCellular::CELLTYPE_WCDMA, YCellular::CELLTYPE_HSDPA, YCellular::CELLTYPE_NONE,
+     * YCellular::CELLTYPE_CDMA, YCellular::CELLTYPE_LTE_M, YCellular::CELLTYPE_NB_IOT and YCellular::CELLTYPE_EC_GSM_IOT
      *
-     * On failure, throws an exception or returns Y_CELLTYPE_INVALID.
+     * On failure, throws an exception or returns YCellular::CELLTYPE_INVALID.
      */
     public function get_cellType()
     {
@@ -423,7 +423,7 @@ class YCellular extends YFunction
      * uniquely identifies
      *         the SIM card
      *
-     * On failure, throws an exception or returns Y_IMSI_INVALID.
+     * On failure, throws an exception or returns YCellular::IMSI_INVALID.
      */
     public function get_imsi()
     {
@@ -442,7 +442,7 @@ class YCellular extends YFunction
      *
      * @return string : a string corresponding to the latest status message from the wireless interface
      *
-     * On failure, throws an exception or returns Y_MESSAGE_INVALID.
+     * On failure, throws an exception or returns YCellular::MESSAGE_INVALID.
      */
     public function get_message()
     {
@@ -466,7 +466,7 @@ class YCellular extends YFunction
      *         the SIM card, or an empty string if none has been configured or if the code provided
      *         was rejected by the SIM card
      *
-     * On failure, throws an exception or returns Y_PIN_INVALID.
+     * On failure, throws an exception or returns YCellular::PIN_INVALID.
      */
     public function get_pin()
     {
@@ -495,7 +495,7 @@ class YCellular extends YFunction
      *
      * @param string $newval : a string corresponding to the PIN code used by the module to access the SIM card
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -514,7 +514,7 @@ class YCellular extends YFunction
      *
      * @return string : a string corresponding to the type of protocol used over the serial line, as a string
      *
-     * On failure, throws an exception or returns Y_RADIOCONFIG_INVALID.
+     * On failure, throws an exception or returns YCellular::RADIOCONFIG_INVALID.
      */
     public function get_radioConfig()
     {
@@ -541,7 +541,7 @@ class YCellular extends YFunction
      *
      * @param string $newval : a string corresponding to the type of protocol used over the serial line
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -561,7 +561,7 @@ class YCellular extends YFunction
      *         or an empty string if the SIM card will automatically choose among available
      *         cell operators
      *
-     * On failure, throws an exception or returns Y_LOCKEDOPERATOR_INVALID.
+     * On failure, throws an exception or returns YCellular::LOCKEDOPERATOR_INVALID.
      */
     public function get_lockedOperator()
     {
@@ -584,7 +584,7 @@ class YCellular extends YFunction
      *
      * @param string $newval : a string corresponding to the name of the cell operator to be used
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -597,10 +597,10 @@ class YCellular extends YFunction
     /**
      * Returns true if the airplane mode is active (radio turned off).
      *
-     * @return integer : either Y_AIRPLANEMODE_OFF or Y_AIRPLANEMODE_ON, according to true if the airplane
-     * mode is active (radio turned off)
+     * @return integer : either YCellular::AIRPLANEMODE_OFF or YCellular::AIRPLANEMODE_ON, according to true
+     * if the airplane mode is active (radio turned off)
      *
-     * On failure, throws an exception or returns Y_AIRPLANEMODE_INVALID.
+     * On failure, throws an exception or returns YCellular::AIRPLANEMODE_INVALID.
      */
     public function get_airplaneMode()
     {
@@ -617,10 +617,10 @@ class YCellular extends YFunction
     /**
      * Changes the activation state of airplane mode (radio turned off).
      *
-     * @param integer $newval : either Y_AIRPLANEMODE_OFF or Y_AIRPLANEMODE_ON, according to the
-     * activation state of airplane mode (radio turned off)
+     * @param integer $newval : either YCellular::AIRPLANEMODE_OFF or YCellular::AIRPLANEMODE_ON, according
+     * to the activation state of airplane mode (radio turned off)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -634,10 +634,11 @@ class YCellular extends YFunction
      * Returns the condition for enabling IP data services (GPRS).
      * When data services are disabled, SMS are the only mean of communication.
      *
-     * @return integer : a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING, Y_ENABLEDATA_NEVER
-     * and Y_ENABLEDATA_NEUTRALITY corresponding to the condition for enabling IP data services (GPRS)
+     * @return integer : a value among YCellular::ENABLEDATA_HOMENETWORK, YCellular::ENABLEDATA_ROAMING,
+     * YCellular::ENABLEDATA_NEVER and YCellular::ENABLEDATA_NEUTRALITY corresponding to the condition for
+     * enabling IP data services (GPRS)
      *
-     * On failure, throws an exception or returns Y_ENABLEDATA_INVALID.
+     * On failure, throws an exception or returns YCellular::ENABLEDATA_INVALID.
      */
     public function get_enableData()
     {
@@ -661,11 +662,11 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : a value among Y_ENABLEDATA_HOMENETWORK, Y_ENABLEDATA_ROAMING,
-     * Y_ENABLEDATA_NEVER and Y_ENABLEDATA_NEUTRALITY corresponding to the condition for enabling IP data
-     * services (GPRS)
+     * @param integer $newval : a value among YCellular::ENABLEDATA_HOMENETWORK,
+     * YCellular::ENABLEDATA_ROAMING, YCellular::ENABLEDATA_NEVER and YCellular::ENABLEDATA_NEUTRALITY
+     * corresponding to the condition for enabling IP data services (GPRS)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -681,7 +682,7 @@ class YCellular extends YFunction
      *
      * @return string : a string corresponding to the Access Point Name (APN) to be used, if needed
      *
-     * On failure, throws an exception or returns Y_APN_INVALID.
+     * On failure, throws an exception or returns YCellular::APN_INVALID.
      */
     public function get_apn()
     {
@@ -703,7 +704,7 @@ class YCellular extends YFunction
      *
      * @param string $newval : a string
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -722,7 +723,7 @@ class YCellular extends YFunction
      * been configured
      *         in the device, or an empty string otherwise
      *
-     * On failure, throws an exception or returns Y_APNSECRET_INVALID.
+     * On failure, throws an exception or returns YCellular::APNSECRET_INVALID.
      */
     public function get_apnSecret()
     {
@@ -747,7 +748,7 @@ class YCellular extends YFunction
      *
      * @return integer : an integer corresponding to the automated connectivity check interval, in seconds
      *
-     * On failure, throws an exception or returns Y_PINGINTERVAL_INVALID.
+     * On failure, throws an exception or returns YCellular::PINGINTERVAL_INVALID.
      */
     public function get_pingInterval()
     {
@@ -768,7 +769,7 @@ class YCellular extends YFunction
      *
      * @param integer $newval : an integer corresponding to the automated connectivity check interval, in seconds
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -783,7 +784,7 @@ class YCellular extends YFunction
      *
      * @return integer : an integer corresponding to the number of bytes sent so far
      *
-     * On failure, throws an exception or returns Y_DATASENT_INVALID.
+     * On failure, throws an exception or returns YCellular::DATASENT_INVALID.
      */
     public function get_dataSent()
     {
@@ -802,7 +803,7 @@ class YCellular extends YFunction
      *
      * @param integer $newval : an integer corresponding to the value of the outgoing data counter
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -817,7 +818,7 @@ class YCellular extends YFunction
      *
      * @return integer : an integer corresponding to the number of bytes received so far
      *
-     * On failure, throws an exception or returns Y_DATARECEIVED_INVALID.
+     * On failure, throws an exception or returns YCellular::DATARECEIVED_INVALID.
      */
     public function get_dataReceived()
     {
@@ -836,7 +837,7 @@ class YCellular extends YFunction
      *
      * @param integer $newval : an integer corresponding to the value of the incoming data counter
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -877,7 +878,7 @@ class YCellular extends YFunction
      *
      * This function does not require that the cellular interface is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YCellular.isOnline() to test if the cellular interface is
+     * Use the method isOnline() to test if the cellular interface is
      * indeed online at a given time. In case of ambiguity when looking for
      * a cellular interface by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -913,7 +914,7 @@ class YCellular extends YFunction
      * @param string $puk : the SIM PUK code
      * @param string $newPin : new PIN code to configure into the SIM card
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -935,7 +936,7 @@ class YCellular extends YFunction
      * @param string $username : APN username
      * @param string $password : APN password
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -947,7 +948,7 @@ class YCellular extends YFunction
     /**
      * Clear the transmitted data counters.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -5708,7 +5709,7 @@ class YCellular extends YFunction
 
     /**
      * Starts the enumeration of cellular interfaces currently accessible.
-     * Use the method YCellular.nextCellular() to iterate on
+     * Use the method YCellular::nextCellular() to iterate on
      * next cellular interfaces.
      *
      * @return YCellular : a pointer to a YCellular object, corresponding to
@@ -5740,7 +5741,7 @@ class YCellular extends YFunction
  *
  * This function does not require that the cellular interface is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YCellular.isOnline() to test if the cellular interface is
+ * Use the method isOnline() to test if the cellular interface is
  * indeed online at a given time. In case of ambiguity when looking for
  * a cellular interface by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -5762,7 +5763,7 @@ function yFindCellular($func)
 
 /**
  * Starts the enumeration of cellular interfaces currently accessible.
- * Use the method YCellular.nextCellular() to iterate on
+ * Use the method YCellular::nextCellular() to iterate on
  * next cellular interfaces.
  *
  * @return YCellular : a pointer to a YCellular object, corresponding to

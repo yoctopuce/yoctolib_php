@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 41109 2020-06-29 12:40:42Z seb $
+ *  $Id: yocto_colorledcluster.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -129,7 +129,7 @@ class YColorLedCluster extends YFunction
      *
      * @return integer : an integer corresponding to the number of LEDs currently handled by the device
      *
-     * On failure, throws an exception or returns Y_ACTIVELEDCOUNT_INVALID.
+     * On failure, throws an exception or returns YColorLedCluster::ACTIVELEDCOUNT_INVALID.
      */
     public function get_activeLedCount()
     {
@@ -150,7 +150,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $newval : an integer corresponding to the number of LEDs currently handled by the device
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -163,10 +163,10 @@ class YColorLedCluster extends YFunction
     /**
      * Returns the RGB LED type currently handled by the device.
      *
-     * @return integer : either Y_LEDTYPE_RGB or Y_LEDTYPE_RGBW, according to the RGB LED type currently
-     * handled by the device
+     * @return integer : either YColorLedCluster::LEDTYPE_RGB or YColorLedCluster::LEDTYPE_RGBW, according
+     * to the RGB LED type currently handled by the device
      *
-     * On failure, throws an exception or returns Y_LEDTYPE_INVALID.
+     * On failure, throws an exception or returns YColorLedCluster::LEDTYPE_INVALID.
      */
     public function get_ledType()
     {
@@ -185,10 +185,10 @@ class YColorLedCluster extends YFunction
      * Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : either Y_LEDTYPE_RGB or Y_LEDTYPE_RGBW, according to the RGB LED type
-     * currently handled by the device
+     * @param integer $newval : either YColorLedCluster::LEDTYPE_RGB or YColorLedCluster::LEDTYPE_RGBW,
+     * according to the RGB LED type currently handled by the device
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -203,7 +203,7 @@ class YColorLedCluster extends YFunction
      *
      * @return integer : an integer corresponding to the maximum number of LEDs that the device can handle
      *
-     * On failure, throws an exception or returns Y_MAXLEDCOUNT_INVALID.
+     * On failure, throws an exception or returns YColorLedCluster::MAXLEDCOUNT_INVALID.
      */
     public function get_maxLedCount()
     {
@@ -222,7 +222,7 @@ class YColorLedCluster extends YFunction
      *
      * @return integer : an integer corresponding to the maximum number of sequences that the device can handle
      *
-     * On failure, throws an exception or returns Y_BLINKSEQMAXCOUNT_INVALID.
+     * On failure, throws an exception or returns YColorLedCluster::BLINKSEQMAXCOUNT_INVALID.
      */
     public function get_blinkSeqMaxCount()
     {
@@ -241,7 +241,7 @@ class YColorLedCluster extends YFunction
      *
      * @return integer : an integer corresponding to the maximum length of sequences
      *
-     * On failure, throws an exception or returns Y_BLINKSEQMAXSIZE_INVALID.
+     * On failure, throws an exception or returns YColorLedCluster::BLINKSEQMAXSIZE_INVALID.
      */
     public function get_blinkSeqMaxSize()
     {
@@ -286,7 +286,7 @@ class YColorLedCluster extends YFunction
      *
      * This function does not require that the RGB LED cluster is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YColorLedCluster.isOnline() to test if the RGB LED cluster is
+     * Use the method isOnline() to test if the RGB LED cluster is
      * indeed online at a given time. In case of ambiguity when looking for
      * a RGB LED cluster by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -325,7 +325,7 @@ class YColorLedCluster extends YFunction
      * @param count    :  affected LED count.
      * @param integer $rgbValue :  new color.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -343,7 +343,7 @@ class YColorLedCluster extends YFunction
      * @param count    :  affected LED count.
      * @param integer $rgbValue :  new color.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -361,7 +361,7 @@ class YColorLedCluster extends YFunction
      * @param count    :  affected LED count.
      * @param integer $hslValue :  new color.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -380,7 +380,7 @@ class YColorLedCluster extends YFunction
      * @param count    :  affected LED count.
      * @param integer $hslValue :  new color.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -398,7 +398,7 @@ class YColorLedCluster extends YFunction
      * @param integer $rgbValue :  new color (0xRRGGBB).
      * @param delay    :  transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -420,7 +420,7 @@ class YColorLedCluster extends YFunction
      * @param integer $hslValue :  new color (0xHHSSLL).
      * @param delay    :  transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -438,7 +438,7 @@ class YColorLedCluster extends YFunction
      * @param integer $rgbValue :  target color (0xRRGGBB)
      * @param delay    :  transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -456,7 +456,7 @@ class YColorLedCluster extends YFunction
      * @param integer $hslValue : target color (0xHHSSLL)
      * @param delay    : transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -474,7 +474,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex : sequence index.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -491,7 +491,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex : sequence index.
      * @param integer $linkSeqIndex : index of the sequence to chain.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -507,7 +507,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex : sequence index.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -527,7 +527,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex :  sequence index.
      * @param offset   :  execution offset in ms.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -547,7 +547,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex :  sequence index.
      * @param offset   :  execution offset in ms.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -567,7 +567,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex :  sequence index.
      * @param periods  :  number of periods to show on LEDs.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -582,7 +582,7 @@ class YColorLedCluster extends YFunction
      * @param ledIndex  :  index of the first affected LED.
      * @param count     :  affected LED count.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -597,7 +597,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex :  index of the sequence to start.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -612,7 +612,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex :  index of the sequence to stop.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -627,7 +627,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex :  index of the sequence to reset
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -645,7 +645,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex :  index of the sequence to reset.
      * @param integer $autostart : 0 to keep the sequence turned off and 1 to start it automatically.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -662,7 +662,7 @@ class YColorLedCluster extends YFunction
      * @param integer $seqIndex :  index of the sequence to start.
      * @param integer $speed :     sequence running speed (-1000...1000).
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -676,7 +676,7 @@ class YColorLedCluster extends YFunction
      * sequence binding for all LEDs. Warning: if some LEDs are linked to a sequence, the
      * method saveBlinkSeq() must also be called to save the sequence definition.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -697,7 +697,7 @@ class YColorLedCluster extends YFunction
      *
      * @param integer $seqIndex :  index of the sequence to start.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -714,7 +714,7 @@ class YColorLedCluster extends YFunction
      * @param integer $ledIndex : index of the first LED which should be updated
      * @param string $buff : the binary buffer to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -731,7 +731,7 @@ class YColorLedCluster extends YFunction
      * @param integer $ledIndex : index of the first LED which should be updated
      * @param Integer[] $rgbList : a list of 24bit RGB codes, in the form 0xRRGGBB
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -766,7 +766,7 @@ class YColorLedCluster extends YFunction
      * @param Integer[] $rgbList : a list of target 24bit RGB codes, in the form 0xRRGGBB
      * @param delay   : transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -800,7 +800,7 @@ class YColorLedCluster extends YFunction
      * @param Integer[] $rgbList : a list of target 24bit RGB codes, in the form 0xRRGGBB
      * @param delay   : transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -820,7 +820,7 @@ class YColorLedCluster extends YFunction
      * @param integer $ledIndex : index of the first LED which should be updated
      * @param string $buff : the binary buffer to send
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -837,7 +837,7 @@ class YColorLedCluster extends YFunction
      * @param integer $ledIndex : index of the first LED which should be updated
      * @param Integer[] $hslList : a list of 24bit HSL codes, in the form 0xHHSSLL
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -871,7 +871,7 @@ class YColorLedCluster extends YFunction
      * @param Integer[] $hslList : a list of target 24bit HSL codes, in the form 0xHHSSLL
      * @param delay   : transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -892,7 +892,7 @@ class YColorLedCluster extends YFunction
      * @param Integer[] $hslList : a list of target 24bit HSL codes, in the form 0xHHSSLL
      * @param delay   : transition duration in ms
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1274,7 +1274,7 @@ class YColorLedCluster extends YFunction
 
     /**
      * Starts the enumeration of RGB LED clusters currently accessible.
-     * Use the method YColorLedCluster.nextColorLedCluster() to iterate on
+     * Use the method YColorLedCluster::nextColorLedCluster() to iterate on
      * next RGB LED clusters.
      *
      * @return YColorLedCluster : a pointer to a YColorLedCluster object, corresponding to
@@ -1306,7 +1306,7 @@ class YColorLedCluster extends YFunction
  *
  * This function does not require that the RGB LED cluster is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YColorLedCluster.isOnline() to test if the RGB LED cluster is
+ * Use the method isOnline() to test if the RGB LED cluster is
  * indeed online at a given time. In case of ambiguity when looking for
  * a RGB LED cluster by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -1328,7 +1328,7 @@ function yFindColorLedCluster($func)
 
 /**
  * Starts the enumeration of RGB LED clusters currently accessible.
- * Use the method YColorLedCluster.nextColorLedCluster() to iterate on
+ * Use the method YColorLedCluster::nextColorLedCluster() to iterate on
  * next RGB LED clusters.
  *
  * @return YColorLedCluster : a pointer to a YColorLedCluster object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_altitude.php 39658 2020-03-12 15:36:29Z seb $
+ *  $Id: yocto_altitude.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YAltitude, the high-level API for Altitude functions
  *
@@ -101,7 +101,7 @@ class YAltitude extends YSensor
      *
      * @param double $newval : a floating point number corresponding to the current estimated altitude
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -122,7 +122,7 @@ class YAltitude extends YSensor
      * to sea level used to compute
      *         the altitude (QNH)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -140,7 +140,7 @@ class YAltitude extends YSensor
      * level used to compute
      *         the altitude (QNH)
      *
-     * On failure, throws an exception or returns Y_QNH_INVALID.
+     * On failure, throws an exception or returns YAltitude::QNH_INVALID.
      */
     public function get_qnh()
     {
@@ -161,7 +161,7 @@ class YAltitude extends YSensor
      * @return string : a string corresponding to the technology used by the sesnor to compute
      *         altitude
      *
-     * On failure, throws an exception or returns Y_TECHNOLOGY_INVALID.
+     * On failure, throws an exception or returns YAltitude::TECHNOLOGY_INVALID.
      */
     public function get_technology()
     {
@@ -188,7 +188,7 @@ class YAltitude extends YSensor
      *
      * This function does not require that the altimeter is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YAltitude.isOnline() to test if the altimeter is
+     * Use the method isOnline() to test if the altimeter is
      * indeed online at a given time. In case of ambiguity when looking for
      * an altimeter by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -246,7 +246,7 @@ class YAltitude extends YSensor
 
     /**
      * Starts the enumeration of altimeters currently accessible.
-     * Use the method YAltitude.nextAltitude() to iterate on
+     * Use the method YAltitude::nextAltitude() to iterate on
      * next altimeters.
      *
      * @return YAltitude : a pointer to a YAltitude object, corresponding to
@@ -278,7 +278,7 @@ class YAltitude extends YSensor
  *
  * This function does not require that the altimeter is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YAltitude.isOnline() to test if the altimeter is
+ * Use the method isOnline() to test if the altimeter is
  * indeed online at a given time. In case of ambiguity when looking for
  * an altimeter by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -300,7 +300,7 @@ function yFindAltitude($func)
 
 /**
  * Starts the enumeration of altimeters currently accessible.
- * Use the method YAltitude.nextAltitude() to iterate on
+ * Use the method YAltitude::nextAltitude() to iterate on
  * next altimeters.
  *
  * @return YAltitude : a pointer to a YAltitude object, corresponding to

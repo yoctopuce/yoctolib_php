@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 38913 2019-12-20 18:59:49Z mvuilleu $
+ *  $Id: yocto_pwmoutput.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -137,9 +137,10 @@ class YPwmOutput extends YFunction
     /**
      * Returns the state of the PWM generators.
      *
-     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the state of the PWM generators
+     * @return integer : either YPwmOutput::ENABLED_FALSE or YPwmOutput::ENABLED_TRUE, according to the
+     * state of the PWM generators
      *
-     * On failure, throws an exception or returns Y_ENABLED_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::ENABLED_INVALID.
      */
     public function get_enabled()
     {
@@ -156,9 +157,9 @@ class YPwmOutput extends YFunction
     /**
      * Stops or starts the PWM.
      *
-     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE
+     * @param integer $newval : either YPwmOutput::ENABLED_FALSE or YPwmOutput::ENABLED_TRUE
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -179,7 +180,7 @@ class YPwmOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the PWM frequency
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -194,7 +195,7 @@ class YPwmOutput extends YFunction
      *
      * @return double : a floating point number corresponding to the PWM frequency in Hz
      *
-     * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::FREQUENCY_INVALID.
      */
     public function get_frequency()
     {
@@ -217,7 +218,7 @@ class YPwmOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the PWM period in milliseconds
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -232,7 +233,7 @@ class YPwmOutput extends YFunction
      *
      * @return double : a floating point number corresponding to the PWM period in milliseconds
      *
-     * On failure, throws an exception or returns Y_PERIOD_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::PERIOD_INVALID.
      */
     public function get_period()
     {
@@ -251,7 +252,7 @@ class YPwmOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the PWM duty cycle, in per cents
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -266,7 +267,7 @@ class YPwmOutput extends YFunction
      *
      * @return double : a floating point number corresponding to the PWM duty cycle, in per cents
      *
-     * On failure, throws an exception or returns Y_DUTYCYCLE_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::DUTYCYCLE_INVALID.
      */
     public function get_dutyCycle()
     {
@@ -286,7 +287,7 @@ class YPwmOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the PWM pulse length, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -302,7 +303,7 @@ class YPwmOutput extends YFunction
      * @return double : a floating point number corresponding to the PWM pulse length in milliseconds, as
      * a floating point number
      *
-     * On failure, throws an exception or returns Y_PULSEDURATION_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::PULSEDURATION_INVALID.
      */
     public function get_pulseDuration()
     {
@@ -337,10 +338,10 @@ class YPwmOutput extends YFunction
     /**
      * Returns the state of the PWM at device power on.
      *
-     * @return integer : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to the
-     * state of the PWM at device power on
+     * @return integer : either YPwmOutput::ENABLEDATPOWERON_FALSE or YPwmOutput::ENABLEDATPOWERON_TRUE,
+     * according to the state of the PWM at device power on
      *
-     * On failure, throws an exception or returns Y_ENABLEDATPOWERON_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::ENABLEDATPOWERON_INVALID.
      */
     public function get_enabledAtPowerOn()
     {
@@ -358,10 +359,10 @@ class YPwmOutput extends YFunction
      * Changes the state of the PWM at device power on. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param integer $newval : either Y_ENABLEDATPOWERON_FALSE or Y_ENABLEDATPOWERON_TRUE, according to
-     * the state of the PWM at device power on
+     * @param integer $newval : either YPwmOutput::ENABLEDATPOWERON_FALSE or
+     * YPwmOutput::ENABLEDATPOWERON_TRUE, according to the state of the PWM at device power on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -377,7 +378,7 @@ class YPwmOutput extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the PWM duty cycle at device power on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -393,7 +394,7 @@ class YPwmOutput extends YFunction
      * @return double : a floating point number corresponding to the PWM generators duty cycle at device
      * power on as a floating point number between 0 and 100
      *
-     * On failure, throws an exception or returns Y_DUTYCYCLEATPOWERON_INVALID.
+     * On failure, throws an exception or returns YPwmOutput::DUTYCYCLEATPOWERON_INVALID.
      */
     public function get_dutyCycleAtPowerOn()
     {
@@ -420,7 +421,7 @@ class YPwmOutput extends YFunction
      *
      * This function does not require that the PWM generator is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPwmOutput.isOnline() to test if the PWM generator is
+     * Use the method isOnline() to test if the PWM generator is
      * indeed online at a given time. In case of ambiguity when looking for
      * a PWM generator by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -454,7 +455,7 @@ class YPwmOutput extends YFunction
      *         (floating-point number, representing the pulse duration in milliseconds)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -476,7 +477,7 @@ class YPwmOutput extends YFunction
      *         (percentage, floating-point number between 0 and 100)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -500,7 +501,7 @@ class YPwmOutput extends YFunction
      * @param target      : new frequency at the end of the transition (floating-point number)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -524,7 +525,7 @@ class YPwmOutput extends YFunction
      * @param target      : phase shift at the end of the transition, in milliseconds (floating-point number)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -543,7 +544,7 @@ class YPwmOutput extends YFunction
      *         (floating-point number, representing the pulse duration in milliseconds)
      * @param n_pulses  : desired pulse count
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -565,7 +566,7 @@ class YPwmOutput extends YFunction
      *         (percentage, floating-point number between 0 and 100)
      * @param integer $n_pulses : desired pulse count
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -589,7 +590,7 @@ class YPwmOutput extends YFunction
      * @param target   : desired frequency for the generated pulses (floating-point number)
      * @param integer $n_pulses : desired pulse count
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -681,7 +682,7 @@ class YPwmOutput extends YFunction
 
     /**
      * Starts the enumeration of PWM generators currently accessible.
-     * Use the method YPwmOutput.nextPwmOutput() to iterate on
+     * Use the method YPwmOutput::nextPwmOutput() to iterate on
      * next PWM generators.
      *
      * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to
@@ -713,7 +714,7 @@ class YPwmOutput extends YFunction
  *
  * This function does not require that the PWM generator is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPwmOutput.isOnline() to test if the PWM generator is
+ * Use the method isOnline() to test if the PWM generator is
  * indeed online at a given time. In case of ambiguity when looking for
  * a PWM generator by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -735,7 +736,7 @@ function yFindPwmOutput($func)
 
 /**
  * Starts the enumeration of PWM generators currently accessible.
- * Use the method YPwmOutput.nextPwmOutput() to iterate on
+ * Use the method YPwmOutput::nextPwmOutput() to iterate on
  * next PWM generators.
  *
  * @return YPwmOutput : a pointer to a YPwmOutput object, corresponding to

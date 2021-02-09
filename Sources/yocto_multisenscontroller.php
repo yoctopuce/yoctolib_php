@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multisenscontroller.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_multisenscontroller.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *
@@ -111,7 +111,7 @@ class YMultiSensController extends YFunction
      *
      * @return integer : an integer corresponding to the number of sensors to poll
      *
-     * On failure, throws an exception or returns Y_NSENSORS_INVALID.
+     * On failure, throws an exception or returns YMultiSensController::NSENSORS_INVALID.
      */
     public function get_nSensors()
     {
@@ -134,7 +134,7 @@ class YMultiSensController extends YFunction
      *
      * @param integer $newval : an integer corresponding to the number of sensors to poll
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -149,7 +149,7 @@ class YMultiSensController extends YFunction
      *
      * @return integer : an integer corresponding to the maximum configurable sensor count allowed on this device
      *
-     * On failure, throws an exception or returns Y_MAXSENSORS_INVALID.
+     * On failure, throws an exception or returns YMultiSensController::MAXSENSORS_INVALID.
      */
     public function get_maxSensors()
     {
@@ -166,10 +166,10 @@ class YMultiSensController extends YFunction
     /**
      * Returns true when the device is in maintenance mode.
      *
-     * @return integer : either Y_MAINTENANCEMODE_FALSE or Y_MAINTENANCEMODE_TRUE, according to true when
-     * the device is in maintenance mode
+     * @return integer : either YMultiSensController::MAINTENANCEMODE_FALSE or
+     * YMultiSensController::MAINTENANCEMODE_TRUE, according to true when the device is in maintenance mode
      *
-     * On failure, throws an exception or returns Y_MAINTENANCEMODE_INVALID.
+     * On failure, throws an exception or returns YMultiSensController::MAINTENANCEMODE_INVALID.
      */
     public function get_maintenanceMode()
     {
@@ -188,10 +188,11 @@ class YMultiSensController extends YFunction
      * This way, the device does not automatically restart when it cannot
      * communicate with one of the sensors.
      *
-     * @param integer $newval : either Y_MAINTENANCEMODE_FALSE or Y_MAINTENANCEMODE_TRUE, according to the
-     * device mode to enable maintenance and to stop sensor polling
+     * @param integer $newval : either YMultiSensController::MAINTENANCEMODE_FALSE or
+     * YMultiSensController::MAINTENANCEMODE_TRUE, according to the device mode to enable maintenance and
+     * to stop sensor polling
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -232,7 +233,7 @@ class YMultiSensController extends YFunction
      *
      * This function does not require that the multi-sensor controller is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YMultiSensController.isOnline() to test if the multi-sensor controller is
+     * Use the method isOnline() to test if the multi-sensor controller is
      * indeed online at a given time. In case of ambiguity when looking for
      * a multi-sensor controller by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -269,7 +270,7 @@ class YMultiSensController extends YFunction
      *
      * @param integer $addr : new address of the connected sensor
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function setupAddress($addr)
@@ -320,7 +321,7 @@ class YMultiSensController extends YFunction
 
     /**
      * Starts the enumeration of multi-sensor controllers currently accessible.
-     * Use the method YMultiSensController.nextMultiSensController() to iterate on
+     * Use the method YMultiSensController::nextMultiSensController() to iterate on
      * next multi-sensor controllers.
      *
      * @return YMultiSensController : a pointer to a YMultiSensController object, corresponding to
@@ -352,7 +353,7 @@ class YMultiSensController extends YFunction
  *
  * This function does not require that the multi-sensor controller is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YMultiSensController.isOnline() to test if the multi-sensor controller is
+ * Use the method isOnline() to test if the multi-sensor controller is
  * indeed online at a given time. In case of ambiguity when looking for
  * a multi-sensor controller by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -374,7 +375,7 @@ function yFindMultiSensController($func)
 
 /**
  * Starts the enumeration of multi-sensor controllers currently accessible.
- * Use the method YMultiSensController.nextMultiSensController() to iterate on
+ * Use the method YMultiSensController::nextMultiSensController() to iterate on
  * next multi-sensor controllers.
  *
  * @return YMultiSensController : a pointer to a YMultiSensController object, corresponding to

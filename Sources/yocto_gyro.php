@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 42951 2020-12-14 09:43:29Z seb $
+ * $Id: yocto_gyro.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -85,7 +85,7 @@ class YQt extends YSensor
      *
      * This function does not require that the quaternion component is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YQt.isOnline() to test if the quaternion component is
+     * Use the method isOnline() to test if the quaternion component is
      * indeed online at a given time. In case of ambiguity when looking for
      * a quaternion component by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -131,7 +131,7 @@ class YQt extends YSensor
 
     /**
      * Starts the enumeration of quaternion components currently accessible.
-     * Use the method YQt.nextQt() to iterate on
+     * Use the method YQt::nextQt() to iterate on
      * next quaternion components.
      *
      * @return YQt : a pointer to a YQt object, corresponding to
@@ -163,7 +163,7 @@ class YQt extends YSensor
  *
  * This function does not require that the quaternion component is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YQt.isOnline() to test if the quaternion component is
+ * Use the method isOnline() to test if the quaternion component is
  * indeed online at a given time. In case of ambiguity when looking for
  * a quaternion component by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -185,7 +185,7 @@ function yFindQt($func)
 
 /**
  * Starts the enumeration of quaternion components currently accessible.
- * Use the method YQt.nextQt() to iterate on
+ * Use the method YQt::nextQt() to iterate on
  * next quaternion components.
  *
  * @return YQt : a pointer to a YQt object, corresponding to
@@ -292,7 +292,7 @@ class YGyro extends YSensor
      *
      * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YGyro::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -314,7 +314,7 @@ class YGyro extends YSensor
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -330,7 +330,7 @@ class YGyro extends YSensor
      * @return double : a floating point number corresponding to the angular velocity around the X axis of
      * the device, as a floating point number
      *
-     * On failure, throws an exception or returns Y_XVALUE_INVALID.
+     * On failure, throws an exception or returns YGyro::XVALUE_INVALID.
      */
     public function get_xValue()
     {
@@ -350,7 +350,7 @@ class YGyro extends YSensor
      * @return double : a floating point number corresponding to the angular velocity around the Y axis of
      * the device, as a floating point number
      *
-     * On failure, throws an exception or returns Y_YVALUE_INVALID.
+     * On failure, throws an exception or returns YGyro::YVALUE_INVALID.
      */
     public function get_yValue()
     {
@@ -370,7 +370,7 @@ class YGyro extends YSensor
      * @return double : a floating point number corresponding to the angular velocity around the Z axis of
      * the device, as a floating point number
      *
-     * On failure, throws an exception or returns Y_ZVALUE_INVALID.
+     * On failure, throws an exception or returns YGyro::ZVALUE_INVALID.
      */
     public function get_zValue()
     {
@@ -397,7 +397,7 @@ class YGyro extends YSensor
      *
      * This function does not require that the gyroscope is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YGyro.isOnline() to test if the gyroscope is
+     * Use the method isOnline() to test if the gyroscope is
      * indeed online at a given time. In case of ambiguity when looking for
      * a gyroscope by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -760,7 +760,7 @@ class YGyro extends YSensor
 
     /**
      * Starts the enumeration of gyroscopes currently accessible.
-     * Use the method YGyro.nextGyro() to iterate on
+     * Use the method YGyro::nextGyro() to iterate on
      * next gyroscopes.
      *
      * @return YGyro : a pointer to a YGyro object, corresponding to
@@ -792,7 +792,7 @@ class YGyro extends YSensor
  *
  * This function does not require that the gyroscope is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YGyro.isOnline() to test if the gyroscope is
+ * Use the method isOnline() to test if the gyroscope is
  * indeed online at a given time. In case of ambiguity when looking for
  * a gyroscope by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -814,7 +814,7 @@ function yFindGyro($func)
 
 /**
  * Starts the enumeration of gyroscopes currently accessible.
- * Use the method YGyro.nextGyro() to iterate on
+ * Use the method YGyro::nextGyro() to iterate on
  * next gyroscopes.
  *
  * @return YGyro : a pointer to a YGyro object, corresponding to

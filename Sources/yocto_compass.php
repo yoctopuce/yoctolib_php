@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_compass.php 42951 2020-12-14 09:43:29Z seb $
+ *  $Id: yocto_compass.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YCompass, the high-level API for Compass functions
  *
@@ -107,7 +107,7 @@ class YCompass extends YSensor
      *
      * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YCompass::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -129,7 +129,7 @@ class YCompass extends YSensor
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -157,7 +157,7 @@ class YCompass extends YSensor
      * @return double : a floating point number corresponding to the magnetic heading, regardless of the
      * configured bearing
      *
-     * On failure, throws an exception or returns Y_MAGNETICHEADING_INVALID.
+     * On failure, throws an exception or returns YCompass::MAGNETICHEADING_INVALID.
      */
     public function get_magneticHeading()
     {
@@ -184,7 +184,7 @@ class YCompass extends YSensor
      *
      * This function does not require that the compass function is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YCompass.isOnline() to test if the compass function is
+     * Use the method isOnline() to test if the compass function is
      * indeed online at a given time. In case of ambiguity when looking for
      * a compass function by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -242,7 +242,7 @@ class YCompass extends YSensor
 
     /**
      * Starts the enumeration of compass functions currently accessible.
-     * Use the method YCompass.nextCompass() to iterate on
+     * Use the method YCompass::nextCompass() to iterate on
      * next compass functions.
      *
      * @return YCompass : a pointer to a YCompass object, corresponding to
@@ -274,7 +274,7 @@ class YCompass extends YSensor
  *
  * This function does not require that the compass function is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YCompass.isOnline() to test if the compass function is
+ * Use the method isOnline() to test if the compass function is
  * indeed online at a given time. In case of ambiguity when looking for
  * a compass function by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -296,7 +296,7 @@ function yFindCompass($func)
 
 /**
  * Starts the enumeration of compass functions currently accessible.
- * Use the method YCompass.nextCompass() to iterate on
+ * Use the method YCompass::nextCompass() to iterate on
  * next compass functions.
  *
  * @return YCompass : a pointer to a YCompass object, corresponding to

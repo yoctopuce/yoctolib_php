@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 42951 2020-12-14 09:43:29Z seb $
+ *  $Id: yocto_magnetometer.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -113,7 +113,7 @@ class YMagnetometer extends YSensor
      *
      * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YMagnetometer::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -135,7 +135,7 @@ class YMagnetometer extends YSensor
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -151,7 +151,7 @@ class YMagnetometer extends YSensor
      * @return double : a floating point number corresponding to the X component of the magnetic field, as
      * a floating point number
      *
-     * On failure, throws an exception or returns Y_XVALUE_INVALID.
+     * On failure, throws an exception or returns YMagnetometer::XVALUE_INVALID.
      */
     public function get_xValue()
     {
@@ -171,7 +171,7 @@ class YMagnetometer extends YSensor
      * @return double : a floating point number corresponding to the Y component of the magnetic field, as
      * a floating point number
      *
-     * On failure, throws an exception or returns Y_YVALUE_INVALID.
+     * On failure, throws an exception or returns YMagnetometer::YVALUE_INVALID.
      */
     public function get_yValue()
     {
@@ -191,7 +191,7 @@ class YMagnetometer extends YSensor
      * @return double : a floating point number corresponding to the Z component of the magnetic field, as
      * a floating point number
      *
-     * On failure, throws an exception or returns Y_ZVALUE_INVALID.
+     * On failure, throws an exception or returns YMagnetometer::ZVALUE_INVALID.
      */
     public function get_zValue()
     {
@@ -218,7 +218,7 @@ class YMagnetometer extends YSensor
      *
      * This function does not require that the magnetometer is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YMagnetometer.isOnline() to test if the magnetometer is
+     * Use the method isOnline() to test if the magnetometer is
      * indeed online at a given time. In case of ambiguity when looking for
      * a magnetometer by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -279,7 +279,7 @@ class YMagnetometer extends YSensor
 
     /**
      * Starts the enumeration of magnetometers currently accessible.
-     * Use the method YMagnetometer.nextMagnetometer() to iterate on
+     * Use the method YMagnetometer::nextMagnetometer() to iterate on
      * next magnetometers.
      *
      * @return YMagnetometer : a pointer to a YMagnetometer object, corresponding to
@@ -311,7 +311,7 @@ class YMagnetometer extends YSensor
  *
  * This function does not require that the magnetometer is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YMagnetometer.isOnline() to test if the magnetometer is
+ * Use the method isOnline() to test if the magnetometer is
  * indeed online at a given time. In case of ambiguity when looking for
  * a magnetometer by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -333,7 +333,7 @@ function yFindMagnetometer($func)
 
 /**
  * Starts the enumeration of magnetometers currently accessible.
- * Use the method YMagnetometer.nextMagnetometer() to iterate on
+ * Use the method YMagnetometer::nextMagnetometer() to iterate on
  * next magnetometers.
  *
  * @return YMagnetometer : a pointer to a YMagnetometer object, corresponding to

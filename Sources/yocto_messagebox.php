@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 42060 2020-10-14 10:02:12Z seb $
+ * $Id: yocto_messagebox.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -393,7 +393,7 @@ class YSms
      *
      * @param string $val : the text to be sent in the message
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      */
     public function addText($val)
     {
@@ -458,7 +458,7 @@ class YSms
      *
      * @param Integer[] $val : an array of special unicode characters
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      */
     public function addUnicodeData($val)
     {
@@ -1253,7 +1253,7 @@ class YSms
      * Sends the SMS to the recipient. Messages of more than 160 characters are supported
      * using SMS concatenation.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1392,7 +1392,7 @@ class YMessageBox extends YFunction
      *
      * @return integer : an integer corresponding to the number of message storage slots currently in use
      *
-     * On failure, throws an exception or returns Y_SLOTSINUSE_INVALID.
+     * On failure, throws an exception or returns YMessageBox::SLOTSINUSE_INVALID.
      */
     public function get_slotsInUse()
     {
@@ -1411,7 +1411,7 @@ class YMessageBox extends YFunction
      *
      * @return integer : an integer corresponding to the total number of message storage slots on the SIM card
      *
-     * On failure, throws an exception or returns Y_SLOTSCOUNT_INVALID.
+     * On failure, throws an exception or returns YMessageBox::SLOTSCOUNT_INVALID.
      */
     public function get_slotsCount()
     {
@@ -1442,7 +1442,7 @@ class YMessageBox extends YFunction
      *
      * @return integer : an integer corresponding to the number of SMS units sent so far
      *
-     * On failure, throws an exception or returns Y_PDUSENT_INVALID.
+     * On failure, throws an exception or returns YMessageBox::PDUSENT_INVALID.
      */
     public function get_pduSent()
     {
@@ -1461,7 +1461,7 @@ class YMessageBox extends YFunction
      *
      * @param integer $newval : an integer corresponding to the value of the outgoing SMS units counter
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1476,7 +1476,7 @@ class YMessageBox extends YFunction
      *
      * @return integer : an integer corresponding to the number of SMS units received so far
      *
-     * On failure, throws an exception or returns Y_PDURECEIVED_INVALID.
+     * On failure, throws an exception or returns YMessageBox::PDURECEIVED_INVALID.
      */
     public function get_pduReceived()
     {
@@ -1495,7 +1495,7 @@ class YMessageBox extends YFunction
      *
      * @param integer $newval : an integer corresponding to the value of the incoming SMS units counter
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1536,7 +1536,7 @@ class YMessageBox extends YFunction
      *
      * This function does not require that the SMS message box interface is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YMessageBox.isOnline() to test if the SMS message box interface is
+     * Use the method isOnline() to test if the SMS message box interface is
      * indeed online at a given time. In case of ambiguity when looking for
      * a SMS message box interface by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -2061,7 +2061,7 @@ class YMessageBox extends YFunction
     /**
      * Clear the SMS units counters.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2088,7 +2088,7 @@ class YMessageBox extends YFunction
      *         national number, or in international format starting with a plus sign
      * @param string $message : the text to be sent in the message
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2114,7 +2114,7 @@ class YMessageBox extends YFunction
      *         national number, or in international format starting with a plus sign
      * @param string $message : the text to be sent in the message
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2135,7 +2135,7 @@ class YMessageBox extends YFunction
      * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
      *
-     * @return YSms : YAPI_SUCCESS when the call succeeds.
+     * @return YSms : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -2208,7 +2208,7 @@ class YMessageBox extends YFunction
 
     /**
      * Starts the enumeration of SMS message box interfaces currently accessible.
-     * Use the method YMessageBox.nextMessageBox() to iterate on
+     * Use the method YMessageBox::nextMessageBox() to iterate on
      * next SMS message box interfaces.
      *
      * @return YMessageBox : a pointer to a YMessageBox object, corresponding to
@@ -2240,7 +2240,7 @@ class YMessageBox extends YFunction
  *
  * This function does not require that the SMS message box interface is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YMessageBox.isOnline() to test if the SMS message box interface is
+ * Use the method isOnline() to test if the SMS message box interface is
  * indeed online at a given time. In case of ambiguity when looking for
  * a SMS message box interface by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -2262,7 +2262,7 @@ function yFindMessageBox($func)
 
 /**
  * Starts the enumeration of SMS message box interfaces currently accessible.
- * Use the method YMessageBox.nextMessageBox() to iterate on
+ * Use the method YMessageBox::nextMessageBox() to iterate on
  * next SMS message box interfaces.
  *
  * @return YMessageBox : a pointer to a YMessageBox object, corresponding to

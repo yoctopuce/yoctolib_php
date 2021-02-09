@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_latitude.php 39658 2020-03-12 15:36:29Z seb $
+ *  $Id: yocto_latitude.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YLatitude, the high-level API for Latitude functions
  *
@@ -84,7 +84,7 @@ class YLatitude extends YSensor
      *
      * This function does not require that the latitude sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YLatitude.isOnline() to test if the latitude sensor is
+     * Use the method isOnline() to test if the latitude sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a latitude sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -130,7 +130,7 @@ class YLatitude extends YSensor
 
     /**
      * Starts the enumeration of latitude sensors currently accessible.
-     * Use the method YLatitude.nextLatitude() to iterate on
+     * Use the method YLatitude::nextLatitude() to iterate on
      * next latitude sensors.
      *
      * @return YLatitude : a pointer to a YLatitude object, corresponding to
@@ -162,7 +162,7 @@ class YLatitude extends YSensor
  *
  * This function does not require that the latitude sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YLatitude.isOnline() to test if the latitude sensor is
+ * Use the method isOnline() to test if the latitude sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a latitude sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -184,7 +184,7 @@ function yFindLatitude($func)
 
 /**
  * Starts the enumeration of latitude sensors currently accessible.
- * Use the method YLatitude.nextLatitude() to iterate on
+ * Use the method YLatitude::nextLatitude() to iterate on
  * next latitude sensors.
  *
  * @return YLatitude : a pointer to a YLatitude object, corresponding to

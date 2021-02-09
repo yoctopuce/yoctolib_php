@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_bluetoothlink.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_bluetoothlink.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YBluetoothLink, the high-level API for BluetoothLink functions
  *
@@ -159,7 +159,7 @@ class YBluetoothLink extends YFunction
      * @return string : a string corresponding to the MAC-48 address of the bluetooth interface, which is
      * unique on the bluetooth network
      *
-     * On failure, throws an exception or returns Y_OWNADDRESS_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::OWNADDRESS_INVALID.
      */
     public function get_ownAddress()
     {
@@ -183,7 +183,7 @@ class YBluetoothLink extends YFunction
      *         the SIM card, or an empty string if none has been configured or if the code provided
      *         was rejected by the SIM card
      *
-     * On failure, throws an exception or returns Y_PAIRINGPIN_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::PAIRINGPIN_INVALID.
      */
     public function get_pairingPin()
     {
@@ -204,7 +204,7 @@ class YBluetoothLink extends YFunction
      *
      * @param string $newval : a string corresponding to the PIN code used by the module for bluetooth pairing
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -219,7 +219,7 @@ class YBluetoothLink extends YFunction
      *
      * @return string : a string corresponding to the MAC-48 address of the remote device to connect to
      *
-     * On failure, throws an exception or returns Y_REMOTEADDRESS_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::REMOTEADDRESS_INVALID.
      */
     public function get_remoteAddress()
     {
@@ -240,7 +240,7 @@ class YBluetoothLink extends YFunction
      *
      * @param string $newval : a string corresponding to the MAC-48 address defining which remote device to connect to
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -256,7 +256,7 @@ class YBluetoothLink extends YFunction
      * @return string : a string corresponding to the bluetooth name the remote device, if found on the
      * bluetooth network
      *
-     * On failure, throws an exception or returns Y_REMOTENAME_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::REMOTENAME_INVALID.
      */
     public function get_remoteName()
     {
@@ -273,9 +273,10 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the state of the mute function.
      *
-     * @return integer : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @return integer : either YBluetoothLink::MUTE_FALSE or YBluetoothLink::MUTE_TRUE, according to the
+     * state of the mute function
      *
-     * On failure, throws an exception or returns Y_MUTE_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::MUTE_INVALID.
      */
     public function get_mute()
     {
@@ -293,9 +294,10 @@ class YBluetoothLink extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : either Y_MUTE_FALSE or Y_MUTE_TRUE, according to the state of the mute function
+     * @param integer $newval : either YBluetoothLink::MUTE_FALSE or YBluetoothLink::MUTE_TRUE, according to
+     * the state of the mute function
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -310,7 +312,7 @@ class YBluetoothLink extends YFunction
      *
      * @return integer : an integer corresponding to the audio pre-amplifier volume, in per cents
      *
-     * On failure, throws an exception or returns Y_PREAMPLIFIER_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::PREAMPLIFIER_INVALID.
      */
     public function get_preAmplifier()
     {
@@ -331,7 +333,7 @@ class YBluetoothLink extends YFunction
      *
      * @param integer $newval : an integer corresponding to the audio pre-amplifier volume, in per cents
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -346,7 +348,7 @@ class YBluetoothLink extends YFunction
      *
      * @return integer : an integer corresponding to the connected headset volume, in per cents
      *
-     * On failure, throws an exception or returns Y_VOLUME_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::VOLUME_INVALID.
      */
     public function get_volume()
     {
@@ -365,7 +367,7 @@ class YBluetoothLink extends YFunction
      *
      * @param integer $newval : an integer corresponding to the connected headset volume, in per cents
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -378,10 +380,11 @@ class YBluetoothLink extends YFunction
     /**
      * Returns the bluetooth link state.
      *
-     * @return integer : a value among Y_LINKSTATE_DOWN, Y_LINKSTATE_FREE, Y_LINKSTATE_SEARCH,
-     * Y_LINKSTATE_EXISTS, Y_LINKSTATE_LINKED and Y_LINKSTATE_PLAY corresponding to the bluetooth link state
+     * @return integer : a value among YBluetoothLink::LINKSTATE_DOWN, YBluetoothLink::LINKSTATE_FREE,
+     * YBluetoothLink::LINKSTATE_SEARCH, YBluetoothLink::LINKSTATE_EXISTS, YBluetoothLink::LINKSTATE_LINKED
+     * and YBluetoothLink::LINKSTATE_PLAY corresponding to the bluetooth link state
      *
-     * On failure, throws an exception or returns Y_LINKSTATE_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::LINKSTATE_INVALID.
      */
     public function get_linkState()
     {
@@ -401,7 +404,7 @@ class YBluetoothLink extends YFunction
      * @return integer : an integer corresponding to the bluetooth receiver signal strength, in pourcents,
      * or 0 if no connection is established
      *
-     * On failure, throws an exception or returns Y_LINKQUALITY_INVALID.
+     * On failure, throws an exception or returns YBluetoothLink::LINKQUALITY_INVALID.
      */
     public function get_linkQuality()
     {
@@ -446,7 +449,7 @@ class YBluetoothLink extends YFunction
      *
      * This function does not require that the Bluetooth sound controller is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YBluetoothLink.isOnline() to test if the Bluetooth sound controller is
+     * Use the method isOnline() to test if the Bluetooth sound controller is
      * indeed online at a given time. In case of ambiguity when looking for
      * a Bluetooth sound controller by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -475,7 +478,7 @@ class YBluetoothLink extends YFunction
     /**
      * Attempt to connect to the previously selected remote device.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -487,7 +490,7 @@ class YBluetoothLink extends YFunction
     /**
      * Disconnect from the previously selected remote device.
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -564,7 +567,7 @@ class YBluetoothLink extends YFunction
 
     /**
      * Starts the enumeration of Bluetooth sound controllers currently accessible.
-     * Use the method YBluetoothLink.nextBluetoothLink() to iterate on
+     * Use the method YBluetoothLink::nextBluetoothLink() to iterate on
      * next Bluetooth sound controllers.
      *
      * @return YBluetoothLink : a pointer to a YBluetoothLink object, corresponding to
@@ -596,7 +599,7 @@ class YBluetoothLink extends YFunction
  *
  * This function does not require that the Bluetooth sound controller is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YBluetoothLink.isOnline() to test if the Bluetooth sound controller is
+ * Use the method isOnline() to test if the Bluetooth sound controller is
  * indeed online at a given time. In case of ambiguity when looking for
  * a Bluetooth sound controller by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -618,7 +621,7 @@ function yFindBluetoothLink($func)
 
 /**
  * Starts the enumeration of Bluetooth sound controllers currently accessible.
- * Use the method YBluetoothLink.nextBluetoothLink() to iterate on
+ * Use the method YBluetoothLink::nextBluetoothLink() to iterate on
  * next Bluetooth sound controllers.
  *
  * @return YBluetoothLink : a pointer to a YBluetoothLink object, corresponding to

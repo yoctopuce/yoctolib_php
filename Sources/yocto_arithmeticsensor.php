@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_arithmeticsensor.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_arithmeticsensor.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YArithmeticSensor, the high-level API for ArithmeticSensor functions
  *
@@ -99,7 +99,7 @@ class YArithmeticSensor extends YSensor
      *
      * @param string $newval : a string corresponding to the measuring unit for the arithmetic sensor
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -114,7 +114,7 @@ class YArithmeticSensor extends YSensor
      *
      * @return string : a string corresponding to a short informative description of the formula
      *
-     * On failure, throws an exception or returns Y_DESCRIPTION_INVALID.
+     * On failure, throws an exception or returns YArithmeticSensor::DESCRIPTION_INVALID.
      */
     public function get_description()
     {
@@ -159,7 +159,7 @@ class YArithmeticSensor extends YSensor
      *
      * This function does not require that the arithmetic sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YArithmeticSensor.isOnline() to test if the arithmetic sensor is
+     * Use the method isOnline() to test if the arithmetic sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * an arithmetic sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -195,7 +195,7 @@ class YArithmeticSensor extends YSensor
      *
      * @return double : the current expression value if the call succeeds.
      *
-     * On failure, throws an exception or returns YAPI_INVALID_DOUBLE.
+     * On failure, throws an exception or returns YAPI::INVALID_DOUBLE.
      */
     public function defineExpression($expr,$descr)
     {
@@ -256,7 +256,7 @@ class YArithmeticSensor extends YSensor
      * @param double[] $outputValues : array of floating point numbers, corresponding to the output value
      *         desired for each of the input value, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -294,7 +294,7 @@ class YArithmeticSensor extends YSensor
      * @param double[] $outputValues : array of floating point numbers, that is filled by the function
      *         output value for each of the input value, index by index.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -346,7 +346,7 @@ class YArithmeticSensor extends YSensor
 
     /**
      * Starts the enumeration of arithmetic sensors currently accessible.
-     * Use the method YArithmeticSensor.nextArithmeticSensor() to iterate on
+     * Use the method YArithmeticSensor::nextArithmeticSensor() to iterate on
      * next arithmetic sensors.
      *
      * @return YArithmeticSensor : a pointer to a YArithmeticSensor object, corresponding to
@@ -378,7 +378,7 @@ class YArithmeticSensor extends YSensor
  *
  * This function does not require that the arithmetic sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YArithmeticSensor.isOnline() to test if the arithmetic sensor is
+ * Use the method isOnline() to test if the arithmetic sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * an arithmetic sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -400,7 +400,7 @@ function yFindArithmeticSensor($func)
 
 /**
  * Starts the enumeration of arithmetic sensors currently accessible.
- * Use the method YArithmeticSensor.nextArithmeticSensor() to iterate on
+ * Use the method YArithmeticSensor::nextArithmeticSensor() to iterate on
  * next arithmetic sensors.
  *
  * @return YArithmeticSensor : a pointer to a YArithmeticSensor object, corresponding to

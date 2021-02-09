@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_gps.php 39658 2020-03-12 15:36:29Z seb $
+ *  $Id: yocto_gps.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YGps, the high-level API for Gps functions
  *
@@ -204,10 +204,10 @@ class YGps extends YFunction
     /**
      * Returns TRUE if the receiver has found enough satellites to work.
      *
-     * @return integer : either Y_ISFIXED_FALSE or Y_ISFIXED_TRUE, according to TRUE if the receiver has
-     * found enough satellites to work
+     * @return integer : either YGps::ISFIXED_FALSE or YGps::ISFIXED_TRUE, according to TRUE if the receiver
+     * has found enough satellites to work
      *
-     * On failure, throws an exception or returns Y_ISFIXED_INVALID.
+     * On failure, throws an exception or returns YGps::ISFIXED_INVALID.
      */
     public function get_isFixed()
     {
@@ -226,7 +226,7 @@ class YGps extends YFunction
      *
      * @return integer : an integer corresponding to the total count of satellites used to compute GPS position
      *
-     * On failure, throws an exception or returns Y_SATCOUNT_INVALID.
+     * On failure, throws an exception or returns YGps::SATCOUNT_INVALID.
      */
     public function get_satCount()
     {
@@ -248,7 +248,7 @@ class YGps extends YFunction
      * @return integer : an integer corresponding to the count of visible satellites per constellation encoded
      *         on a 32 bit integer: bits 0.
      *
-     * On failure, throws an exception or returns Y_SATPERCONST_INVALID.
+     * On failure, throws an exception or returns YGps::SATPERCONST_INVALID.
      */
     public function get_satPerConst()
     {
@@ -268,7 +268,7 @@ class YGps extends YFunction
      *
      * @return double : a floating point number corresponding to effective GPS data refresh frequency
      *
-     * On failure, throws an exception or returns Y_GPSREFRESHRATE_INVALID.
+     * On failure, throws an exception or returns YGps::GPSREFRESHRATE_INVALID.
      */
     public function get_gpsRefreshRate()
     {
@@ -285,10 +285,10 @@ class YGps extends YFunction
     /**
      * Returns the representation system used for positioning data.
      *
-     * @return integer : a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and Y_COORDSYSTEM_GPS_D
-     * corresponding to the representation system used for positioning data
+     * @return integer : a value among YGps::COORDSYSTEM_GPS_DMS, YGps::COORDSYSTEM_GPS_DM and
+     * YGps::COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
      *
-     * On failure, throws an exception or returns Y_COORDSYSTEM_INVALID.
+     * On failure, throws an exception or returns YGps::COORDSYSTEM_INVALID.
      */
     public function get_coordSystem()
     {
@@ -307,10 +307,10 @@ class YGps extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param integer $newval : a value among Y_COORDSYSTEM_GPS_DMS, Y_COORDSYSTEM_GPS_DM and
-     * Y_COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
+     * @param integer $newval : a value among YGps::COORDSYSTEM_GPS_DMS, YGps::COORDSYSTEM_GPS_DM and
+     * YGps::COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -324,12 +324,13 @@ class YGps extends YFunction
      * Returns the the satellites constellation used to compute
      * positioning data.
      *
-     * @return integer : a value among Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS, Y_CONSTELLATION_GLONASS,
-     * Y_CONSTELLATION_GALILEO, Y_CONSTELLATION_GPS_GLONASS, Y_CONSTELLATION_GPS_GALILEO and
-     * Y_CONSTELLATION_GLONASS_GALILEO corresponding to the the satellites constellation used to compute
+     * @return integer : a value among YGps::CONSTELLATION_GNSS, YGps::CONSTELLATION_GPS,
+     * YGps::CONSTELLATION_GLONASS, YGps::CONSTELLATION_GALILEO, YGps::CONSTELLATION_GPS_GLONASS,
+     * YGps::CONSTELLATION_GPS_GALILEO and YGps::CONSTELLATION_GLONASS_GALILEO corresponding to the the
+     * satellites constellation used to compute
      *         positioning data
      *
-     * On failure, throws an exception or returns Y_CONSTELLATION_INVALID.
+     * On failure, throws an exception or returns YGps::CONSTELLATION_INVALID.
      */
     public function get_constellation()
     {
@@ -348,13 +349,13 @@ class YGps extends YFunction
      * positioning data. Possible  constellations are GNSS ( = all supported constellations),
      * GPS, Glonass, Galileo , and the 3 possible pairs. This setting has  no effect on Yocto-GPS (V1).
      *
-     * @param integer $newval : a value among Y_CONSTELLATION_GNSS, Y_CONSTELLATION_GPS,
-     * Y_CONSTELLATION_GLONASS, Y_CONSTELLATION_GALILEO, Y_CONSTELLATION_GPS_GLONASS,
-     * Y_CONSTELLATION_GPS_GALILEO and Y_CONSTELLATION_GLONASS_GALILEO corresponding to the satellites
-     * constellation used to compute
+     * @param integer $newval : a value among YGps::CONSTELLATION_GNSS, YGps::CONSTELLATION_GPS,
+     * YGps::CONSTELLATION_GLONASS, YGps::CONSTELLATION_GALILEO, YGps::CONSTELLATION_GPS_GLONASS,
+     * YGps::CONSTELLATION_GPS_GALILEO and YGps::CONSTELLATION_GLONASS_GALILEO corresponding to the
+     * satellites constellation used to compute
      *         positioning data
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -369,7 +370,7 @@ class YGps extends YFunction
      *
      * @return string : a string corresponding to the current latitude
      *
-     * On failure, throws an exception or returns Y_LATITUDE_INVALID.
+     * On failure, throws an exception or returns YGps::LATITUDE_INVALID.
      */
     public function get_latitude()
     {
@@ -388,7 +389,7 @@ class YGps extends YFunction
      *
      * @return string : a string corresponding to the current longitude
      *
-     * On failure, throws an exception or returns Y_LONGITUDE_INVALID.
+     * On failure, throws an exception or returns YGps::LONGITUDE_INVALID.
      */
     public function get_longitude()
     {
@@ -409,7 +410,7 @@ class YGps extends YFunction
      * @return double : a floating point number corresponding to the current horizontal dilution of precision,
      *         the smaller that number is, the better
      *
-     * On failure, throws an exception or returns Y_DILUTION_INVALID.
+     * On failure, throws an exception or returns YGps::DILUTION_INVALID.
      */
     public function get_dilution()
     {
@@ -429,7 +430,7 @@ class YGps extends YFunction
      *
      * @return double : a floating point number corresponding to the current altitude
      *
-     * On failure, throws an exception or returns Y_ALTITUDE_INVALID.
+     * On failure, throws an exception or returns YGps::ALTITUDE_INVALID.
      */
     public function get_altitude()
     {
@@ -448,7 +449,7 @@ class YGps extends YFunction
      *
      * @return double : a floating point number corresponding to the current ground speed in Km/h
      *
-     * On failure, throws an exception or returns Y_GROUNDSPEED_INVALID.
+     * On failure, throws an exception or returns YGps::GROUNDSPEED_INVALID.
      */
     public function get_groundSpeed()
     {
@@ -469,7 +470,7 @@ class YGps extends YFunction
      * @return double : a floating point number corresponding to the current move bearing in degrees, zero
      *         is the true (geographic) north
      *
-     * On failure, throws an exception or returns Y_DIRECTION_INVALID.
+     * On failure, throws an exception or returns YGps::DIRECTION_INVALID.
      */
     public function get_direction()
     {
@@ -490,7 +491,7 @@ class YGps extends YFunction
      * @return integer : an integer corresponding to the current time in Unix format (number of
      *         seconds elapsed since Jan 1st, 1970)
      *
-     * On failure, throws an exception or returns Y_UNIXTIME_INVALID.
+     * On failure, throws an exception or returns YGps::UNIXTIME_INVALID.
      */
     public function get_unixTime()
     {
@@ -509,7 +510,7 @@ class YGps extends YFunction
      *
      * @return string : a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
-     * On failure, throws an exception or returns Y_DATETIME_INVALID.
+     * On failure, throws an exception or returns YGps::DATETIME_INVALID.
      */
     public function get_dateTime()
     {
@@ -529,7 +530,7 @@ class YGps extends YFunction
      * @return integer : an integer corresponding to the number of seconds between current time and UTC
      * time (time zone)
      *
-     * On failure, throws an exception or returns Y_UTCOFFSET_INVALID.
+     * On failure, throws an exception or returns YGps::UTCOFFSET_INVALID.
      */
     public function get_utcOffset()
     {
@@ -553,7 +554,7 @@ class YGps extends YFunction
      * @param integer $newval : an integer corresponding to the number of seconds between current time and
      * UTC time (time zone)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -594,7 +595,7 @@ class YGps extends YFunction
      *
      * This function does not require that the geolocalization module is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YGps.isOnline() to test if the geolocalization module is
+     * Use the method isOnline() to test if the geolocalization module is
      * indeed online at a given time. In case of ambiguity when looking for
      * a geolocalization module by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -700,7 +701,7 @@ class YGps extends YFunction
 
     /**
      * Starts the enumeration of geolocalization modules currently accessible.
-     * Use the method YGps.nextGps() to iterate on
+     * Use the method YGps::nextGps() to iterate on
      * next geolocalization modules.
      *
      * @return YGps : a pointer to a YGps object, corresponding to
@@ -732,7 +733,7 @@ class YGps extends YFunction
  *
  * This function does not require that the geolocalization module is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YGps.isOnline() to test if the geolocalization module is
+ * Use the method isOnline() to test if the geolocalization module is
  * indeed online at a given time. In case of ambiguity when looking for
  * a geolocalization module by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -754,7 +755,7 @@ function yFindGps($func)
 
 /**
  * Starts the enumeration of geolocalization modules currently accessible.
- * Use the method YGps.nextGps() to iterate on
+ * Use the method YGps::nextGps() to iterate on
  * next geolocalization modules.
  *
  * @return YGps : a pointer to a YGps object, corresponding to

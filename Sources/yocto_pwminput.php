@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwminput.php 41351 2020-08-10 15:14:25Z seb $
+ *  $Id: yocto_pwminput.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YPwmInput, the high-level API for PwmInput functions
  *
@@ -171,7 +171,7 @@ class YPwmInput extends YSensor
      *
      * @param string $newval : a string corresponding to the measuring unit for the measured quantity
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -186,7 +186,7 @@ class YPwmInput extends YSensor
      *
      * @return double : a floating point number corresponding to the PWM duty cycle, in per cents
      *
-     * On failure, throws an exception or returns Y_DUTYCYCLE_INVALID.
+     * On failure, throws an exception or returns YPwmInput::DUTYCYCLE_INVALID.
      */
     public function get_dutyCycle()
     {
@@ -206,7 +206,7 @@ class YPwmInput extends YSensor
      * @return double : a floating point number corresponding to the PWM pulse length in milliseconds, as
      * a floating point number
      *
-     * On failure, throws an exception or returns Y_PULSEDURATION_INVALID.
+     * On failure, throws an exception or returns YPwmInput::PULSEDURATION_INVALID.
      */
     public function get_pulseDuration()
     {
@@ -225,7 +225,7 @@ class YPwmInput extends YSensor
      *
      * @return double : a floating point number corresponding to the PWM frequency in Hz
      *
-     * On failure, throws an exception or returns Y_FREQUENCY_INVALID.
+     * On failure, throws an exception or returns YPwmInput::FREQUENCY_INVALID.
      */
     public function get_frequency()
     {
@@ -244,7 +244,7 @@ class YPwmInput extends YSensor
      *
      * @return double : a floating point number corresponding to the PWM period in milliseconds
      *
-     * On failure, throws an exception or returns Y_PERIOD_INVALID.
+     * On failure, throws an exception or returns YPwmInput::PERIOD_INVALID.
      */
     public function get_period()
     {
@@ -265,7 +265,7 @@ class YPwmInput extends YSensor
      *
      * @return integer : an integer corresponding to the pulse counter value
      *
-     * On failure, throws an exception or returns Y_PULSECOUNTER_INVALID.
+     * On failure, throws an exception or returns YPwmInput::PULSECOUNTER_INVALID.
      */
     public function get_pulseCounter()
     {
@@ -290,7 +290,7 @@ class YPwmInput extends YSensor
      *
      * @return integer : an integer corresponding to the timer of the pulses counter (ms)
      *
-     * On failure, throws an exception or returns Y_PULSETIMER_INVALID.
+     * On failure, throws an exception or returns YPwmInput::PULSETIMER_INVALID.
      */
     public function get_pulseTimer()
     {
@@ -308,14 +308,16 @@ class YPwmInput extends YSensor
      * Returns the parameter (frequency/duty cycle, pulse width, edges count) returned by the
      * get_currentValue function and callbacks. Attention
      *
-     * @return integer : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE, Y_PWMREPORTMODE_PWM_FREQUENCY,
-     * Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT, Y_PWMREPORTMODE_PWM_PULSECOUNT,
-     * Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM, Y_PWMREPORTMODE_PWM_STATE,
-     * Y_PWMREPORTMODE_PWM_FREQ_CPS, Y_PWMREPORTMODE_PWM_FREQ_CPM and Y_PWMREPORTMODE_PWM_PERIODCOUNT
-     * corresponding to the parameter (frequency/duty cycle, pulse width, edges count) returned by the
-     * get_currentValue function and callbacks
+     * @return integer : a value among YPwmInput::PWMREPORTMODE_PWM_DUTYCYCLE,
+     * YPwmInput::PWMREPORTMODE_PWM_FREQUENCY, YPwmInput::PWMREPORTMODE_PWM_PULSEDURATION,
+     * YPwmInput::PWMREPORTMODE_PWM_EDGECOUNT, YPwmInput::PWMREPORTMODE_PWM_PULSECOUNT,
+     * YPwmInput::PWMREPORTMODE_PWM_CPS, YPwmInput::PWMREPORTMODE_PWM_CPM,
+     * YPwmInput::PWMREPORTMODE_PWM_STATE, YPwmInput::PWMREPORTMODE_PWM_FREQ_CPS,
+     * YPwmInput::PWMREPORTMODE_PWM_FREQ_CPM and YPwmInput::PWMREPORTMODE_PWM_PERIODCOUNT corresponding to
+     * the parameter (frequency/duty cycle, pulse width, edges count) returned by the get_currentValue
+     * function and callbacks
      *
-     * On failure, throws an exception or returns Y_PWMREPORTMODE_INVALID.
+     * On failure, throws an exception or returns YPwmInput::PWMREPORTMODE_INVALID.
      */
     public function get_pwmReportMode()
     {
@@ -336,14 +338,16 @@ class YPwmInput extends YSensor
      * get_pulseCounter().
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param integer $newval : a value among Y_PWMREPORTMODE_PWM_DUTYCYCLE,
-     * Y_PWMREPORTMODE_PWM_FREQUENCY, Y_PWMREPORTMODE_PWM_PULSEDURATION, Y_PWMREPORTMODE_PWM_EDGECOUNT,
-     * Y_PWMREPORTMODE_PWM_PULSECOUNT, Y_PWMREPORTMODE_PWM_CPS, Y_PWMREPORTMODE_PWM_CPM,
-     * Y_PWMREPORTMODE_PWM_STATE, Y_PWMREPORTMODE_PWM_FREQ_CPS, Y_PWMREPORTMODE_PWM_FREQ_CPM and
-     * Y_PWMREPORTMODE_PWM_PERIODCOUNT corresponding to the  parameter  type (frequency/duty cycle, pulse
-     * width, or edge count) returned by the get_currentValue function and callbacks
+     * @param integer $newval : a value among YPwmInput::PWMREPORTMODE_PWM_DUTYCYCLE,
+     * YPwmInput::PWMREPORTMODE_PWM_FREQUENCY, YPwmInput::PWMREPORTMODE_PWM_PULSEDURATION,
+     * YPwmInput::PWMREPORTMODE_PWM_EDGECOUNT, YPwmInput::PWMREPORTMODE_PWM_PULSECOUNT,
+     * YPwmInput::PWMREPORTMODE_PWM_CPS, YPwmInput::PWMREPORTMODE_PWM_CPM,
+     * YPwmInput::PWMREPORTMODE_PWM_STATE, YPwmInput::PWMREPORTMODE_PWM_FREQ_CPS,
+     * YPwmInput::PWMREPORTMODE_PWM_FREQ_CPM and YPwmInput::PWMREPORTMODE_PWM_PERIODCOUNT corresponding to
+     * the  parameter  type (frequency/duty cycle, pulse width, or edge count) returned by the
+     * get_currentValue function and callbacks
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -358,7 +362,7 @@ class YPwmInput extends YSensor
      *
      * @return integer : an integer corresponding to the shortest expected pulse duration, in ms
      *
-     * On failure, throws an exception or returns Y_DEBOUNCEPERIOD_INVALID.
+     * On failure, throws an exception or returns YPwmInput::DEBOUNCEPERIOD_INVALID.
      */
     public function get_debouncePeriod()
     {
@@ -378,7 +382,7 @@ class YPwmInput extends YSensor
      *
      * @param integer $newval : an integer corresponding to the shortest expected pulse duration, in ms
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -393,7 +397,7 @@ class YPwmInput extends YSensor
      *
      * @return integer : an integer corresponding to the input signal sampling rate, in kHz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YPwmInput::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -416,7 +420,7 @@ class YPwmInput extends YSensor
      *
      * @param integer $newval : an integer corresponding to the input signal sampling rate, measured in kHz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -432,7 +436,7 @@ class YPwmInput extends YSensor
      *
      * @return integer : an integer corresponding to the number of edges detected per preiod
      *
-     * On failure, throws an exception or returns Y_EDGESPERPERIOD_INVALID.
+     * On failure, throws an exception or returns YPwmInput::EDGESPERPERIOD_INVALID.
      */
     public function get_edgesPerPeriod()
     {
@@ -459,7 +463,7 @@ class YPwmInput extends YSensor
      *
      * This function does not require that the PWM input is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPwmInput.isOnline() to test if the PWM input is
+     * Use the method isOnline() to test if the PWM input is
      * indeed online at a given time. In case of ambiguity when looking for
      * a PWM input by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -488,7 +492,7 @@ class YPwmInput extends YSensor
     /**
      * Returns the pulse counter value as well as its timer.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -562,7 +566,7 @@ class YPwmInput extends YSensor
 
     /**
      * Starts the enumeration of PWM inputs currently accessible.
-     * Use the method YPwmInput.nextPwmInput() to iterate on
+     * Use the method YPwmInput::nextPwmInput() to iterate on
      * next PWM inputs.
      *
      * @return YPwmInput : a pointer to a YPwmInput object, corresponding to
@@ -594,7 +598,7 @@ class YPwmInput extends YSensor
  *
  * This function does not require that the PWM input is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPwmInput.isOnline() to test if the PWM input is
+ * Use the method isOnline() to test if the PWM input is
  * indeed online at a given time. In case of ambiguity when looking for
  * a PWM input by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -616,7 +620,7 @@ function yFindPwmInput($func)
 
 /**
  * Starts the enumeration of PWM inputs currently accessible.
- * Use the method YPwmInput.nextPwmInput() to iterate on
+ * Use the method YPwmInput::nextPwmInput() to iterate on
  * next PWM inputs.
  *
  * @return YPwmInput : a pointer to a YPwmInput object, corresponding to

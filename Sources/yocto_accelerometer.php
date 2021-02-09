@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_accelerometer.php 42951 2020-12-14 09:43:29Z seb $
+ *  $Id: yocto_accelerometer.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -54,7 +54,8 @@ if(!defined('Y_ZVALUE_INVALID'))             define('Y_ZVALUE_INVALID',         
 
 //--- (YAccelerometer declaration)
 /**
- * YAccelerometer Class: accelerometer control interface, available for instance in the Yocto-3D-V2
+ * YAccelerometer Class: accelerometer control interface, available for instance in the Yocto-3D-V2 or
+ * the Yocto-Inclinometer
  *
  * The YAccelerometer class allows you to read and configure Yoctopuce accelerometers.
  * It inherits from YSensor class the core functions to read measurements,
@@ -119,7 +120,7 @@ class YAccelerometer extends YSensor
      *
      * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YAccelerometer::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -141,7 +142,7 @@ class YAccelerometer extends YSensor
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -157,7 +158,7 @@ class YAccelerometer extends YSensor
      * @return double : a floating point number corresponding to the X component of the acceleration, as a
      * floating point number
      *
-     * On failure, throws an exception or returns Y_XVALUE_INVALID.
+     * On failure, throws an exception or returns YAccelerometer::XVALUE_INVALID.
      */
     public function get_xValue()
     {
@@ -177,7 +178,7 @@ class YAccelerometer extends YSensor
      * @return double : a floating point number corresponding to the Y component of the acceleration, as a
      * floating point number
      *
-     * On failure, throws an exception or returns Y_YVALUE_INVALID.
+     * On failure, throws an exception or returns YAccelerometer::YVALUE_INVALID.
      */
     public function get_yValue()
     {
@@ -197,7 +198,7 @@ class YAccelerometer extends YSensor
      * @return double : a floating point number corresponding to the Z component of the acceleration, as a
      * floating point number
      *
-     * On failure, throws an exception or returns Y_ZVALUE_INVALID.
+     * On failure, throws an exception or returns YAccelerometer::ZVALUE_INVALID.
      */
     public function get_zValue()
     {
@@ -242,7 +243,7 @@ class YAccelerometer extends YSensor
      *
      * This function does not require that the accelerometer is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YAccelerometer.isOnline() to test if the accelerometer is
+     * Use the method isOnline() to test if the accelerometer is
      * indeed online at a given time. In case of ambiguity when looking for
      * an accelerometer by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -309,7 +310,7 @@ class YAccelerometer extends YSensor
 
     /**
      * Starts the enumeration of accelerometers currently accessible.
-     * Use the method YAccelerometer.nextAccelerometer() to iterate on
+     * Use the method YAccelerometer::nextAccelerometer() to iterate on
      * next accelerometers.
      *
      * @return YAccelerometer : a pointer to a YAccelerometer object, corresponding to
@@ -341,7 +342,7 @@ class YAccelerometer extends YSensor
  *
  * This function does not require that the accelerometer is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YAccelerometer.isOnline() to test if the accelerometer is
+ * Use the method isOnline() to test if the accelerometer is
  * indeed online at a given time. In case of ambiguity when looking for
  * an accelerometer by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -363,7 +364,7 @@ function yFindAccelerometer($func)
 
 /**
  * Starts the enumeration of accelerometers currently accessible.
- * Use the method YAccelerometer.nextAccelerometer() to iterate on
+ * Use the method YAccelerometer::nextAccelerometer() to iterate on
  * next accelerometers.
  *
  * @return YAccelerometer : a pointer to a YAccelerometer object, corresponding to

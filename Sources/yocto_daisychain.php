@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_daisychain.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_daisychain.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YDaisyChain, the high-level API for DaisyChain functions
  *
@@ -109,11 +109,11 @@ class YDaisyChain extends YFunction
     /**
      * Returns the state of the daisy-link between modules.
      *
-     * @return integer : a value among Y_DAISYSTATE_READY, Y_DAISYSTATE_IS_CHILD,
-     * Y_DAISYSTATE_FIRMWARE_MISMATCH, Y_DAISYSTATE_CHILD_MISSING and Y_DAISYSTATE_CHILD_LOST
-     * corresponding to the state of the daisy-link between modules
+     * @return integer : a value among YDaisyChain::DAISYSTATE_READY, YDaisyChain::DAISYSTATE_IS_CHILD,
+     * YDaisyChain::DAISYSTATE_FIRMWARE_MISMATCH, YDaisyChain::DAISYSTATE_CHILD_MISSING and
+     * YDaisyChain::DAISYSTATE_CHILD_LOST corresponding to the state of the daisy-link between modules
      *
-     * On failure, throws an exception or returns Y_DAISYSTATE_INVALID.
+     * On failure, throws an exception or returns YDaisyChain::DAISYSTATE_INVALID.
      */
     public function get_daisyState()
     {
@@ -132,7 +132,7 @@ class YDaisyChain extends YFunction
      *
      * @return integer : an integer corresponding to the number of child nodes currently detected
      *
-     * On failure, throws an exception or returns Y_CHILDCOUNT_INVALID.
+     * On failure, throws an exception or returns YDaisyChain::CHILDCOUNT_INVALID.
      */
     public function get_childCount()
     {
@@ -151,7 +151,7 @@ class YDaisyChain extends YFunction
      *
      * @return integer : an integer corresponding to the number of child nodes expected in normal conditions
      *
-     * On failure, throws an exception or returns Y_REQUIREDCHILDCOUNT_INVALID.
+     * On failure, throws an exception or returns YDaisyChain::REQUIREDCHILDCOUNT_INVALID.
      */
     public function get_requiredChildCount()
     {
@@ -174,7 +174,7 @@ class YDaisyChain extends YFunction
      *
      * @param integer $newval : an integer corresponding to the number of child nodes expected in normal conditions
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -197,7 +197,7 @@ class YDaisyChain extends YFunction
      *
      * This function does not require that the module chain is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YDaisyChain.isOnline() to test if the module chain is
+     * Use the method isOnline() to test if the module chain is
      * indeed online at a given time. In case of ambiguity when looking for
      * a module chain by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -255,7 +255,7 @@ class YDaisyChain extends YFunction
 
     /**
      * Starts the enumeration of module chains currently accessible.
-     * Use the method YDaisyChain.nextDaisyChain() to iterate on
+     * Use the method YDaisyChain::nextDaisyChain() to iterate on
      * next module chains.
      *
      * @return YDaisyChain : a pointer to a YDaisyChain object, corresponding to
@@ -287,7 +287,7 @@ class YDaisyChain extends YFunction
  *
  * This function does not require that the module chain is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YDaisyChain.isOnline() to test if the module chain is
+ * Use the method isOnline() to test if the module chain is
  * indeed online at a given time. In case of ambiguity when looking for
  * a module chain by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -309,7 +309,7 @@ function yFindDaisyChain($func)
 
 /**
  * Starts the enumeration of module chains currently accessible.
- * Use the method YDaisyChain.nextDaisyChain() to iterate on
+ * Use the method YDaisyChain::nextDaisyChain() to iterate on
  * next module chains.
  *
  * @return YDaisyChain : a pointer to a YDaisyChain object, corresponding to

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 42951 2020-12-14 09:43:29Z seb $
+ *  $Id: yocto_tilt.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *
@@ -52,7 +52,7 @@ if(!defined('Y_BANDWIDTH_INVALID'))          define('Y_BANDWIDTH_INVALID',      
 
 //--- (YTilt declaration)
 /**
- * YTilt Class: tilt sensor control interface, available for instance in the Yocto-3D-V2
+ * YTilt Class: tilt sensor control interface, available for instance in the Yocto-3D-V2 or the Yocto-Inclinometer
  *
  * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max
@@ -107,7 +107,7 @@ class YTilt extends YSensor
      *
      * @return integer : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * On failure, throws an exception or returns Y_BANDWIDTH_INVALID.
+     * On failure, throws an exception or returns YTilt::BANDWIDTH_INVALID.
      */
     public function get_bandwidth()
     {
@@ -129,7 +129,7 @@ class YTilt extends YSensor
      *
      * @param integer $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -164,7 +164,7 @@ class YTilt extends YSensor
      *
      * This function does not require that the tilt sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YTilt.isOnline() to test if the tilt sensor is
+     * Use the method isOnline() to test if the tilt sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a tilt sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -196,7 +196,7 @@ class YTilt extends YSensor
      * is applied so that the current position is reported as a zero angle.
      * Be aware that this shift will also affect the measurement boundaries.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -217,7 +217,7 @@ class YTilt extends YSensor
      * Cancels any previous zero calibration for the tilt measurement (Yocto-Inclinometer only).
      * This function restores the factory zero calibration.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -255,7 +255,7 @@ class YTilt extends YSensor
 
     /**
      * Starts the enumeration of tilt sensors currently accessible.
-     * Use the method YTilt.nextTilt() to iterate on
+     * Use the method YTilt::nextTilt() to iterate on
      * next tilt sensors.
      *
      * @return YTilt : a pointer to a YTilt object, corresponding to
@@ -287,7 +287,7 @@ class YTilt extends YSensor
  *
  * This function does not require that the tilt sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YTilt.isOnline() to test if the tilt sensor is
+ * Use the method isOnline() to test if the tilt sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a tilt sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -309,7 +309,7 @@ function yFindTilt($func)
 
 /**
  * Starts the enumeration of tilt sensors currently accessible.
- * Use the method YTilt.nextTilt() to iterate on
+ * Use the method YTilt::nextTilt() to iterate on
  * next tilt sensors.
  *
  * @return YTilt : a pointer to a YTilt object, corresponding to

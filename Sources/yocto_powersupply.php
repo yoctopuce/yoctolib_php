@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_powersupply.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -169,7 +169,7 @@ class YPowerSupply extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the voltage set point, in V
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -184,7 +184,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the voltage set point, in V
      *
-     * On failure, throws an exception or returns Y_VOLTAGESETPOINT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VOLTAGESETPOINT_INVALID.
      */
     public function get_voltageSetPoint()
     {
@@ -203,7 +203,7 @@ class YPowerSupply extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the current limit, in mA
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -218,7 +218,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the current limit, in mA
      *
-     * On failure, throws an exception or returns Y_CURRENTLIMIT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::CURRENTLIMIT_INVALID.
      */
     public function get_currentLimit()
     {
@@ -235,10 +235,10 @@ class YPowerSupply extends YFunction
     /**
      * Returns the power supply output switch state.
      *
-     * @return integer : either Y_POWEROUTPUT_OFF or Y_POWEROUTPUT_ON, according to the power supply
-     * output switch state
+     * @return integer : either YPowerSupply::POWEROUTPUT_OFF or YPowerSupply::POWEROUTPUT_ON, according to
+     * the power supply output switch state
      *
-     * On failure, throws an exception or returns Y_POWEROUTPUT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::POWEROUTPUT_INVALID.
      */
     public function get_powerOutput()
     {
@@ -255,10 +255,10 @@ class YPowerSupply extends YFunction
     /**
      * Changes the power supply output switch state.
      *
-     * @param integer $newval : either Y_POWEROUTPUT_OFF or Y_POWEROUTPUT_ON, according to the power
-     * supply output switch state
+     * @param integer $newval : either YPowerSupply::POWEROUTPUT_OFF or YPowerSupply::POWEROUTPUT_ON,
+     * according to the power supply output switch state
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -271,9 +271,10 @@ class YPowerSupply extends YFunction
     /**
      * Returns the output voltage control point.
      *
-     * @return integer : either Y_VOLTAGESENSE_INT or Y_VOLTAGESENSE_EXT, according to the output voltage control point
+     * @return integer : either YPowerSupply::VOLTAGESENSE_INT or YPowerSupply::VOLTAGESENSE_EXT, according
+     * to the output voltage control point
      *
-     * On failure, throws an exception or returns Y_VOLTAGESENSE_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VOLTAGESENSE_INVALID.
      */
     public function get_voltageSense()
     {
@@ -290,9 +291,10 @@ class YPowerSupply extends YFunction
     /**
      * Changes the voltage control point.
      *
-     * @param integer $newval : either Y_VOLTAGESENSE_INT or Y_VOLTAGESENSE_EXT, according to the voltage control point
+     * @param integer $newval : either YPowerSupply::VOLTAGESENSE_INT or YPowerSupply::VOLTAGESENSE_EXT,
+     * according to the voltage control point
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -307,7 +309,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the measured output voltage, in V
      *
-     * On failure, throws an exception or returns Y_MEASUREDVOLTAGE_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::MEASUREDVOLTAGE_INVALID.
      */
     public function get_measuredVoltage()
     {
@@ -326,7 +328,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the measured output current, in mA
      *
-     * On failure, throws an exception or returns Y_MEASUREDCURRENT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::MEASUREDCURRENT_INVALID.
      */
     public function get_measuredCurrent()
     {
@@ -345,7 +347,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the measured input voltage, in V
      *
-     * On failure, throws an exception or returns Y_INPUTVOLTAGE_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::INPUTVOLTAGE_INVALID.
      */
     public function get_inputVoltage()
     {
@@ -364,7 +366,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the internal voltage, in V
      *
-     * On failure, throws an exception or returns Y_VINT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VINT_INVALID.
      */
     public function get_vInt()
     {
@@ -383,7 +385,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the LDO temperature, in Celsius
      *
-     * On failure, throws an exception or returns Y_LDOTEMPERATURE_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::LDOTEMPERATURE_INVALID.
      */
     public function get_ldoTemperature()
     {
@@ -421,7 +423,7 @@ class YPowerSupply extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the voltage set point at device start up
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -436,7 +438,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the selected voltage set point at device startup, in V
      *
-     * On failure, throws an exception or returns Y_VOLTAGEATSTARTUP_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VOLTAGEATSTARTUP_INVALID.
      */
     public function get_voltageAtStartUp()
     {
@@ -456,7 +458,7 @@ class YPowerSupply extends YFunction
      *
      * @param double $newval : a floating point number corresponding to the current limit at device start up
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -471,7 +473,7 @@ class YPowerSupply extends YFunction
      *
      * @return double : a floating point number corresponding to the selected current limit at device startup, in mA
      *
-     * On failure, throws an exception or returns Y_CURRENTATSTARTUP_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::CURRENTATSTARTUP_INVALID.
      */
     public function get_currentAtStartUp()
     {
@@ -516,7 +518,7 @@ class YPowerSupply extends YFunction
      *
      * This function does not require that the regulated power supply is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YPowerSupply.isOnline() to test if the regulated power supply is
+     * Use the method isOnline() to test if the regulated power supply is
      * indeed online at a given time. In case of ambiguity when looking for
      * a regulated power supply by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -550,7 +552,7 @@ class YPowerSupply extends YFunction
      *         (floating-point number, representing the end voltage in V)
      * @param integer $ms_duration : total duration of the transition, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS when the call succeeds.
+     * @return integer : YAPI::SUCCESS when the call succeeds.
      */
     public function voltageMove($V_target,$ms_duration)
     {
@@ -646,7 +648,7 @@ class YPowerSupply extends YFunction
 
     /**
      * Starts the enumeration of regulated power supplies currently accessible.
-     * Use the method YPowerSupply.nextPowerSupply() to iterate on
+     * Use the method YPowerSupply::nextPowerSupply() to iterate on
      * next regulated power supplies.
      *
      * @return YPowerSupply : a pointer to a YPowerSupply object, corresponding to
@@ -678,7 +680,7 @@ class YPowerSupply extends YFunction
  *
  * This function does not require that the regulated power supply is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YPowerSupply.isOnline() to test if the regulated power supply is
+ * Use the method isOnline() to test if the regulated power supply is
  * indeed online at a given time. In case of ambiguity when looking for
  * a regulated power supply by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -700,7 +702,7 @@ function yFindPowerSupply($func)
 
 /**
  * Starts the enumeration of regulated power supplies currently accessible.
- * Use the method YPowerSupply.nextPowerSupply() to iterate on
+ * Use the method YPowerSupply::nextPowerSupply() to iterate on
  * next regulated power supplies.
  *
  * @return YPowerSupply : a pointer to a YPowerSupply object, corresponding to

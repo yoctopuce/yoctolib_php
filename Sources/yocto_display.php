@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 42092 2020-10-16 17:56:31Z mvuilleu $
+ * $Id: yocto_display.php 43619 2021-01-29 09:14:45Z mvuilleu $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -175,7 +175,7 @@ class YDisplayLayer
      * and selects the most visible pen color. If you only want to erase the layer
      * content, use the method clear() instead.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -191,7 +191,7 @@ class YDisplayLayer
      * To reinitialize the layer attributes to defaults settings, use the method
      * reset() instead.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -208,7 +208,7 @@ class YDisplayLayer
      *
      * @param integer $color : the desired pen color, as a 24-bit RGB value
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -227,7 +227,7 @@ class YDisplayLayer
      *
      * @param integer $graylevel : the desired gray level, from 0 to 255
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -242,7 +242,7 @@ class YDisplayLayer
      * becomes transparent (as when the layer is empty), showing the other
      * layers beneath it.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -263,7 +263,7 @@ class YDisplayLayer
      * @param boolean $mode : true to enable anti-aliasing, false to
      *         disable it.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -278,7 +278,7 @@ class YDisplayLayer
      * @param integer $x : the distance from left of layer, in pixels
      * @param integer $y : the distance from top of layer, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -295,7 +295,7 @@ class YDisplayLayer
      * @param integer $x2 : the distance from left of layer to the right border of the rectangle, in pixels
      * @param integer $y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -312,7 +312,7 @@ class YDisplayLayer
      * @param integer $x2 : the distance from left of layer to the right border of the rectangle, in pixels
      * @param integer $y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -328,7 +328,7 @@ class YDisplayLayer
      * @param integer $y : the distance from top of layer to the center of the circle, in pixels
      * @param integer $r : the radius of the circle, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -344,7 +344,7 @@ class YDisplayLayer
      * @param integer $y : the distance from top of layer to the center of the disc, in pixels
      * @param integer $r : the radius of the disc, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -363,7 +363,7 @@ class YDisplayLayer
      * @param string $fontname : the font file name, embedded fonts are 8x8.yfm, Small.yfm, Medium.yfm,
      * Large.yfm (not available on Yocto-MiniDisplay).
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -379,14 +379,18 @@ class YDisplayLayer
      *
      * @param integer $x : the distance from left of layer to the text anchor point, in pixels
      * @param integer $y : the distance from top of layer to the text anchor point, in pixels
-     * @param ALIGN $anchor : the text anchor point, chosen among the Y_ALIGN enumeration:
-     *         Y_ALIGN_TOP_LEFT,    Y_ALIGN_CENTER_LEFT,    Y_ALIGN_BASELINE_LEFT,    Y_ALIGN_BOTTOM_LEFT,
-     *         Y_ALIGN_TOP_CENTER,  Y_ALIGN_CENTER,         Y_ALIGN_BASELINE_CENTER,  Y_ALIGN_BOTTOM_CENTER,
-     *         Y_ALIGN_TOP_DECIMAL, Y_ALIGN_CENTER_DECIMAL, Y_ALIGN_BASELINE_DECIMAL, Y_ALIGN_BOTTOM_DECIMAL,
-     *         Y_ALIGN_TOP_RIGHT,   Y_ALIGN_CENTER_RIGHT,   Y_ALIGN_BASELINE_RIGHT,   Y_ALIGN_BOTTOM_RIGHT.
+     * @param ALIGN $anchor : the text anchor point, chosen among the YDisplayLayer::ALIGN enumeration:
+     *         YDisplayLayer::ALIGN_TOP_LEFT,         YDisplayLayer::ALIGN_CENTER_LEFT,
+     *         YDisplayLayer::ALIGN_BASELINE_LEFT,    YDisplayLayer::ALIGN_BOTTOM_LEFT,
+     *         YDisplayLayer::ALIGN_TOP_CENTER,       YDisplayLayer::ALIGN_CENTER,
+     *         YDisplayLayer::ALIGN_BASELINE_CENTER,  YDisplayLayer::ALIGN_BOTTOM_CENTER,
+     *         YDisplayLayer::ALIGN_TOP_DECIMAL,      YDisplayLayer::ALIGN_CENTER_DECIMAL,
+     *         YDisplayLayer::ALIGN_BASELINE_DECIMAL, YDisplayLayer::ALIGN_BOTTOM_DECIMAL,
+     *         YDisplayLayer::ALIGN_TOP_RIGHT,        YDisplayLayer::ALIGN_CENTER_RIGHT,
+     *         YDisplayLayer::ALIGN_BASELINE_RIGHT,   YDisplayLayer::ALIGN_BOTTOM_RIGHT.
      * @param string $text : the text string to draw
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -405,7 +409,7 @@ class YDisplayLayer
      * @param integer $y : the distance from top of layer to the top of the image, in pixels
      * @param string $imagename : the GIF file name
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -430,7 +434,7 @@ class YDisplayLayer
      * @param integer $bgcol : the background gray level to use for zero bits (0 = black,
      *         255 = white), or -1 to leave the pixels unchanged
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -447,7 +451,7 @@ class YDisplayLayer
      * @param integer $x : the distance from left of layer, in pixels
      * @param integer $y : the distance from top of layer, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -464,7 +468,7 @@ class YDisplayLayer
      * @param integer $x : the distance from left of layer to the end point of the line, in pixels
      * @param integer $y : the distance from top of layer to the end point of the line, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -482,7 +486,7 @@ class YDisplayLayer
      *
      * @param string $text : the message to display
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -499,7 +503,7 @@ class YDisplayLayer
      * @param integer $x2 : the distance from left of layer to the right margin, in pixels
      * @param integer $y2 : the distance from top of layer to the bottom margin, in pixels
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -515,7 +519,7 @@ class YDisplayLayer
      * @param integer $bgcol : the background gray level to use when scrolling (0 = black,
      *         255 = white), or -1 for transparent
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -530,7 +534,7 @@ class YDisplayLayer
      * @param boolean $wordwrap : true to wrap only between words,
      *         false to wrap on the last column anyway.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -543,7 +547,7 @@ class YDisplayLayer
      * Blanks the console area within console margins, and resets the console pointer
      * to the upper left corner of the console.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -562,7 +566,7 @@ class YDisplayLayer
      * @param integer $scrollTime : number of milliseconds to use for smooth scrolling, or
      *         0 if the scrolling should be immediate.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -577,7 +581,7 @@ class YDisplayLayer
      * affect the drawing speed, since it postpones the rendering until all operations are
      * completed (double-buffering).
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -591,7 +595,7 @@ class YDisplayLayer
     /**
      * Shows the layer. Shows the layer again after a hide command.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -602,7 +606,7 @@ class YDisplayLayer
     }
 
     /**
-     * Gets parent YDisplay. Returns the parent YDisplay object of the current YDisplayLayer.
+     * Gets parent YDisplay. Returns the parent YDisplay object of the current YDisplayLayer::
      *
      * @return YDisplay : an YDisplay object
      */
@@ -616,7 +620,7 @@ class YDisplayLayer
      *
      * @return integer : an integer corresponding to the display width, in pixels
      *
-     * On failure, throws an exception or returns Y_DISPLAYWIDTH_INVALID.
+     * On failure, throws an exception or returns YDisplayLayer::DISPLAYWIDTH_INVALID.
      */
     public function get_displayWidth()
     {
@@ -628,7 +632,7 @@ class YDisplayLayer
      *
      * @return integer : an integer corresponding to the display height, in pixels
      *
-     * On failure, throws an exception or returns Y_DISPLAYHEIGHT_INVALID.
+     * On failure, throws an exception or returns YDisplayLayer::DISPLAYHEIGHT_INVALID.
      */
     public function get_displayHeight()
     {
@@ -640,7 +644,7 @@ class YDisplayLayer
      *
      * @return integer : an integer corresponding to the width of the layers to draw on, in pixels
      *
-     * On failure, throws an exception or returns Y_LAYERWIDTH_INVALID.
+     * On failure, throws an exception or returns YDisplayLayer::LAYERWIDTH_INVALID.
      */
     public function get_layerWidth()
     {
@@ -652,7 +656,7 @@ class YDisplayLayer
      *
      * @return integer : an integer corresponding to the height of the layers to draw on, in pixels
      *
-     * On failure, throws an exception or returns Y_LAYERHEIGHT_INVALID.
+     * On failure, throws an exception or returns YDisplayLayer::LAYERHEIGHT_INVALID.
      */
     public function get_layerHeight()
     {
@@ -782,10 +786,10 @@ class YDisplay extends YFunction
     /**
      * Returns true if the screen is powered, false otherwise.
      *
-     * @return integer : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to true if the screen is
-     * powered, false otherwise
+     * @return integer : either YDisplay::ENABLED_FALSE or YDisplay::ENABLED_TRUE, according to true if the
+     * screen is powered, false otherwise
      *
-     * On failure, throws an exception or returns Y_ENABLED_INVALID.
+     * On failure, throws an exception or returns YDisplay::ENABLED_INVALID.
      */
     public function get_enabled()
     {
@@ -802,9 +806,10 @@ class YDisplay extends YFunction
     /**
      * Changes the power state of the display.
      *
-     * @param integer $newval : either Y_ENABLED_FALSE or Y_ENABLED_TRUE, according to the power state of the display
+     * @param integer $newval : either YDisplay::ENABLED_FALSE or YDisplay::ENABLED_TRUE, according to the
+     * power state of the display
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -819,7 +824,7 @@ class YDisplay extends YFunction
      *
      * @return string : a string corresponding to the name of the sequence to play when the displayed is powered on
      *
-     * On failure, throws an exception or returns Y_STARTUPSEQ_INVALID.
+     * On failure, throws an exception or returns YDisplay::STARTUPSEQ_INVALID.
      */
     public function get_startupSeq()
     {
@@ -841,7 +846,7 @@ class YDisplay extends YFunction
      * @param string $newval : a string corresponding to the name of the sequence to play when the
      * displayed is powered on
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -856,7 +861,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the luminosity of the  module informative LEDs (from 0 to 100)
      *
-     * On failure, throws an exception or returns Y_BRIGHTNESS_INVALID.
+     * On failure, throws an exception or returns YDisplay::BRIGHTNESS_INVALID.
      */
     public function get_brightness()
     {
@@ -877,7 +882,7 @@ class YDisplay extends YFunction
      *
      * @param integer $newval : an integer corresponding to the brightness of the display
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -890,10 +895,11 @@ class YDisplay extends YFunction
     /**
      * Returns the currently selected display orientation.
      *
-     * @return integer : a value among Y_ORIENTATION_LEFT, Y_ORIENTATION_UP, Y_ORIENTATION_RIGHT and
-     * Y_ORIENTATION_DOWN corresponding to the currently selected display orientation
+     * @return integer : a value among YDisplay::ORIENTATION_LEFT, YDisplay::ORIENTATION_UP,
+     * YDisplay::ORIENTATION_RIGHT and YDisplay::ORIENTATION_DOWN corresponding to the currently selected
+     * display orientation
      *
-     * On failure, throws an exception or returns Y_ORIENTATION_INVALID.
+     * On failure, throws an exception or returns YDisplay::ORIENTATION_INVALID.
      */
     public function get_orientation()
     {
@@ -911,10 +917,10 @@ class YDisplay extends YFunction
      * Changes the display orientation. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : a value among Y_ORIENTATION_LEFT, Y_ORIENTATION_UP, Y_ORIENTATION_RIGHT
-     * and Y_ORIENTATION_DOWN corresponding to the display orientation
+     * @param integer $newval : a value among YDisplay::ORIENTATION_LEFT, YDisplay::ORIENTATION_UP,
+     * YDisplay::ORIENTATION_RIGHT and YDisplay::ORIENTATION_DOWN corresponding to the display orientation
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -929,7 +935,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the display width, in pixels
      *
-     * On failure, throws an exception or returns Y_DISPLAYWIDTH_INVALID.
+     * On failure, throws an exception or returns YDisplay::DISPLAYWIDTH_INVALID.
      */
     public function get_displayWidth()
     {
@@ -948,7 +954,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the display height, in pixels
      *
-     * On failure, throws an exception or returns Y_DISPLAYHEIGHT_INVALID.
+     * On failure, throws an exception or returns YDisplay::DISPLAYHEIGHT_INVALID.
      */
     public function get_displayHeight()
     {
@@ -965,10 +971,10 @@ class YDisplay extends YFunction
     /**
      * Returns the display type: monochrome, gray levels or full color.
      *
-     * @return integer : a value among Y_DISPLAYTYPE_MONO, Y_DISPLAYTYPE_GRAY and Y_DISPLAYTYPE_RGB
-     * corresponding to the display type: monochrome, gray levels or full color
+     * @return integer : a value among YDisplay::DISPLAYTYPE_MONO, YDisplay::DISPLAYTYPE_GRAY and
+     * YDisplay::DISPLAYTYPE_RGB corresponding to the display type: monochrome, gray levels or full color
      *
-     * On failure, throws an exception or returns Y_DISPLAYTYPE_INVALID.
+     * On failure, throws an exception or returns YDisplay::DISPLAYTYPE_INVALID.
      */
     public function get_displayType()
     {
@@ -987,7 +993,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the width of the layers to draw on, in pixels
      *
-     * On failure, throws an exception or returns Y_LAYERWIDTH_INVALID.
+     * On failure, throws an exception or returns YDisplay::LAYERWIDTH_INVALID.
      */
     public function get_layerWidth()
     {
@@ -1006,7 +1012,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the height of the layers to draw on, in pixels
      *
-     * On failure, throws an exception or returns Y_LAYERHEIGHT_INVALID.
+     * On failure, throws an exception or returns YDisplay::LAYERHEIGHT_INVALID.
      */
     public function get_layerHeight()
     {
@@ -1025,7 +1031,7 @@ class YDisplay extends YFunction
      *
      * @return integer : an integer corresponding to the number of available layers to draw on
      *
-     * On failure, throws an exception or returns Y_LAYERCOUNT_INVALID.
+     * On failure, throws an exception or returns YDisplay::LAYERCOUNT_INVALID.
      */
     public function get_layerCount()
     {
@@ -1070,7 +1076,7 @@ class YDisplay extends YFunction
      *
      * This function does not require that the display is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YDisplay.isOnline() to test if the display is
+     * Use the method isOnline() to test if the display is
      * indeed online at a given time. In case of ambiguity when looking for
      * a display by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -1101,7 +1107,7 @@ class YDisplay extends YFunction
      * Using this function in a sequence will kill the sequence play-back. Don't use that
      * function to reset the display at sequence start-up.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1119,7 +1125,7 @@ class YDisplay extends YFunction
      * @param integer $brightness : the new screen brightness
      * @param integer $duration : duration of the brightness transition, in milliseconds.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1134,7 +1140,7 @@ class YDisplay extends YFunction
      * The name used to store the sequence is specified when calling
      * saveSequence(), once the recording is complete.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1153,7 +1159,7 @@ class YDisplay extends YFunction
      *
      * @param string $sequenceName : the name of the newly created sequence
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1173,7 +1179,7 @@ class YDisplay extends YFunction
      *
      * @param string $sequenceName : the name of the newly created sequence
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1193,7 +1199,7 @@ class YDisplay extends YFunction
      *
      * @param integer $delay_ms : the duration to wait, in milliseconds
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1207,7 +1213,7 @@ class YDisplay extends YFunction
      * Stops immediately any ongoing sequence replay.
      * The display is left as is.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1225,7 +1231,7 @@ class YDisplay extends YFunction
      * @param string $pathname : path and name of the new file to create
      * @param string $content : binary buffer with the content to set
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1244,7 +1250,7 @@ class YDisplay extends YFunction
      * @param integer $srcLayerId : the identifier of the source layer (a number in range 0..layerCount-1)
      * @param integer $dstLayerId : the identifier of the destination layer (a number in range 0..layerCount-1)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1265,7 +1271,7 @@ class YDisplay extends YFunction
      * @param integer $layerIdA : the first layer (a number in range 0..layerCount-1)
      * @param integer $layerIdB : the second layer (a number in range 0..layerCount-1)
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -1370,7 +1376,7 @@ class YDisplay extends YFunction
 
     /**
      * Starts the enumeration of displays currently accessible.
-     * Use the method YDisplay.nextDisplay() to iterate on
+     * Use the method YDisplay::nextDisplay() to iterate on
      * next displays.
      *
      * @return YDisplay : a pointer to a YDisplay object, corresponding to
@@ -1429,7 +1435,7 @@ class YDisplay extends YFunction
  *
  * This function does not require that the display is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YDisplay.isOnline() to test if the display is
+ * Use the method isOnline() to test if the display is
  * indeed online at a given time. In case of ambiguity when looking for
  * a display by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -1451,7 +1457,7 @@ function yFindDisplay($func)
 
 /**
  * Starts the enumeration of displays currently accessible.
- * Use the method YDisplay.nextDisplay() to iterate on
+ * Use the method YDisplay::nextDisplay() to iterate on
  * next displays.
  *
  * @return YDisplay : a pointer to a YDisplay object, corresponding to

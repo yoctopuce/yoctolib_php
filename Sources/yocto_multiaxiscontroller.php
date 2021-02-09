@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multiaxiscontroller.php 37827 2019-10-25 13:07:48Z mvuilleu $
+ *  $Id: yocto_multiaxiscontroller.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -112,7 +112,7 @@ class YMultiAxisController extends YFunction
      *
      * @return integer : an integer corresponding to the number of synchronized controllers
      *
-     * On failure, throws an exception or returns Y_NAXIS_INVALID.
+     * On failure, throws an exception or returns YMultiAxisController::NAXIS_INVALID.
      */
     public function get_nAxis()
     {
@@ -131,7 +131,7 @@ class YMultiAxisController extends YFunction
      *
      * @param integer $newval : an integer corresponding to the number of synchronized controllers
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -144,11 +144,12 @@ class YMultiAxisController extends YFunction
     /**
      * Returns the stepper motor set overall state.
      *
-     * @return integer : a value among Y_GLOBALSTATE_ABSENT, Y_GLOBALSTATE_ALERT, Y_GLOBALSTATE_HI_Z,
-     * Y_GLOBALSTATE_STOP, Y_GLOBALSTATE_RUN and Y_GLOBALSTATE_BATCH corresponding to the stepper motor
-     * set overall state
+     * @return integer : a value among YMultiAxisController::GLOBALSTATE_ABSENT,
+     * YMultiAxisController::GLOBALSTATE_ALERT, YMultiAxisController::GLOBALSTATE_HI_Z,
+     * YMultiAxisController::GLOBALSTATE_STOP, YMultiAxisController::GLOBALSTATE_RUN and
+     * YMultiAxisController::GLOBALSTATE_BATCH corresponding to the stepper motor set overall state
      *
-     * On failure, throws an exception or returns Y_GLOBALSTATE_INVALID.
+     * On failure, throws an exception or returns YMultiAxisController::GLOBALSTATE_INVALID.
      */
     public function get_globalState()
     {
@@ -193,7 +194,7 @@ class YMultiAxisController extends YFunction
      *
      * This function does not require that the multi-axis controller is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YMultiAxisController.isOnline() to test if the multi-axis controller is
+     * Use the method isOnline() to test if the multi-axis controller is
      * indeed online at a given time. In case of ambiguity when looking for
      * a multi-axis controller by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -228,7 +229,7 @@ class YMultiAxisController extends YFunction
         //may throw an exception
         $retBin = $this->_download($url);
         $res = ord($retBin[0]);
-        if ($res == 49) {
+        if ($res < 58) {
             if (!($res == 48)) return $this->_throw( YAPI_DEVICE_BUSY, 'Motor command pipeline is full, try again later',YAPI_DEVICE_BUSY);
         } else {
             if (!($res == 48)) return $this->_throw( YAPI_IO_ERROR, 'Motor command failed permanently',YAPI_IO_ERROR);
@@ -239,7 +240,7 @@ class YMultiAxisController extends YFunction
     /**
      * Reinitialize all controllers and clear all alert flags.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function reset()
@@ -252,7 +253,7 @@ class YMultiAxisController extends YFunction
      *
      * @param double[] $speed : desired speed for all axis, in steps per second.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function findHomePosition($speed)
@@ -278,7 +279,7 @@ class YMultiAxisController extends YFunction
      *
      * @param double[] $absPos : absolute position, measured in steps from each origin.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function moveTo($absPos)
@@ -304,7 +305,7 @@ class YMultiAxisController extends YFunction
      *
      * @param double[] $relPos : relative position, measured in steps from the current position.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function moveRel($relPos)
@@ -327,7 +328,7 @@ class YMultiAxisController extends YFunction
      *
      * @param integer $waitMs : wait time, specified in milliseconds.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function pause($waitMs)
@@ -338,7 +339,7 @@ class YMultiAxisController extends YFunction
     /**
      * Stops the motor with an emergency alert, without taking any additional precaution.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function emergencyStop()
@@ -349,7 +350,7 @@ class YMultiAxisController extends YFunction
     /**
      * Stops the motor smoothly as soon as possible, without waiting for ongoing move completion.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function abortAndBrake()
@@ -360,7 +361,7 @@ class YMultiAxisController extends YFunction
     /**
      * Turn the controller into Hi-Z mode immediately, without waiting for ongoing move completion.
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
      */
     public function abortAndHiZ()
@@ -403,7 +404,7 @@ class YMultiAxisController extends YFunction
 
     /**
      * Starts the enumeration of multi-axis controllers currently accessible.
-     * Use the method YMultiAxisController.nextMultiAxisController() to iterate on
+     * Use the method YMultiAxisController::nextMultiAxisController() to iterate on
      * next multi-axis controllers.
      *
      * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to
@@ -435,7 +436,7 @@ class YMultiAxisController extends YFunction
  *
  * This function does not require that the multi-axis controller is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YMultiAxisController.isOnline() to test if the multi-axis controller is
+ * Use the method isOnline() to test if the multi-axis controller is
  * indeed online at a given time. In case of ambiguity when looking for
  * a multi-axis controller by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -457,7 +458,7 @@ function yFindMultiAxisController($func)
 
 /**
  * Starts the enumeration of multi-axis controllers currently accessible.
- * Use the method YMultiAxisController.nextMultiAxisController() to iterate on
+ * Use the method YMultiAxisController::nextMultiAxisController() to iterate on
  * next multi-axis controllers.
  *
  * @return YMultiAxisController : a pointer to a YMultiAxisController object, corresponding to

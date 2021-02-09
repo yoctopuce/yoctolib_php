@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_humidity.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_humidity.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YHumidity, the high-level API for Humidity functions
  *
@@ -102,7 +102,7 @@ class YHumidity extends YSensor
      *
      * @param string $newval : a string corresponding to the primary unit for measuring humidity
      *
-     * @return integer : YAPI_SUCCESS if the call succeeds.
+     * @return integer : YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
@@ -117,7 +117,7 @@ class YHumidity extends YSensor
      *
      * @return double : a floating point number corresponding to the current relative humidity, in per cents
      *
-     * On failure, throws an exception or returns Y_RELHUM_INVALID.
+     * On failure, throws an exception or returns YHumidity::RELHUM_INVALID.
      */
     public function get_relHum()
     {
@@ -137,7 +137,7 @@ class YHumidity extends YSensor
      * @return double : a floating point number corresponding to the current absolute humidity, in grams
      * per cubic meter of air
      *
-     * On failure, throws an exception or returns Y_ABSHUM_INVALID.
+     * On failure, throws an exception or returns YHumidity::ABSHUM_INVALID.
      */
     public function get_absHum()
     {
@@ -164,7 +164,7 @@ class YHumidity extends YSensor
      *
      * This function does not require that the humidity sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YHumidity.isOnline() to test if the humidity sensor is
+     * Use the method isOnline() to test if the humidity sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a humidity sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -219,7 +219,7 @@ class YHumidity extends YSensor
 
     /**
      * Starts the enumeration of humidity sensors currently accessible.
-     * Use the method YHumidity.nextHumidity() to iterate on
+     * Use the method YHumidity::nextHumidity() to iterate on
      * next humidity sensors.
      *
      * @return YHumidity : a pointer to a YHumidity object, corresponding to
@@ -251,7 +251,7 @@ class YHumidity extends YSensor
  *
  * This function does not require that the humidity sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YHumidity.isOnline() to test if the humidity sensor is
+ * Use the method isOnline() to test if the humidity sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a humidity sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -273,7 +273,7 @@ function yFindHumidity($func)
 
 /**
  * Starts the enumeration of humidity sensors currently accessible.
- * Use the method YHumidity.nextHumidity() to iterate on
+ * Use the method YHumidity::nextHumidity() to iterate on
  * next humidity sensors.
  *
  * @return YHumidity : a pointer to a YHumidity object, corresponding to

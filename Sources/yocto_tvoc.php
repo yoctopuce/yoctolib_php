@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tvoc.php 38899 2019-12-20 17:21:03Z mvuilleu $
+ *  $Id: yocto_tvoc.php 43580 2021-01-26 17:46:01Z mvuilleu $
  *
  *  Implements YTvoc, the high-level API for Tvoc functions
  *
@@ -85,7 +85,7 @@ class YTvoc extends YSensor
      *
      * This function does not require that the Total  Volatile Organic Compound sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
-     * Use the method YTvoc.isOnline() to test if the Total  Volatile Organic Compound sensor is
+     * Use the method isOnline() to test if the Total  Volatile Organic Compound sensor is
      * indeed online at a given time. In case of ambiguity when looking for
      * a Total  Volatile Organic Compound sensor by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
@@ -132,7 +132,7 @@ class YTvoc extends YSensor
 
     /**
      * Starts the enumeration of Total Volatile Organic Compound sensors currently accessible.
-     * Use the method YTvoc.nextTvoc() to iterate on
+     * Use the method YTvoc::nextTvoc() to iterate on
      * next Total Volatile Organic Compound sensors.
      *
      * @return YTvoc : a pointer to a YTvoc object, corresponding to
@@ -164,7 +164,7 @@ class YTvoc extends YSensor
  *
  * This function does not require that the Total  Volatile Organic Compound sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
- * Use the method YTvoc.isOnline() to test if the Total  Volatile Organic Compound sensor is
+ * Use the method isOnline() to test if the Total  Volatile Organic Compound sensor is
  * indeed online at a given time. In case of ambiguity when looking for
  * a Total  Volatile Organic Compound sensor by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
@@ -187,7 +187,7 @@ function yFindTvoc($func)
 
 /**
  * Starts the enumeration of Total Volatile Organic Compound sensors currently accessible.
- * Use the method YTvoc.nextTvoc() to iterate on
+ * Use the method YTvoc::nextTvoc() to iterate on
  * next Total Volatile Organic Compound sensors.
  *
  * @return YTvoc : a pointer to a YTvoc object, corresponding to
