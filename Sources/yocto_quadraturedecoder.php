@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_quadraturedecoder.php 44023 2021-02-25 09:23:38Z web $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -43,6 +43,8 @@
 //--- (YQuadratureDecoder definitions)
 if(!defined('Y_DECODING_OFF'))               define('Y_DECODING_OFF',              0);
 if(!defined('Y_DECODING_ON'))                define('Y_DECODING_ON',               1);
+if(!defined('Y_DECODING_DIV2'))              define('Y_DECODING_DIV2',             2);
+if(!defined('Y_DECODING_DIV4'))              define('Y_DECODING_DIV4',             3);
 if(!defined('Y_DECODING_INVALID'))           define('Y_DECODING_INVALID',          -1);
 if(!defined('Y_SPEED_INVALID'))              define('Y_SPEED_INVALID',             YAPI_INVALID_DOUBLE);
 //--- (end of YQuadratureDecoder definitions)
@@ -62,12 +64,14 @@ class YQuadratureDecoder extends YSensor
     const SPEED_INVALID                  = YAPI_INVALID_DOUBLE;
     const DECODING_OFF                   = 0;
     const DECODING_ON                    = 1;
+    const DECODING_DIV2                  = 2;
+    const DECODING_DIV4                  = 3;
     const DECODING_INVALID               = -1;
     //--- (end of YQuadratureDecoder declaration)
 
     //--- (YQuadratureDecoder attributes)
     protected $_speed                    = Y_SPEED_INVALID;              // MeasureVal
-    protected $_decoding                 = Y_DECODING_INVALID;           // OnOff
+    protected $_decoding                 = Y_DECODING_INVALID;           // OffOnDiv
     //--- (end of YQuadratureDecoder attributes)
 
     function __construct($str_func)
@@ -133,14 +137,15 @@ class YQuadratureDecoder extends YSensor
     /**
      * Returns the current activation state of the quadrature decoder.
      *
-     * @return integer : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
-     * according to the current activation state of the quadrature decoder
+     * @return integer : a value among YQuadratureDecoder::DECODING_OFF, YQuadratureDecoder::DECODING_ON,
+     * YQuadratureDecoder::DECODING_DIV2 and YQuadratureDecoder::DECODING_DIV4 corresponding to the current
+     * activation state of the quadrature decoder
      *
      * On failure, throws an exception or returns YQuadratureDecoder::DECODING_INVALID.
      */
     public function get_decoding()
     {
-        // $res                    is a enumONOFF;
+        // $res                    is a enumOFFONDIV;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DECODING_INVALID;
@@ -155,8 +160,9 @@ class YQuadratureDecoder extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
-     * according to the activation state of the quadrature decoder
+     * @param integer $newval : a value among YQuadratureDecoder::DECODING_OFF,
+     * YQuadratureDecoder::DECODING_ON, YQuadratureDecoder::DECODING_DIV2 and
+     * YQuadratureDecoder::DECODING_DIV4 corresponding to the activation state of the quadrature decoder
      *
      * @return integer : YAPI::SUCCESS if the call succeeds.
      *

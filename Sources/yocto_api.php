@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 43619 2021-01-29 09:14:45Z mvuilleu $
+ * $Id: yocto_api.php 44026 2021-02-25 09:48:41Z web $
  *
  * High-level programming interface, common to all modules
  *
@@ -1606,6 +1606,23 @@ class YDevice
         }
         return '';
     }
+
+    /**
+     * Retrieves the hardware identifier of a function given its funydx (internal function identifier index)
+     *
+     * @param integer $funYdx : the internal function identifier index
+     *
+     * @return string : a string corresponding to the unambiguous hardware identifier of the requested module function
+     *
+     * On failure, throws an exception or returns an empty string.
+     */
+    public function functionIdByFunYdx($funYdx)
+    {
+        if(isset($this->_functions[$funYdx])) {
+            return $this->_functions[$funYdx][0];
+        }
+        return '';
+    }
 }
 
 
@@ -1636,6 +1653,10 @@ class YAPIContext
         //--- (end of generated code: YAPIContext constructor)
     }
 
+    private function AddUdevRule_internal($force)
+    {
+        return "error: Not supported in PHP";
+    }
     //--- (generated code: YAPIContext implementation)
 
     /**
@@ -1671,6 +1692,25 @@ class YAPIContext
 
     //cannot be generated for PHP:
     //private function GetDeviceListValidity_internal()
+
+    /**
+     * Adds a UDEV rule which authorizes all users to access Yoctopuce modules
+     * connected to the USB ports. This function works only under Linux. The process that
+     * calls this method must have root privileges because this method changes the Linux configuration.
+     *
+     * @param boolean $force : if true, overwrites any existing rule.
+     *
+     * @return string : an empty string if the rule has been added.
+     *
+     * On failure, returns a string that starts with "error:".
+     */
+    public function AddUdevRule($force)
+    {
+        return $this->AddUdevRule_internal($force);
+    }
+
+    //cannot be generated for PHP:
+    //private function AddUdevRule_internal($force)
 
     /**
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
@@ -2170,7 +2210,7 @@ class YAPI
                         if (isset($hub->serialByYdx[$devydx])) {
                             $serial = $hub->serialByYdx[$devydx];
                             if (isset(self::$_devs[$serial])) {
-                                $funcid = ($funydx == 0xf ? 'time' : self::$_devs[$serial]->functionId($funydx));
+                                $funcid = ($funydx == 0xf ? 'time' : self::$_devs[$serial]->functionIdByFunYdx($funydx));
                                 if ($funcid != "") {
                                     $value = substr($ev, 3);
                                     switch ($firstCode) {
@@ -3091,6 +3131,21 @@ class YAPI
         return self::$_yapiContext->GetDeviceListValidity();
     }
     /**
+     * Adds a UDEV rule which authorizes all users to access Yoctopuce modules
+     * connected to the USB ports. This function works only under Linux. The process that
+     * calls this method must have root privileges because this method changes the Linux configuration.
+     *
+     * @param boolean $force : if true, overwrites any existing rule.
+     *
+     * @return string : an empty string if the rule has been added.
+     *
+     * On failure, returns a string that starts with "error:".
+     */
+    public static function AddUdevRule($force)
+    {
+        return self::$_yapiContext->AddUdevRule($force);
+    }
+    /**
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
      * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
@@ -3168,7 +3223,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.43781";
+        return "1.10.44029";
     }
 
     /**
