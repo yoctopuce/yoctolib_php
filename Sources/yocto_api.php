@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 44026 2021-02-25 09:48:41Z web $
+ * $Id: yocto_api.php 44114 2021-03-03 17:47:55Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -3223,7 +3223,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.44029";
+        return "1.10.44175";
     }
 
     /**
@@ -10612,7 +10612,7 @@ class YDataLogger extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the data logger, for instance
-     *         RX420MA1.dataLogger.
+     *         LIGHTMK3.dataLogger.
      *
      * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
      */
@@ -10771,7 +10771,7 @@ class YDataLogger extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the data logger, for instance
- *         RX420MA1.dataLogger.
+ *         LIGHTMK3.dataLogger.
  *
  * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
  */
