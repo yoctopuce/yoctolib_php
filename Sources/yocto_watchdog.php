@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_watchdog.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_watchdog.php 44548 2021-04-13 09:56:42Z mvuilleu $
  *
  *  Implements YWatchdog, the high-level API for Watchdog functions
  *
@@ -64,6 +64,7 @@ if(!defined('Y_DELAYEDPULSETIMER_INVALID'))  define('Y_DELAYEDPULSETIMER_INVALID
 if(!defined('Y_COUNTDOWN_INVALID'))          define('Y_COUNTDOWN_INVALID',         YAPI_INVALID_LONG);
 if(!defined('Y_TRIGGERDELAY_INVALID'))       define('Y_TRIGGERDELAY_INVALID',      YAPI_INVALID_LONG);
 if(!defined('Y_TRIGGERDURATION_INVALID'))    define('Y_TRIGGERDURATION_INVALID',   YAPI_INVALID_LONG);
+if(!defined('Y_LASTTRIGGER_INVALID'))        define('Y_LASTTRIGGER_INVALID',       YAPI_INVALID_UINT);
 //--- (end of YWatchdog definitions)
     #--- (YWatchdog yapiwrapper)
    #--- (end of YWatchdog yapiwrapper)
@@ -106,6 +107,7 @@ class YWatchdog extends YFunction
     const RUNNING_INVALID                = -1;
     const TRIGGERDELAY_INVALID           = YAPI_INVALID_LONG;
     const TRIGGERDURATION_INVALID        = YAPI_INVALID_LONG;
+    const LASTTRIGGER_INVALID            = YAPI_INVALID_UINT;
     //--- (end of YWatchdog declaration)
 
     //--- (YWatchdog attributes)
@@ -121,6 +123,7 @@ class YWatchdog extends YFunction
     protected $_running                  = Y_RUNNING_INVALID;            // OnOff
     protected $_triggerDelay             = Y_TRIGGERDELAY_INVALID;       // Time
     protected $_triggerDuration          = Y_TRIGGERDURATION_INVALID;    // Time
+    protected $_lastTrigger              = Y_LASTTRIGGER_INVALID;        // UInt31
     protected $_firm                     = 0;                            // int
     //--- (end of YWatchdog attributes)
 
@@ -173,6 +176,9 @@ class YWatchdog extends YFunction
             return 1;
         case 'triggerDuration':
             $this->_triggerDuration = intval($val);
+            return 1;
+        case 'lastTrigger':
+            $this->_lastTrigger = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -639,6 +645,25 @@ class YWatchdog extends YFunction
     }
 
     /**
+     * Returns the number of seconds spent since the last output power-up event.
+     *
+     * @return integer : an integer corresponding to the number of seconds spent since the last output power-up event
+     *
+     * On failure, throws an exception or returns YWatchdog::LASTTRIGGER_INVALID.
+     */
+    public function get_lastTrigger()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_LASTTRIGGER_INVALID;
+            }
+        }
+        $res = $this->_lastTrigger;
+        return $res;
+    }
+
+    /**
      * Retrieves a watchdog for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -781,6 +806,9 @@ class YWatchdog extends YFunction
 
     public function setTriggerDuration($newval)
     { return $this->set_triggerDuration($newval); }
+
+    public function lastTrigger()
+    { return $this->get_lastTrigger(); }
 
     /**
      * Continues the enumeration of watchdog started using yFirstWatchdog().

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_lightsensor.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_lightsensor.php 45292 2021-05-25 23:27:54Z mvuilleu $
  *
  *  Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -54,7 +54,7 @@ if(!defined('Y_MEASURETYPE_INVALID'))        define('Y_MEASURETYPE_INVALID',    
 
 //--- (YLightSensor declaration)
 /**
- * YLightSensor Class: light sensor control interface, available for instance in the Yocto-Light-V3,
+ * YLightSensor Class: light sensor control interface, available for instance in the Yocto-Light-V4,
  * the Yocto-Proximity or the Yocto-RangeFinder
  *
  * The YLightSensor class allows you to read and configure Yoctopuce light sensors.
@@ -194,7 +194,7 @@ class YLightSensor extends YSensor
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the light sensor, for instance
-     *         LIGHTMK3.lightSensor.
+     *         LIGHTMK4.lightSensor.
      *
      * @return YLightSensor : a YLightSensor object allowing you to drive the light sensor.
      */
@@ -281,7 +281,7 @@ class YLightSensor extends YSensor
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the light sensor, for instance
- *         LIGHTMK3.lightSensor.
+ *         LIGHTMK4.lightSensor.
  *
  * @return YLightSensor : a YLightSensor object allowing you to drive the light sensor.
  */

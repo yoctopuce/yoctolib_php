@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 44023 2021-02-25 09:23:38Z web $
+ *  $Id: yocto_quadraturedecoder.php 45292 2021-05-25 23:27:54Z mvuilleu $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -43,10 +43,9 @@
 //--- (YQuadratureDecoder definitions)
 if(!defined('Y_DECODING_OFF'))               define('Y_DECODING_OFF',              0);
 if(!defined('Y_DECODING_ON'))                define('Y_DECODING_ON',               1);
-if(!defined('Y_DECODING_DIV2'))              define('Y_DECODING_DIV2',             2);
-if(!defined('Y_DECODING_DIV4'))              define('Y_DECODING_DIV4',             3);
 if(!defined('Y_DECODING_INVALID'))           define('Y_DECODING_INVALID',          -1);
 if(!defined('Y_SPEED_INVALID'))              define('Y_SPEED_INVALID',             YAPI_INVALID_DOUBLE);
+if(!defined('Y_EDGESPERCYCLE_INVALID'))      define('Y_EDGESPERCYCLE_INVALID',     YAPI_INVALID_UINT);
 //--- (end of YQuadratureDecoder definitions)
     #--- (YQuadratureDecoder yapiwrapper)
    #--- (end of YQuadratureDecoder yapiwrapper)
@@ -64,14 +63,14 @@ class YQuadratureDecoder extends YSensor
     const SPEED_INVALID                  = YAPI_INVALID_DOUBLE;
     const DECODING_OFF                   = 0;
     const DECODING_ON                    = 1;
-    const DECODING_DIV2                  = 2;
-    const DECODING_DIV4                  = 3;
     const DECODING_INVALID               = -1;
+    const EDGESPERCYCLE_INVALID          = YAPI_INVALID_UINT;
     //--- (end of YQuadratureDecoder declaration)
 
     //--- (YQuadratureDecoder attributes)
     protected $_speed                    = Y_SPEED_INVALID;              // MeasureVal
-    protected $_decoding                 = Y_DECODING_INVALID;           // OffOnDiv
+    protected $_decoding                 = Y_DECODING_INVALID;           // OnOff
+    protected $_edgesPerCycle            = Y_EDGESPERCYCLE_INVALID;      // UInt31
     //--- (end of YQuadratureDecoder attributes)
 
     function __construct($str_func)
@@ -93,6 +92,9 @@ class YQuadratureDecoder extends YSensor
             return 1;
         case 'decoding':
             $this->_decoding = intval($val);
+            return 1;
+        case 'edgesPerCycle':
+            $this->_edgesPerCycle = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -116,9 +118,9 @@ class YQuadratureDecoder extends YSensor
     }
 
     /**
-     * Returns the increments frequency, in Hz.
+     * Returns the cycle frequency, in Hz.
      *
-     * @return double : a floating point number corresponding to the increments frequency, in Hz
+     * @return double : a floating point number corresponding to the cycle frequency, in Hz
      *
      * On failure, throws an exception or returns YQuadratureDecoder::SPEED_INVALID.
      */
@@ -137,15 +139,14 @@ class YQuadratureDecoder extends YSensor
     /**
      * Returns the current activation state of the quadrature decoder.
      *
-     * @return integer : a value among YQuadratureDecoder::DECODING_OFF, YQuadratureDecoder::DECODING_ON,
-     * YQuadratureDecoder::DECODING_DIV2 and YQuadratureDecoder::DECODING_DIV4 corresponding to the current
-     * activation state of the quadrature decoder
+     * @return integer : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
+     * according to the current activation state of the quadrature decoder
      *
      * On failure, throws an exception or returns YQuadratureDecoder::DECODING_INVALID.
      */
     public function get_decoding()
     {
-        // $res                    is a enumOFFONDIV;
+        // $res                    is a enumONOFF;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
                 return Y_DECODING_INVALID;
@@ -160,9 +161,8 @@ class YQuadratureDecoder extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param integer $newval : a value among YQuadratureDecoder::DECODING_OFF,
-     * YQuadratureDecoder::DECODING_ON, YQuadratureDecoder::DECODING_DIV2 and
-     * YQuadratureDecoder::DECODING_DIV4 corresponding to the activation state of the quadrature decoder
+     * @param integer $newval : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
+     * according to the activation state of the quadrature decoder
      *
      * @return integer : YAPI::SUCCESS if the call succeeds.
      *
@@ -172,6 +172,42 @@ class YQuadratureDecoder extends YSensor
     {
         $rest_val = strval($newval);
         return $this->_setAttr("decoding",$rest_val);
+    }
+
+    /**
+     * Returns the edge count per full cycle configuration setting.
+     *
+     * @return integer : an integer corresponding to the edge count per full cycle configuration setting
+     *
+     * On failure, throws an exception or returns YQuadratureDecoder::EDGESPERCYCLE_INVALID.
+     */
+    public function get_edgesPerCycle()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_EDGESPERCYCLE_INVALID;
+            }
+        }
+        $res = $this->_edgesPerCycle;
+        return $res;
+    }
+
+    /**
+     * Changes the edge count per full cycle configuration setting.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
+     *
+     * @param integer $newval : an integer corresponding to the edge count per full cycle configuration setting
+     *
+     * @return integer : YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_edgesPerCycle($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("edgesPerCycle",$rest_val);
     }
 
     /**
@@ -224,6 +260,12 @@ class YQuadratureDecoder extends YSensor
 
     public function setDecoding($newval)
     { return $this->set_decoding($newval); }
+
+    public function edgesPerCycle()
+    { return $this->get_edgesPerCycle(); }
+
+    public function setEdgesPerCycle($newval)
+    { return $this->set_edgesPerCycle($newval); }
 
     /**
      * Continues the enumeration of quadrature decoders started using yFirstQuadratureDecoder().

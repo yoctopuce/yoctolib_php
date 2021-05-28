@@ -38,8 +38,8 @@
   Print("Module to use: <input name='serial' value='$serial'><br>");
   if(isset($_GET['voltage'])) {
       $voltage = $_GET['voltage'];
-      $vout1->set_dutyCycle($voltage);      // immediate change
-      $vout2->dutyCycleMove($voltage,3000); // smooth change
+      $vout1->set_currentVoltage($voltage);      // immediate change
+      $vout2->voltageMove($voltage,3000); // smooth change
    }
   YAPI::FreeAPI();
 ?>

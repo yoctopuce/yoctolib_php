@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_colorledcluster.php 44921 2021-05-06 08:03:05Z mvuilleu $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -43,6 +43,7 @@
 //--- (YColorLedCluster definitions)
 if(!defined('Y_LEDTYPE_RGB'))                define('Y_LEDTYPE_RGB',               0);
 if(!defined('Y_LEDTYPE_RGBW'))               define('Y_LEDTYPE_RGBW',              1);
+if(!defined('Y_LEDTYPE_WS2811'))             define('Y_LEDTYPE_WS2811',            2);
 if(!defined('Y_LEDTYPE_INVALID'))            define('Y_LEDTYPE_INVALID',           -1);
 if(!defined('Y_ACTIVELEDCOUNT_INVALID'))     define('Y_ACTIVELEDCOUNT_INVALID',    YAPI_INVALID_UINT);
 if(!defined('Y_MAXLEDCOUNT_INVALID'))        define('Y_MAXLEDCOUNT_INVALID',       YAPI_INVALID_UINT);
@@ -72,6 +73,7 @@ class YColorLedCluster extends YFunction
     const ACTIVELEDCOUNT_INVALID         = YAPI_INVALID_UINT;
     const LEDTYPE_RGB                    = 0;
     const LEDTYPE_RGBW                   = 1;
+    const LEDTYPE_WS2811                 = 2;
     const LEDTYPE_INVALID                = -1;
     const MAXLEDCOUNT_INVALID            = YAPI_INVALID_UINT;
     const BLINKSEQMAXCOUNT_INVALID       = YAPI_INVALID_UINT;
@@ -163,8 +165,8 @@ class YColorLedCluster extends YFunction
     /**
      * Returns the RGB LED type currently handled by the device.
      *
-     * @return integer : either YColorLedCluster::LEDTYPE_RGB or YColorLedCluster::LEDTYPE_RGBW, according
-     * to the RGB LED type currently handled by the device
+     * @return integer : a value among YColorLedCluster::LEDTYPE_RGB, YColorLedCluster::LEDTYPE_RGBW and
+     * YColorLedCluster::LEDTYPE_WS2811 corresponding to the RGB LED type currently handled by the device
      *
      * On failure, throws an exception or returns YColorLedCluster::LEDTYPE_INVALID.
      */
@@ -185,8 +187,8 @@ class YColorLedCluster extends YFunction
      * Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param integer $newval : either YColorLedCluster::LEDTYPE_RGB or YColorLedCluster::LEDTYPE_RGBW,
-     * according to the RGB LED type currently handled by the device
+     * @param integer $newval : a value among YColorLedCluster::LEDTYPE_RGB, YColorLedCluster::LEDTYPE_RGBW
+     * and YColorLedCluster::LEDTYPE_WS2811 corresponding to the RGB LED type currently handled by the device
      *
      * @return integer : YAPI::SUCCESS if the call succeeds.
      *
