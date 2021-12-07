@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 45292 2021-05-25 23:27:54Z mvuilleu $
+ * $Id: yocto_api.php 46928 2021-10-28 08:33:32Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -55,6 +55,7 @@ define('YAPI_DOUBLE_ACCES',            -11);   // you have two process that try 
 define('YAPI_UNAUTHORIZED',            -12);   // unauthorized access to password-protected device
 define('YAPI_RTC_NOT_READY',           -13);   // real-time clock has not been initialized (or time was lost)
 define('YAPI_FILE_NOT_FOUND',          -14);   // the file is not found
+define('YAPI_SSL_ERROR',               -15);   // Error reported by mbedSSL
 
 define('YAPI_INVALID_INT',             0x7fffffff);
 define('YAPI_INVALID_UINT',            -1);
@@ -1837,6 +1838,7 @@ class YAPI
     const UNAUTHORIZED          = -12;     // unauthorized access to password-protected device
     const RTC_NOT_READY         = -13;     // real-time clock has not been initialized (or time was lost)
     const FILE_NOT_FOUND        = -14;     // the file is not found
+    const SSL_ERROR             = -15;     // Error reported by mbedSSL
 //--- (end of generated code: YFunction return codes)
 
     // yInitAPI constants (not really useful in JavaScript)
@@ -3223,7 +3225,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.45343";
+        return "1.10.47582";
     }
 
     /**
@@ -3404,7 +3406,8 @@ class YAPI
     }
 
     /**
-     * Setup the Yoctopuce library to use modules connected on a given machine. The
+     * Setup the Yoctopuce library to use modules connected on a given machine. Idealy this
+     * call will be made once at the begining of your application.  The
      * parameter will determine how the API will work. Use the following values:
      *
      * <b>usb</b>: When the usb keyword is used, the API will work with
@@ -3437,7 +3440,9 @@ class YAPI
      *
      * http://username:password@address:port
      *
-     * You can call <i>RegisterHub</i> several times to connect to several machines.
+     * You can call <i>RegisterHub</i> several times to connect to several machines. On
+     * the other hand, it is useless and even counterproductive to call <i>RegisterHub</i>
+     * with to same address multiple times during the life of the application.
      *
      * @param string $url : a string containing either "usb","callback" or the
      *         root URL of the hub to monitor
@@ -4599,16 +4604,26 @@ class YDataStream
         if ($this->_isAvg) {
             while ($idx + 3 < sizeof($udat)) {
                 while(sizeof($dat) > 0) { array_pop($dat); };
-                $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))));
-                $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
-                $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << (16))));
+                if (($udat[$idx] == 65535) && ($udat[$idx + 1] == 65535)) {
+                    $dat[] = NAN;
+                    $dat[] = NAN;
+                    $dat[] = NAN;
+                } else {
+                    $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))));
+                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                    $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << (16))));
+                }
                 $idx = $idx + 6;
                 $this->_values[] = $dat;
             }
         } else {
             while ($idx + 1 < sizeof($udat)) {
                 while(sizeof($dat) > 0) { array_pop($dat); };
-                $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                if (($udat[$idx] == 65535) && ($udat[$idx + 1] == 65535)) {
+                    $dat[] = NAN;
+                } else {
+                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                }
                 $this->_values[] = $dat;
                 $idx = $idx + 2;
             }
@@ -5171,6 +5186,7 @@ class YDataSet
         // $tim                    is a float;
         // $itv                    is a float;
         // $fitv                   is a float;
+        // $avgv                   is a float;
         // $end_                   is a float;
         // $nCols                  is a int;
         // $minCol                 is a int;
@@ -5221,8 +5237,9 @@ class YDataSet
             } else {
                 $end_ = $tim + $itv;
             }
-            if (($end_ > $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($tim < $this->_endTimeMs))) {
-                $this->_measures[] = new YMeasure($tim / 1000, $end_ / 1000, $each[$minCol], $each[$avgCol], $each[$maxCol]);
+            $avgv = $each[$avgCol];
+            if (($end_ > $this->_startTimeMs) && (($this->_endTimeMs == 0) || ($tim < $this->_endTimeMs)) && !(is_nan($avgv))) {
+                $this->_measures[] = new YMeasure($tim / 1000, $end_ / 1000, $each[$minCol], $avgv, $each[$maxCol]);
             }
             $tim = $end_;
         }
@@ -9836,7 +9853,8 @@ function yEnableExceptions()
 }
 
 /**
- * Setup the Yoctopuce library to use modules connected on a given machine. The
+ * Setup the Yoctopuce library to use modules connected on a given machine. Idealy this
+ * call will be made once at the begining of your application.  The
  * parameter will determine how the API will work. Use the following values:
  *
  * <b>usb</b>: When the usb keyword is used, the API will work with
@@ -9869,7 +9887,9 @@ function yEnableExceptions()
  *
  * http://username:password@address:port
  *
- * You can call <i>RegisterHub</i> several times to connect to several machines.
+ * You can call <i>RegisterHub</i> several times to connect to several machines. On
+ * the other hand, it is useless and even counterproductive to call <i>RegisterHub</i>
+ * with to same address multiple times during the life of the application.
  *
  * @param string $url : a string containing either "usb","callback" or the
  *         root URL of the hub to monitor
@@ -10612,7 +10632,7 @@ class YDataLogger extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the data logger, for instance
-     *         RX420MA1.dataLogger.
+     *         LIGHTMK4.dataLogger.
      *
      * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
      */
@@ -10771,7 +10791,7 @@ class YDataLogger extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the data logger, for instance
- *         RX420MA1.dataLogger.
+ *         LIGHTMK4.dataLogger.
  *
  * @return YDataLogger : a YDataLogger object allowing you to drive the data logger.
  */

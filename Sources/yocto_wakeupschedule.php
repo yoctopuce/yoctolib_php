@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupschedule.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_wakeupschedule.php 45843 2021-08-04 07:51:59Z mvuilleu $
  *
  *  Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -55,7 +55,7 @@ if(!defined('Y_NEXTOCCURENCE_INVALID'))      define('Y_NEXTOCCURENCE_INVALID',  
 //--- (YWakeUpSchedule declaration)
 /**
  * YWakeUpSchedule Class: wake up schedule control interface, available for instance in the
- * YoctoHub-GSM-3G-EU, the YoctoHub-GSM-3G-NA, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
  *
  * The YWakeUpSchedule class implements a wake up condition. The wake up time is
  * specified as a set of months and/or days and/or hours and/or minutes when the
@@ -384,7 +384,7 @@ class YWakeUpSchedule extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the wake up schedule, for instance
-     *         YHUBGSM3.wakeUpSchedule1.
+     *         YHUBGSM1.wakeUpSchedule1.
      *
      * @return YWakeUpSchedule : a YWakeUpSchedule object allowing you to drive the wake up schedule.
      */
@@ -530,7 +530,7 @@ class YWakeUpSchedule extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the wake up schedule, for instance
- *         YHUBGSM3.wakeUpSchedule1.
+ *         YHUBGSM1.wakeUpSchedule1.
  *
  * @return YWakeUpSchedule : a YWakeUpSchedule object allowing you to drive the wake up schedule.
  */
