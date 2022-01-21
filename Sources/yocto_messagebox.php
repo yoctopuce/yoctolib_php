@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ * $Id: yocto_messagebox.php 48014 2022-01-12 08:06:41Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -771,7 +771,7 @@ class YSms
                     $n = $n - 1;
                     $v2 = 4 * ord($res[$n]) + $v1;
                     if (ord($expasc[$i-3]) == 45) {
-                        $v2 += 128;
+                        $v2 = $v2 + 128;
                     }
                     $res[$n] = pack('C', $v2);
                 }

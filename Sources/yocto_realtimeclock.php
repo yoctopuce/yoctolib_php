@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 45843 2021-08-04 07:51:59Z mvuilleu $
+ *  $Id: yocto_realtimeclock.php 48183 2022-01-20 10:26:11Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -54,7 +54,7 @@ if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',      
 //--- (YRealTimeClock declaration)
 /**
  * YRealTimeClock Class: real-time clock control interface, available for instance in the
- * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-4G, the YoctoHub-Wireless-SR, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
  *
  * The YRealTimeClock class provide access to the embedded real-time clock available on some Yoctopuce
  * devices. It can provide current date and time, even after a power outage
@@ -246,7 +246,7 @@ class YRealTimeClock extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the real-time clock, for instance
-     *         YHUBGSM1.realTimeClock.
+     *         YHUBGSM5.realTimeClock.
      *
      * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the real-time clock.
      */
@@ -342,7 +342,7 @@ class YRealTimeClock extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the real-time clock, for instance
- *         YHUBGSM1.realTimeClock.
+ *         YHUBGSM5.realTimeClock.
  *
  * @return YRealTimeClock : a YRealTimeClock object allowing you to drive the real-time clock.
  */

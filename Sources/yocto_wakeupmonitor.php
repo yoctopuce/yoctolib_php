@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupmonitor.php 45843 2021-08-04 07:51:59Z mvuilleu $
+ *  $Id: yocto_wakeupmonitor.php 48183 2022-01-20 10:26:11Z mvuilleu $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -62,7 +62,7 @@ if(!defined('Y_RTCTIME_INVALID'))            define('Y_RTCTIME_INVALID',        
 //--- (YWakeUpMonitor declaration)
 /**
  * YWakeUpMonitor Class: wake-up monitor control interface, available for instance in the
- * YoctoHub-GSM-2G, the YoctoHub-GSM-3G-EU, the YoctoHub-GSM-4G or the YoctoHub-Wireless-n
+ * YoctoHub-GSM-4G, the YoctoHub-Wireless-SR, the YoctoHub-Wireless-g or the YoctoHub-Wireless-n
  *
  * The YWakeUpMonitor class handles globally all wake-up sources, as well
  * as automated sleep mode.
@@ -321,7 +321,7 @@ class YWakeUpMonitor extends YFunction
      * call registerHub() at application initialization time.
      *
      * @param string $func : a string that uniquely characterizes the wake-up monitor, for instance
-     *         YHUBGSM1.wakeUpMonitor.
+     *         YHUBGSM5.wakeUpMonitor.
      *
      * @return YWakeUpMonitor : a YWakeUpMonitor object allowing you to drive the wake-up monitor.
      */
@@ -514,7 +514,7 @@ class YWakeUpMonitor extends YFunction
  * call registerHub() at application initialization time.
  *
  * @param string $func : a string that uniquely characterizes the wake-up monitor, for instance
- *         YHUBGSM1.wakeUpMonitor.
+ *         YHUBGSM5.wakeUpMonitor.
  *
  * @return YWakeUpMonitor : a YWakeUpMonitor object allowing you to drive the wake-up monitor.
  */
