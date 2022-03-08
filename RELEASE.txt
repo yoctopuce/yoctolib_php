@@ -1,4 +1,4 @@
-PHP v1.10.48220
+PHP v1.10.48855
 
-- Fix YSMS addText method
-- Fix search feature in HTML documentation
+- Add support for firmware update with HTTP callback
+- Fix HTTP callback that was not working with YoctoHub firmware betweend 48433 and 48716

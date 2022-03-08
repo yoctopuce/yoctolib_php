@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 48183 2022-01-20 10:26:11Z mvuilleu $
+ *  $Id: yocto_network.php 48692 2022-02-24 22:30:52Z mvuilleu $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -72,6 +72,7 @@ if(!defined('Y_MACADDRESS_INVALID'))         define('Y_MACADDRESS_INVALID',     
 if(!defined('Y_IPADDRESS_INVALID'))          define('Y_IPADDRESS_INVALID',         YAPI_INVALID_STRING);
 if(!defined('Y_SUBNETMASK_INVALID'))         define('Y_SUBNETMASK_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_ROUTER_INVALID'))             define('Y_ROUTER_INVALID',            YAPI_INVALID_STRING);
+if(!defined('Y_CURRENTDNS_INVALID'))         define('Y_CURRENTDNS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_IPCONFIG_INVALID'))           define('Y_IPCONFIG_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_PRIMARYDNS_INVALID'))         define('Y_PRIMARYDNS_INVALID',        YAPI_INVALID_STRING);
 if(!defined('Y_SECONDARYDNS_INVALID'))       define('Y_SECONDARYDNS_INVALID',      YAPI_INVALID_STRING);
@@ -112,6 +113,7 @@ class YNetwork extends YFunction
     const IPADDRESS_INVALID              = YAPI_INVALID_STRING;
     const SUBNETMASK_INVALID             = YAPI_INVALID_STRING;
     const ROUTER_INVALID                 = YAPI_INVALID_STRING;
+    const CURRENTDNS_INVALID             = YAPI_INVALID_STRING;
     const IPCONFIG_INVALID               = YAPI_INVALID_STRING;
     const PRIMARYDNS_INVALID             = YAPI_INVALID_STRING;
     const SECONDARYDNS_INVALID           = YAPI_INVALID_STRING;
@@ -157,6 +159,7 @@ class YNetwork extends YFunction
     protected $_ipAddress                = Y_IPADDRESS_INVALID;          // IPAddress
     protected $_subnetMask               = Y_SUBNETMASK_INVALID;         // IPAddress
     protected $_router                   = Y_ROUTER_INVALID;             // IPAddress
+    protected $_currentDNS               = Y_CURRENTDNS_INVALID;         // IPAddress
     protected $_ipConfig                 = Y_IPCONFIG_INVALID;           // IPConfig
     protected $_primaryDNS               = Y_PRIMARYDNS_INVALID;         // IPAddress
     protected $_secondaryDNS             = Y_SECONDARYDNS_INVALID;       // IPAddress
@@ -206,6 +209,9 @@ class YNetwork extends YFunction
             return 1;
         case 'router':
             $this->_router = $val;
+            return 1;
+        case 'currentDNS':
+            $this->_currentDNS = $val;
             return 1;
         case 'ipConfig':
             $this->_ipConfig = $val;
@@ -377,6 +383,25 @@ class YNetwork extends YFunction
             }
         }
         $res = $this->_router;
+        return $res;
+    }
+
+    /**
+     * Returns the IP address of the DNS server currently used by the device.
+     *
+     * @return string : a string corresponding to the IP address of the DNS server currently used by the device
+     *
+     * On failure, throws an exception or returns YNetwork::CURRENTDNS_INVALID.
+     */
+    public function get_currentDNS()
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_CURRENTDNS_INVALID;
+            }
+        }
+        $res = $this->_currentDNS;
         return $res;
     }
 
@@ -1284,6 +1309,9 @@ class YNetwork extends YFunction
 
     public function router()
     { return $this->get_router(); }
+
+    public function currentDNS()
+    { return $this->get_currentDNS(); }
 
     public function ipConfig()
     { return $this->get_ipConfig(); }

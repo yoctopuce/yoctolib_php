@@ -34,7 +34,7 @@
   Print("Module to use: <input name='serial' value='$serial'><br>\n");
 
   // sample code reading MCP9804 temperature sensor
-  $i2cport->set_i2cMode("400kbps");
+  $i2cport->set_i2cMode("100kbps");
   $i2cport->set_i2cVoltageLevel(Y_I2CVOLTAGELEVEL_3V3);
   $i2cport->reset();
   Print("****************************<br>\n");
