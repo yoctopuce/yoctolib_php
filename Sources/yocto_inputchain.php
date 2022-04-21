@@ -41,6 +41,9 @@
 //--- (YInputChain return codes)
 //--- (end of YInputChain return codes)
 //--- (YInputChain definitions)
+if(!defined('Y_LOOPBACKTEST_OFF'))           define('Y_LOOPBACKTEST_OFF',          0);
+if(!defined('Y_LOOPBACKTEST_ON'))            define('Y_LOOPBACKTEST_ON',           1);
+if(!defined('Y_LOOPBACKTEST_INVALID'))       define('Y_LOOPBACKTEST_INVALID',      -1);
 if(!defined('Y_EXPECTEDNODES_INVALID'))      define('Y_EXPECTEDNODES_INVALID',     YAPI_INVALID_UINT);
 if(!defined('Y_DETECTEDNODES_INVALID'))      define('Y_DETECTEDNODES_INVALID',     YAPI_INVALID_UINT);
 if(!defined('Y_REFRESHRATE_INVALID'))        define('Y_REFRESHRATE_INVALID',       YAPI_INVALID_UINT);
@@ -73,6 +76,9 @@ class YInputChain extends YFunction
 {
     const EXPECTEDNODES_INVALID          = YAPI_INVALID_UINT;
     const DETECTEDNODES_INVALID          = YAPI_INVALID_UINT;
+    const LOOPBACKTEST_OFF               = 0;
+    const LOOPBACKTEST_ON                = 1;
+    const LOOPBACKTEST_INVALID           = -1;
     const REFRESHRATE_INVALID            = YAPI_INVALID_UINT;
     const BITCHAIN1_INVALID              = YAPI_INVALID_STRING;
     const BITCHAIN2_INVALID              = YAPI_INVALID_STRING;
@@ -88,6 +94,7 @@ class YInputChain extends YFunction
     //--- (YInputChain attributes)
     protected $_expectedNodes            = Y_EXPECTEDNODES_INVALID;      // UInt31
     protected $_detectedNodes            = Y_DETECTEDNODES_INVALID;      // UInt31
+    protected $_loopbackTest             = Y_LOOPBACKTEST_INVALID;       // OnOff
     protected $_refreshRate              = Y_REFRESHRATE_INVALID;        // UInt31
     protected $_bitChain1                = Y_BITCHAIN1_INVALID;          // Text
     protected $_bitChain2                = Y_BITCHAIN2_INVALID;          // Text
@@ -124,6 +131,9 @@ class YInputChain extends YFunction
             return 1;
         case 'detectedNodes':
             $this->_detectedNodes = intval($val);
+            return 1;
+        case 'loopbackTest':
+            $this->_loopbackTest = intval($val);
             return 1;
         case 'refreshRate':
             $this->_refreshRate = intval($val);
@@ -212,6 +222,46 @@ class YInputChain extends YFunction
         }
         $res = $this->_detectedNodes;
         return $res;
+    }
+
+    /**
+     * Returns the activation state of the exhaustive chain connectivity test.
+     * The connectivity test requires a cable connecting the end of the chain
+     * to the loopback test connector.
+     *
+     * @return integer : either YInputChain::LOOPBACKTEST_OFF or YInputChain::LOOPBACKTEST_ON, according to
+     * the activation state of the exhaustive chain connectivity test
+     *
+     * On failure, throws an exception or returns YInputChain::LOOPBACKTEST_INVALID.
+     */
+    public function get_loopbackTest()
+    {
+        // $res                    is a enumONOFF;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_LOOPBACKTEST_INVALID;
+            }
+        }
+        $res = $this->_loopbackTest;
+        return $res;
+    }
+
+    /**
+     * Changes the activation state of the exhaustive chain connectivity test.
+     * The connectivity test requires a cable connecting the end of the chain
+     * to the loopback test connector.
+     *
+     * @param integer $newval : either YInputChain::LOOPBACKTEST_OFF or YInputChain::LOOPBACKTEST_ON,
+     * according to the activation state of the exhaustive chain connectivity test
+     *
+     * @return integer : YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_loopbackTest($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("loopbackTest",$rest_val);
     }
 
     /**
@@ -705,6 +755,12 @@ class YInputChain extends YFunction
 
     public function detectedNodes()
     { return $this->get_detectedNodes(); }
+
+    public function loopbackTest()
+    { return $this->get_loopbackTest(); }
+
+    public function setLoopbackTest($newval)
+    { return $this->set_loopbackTest($newval); }
 
     public function refreshRate()
     { return $this->get_refreshRate(); }

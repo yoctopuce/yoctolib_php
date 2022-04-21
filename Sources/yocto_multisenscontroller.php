@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multisenscontroller.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_multisenscontroller.php 49501 2022-04-21 07:09:25Z mvuilleu $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *
@@ -46,6 +46,7 @@ if(!defined('Y_MAINTENANCEMODE_TRUE'))       define('Y_MAINTENANCEMODE_TRUE',   
 if(!defined('Y_MAINTENANCEMODE_INVALID'))    define('Y_MAINTENANCEMODE_INVALID',   -1);
 if(!defined('Y_NSENSORS_INVALID'))           define('Y_NSENSORS_INVALID',          YAPI_INVALID_UINT);
 if(!defined('Y_MAXSENSORS_INVALID'))         define('Y_MAXSENSORS_INVALID',        YAPI_INVALID_UINT);
+if(!defined('Y_LASTADDRESSDETECTED_INVALID')) define('Y_LASTADDRESSDETECTED_INVALID', YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
 //--- (end of YMultiSensController definitions)
     #--- (YMultiSensController yapiwrapper)
@@ -66,6 +67,7 @@ class YMultiSensController extends YFunction
     const MAINTENANCEMODE_FALSE          = 0;
     const MAINTENANCEMODE_TRUE           = 1;
     const MAINTENANCEMODE_INVALID        = -1;
+    const LASTADDRESSDETECTED_INVALID    = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
     //--- (end of YMultiSensController declaration)
 
@@ -73,6 +75,7 @@ class YMultiSensController extends YFunction
     protected $_nSensors                 = Y_NSENSORS_INVALID;           // UInt31
     protected $_maxSensors               = Y_MAXSENSORS_INVALID;         // UInt31
     protected $_maintenanceMode          = Y_MAINTENANCEMODE_INVALID;    // Bool
+    protected $_lastAddressDetected      = Y_LASTADDRESSDETECTED_INVALID; // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     //--- (end of YMultiSensController attributes)
 
@@ -98,6 +101,9 @@ class YMultiSensController extends YFunction
             return 1;
         case 'maintenanceMode':
             $this->_maintenanceMode = intval($val);
+            return 1;
+        case 'lastAddressDetected':
+            $this->_lastAddressDetected = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -130,7 +136,7 @@ class YMultiSensController extends YFunction
      * saveToFlash() method of the module if the
      * modification must be kept. It is recommended to restart the
      * device with  module->reboot() after modifying
-     * (and saving) this settings
+     * (and saving) this settings.
      *
      * @param integer $newval : an integer corresponding to the number of sensors to poll
      *
@@ -202,6 +208,28 @@ class YMultiSensController extends YFunction
         return $this->_setAttr("maintenanceMode",$rest_val);
     }
 
+    /**
+     * Returns the I2C address of the most recently detected sensor. This method can
+     * be used to in case of I2C communication error to determine what is the
+     * last sensor that can be reached, or after a call to setupAddress
+     * to make sure that the address change was properly processed.
+     *
+     * @return integer : an integer corresponding to the I2C address of the most recently detected sensor
+     *
+     * On failure, throws an exception or returns YMultiSensController::LASTADDRESSDETECTED_INVALID.
+     */
+    public function get_lastAddressDetected()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_LASTADDRESSDETECTED_INVALID;
+            }
+        }
+        $res = $this->_lastAddressDetected;
+        return $res;
+    }
+
     public function get_command()
     {
         // $res                    is a string;
@@ -263,9 +291,10 @@ class YMultiSensController extends YFunction
      * Configures the I2C address of the only sensor connected to the device.
      * It is recommended to put the the device in maintenance mode before
      * changing sensor addresses.  This method is only intended to work with a single
-     * sensor connected to the device, if several sensors are connected, the result
+     * sensor connected to the device. If several sensors are connected, the result
      * is unpredictable.
-     * Note that the device is probably expecting to find a string of sensors with specific
+     *
+     * Note that the device is expecting to find a sensor or a string of sensors with specific
      * addresses. Check the device documentation to find out which addresses should be used.
      *
      * @param integer $addr : new address of the connected sensor
@@ -276,8 +305,34 @@ class YMultiSensController extends YFunction
     public function setupAddress($addr)
     {
         // $cmd                    is a str;
+        // $res                    is a int;
         $cmd = sprintf('A%d', $addr);
-        return $this->set_command($cmd);
+        $res = $this->set_command($cmd);
+        if (!($res == YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to trigger address change',YAPI_IO_ERROR);
+        YAPI.Sleep(1500);
+        $res = $this->get_lastAddressDetected();
+        if (!($res > 0)) return $this->_throw( YAPI_IO_ERROR, 'IR sensor not found',YAPI_IO_ERROR);
+        if (!($res == $addr)) return $this->_throw( YAPI_IO_ERROR, 'address change failed',YAPI_IO_ERROR);
+        return YAPI_SUCCESS;
+    }
+
+    /**
+     * Triggers the I2C address detection procedure for the only sensor connected to the device.
+     * This method is only intended to work with a single sensor connected to the device.
+     * If several sensors are connected, the result is unpredictable.
+     *
+     * @return integer : the I2C address of the detected sensor, or 0 if none is found
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function get_sensorAddress()
+    {
+        // $res                    is a int;
+        $res = $this->set_command('a');
+        if (!($res == YAPI_SUCCESS)) return $this->_throw( YAPI_IO_ERROR, 'unable to trigger address detection',$res);
+        YAPI.Sleep(1000);
+        $res = $this->get_lastAddressDetected();
+        return $res;
     }
 
     public function nSensors()
@@ -294,6 +349,9 @@ class YMultiSensController extends YFunction
 
     public function setMaintenanceMode($newval)
     { return $this->set_maintenanceMode($newval); }
+
+    public function lastAddressDetected()
+    { return $this->get_lastAddressDetected(); }
 
     public function command()
     { return $this->get_command(); }

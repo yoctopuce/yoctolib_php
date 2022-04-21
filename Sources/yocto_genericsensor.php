@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_genericsensor.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_genericsensor.php 49385 2022-04-06 00:49:27Z mvuilleu $
  *
  *  Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -62,7 +62,7 @@ if(!defined('Y_SIGNALBIAS_INVALID'))         define('Y_SIGNALBIAS_INVALID',     
 //--- (YGenericSensor declaration)
 /**
  * YGenericSensor Class: GenericSensor control interface, available for instance in the
- * Yocto-0-10V-Rx, the Yocto-4-20mA-Rx, the Yocto-Serial or the Yocto-milliVolt-Rx
+ * Yocto-0-10V-Rx, the Yocto-4-20mA-Rx, the Yocto-SPI or the Yocto-milliVolt-Rx
  *
  * The YGenericSensor class allows you to read and configure Yoctopuce signal
  * transducers. It inherits from YSensor class the core functions to read measurements,

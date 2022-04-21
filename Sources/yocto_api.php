@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 48790 2022-03-04 11:01:33Z seb $
+ * $Id: yocto_api.php 49021 2022-03-15 10:38:01Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -795,8 +795,8 @@ class YTcpReq
             // write request body, if any, once header is fully received
             if ($this->reqbody != '' && strpos($this->meta, "\r\n\r\n") !== false) {
                 $bodylen = strlen($this->reqbody);
-                $written = @fwrite($this->skt, $this->reqbody, $bodylen);
-                if ($written !== false && $written > 0) {
+                $written = fwrite($this->skt, $this->reqbody, $bodylen);
+                if ($written > 0) {
                     $this->reqbody = substr($this->reqbody, $written);
                 }
             }
@@ -2953,23 +2953,6 @@ class YAPI
     }
 
 
-    public static function getHub($str_device)
-    {
-        $dev = self::getDevice($str_device);
-        if (!$dev) {
-            return null;
-        }
-        $rooturl = $dev->getRootUrl();
-        $pos = strpos($rooturl, '/', 7);
-        if ($pos >= 0) {
-            $rooturl = substr($rooturl, 0, $pos + 1);
-        }
-        if (!isset(self::$_hubs[$rooturl])) {
-            return null;
-        }
-        return self::$_hubs[$rooturl];
-    }
-
     /**
      * Retrun the serialnummber of all subdevcies
      * @param string $str_device
@@ -3242,7 +3225,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.48855";
+        return "1.10.49504";
     }
 
     /**
@@ -4306,76 +4289,11 @@ class YFirmwareUpdate
         $this->_force = $force;
     }
 
-    private function _set_progress($progress, $msg)
+    private function _processMore_internal($i)
     {
-        $this->_progress = $progress;
-        $this->_progress_msg = $msg;
-        //$date = new DateTime();
-        //$line = $date->format('Y-m-d H:i:s'). " $progress%: $msg\n";
-        //print($line);
-        //file_put_contents("log.txt",$line,FILE_APPEND);
-    }
-
-    private function _processMore_internal($newupdate)
-    {
-        if ($newupdate) {
-            $this->_set_progress(0, "Firmware update started");
-            $firmware = null;
-            //1% -> 5%
-            $this->_set_progress(1, "Loading firmware");
-            $firmware = file_get_contents($this->_firmwarepath);
-            //5% -> 10%
-            $this->_set_progress(5, "check if module is already in bootloader");
-            $module = YModule::FindModule($this->_serial . ".module");
-            if (!$module->isOnline()) {
-                $this->_set_progress(YAPI::NOT_SUPPORTED, "Bootloader fw update are not yet supported");
-                return $this->_progress;
-            }
-            $hub_serial = YAPI::getHubSerialFrom($this->_serial);
-            if ($hub_serial != $this->_serial) {
-                $this->_set_progress(YAPI::NOT_SUPPORTED, "Sub device fw update are not yet supported");
-                return $this->_progress;
-            }
-            $hub = YModule::FindModule($hub_serial);
-            $hub->isOnline();
-            if (!$hub->isOnline()) {
-                $this->_set_progress(YAPI::IO_ERROR, "Unable to contact YoctoHub");
-                return $this->_progress;
-            }
-            $yhub = YAPI::getHub($this->_serial);
-            $iscallback = $yhub->isCachedHub();
-            $this->_set_progress(20, "Send firmware file");
-            $hub->_uploadEx("firmware", $firmware);
-            if (!$iscallback) {
-                $json_data = $hub->_download('flash.json?a=state');
-                $uploadres = json_decode($json_data, True);
-                if (!array_key_exists('state', $uploadres) || $uploadres['state'] != "valid") {
-                    $this->_set_progress(YAPI::IO_ERROR, "Upload of firmware failed: invalid firmware(" . $uploadres["state"] . ")");
-                    return $this->_progress;
-                }
-                if ($uploadres["progress"] != 100) {
-                    $this->_set_progress(YAPI::IO_ERROR, "Upload of firmware failed: incomplete upload");
-                    return $this->_progress;
-                }
-            }
-            $jsonObject = json_decode($this->_settings, True);
-            $settingsOnly = $jsonObject["api"];
-            unset($settingsOnly["services"]);
-            $startupConf = json_encode($settingsOnly);
-            $this->_set_progress(40, "Upload startupConf.json");
-            $hub->_uploadEx("startupConf.json", $startupConf);
-            $this->_set_progress(40, "Upload firmwareConf");
-            $hub->_uploadEx("firmwareConf", $startupConf);
-            $this->_set_progress(45, "Flash firmware");
-            // the hub itself -> reboot in autoflash mode
-            $hub->set_rebootCountdown(-1003);
-            if ($iscallback) {
-                $this->_set_progress(100, "Success (HTTP Callback)");
-            } else {
-                YAPI::Sleep(7000);
-                $this->_set_progress(100, "Success");
-            }
-        }
+        //not yet implemented
+        $this->_progress = -1;
+        $this->_progress_msg = "Not supported in PHP";
         return $this->_progress;
     }
 

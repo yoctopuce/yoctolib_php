@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ * $Id: yocto_serialport.php 48954 2022-03-14 09:55:13Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -1341,6 +1341,23 @@ class YSerialPort extends YFunction
             $ofs = $ofs + 1;
         }
         return $res;
+    }
+
+    /**
+     * Emits a BREAK condition on the serial interface. When the specified
+     * duration is 0, the BREAK signal will be exactly one character wide.
+     * When the duration is between 1 and 100, the BREAK condition will
+     * be hold for the specified number of milliseconds.
+     *
+     * @param integer $duration : 0 for a standard BREAK, or duration between 1 and 100 ms
+     *
+     * @return integer : YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function sendBreak($duration)
+    {
+        return $this->sendCommand(sprintf('B%d',$duration));
     }
 
     /**
