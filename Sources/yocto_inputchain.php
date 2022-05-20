@@ -60,9 +60,9 @@ if(!defined('Y_CHAINDIAGS_INVALID'))         define('Y_CHAINDIAGS_INVALID',     
     #--- (YInputChain yapiwrapper)
    #--- (end of YInputChain yapiwrapper)
 
-function yInternalEventCallback($inputChain, $value)
+function yInternalEventCallback($obj, $value)
 {
-    $inputChain->_internalEventHandler($value);
+    $obj->_internalEventHandler($value);
 }
 
 //--- (YInputChain declaration)

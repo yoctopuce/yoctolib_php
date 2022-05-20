@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 49021 2022-03-15 10:38:01Z seb $
+ * $Id: yocto_api.php 49750 2022-05-13 07:10:42Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -3225,7 +3225,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.49504";
+        return "1.10.49822";
     }
 
     /**
@@ -4340,9 +4340,7 @@ class YFirmwareUpdate
     //private function _processMore_internal($newupdate)
 
     /**
-     * Returns a list of all the modules in "firmware update" mode. Only devices
-     * connected over USB are listed. For devices connected to a YoctoHub, you
-     * must connect yourself to the YoctoHub web interface.
+     * Returns a list of all the modules in "firmware update" mode.
      *
      * @return string[] : an array of strings containing the serial numbers of devices in "firmware update" mode.
      */

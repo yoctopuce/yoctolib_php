@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 48954 2022-03-14 09:55:13Z seb $
+ * $Id: yocto_serialport.php 49818 2022-05-19 09:57:42Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -49,6 +49,7 @@ if(!defined('Y_VOLTAGELEVEL_TTL5VR'))        define('Y_VOLTAGELEVEL_TTL5VR',    
 if(!defined('Y_VOLTAGELEVEL_RS232'))         define('Y_VOLTAGELEVEL_RS232',        5);
 if(!defined('Y_VOLTAGELEVEL_RS485'))         define('Y_VOLTAGELEVEL_RS485',        6);
 if(!defined('Y_VOLTAGELEVEL_TTL1V8'))        define('Y_VOLTAGELEVEL_TTL1V8',       7);
+if(!defined('Y_VOLTAGELEVEL_SDI12'))         define('Y_VOLTAGELEVEL_SDI12',        8);
 if(!defined('Y_VOLTAGELEVEL_INVALID'))       define('Y_VOLTAGELEVEL_INVALID',      -1);
 if(!defined('Y_RXCOUNT_INVALID'))            define('Y_RXCOUNT_INVALID',           YAPI_INVALID_UINT);
 if(!defined('Y_TXCOUNT_INVALID'))            define('Y_TXCOUNT_INVALID',           YAPI_INVALID_UINT);
@@ -165,6 +166,7 @@ class YSerialPort extends YFunction
     const VOLTAGELEVEL_RS232             = 5;
     const VOLTAGELEVEL_RS485             = 6;
     const VOLTAGELEVEL_TTL1V8            = 7;
+    const VOLTAGELEVEL_SDI12             = 8;
     const VOLTAGELEVEL_INVALID           = -1;
     const SERIALMODE_INVALID             = YAPI_INVALID_STRING;
     //--- (end of generated code: YSerialPort declaration)
@@ -187,6 +189,8 @@ class YSerialPort extends YFunction
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
     protected $_rxbuffptr                = 0;                            // int
+    protected $_eventCallback            = null;                         // YSnoopingCallback
+    protected $_eventPos                 = 0;                            // int
     //--- (end of generated code: YSerialPort attributes)
 
     function __construct($str_func)
@@ -552,8 +556,8 @@ class YSerialPort extends YFunction
      *
      * @return integer : a value among YSerialPort::VOLTAGELEVEL_OFF, YSerialPort::VOLTAGELEVEL_TTL3V,
      * YSerialPort::VOLTAGELEVEL_TTL3VR, YSerialPort::VOLTAGELEVEL_TTL5V, YSerialPort::VOLTAGELEVEL_TTL5VR,
-     * YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485 and YSerialPort::VOLTAGELEVEL_TTL1V8
-     * corresponding to the voltage level used on the serial line
+     * YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485, YSerialPort::VOLTAGELEVEL_TTL1V8 and
+     * YSerialPort::VOLTAGELEVEL_SDI12 corresponding to the voltage level used on the serial line
      *
      * On failure, throws an exception or returns YSerialPort::VOLTAGELEVEL_INVALID.
      */
@@ -580,8 +584,9 @@ class YSerialPort extends YFunction
      *
      * @param integer $newval : a value among YSerialPort::VOLTAGELEVEL_OFF,
      * YSerialPort::VOLTAGELEVEL_TTL3V, YSerialPort::VOLTAGELEVEL_TTL3VR, YSerialPort::VOLTAGELEVEL_TTL5V,
-     * YSerialPort::VOLTAGELEVEL_TTL5VR, YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485 and
-     * YSerialPort::VOLTAGELEVEL_TTL1V8 corresponding to the voltage type used on the serial line
+     * YSerialPort::VOLTAGELEVEL_TTL5VR, YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485,
+     * YSerialPort::VOLTAGELEVEL_TTL1V8 and YSerialPort::VOLTAGELEVEL_SDI12 corresponding to the voltage
+     * type used on the serial line
      *
      * @return integer : YAPI::SUCCESS if the call succeeds.
      *
@@ -1435,6 +1440,65 @@ class YSerialPort extends YFunction
             $idx = $idx + 1;
         }
         return $res;
+    }
+
+    /**
+     * Registers a callback function to be called each time that a message is sent or
+     * received by the serial port.
+     *
+     * @param function $callback : the callback function to call, or a null pointer.
+     *         The callback function should take four arguments:
+     *         the YSerialPort object that emitted the event, and
+     *         the SnoopingRecord object that describes the message
+     *         sent or received.
+     *         On failure, throws an exception or returns a negative error code.
+     */
+    public function registerSnoopingCallback($callback)
+    {
+        if (!is_null($callback)) {
+            $this->registerValueCallback('yInternalEventCallback');
+        } else {
+            $this->registerValueCallback(null);
+        }
+        // register user callback AFTER the internal pseudo-event,
+        // to make sure we start with future events only
+        $this->_eventCallback = $callback;
+        return 0;
+    }
+
+    public function _internalEventHandler($advstr)
+    {
+        // $url                    is a str;
+        // $msgbin                 is a bin;
+        $msgarr = Array();      // strArr;
+        // $msglen                 is a int;
+        // $idx                    is a int;
+        if (!(!is_null($this->_eventCallback))) {
+            // first simulated event, use it only to initialize reference values
+            $this->_eventPos = 0;
+        }
+
+        $url = sprintf('rxmsg.json?pos=%d&maxw=0&t=0', $this->_eventPos);
+        $msgbin = $this->_download($url);
+        $msgarr = $this->_json_get_array($msgbin);
+        $msglen = sizeof($msgarr);
+        if ($msglen == 0) {
+            return YAPI_SUCCESS;
+        }
+        // last element of array is the new position
+        $msglen = $msglen - 1;
+        if (!(!is_null($this->_eventCallback))) {
+            // first simulated event, use it only to initialize reference values
+            $this->_eventPos = intVal($msgarr[$msglen]);
+            return YAPI_SUCCESS;
+        }
+        $this->_eventPos = intVal($msgarr[$msglen]);
+        $idx = 0;
+        while ($idx < $msglen) {
+            call_user_func($this->_eventCallback, $this, new YSnoopingRecord($msgarr[$idx]));
+            $idx = $idx + 1;
+        }
+        return YAPI_SUCCESS;
     }
 
     /**
