@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 48014 2022-01-12 08:06:41Z seb $
+ * $Id: yocto_messagebox.php 50144 2022-06-17 06:59:52Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -58,20 +58,20 @@ class YSms
     protected $_mbox                     = null;                         // YMessageBox
     protected $_slot                     = 0;                            // int
     protected $_deliv                    = 0;                            // bool
-    protected $_smsc                     = "";                           // str
+    protected $_smsc                     = '';                           // str
     protected $_mref                     = 0;                            // int
-    protected $_orig                     = "";                           // str
-    protected $_dest                     = "";                           // str
+    protected $_orig                     = '';                           // str
+    protected $_dest                     = '';                           // str
     protected $_pid                      = 0;                            // int
     protected $_alphab                   = 0;                            // int
     protected $_mclass                   = 0;                            // int
-    protected $_stamp                    = "";                           // str
+    protected $_stamp                    = '';                           // str
     protected $_udh                      = "";                           // bin
     protected $_udata                    = "";                           // bin
     protected $_npdu                     = 0;                            // int
     protected $_pdu                      = "";                           // bin
     protected $_parts                    = Array();                      // YSmsArr
-    protected $_aggSig                   = "";                           // str
+    protected $_aggSig                   = '';                           // str
     protected $_aggIdx                   = 0;                            // int
     protected $_aggCnt                   = 0;                            // int
     //--- (end of generated code: YSms attributes)
@@ -550,13 +550,13 @@ class YSms
             }
         }
         $this->_parts = $sorted;
-        $this->_npdu = sizeof($sorted);
         // inherit header fields from first part
         $subsms = $this->_parts[0];
         $retcode = $this->parsePdu($subsms->get_pdu());
         if ($retcode != YAPI_SUCCESS) {
             return $retcode;
         }
+        $this->_npdu = sizeof($sorted);
         // concatenate user data from all parts
         $totsize = 0;
         $partno = 0;
@@ -1285,7 +1285,7 @@ class YSms
         // $retcode                is a int;
         // $pdu                    is a YSms;
 
-        if ($this->_slot > 0) {
+        if ($this->_npdu < 2) {
             return $this->_mbox->clearSIMSlot($this->_slot);
         }
         $retcode = YAPI_SUCCESS;
@@ -1343,7 +1343,7 @@ class YMessageBox extends YFunction
     protected $_pduReceived              = Y_PDURECEIVED_INVALID;        // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
     protected $_nextMsgRef               = 0;                            // int
-    protected $_prevBitmapStr            = "";                           // str
+    protected $_prevBitmapStr            = '';                           // str
     protected $_pdus                     = Array();                      // YSmsArr
     protected $_messages                 = Array();                      // YSmsArr
     protected $_gsm2unicodeReady         = 0;                            // bool
@@ -1570,8 +1570,102 @@ class YMessageBox extends YFunction
 
     public function clearSIMSlot($slot)
     {
-        $this->_prevBitmapStr = '';
-        return $this->set_command(sprintf('DS%d',$slot));
+        // $retry                  is a int;
+        // $idx                    is a int;
+        // $res                    is a str;
+        // $bitmapStr              is a str;
+        // $int_res                is a int;
+        // $newBitmap              is a bin;
+        // $bitVal                 is a int;
+
+        $retry = 5;
+        while ($retry > 0) {
+            $this->clearCache();
+            $bitmapStr = $this->get_slotsBitmap();
+            $newBitmap = YAPI::_hexStrToBin($bitmapStr);
+            $idx = (($slot) >> (3));
+            if ($idx < strlen($newBitmap)) {
+                $bitVal = ((1) << (((($slot) & (7)))));
+                if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
+                    $this->_prevBitmapStr = '';
+                    $int_res = $this->set_command(sprintf('DS%d',$slot));
+                    if ($int_res < 0) {
+                        return $int_res;
+                    }
+                } else {
+                    return YAPI_SUCCESS;
+                }
+            } else {
+                return YAPI_INVALID_ARGUMENT;
+            }
+            $res = $this->_AT('');
+            $retry = $retry - 1;
+        }
+        return YAPI_IO_ERROR;
+    }
+
+    public function _AT($cmd)
+    {
+        // $chrPos                 is a int;
+        // $cmdLen                 is a int;
+        // $waitMore               is a int;
+        // $res                    is a str;
+        // $buff                   is a bin;
+        // $bufflen                is a int;
+        // $buffstr                is a str;
+        // $buffstrlen             is a int;
+        // $idx                    is a int;
+        // $suffixlen              is a int;
+        // copied form the YCellular class
+        // quote dangerous characters used in AT commands
+        $cmdLen = strlen($cmd);
+        $chrPos = Ystrpos($cmd,'#');
+        while ($chrPos >= 0) {
+            $cmd = sprintf('%s%c23%s', substr($cmd,  0, $chrPos), 37,
+            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmdLen = $cmdLen + 2;
+            $chrPos = Ystrpos($cmd,'#');
+        }
+        $chrPos = Ystrpos($cmd,'+');
+        while ($chrPos >= 0) {
+            $cmd = sprintf('%s%c2B%s', substr($cmd,  0, $chrPos), 37,
+            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmdLen = $cmdLen + 2;
+            $chrPos = Ystrpos($cmd,'+');
+        }
+        $chrPos = Ystrpos($cmd,'=');
+        while ($chrPos >= 0) {
+            $cmd = sprintf('%s%c3D%s', substr($cmd,  0, $chrPos), 37,
+            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmdLen = $cmdLen + 2;
+            $chrPos = Ystrpos($cmd,'=');
+        }
+        $cmd = sprintf('at.txt?cmd=%s',$cmd);
+        $res = sprintf('');
+        // max 2 minutes (each iteration may take up to 5 seconds if waiting)
+        $waitMore = 24;
+        while ($waitMore > 0) {
+            $buff = $this->_download($cmd);
+            $bufflen = strlen($buff);
+            $buffstr = $buff;
+            $buffstrlen = strlen($buffstr);
+            $idx = $bufflen - 1;
+            while (($idx > 0) && (ord($buff[$idx]) != 64) && (ord($buff[$idx]) != 10) && (ord($buff[$idx]) != 13)) {
+                $idx = $idx - 1;
+            }
+            if (ord($buff[$idx]) == 64) {
+                // continuation detected
+                $suffixlen = $bufflen - $idx;
+                $cmd = sprintf('at.txt?cmd=%s', substr($buffstr,  $buffstrlen - $suffixlen, $suffixlen));
+                $buffstr = substr($buffstr,  0, $buffstrlen - $suffixlen);
+                $waitMore = $waitMore - 1;
+            } else {
+                // request complete
+                $waitMore = 0;
+            }
+            $res = sprintf('%s%s', $res, $buffstr);
+        }
+        return $res;
     }
 
     public function fetchPdu($slot)

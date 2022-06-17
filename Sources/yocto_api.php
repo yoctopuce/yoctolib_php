@@ -3225,7 +3225,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.49822";
+        return "1.10.50144";
     }
 
     /**

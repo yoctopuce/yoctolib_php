@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 49744 2022-05-11 15:13:45Z mvuilleu $
+ *  $Id: yocto_spiport.php 49903 2022-05-25 14:18:36Z mvuilleu $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *
@@ -200,6 +200,7 @@ class YSpiPort extends YFunction
     protected $_rxptr                    = 0;                            // int
     protected $_rxbuff                   = "";                           // bin
     protected $_rxbuffptr                = 0;                            // int
+    protected $_eventPos                 = 0;                            // int
     //--- (end of generated code: YSpiPort attributes)
 
     function __construct($str_func)
@@ -1014,6 +1015,7 @@ class YSpiPort extends YFunction
      */
     public function reset()
     {
+        $this->_eventPos = 0;
         $this->_rxptr = 0;
         $this->_rxbuffptr = 0;
         $this->_rxbuff = '';

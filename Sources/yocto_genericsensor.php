@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_genericsensor.php 49385 2022-04-06 00:49:27Z mvuilleu $
+ *  $Id: yocto_genericsensor.php 49903 2022-05-25 14:18:36Z mvuilleu $
  *
  *  Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -46,6 +46,7 @@ if(!defined('Y_SIGNALSAMPLING_HIGH_RATE_FILTERED')) define('Y_SIGNALSAMPLING_HIG
 if(!defined('Y_SIGNALSAMPLING_LOW_NOISE'))   define('Y_SIGNALSAMPLING_LOW_NOISE',  2);
 if(!defined('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED')) define('Y_SIGNALSAMPLING_LOW_NOISE_FILTERED', 3);
 if(!defined('Y_SIGNALSAMPLING_HIGHEST_RATE')) define('Y_SIGNALSAMPLING_HIGHEST_RATE', 4);
+if(!defined('Y_SIGNALSAMPLING_AC'))          define('Y_SIGNALSAMPLING_AC',         5);
 if(!defined('Y_SIGNALSAMPLING_INVALID'))     define('Y_SIGNALSAMPLING_INVALID',    -1);
 if(!defined('Y_ENABLED_FALSE'))              define('Y_ENABLED_FALSE',             0);
 if(!defined('Y_ENABLED_TRUE'))               define('Y_ENABLED_TRUE',              1);
@@ -82,6 +83,7 @@ class YGenericSensor extends YSensor
     const SIGNALSAMPLING_LOW_NOISE       = 2;
     const SIGNALSAMPLING_LOW_NOISE_FILTERED = 3;
     const SIGNALSAMPLING_HIGHEST_RATE    = 4;
+    const SIGNALSAMPLING_AC              = 5;
     const SIGNALSAMPLING_INVALID         = -1;
     const ENABLED_FALSE                  = 0;
     const ENABLED_TRUE                   = 1;
@@ -332,8 +334,8 @@ class YGenericSensor extends YSensor
      *
      * @return integer : a value among YGenericSensor::SIGNALSAMPLING_HIGH_RATE,
      * YGenericSensor::SIGNALSAMPLING_HIGH_RATE_FILTERED, YGenericSensor::SIGNALSAMPLING_LOW_NOISE,
-     * YGenericSensor::SIGNALSAMPLING_LOW_NOISE_FILTERED and YGenericSensor::SIGNALSAMPLING_HIGHEST_RATE
-     * corresponding to the electric signal sampling method to use
+     * YGenericSensor::SIGNALSAMPLING_LOW_NOISE_FILTERED, YGenericSensor::SIGNALSAMPLING_HIGHEST_RATE and
+     * YGenericSensor::SIGNALSAMPLING_AC corresponding to the electric signal sampling method to use
      *
      * On failure, throws an exception or returns YGenericSensor::SIGNALSAMPLING_INVALID.
      */
@@ -361,8 +363,8 @@ class YGenericSensor extends YSensor
      *
      * @param integer $newval : a value among YGenericSensor::SIGNALSAMPLING_HIGH_RATE,
      * YGenericSensor::SIGNALSAMPLING_HIGH_RATE_FILTERED, YGenericSensor::SIGNALSAMPLING_LOW_NOISE,
-     * YGenericSensor::SIGNALSAMPLING_LOW_NOISE_FILTERED and YGenericSensor::SIGNALSAMPLING_HIGHEST_RATE
-     * corresponding to the electric signal sampling method to use
+     * YGenericSensor::SIGNALSAMPLING_LOW_NOISE_FILTERED, YGenericSensor::SIGNALSAMPLING_HIGHEST_RATE and
+     * YGenericSensor::SIGNALSAMPLING_AC corresponding to the electric signal sampling method to use
      *
      * @return integer : YAPI::SUCCESS if the call succeeds.
      *
