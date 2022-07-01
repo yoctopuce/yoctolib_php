@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 45843 2021-08-04 07:51:59Z mvuilleu $
+ *  $Id: yocto_colorledcluster.php 50281 2022-06-30 07:21:14Z mvuilleu $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -47,6 +47,7 @@ if(!defined('Y_LEDTYPE_WS2811'))             define('Y_LEDTYPE_WS2811',         
 if(!defined('Y_LEDTYPE_INVALID'))            define('Y_LEDTYPE_INVALID',           -1);
 if(!defined('Y_ACTIVELEDCOUNT_INVALID'))     define('Y_ACTIVELEDCOUNT_INVALID',    YAPI_INVALID_UINT);
 if(!defined('Y_MAXLEDCOUNT_INVALID'))        define('Y_MAXLEDCOUNT_INVALID',       YAPI_INVALID_UINT);
+if(!defined('Y_DYNAMICLEDCOUNT_INVALID'))    define('Y_DYNAMICLEDCOUNT_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_BLINKSEQMAXCOUNT_INVALID'))   define('Y_BLINKSEQMAXCOUNT_INVALID',  YAPI_INVALID_UINT);
 if(!defined('Y_BLINKSEQMAXSIZE_INVALID'))    define('Y_BLINKSEQMAXSIZE_INVALID',   YAPI_INVALID_UINT);
 if(!defined('Y_COMMAND_INVALID'))            define('Y_COMMAND_INVALID',           YAPI_INVALID_STRING);
@@ -76,6 +77,7 @@ class YColorLedCluster extends YFunction
     const LEDTYPE_WS2811                 = 2;
     const LEDTYPE_INVALID                = -1;
     const MAXLEDCOUNT_INVALID            = YAPI_INVALID_UINT;
+    const DYNAMICLEDCOUNT_INVALID        = YAPI_INVALID_UINT;
     const BLINKSEQMAXCOUNT_INVALID       = YAPI_INVALID_UINT;
     const BLINKSEQMAXSIZE_INVALID        = YAPI_INVALID_UINT;
     const COMMAND_INVALID                = YAPI_INVALID_STRING;
@@ -85,6 +87,7 @@ class YColorLedCluster extends YFunction
     protected $_activeLedCount           = Y_ACTIVELEDCOUNT_INVALID;     // UInt31
     protected $_ledType                  = Y_LEDTYPE_INVALID;            // LedType
     protected $_maxLedCount              = Y_MAXLEDCOUNT_INVALID;        // UInt31
+    protected $_dynamicLedCount          = Y_DYNAMICLEDCOUNT_INVALID;    // UInt31
     protected $_blinkSeqMaxCount         = Y_BLINKSEQMAXCOUNT_INVALID;   // UInt31
     protected $_blinkSeqMaxSize          = Y_BLINKSEQMAXSIZE_INVALID;    // UInt31
     protected $_command                  = Y_COMMAND_INVALID;            // Text
@@ -112,6 +115,9 @@ class YColorLedCluster extends YFunction
             return 1;
         case 'maxLedCount':
             $this->_maxLedCount = intval($val);
+            return 1;
+        case 'dynamicLedCount':
+            $this->_dynamicLedCount = intval($val);
             return 1;
         case 'blinkSeqMaxCount':
             $this->_blinkSeqMaxCount = intval($val);
@@ -216,6 +222,26 @@ class YColorLedCluster extends YFunction
             }
         }
         $res = $this->_maxLedCount;
+        return $res;
+    }
+
+    /**
+     * Returns the maximum number of LEDs that can perform autonomous transitions and sequences.
+     *
+     * @return integer : an integer corresponding to the maximum number of LEDs that can perform
+     * autonomous transitions and sequences
+     *
+     * On failure, throws an exception or returns YColorLedCluster::DYNAMICLEDCOUNT_INVALID.
+     */
+    public function get_dynamicLedCount()
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration == 0) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_DYNAMICLEDCOUNT_INVALID;
+            }
+        }
+        $res = $this->_dynamicLedCount;
         return $res;
     }
 
@@ -1243,6 +1269,9 @@ class YColorLedCluster extends YFunction
 
     public function maxLedCount()
     { return $this->get_maxLedCount(); }
+
+    public function dynamicLedCount()
+    { return $this->get_dynamicLedCount(); }
 
     public function blinkSeqMaxCount()
     { return $this->get_blinkSeqMaxCount(); }

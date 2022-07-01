@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ * $Id: yocto_cellular.php 50281 2022-06-30 07:21:14Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -5603,6 +5603,45 @@ class YCellular extends YFunction
     public function decodePLMN($mccmnc)
     {
         return $this->imm_decodePLMN($mccmnc);
+    }
+
+    /**
+     * Returns the list available radio communication profiles, as a string array
+     * (YoctoHub-GSM-4G only).
+     * Each string is a made of a numerical ID, followed by a colon,
+     * followed by the profile description.
+     *
+     * @return string[] : a list of string describing available radio communication profiles.
+     */
+    public function get_communicationProfiles()
+    {
+        // $profiles               is a str;
+        $lines = Array();       // strArr;
+        // $nlines                 is a int;
+        // $idx                    is a int;
+        // $line                   is a str;
+        // $cpos                   is a int;
+        // $profno                 is a int;
+        $res = Array();         // strArr;
+
+        $profiles = $this->_AT('+UMNOPROF=?');
+        $lines = explode(''."\n".'', $profiles);
+        $nlines = sizeof($lines);
+        if (!($nlines > 0)) return $this->_throw( YAPI_IO_ERROR, 'fail to retrieve profile list',$res);
+        while(sizeof($res) > 0) { array_pop($res); };
+        $idx = 0;
+        while ($idx < $nlines) {
+            $line = $lines[$idx];
+            $cpos = Ystrpos($line,':');
+            if ($cpos > 0) {
+                $profno = intVal(substr($line,  0, $cpos));
+                if ($profno > 0) {
+                    $res[] = $line;
+                }
+            }
+            $idx = $idx + 1;
+        }
+        return $res;
     }
 
     public function linkQuality()
