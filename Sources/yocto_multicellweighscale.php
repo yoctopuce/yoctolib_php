@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multicellweighscale.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_multicellweighscale.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
@@ -127,22 +127,22 @@ class YMultiCellWeighScale extends YSensor
             $this->_excitation = intval($val);
             return 1;
         case 'tempAvgAdaptRatio':
-            $this->_tempAvgAdaptRatio = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_tempAvgAdaptRatio = round($val / 65.536) / 1000.0;
             return 1;
         case 'tempChgAdaptRatio':
-            $this->_tempChgAdaptRatio = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_tempChgAdaptRatio = round($val / 65.536) / 1000.0;
             return 1;
         case 'compTempAvg':
-            $this->_compTempAvg = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_compTempAvg = round($val / 65.536) / 1000.0;
             return 1;
         case 'compTempChg':
-            $this->_compTempChg = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_compTempChg = round($val / 65.536) / 1000.0;
             return 1;
         case 'compensation':
-            $this->_compensation = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_compensation = round($val / 65.536) / 1000.0;
             return 1;
         case 'zeroTracking':
-            $this->_zeroTracking = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_zeroTracking = round($val / 65.536) / 1000.0;
             return 1;
         case 'command':
             $this->_command = $val;

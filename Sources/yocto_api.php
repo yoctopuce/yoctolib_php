@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 49750 2022-05-13 07:10:42Z seb $
+ * $Id: yocto_api.php 51266 2022-10-10 09:18:25Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -301,16 +301,16 @@ class YTcpHub
      * @param mixed
      * @return mixed
      */
-    static function decodeJZON($jzon, $ref)
+    static function decodeJZONReq($jzon, $ref)
     {
         $res = array();
         $ofs = 0;
         if (is_array($ref)) {
             foreach ($ref as $key => $value) {
                 if (key_exists($key, $jzon)) {
-                    $res[$key] = self::decodeJZON($jzon[$key], $value);
+                    $res[$key] = self::decodeJZONReq($jzon[$key], $value);
                 } else if (isset($jzon[$ofs])) {
-                    $res[$key] = self::decodeJZON($jzon[$ofs], $value);
+                    $res[$key] = self::decodeJZONReq($jzon[$ofs], $value);
                 }
                 $ofs++;
             }
@@ -318,6 +318,49 @@ class YTcpHub
         }
         return $jzon;
     }
+
+    /**
+     * @param mixed
+     * @param mixed
+     * @return mixed
+     */
+    static function decodeJZONService($jzon, $ref)
+    {
+        $wp = array();
+        $yp = array();
+        foreach($jzon[0] as $wp_entry) {
+            $wp[] = self::decodeJZONReq($wp_entry, $ref['whitePages'][0]);
+        }
+
+
+        $yp_entry_ref = $ref['yellowPages'][array_key_first($ref['yellowPages'])][0];
+        foreach($jzon[1] as $yp_type => $yp_entries) {
+            $yp[$yp_type] = array();
+            foreach($yp_entries as $yp_entry) {
+                $yp[$yp_type][] = self::decodeJZONReq($yp_entry, $yp_entry_ref);
+            }
+        }
+        return ['whitePages' => $wp, 'yellowPages'=>$yp];
+    }
+
+
+    /**
+     * @param mixed
+     * @param mixed
+     * @return mixed
+     */
+    static function decodeJZON($jzon, $ref)
+    {
+        $decoded = self::decodeJZONReq($jzon, $ref);
+        if (array_key_exists('services', $ref)) {
+            $ofs = sizeof($jzon) - 1;
+            if(isset($jzon[$ofs])) {
+                $decoded['services'] = self::decodeJZONService($jzon[$ofs], $ref['services']);
+            }
+        }
+        return $decoded;
+    }
+
 
     /**
      * @param array
@@ -370,7 +413,11 @@ class YTcpHub
             }
 
             if ($fullTest) {
-                $data = file_get_contents('php://input', 'rb');
+                if(isset($_SERVER['HTTP_RAW_POST_DATA'])) {
+                    $data = $_SERVER['HTTP_RAW_POST_DATA'];
+                } else {
+                    $data = file_get_contents('php://input');
+                }
                 $this->callbackData = $data;
                 if ($data == "") {
                     $errmsg = "RegisterHub(callback) used without posting YoctoAPI data";
@@ -378,8 +425,12 @@ class YTcpHub
                     $this->callbackCache = Array();
                     return YAPI_IO_ERROR;
                 } else {
-                    $utf8_encode = utf8_encode($data);
-                    $this->callbackCache = json_decode($utf8_encode, true);
+                    if(isset($_SERVER['HTTP_JSON_POST_DATA'])) {
+                        $this->callbackCache = $_SERVER['HTTP_JSON_POST_DATA'];
+                    } else {
+                        $utf8_encode = utf8_encode($data);
+                        $this->callbackCache = json_decode($utf8_encode, true);
+                    }
                     if (is_null($this->callbackCache)) {
                         $errmsg = "invalid data:[\n$data\n]";
                         Print("\n!YoctoAPI:$errmsg\n");
@@ -419,7 +470,7 @@ class YTcpHub
                                 $isJZON = false;
                                 if ($fwpos !== False) {
                                     if (key_exists('module', $value)) {
-                                        // device did not returned JZON (probably due to fw update)
+                                        // device did not return JZON (probably due to fw update)
                                         $req = substr($req, 0, $fwpos);
                                     } else {
                                         $isJZON = true;
@@ -453,7 +504,7 @@ class YTcpHub
                                     }
                                     $req = substr($req, 0, $fwpos);
                                     $mergedCache[$req] = $decoded;
-                                    //Print("Use jzon data for{$serial}/{$firm}\n");
+                                    //Print("Use jzon data for {$serial}/{$firm}\n");
                                 } else {
                                     $serial = $value['module']['serialNumber'];
                                     $base = substr($serial, 0, YOCTO_BASE_SERIAL_LEN);
@@ -464,12 +515,24 @@ class YTcpHub
                                     Print("\n@YoctoAPI:#{$serial}/{$firm}\n");
                                     $upToDate = false;
                                 }
+                            } else {
+                                $mergedCache[$req] = $value;
                             }
                         }
                         if ($upToDate) {
                             Print("\n@YoctoAPI:#=\n");
                         }
                         $this->callbackCache = $mergedCache;
+                    }
+                    // decode binary content
+                    foreach ($this->callbackCache as $url => $data) {
+                        if (!is_string($data)){
+                            continue;
+                        }
+                        $len = strlen($url);
+                        if ($len > 2 && substr($url, $len - 2) === '.#') {
+                            $this->callbackCache[substr($url,0, $len-2)] = base64_decode($data);
+                        }
                     }
                 }
             }
@@ -560,6 +623,7 @@ class YTcpHub
         }
         // dispatch between cached get and remote set
         if (strpos($str_query, '?') === FALSE ||
+            strpos($str_query, '/@YCB+') !== FALSE ||
             strpos($str_query, '/logs.txt') !== FALSE ||
             strpos($str_query, '/logger.json') !== FALSE ||
             strpos($str_query, '/ping.txt') !== FALSE ||
@@ -572,9 +636,23 @@ class YTcpHub
                 $url = str_replace('api/module.json', 'api.json', $url);
             }
             if (!isset($this->callbackCache[$url])) {
-                Print("\n!YoctoAPI:$url is not preloaded, adding to list");
-                Print("\n@YoctoAPI:+$url\n");
-                return NULL;
+                if ($url == "/api.json") {
+                    // /api.json is not present in cache. Report an error to force the hub
+                    // to switch back to json encoding
+                    print("\n!YoctoAPI:$url is in cache. Disable JZON encoding");
+                    Print("\n@YoctoAPI:#!invalid\n");
+                    return NULL;
+                }
+                if (strpos($url,"@YCB+")!== false) {
+                    // file has be requested by addFileToHTTPCallback
+                    $url = str_replace('@YCB+', '',$url);
+                    Print("\n@YoctoAPI:+$url\n");
+                    return "OK\r\n\r\n";
+                }else {
+                    print("\n!YoctoAPI:$url is not preloaded, adding to list");
+                    Print("\n@YoctoAPI:+$url\n");
+                    return NULL;
+                }
             }
             // Print("\n[$url found]\n");
             $jsonres = $this->callbackCache[$url];
@@ -1409,22 +1487,18 @@ class YDevice
         }
         $yreq = YAPI::devRequest($this->_rootUrl, $req);
         if ($yreq->errorType != YAPI_SUCCESS) return $yreq;
-        if ($use_jzon) {
-            $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
-            if (json_last_error() != JSON_ERROR_NONE) {
-                return $this->_throw(YAPI_IO_ERROR, 'Request failed, Invalid JZON data for ' . $this->_rootUrl,
-                    YAPI_IO_ERROR);
-            }
-            $decoded = YTcpHub::decodeJZON($loadval, $this->_cache['_precooked']);
+        $json_req = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            return $this->_throw(YAPI_IO_ERROR, 'Request failed, could not parse API result for ' . $this->_rootUrl,
+                YAPI_IO_ERROR);
+        }
+        if ($use_jzon && !key_exists('module', $json_req)) {
+            $decoded = YTcpHub::decodeJZON($json_req, $this->_cache['_precooked']);
             $this->_cache['_json'] = json_encode($decoded);
             $this->_cache['_precooked'] = $decoded;
         } else {
             $this->_cache['_json'] = $yreq->result;
-            $this->_cache['_precooked'] = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
-            if (json_last_error() != JSON_ERROR_NONE) {
-                return $this->_throw(YAPI_IO_ERROR, 'Request failed, could not parse API result for ' . $this->_rootUrl,
-                    YAPI_IO_ERROR);
-            }
+            $this->_cache['_precooked'] = $json_req;
         }
         $this->_cache['_expiration'] = YAPI::GetTickCount() + YAPI::$defaultCacheValidity;
 
@@ -2849,6 +2923,11 @@ class YAPI
                 'Access denied: admin credentials required',
                 null);
         }
+        if (strpos($devUrl,'@YCB+') && !$hub->isCachedHub()) {
+            return new YAPI_YReq("", YAPI_INVALID_ARGUMENT,
+                'Preloading of URL is only supported for HTTP callback.',
+                null);
+        }
         $tcpreq = new YTcpReq($hub, "$method $devUrl", $async, $body);
         if (!is_null($dev)) {
             $dev->prepRequest($tcpreq);
@@ -2876,7 +2955,7 @@ class YAPI
                 $mstimeout = YIO_10_MINUTES_TCP_TIMEOUT;
             } else if (strpos($devUrl,'/flash.json') !== false) {
                 $mstimeout = YIO_10_MINUTES_TCP_TIMEOUT;
-            }            
+            }
             if ($mstimeout < YAPI::$_yapiContext->_networkTimeoutMs){
                 $mstimeout = YAPI::$_yapiContext->_networkTimeoutMs;
             }
@@ -3225,7 +3304,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.50357";
+        return "1.10.51266";
     }
 
     /**
@@ -6825,16 +6904,16 @@ class YSensor extends YFunction
             $this->_unit = $val;
             return 1;
         case 'currentValue':
-            $this->_currentValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'lowestValue':
-            $this->_lowestValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_lowestValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'highestValue':
-            $this->_highestValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_highestValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'currentRawValue':
-            $this->_currentRawValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentRawValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'logFrequency':
             $this->_logFrequency = $val;
@@ -6849,7 +6928,7 @@ class YSensor extends YFunction
             $this->_calibrationParam = $val;
             return 1;
         case 'resolution':
-            $this->_resolution = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_resolution = round($val / 65.536) / 1000.0;
             return 1;
         case 'sensorState':
             $this->_sensorState = intval($val);
@@ -9516,6 +9595,26 @@ class YModule extends YFunction
         }
         $this->clearCache();
         return $res;
+    }
+
+    /**
+     * Adds a file to the uploaded data at the next HTTP callback.
+     * This function only affects the next HTTP callback and only works in
+     * HTTP callback mode.
+     *
+     * @param string $filename : the name of the file to upload at the next HTTP callback
+     *
+     * @return integer : nothing.
+     */
+    public function addFileToHTTPCallback($filename)
+    {
+        // $content                is a bin;
+
+        $content = $this->_download('@YCB+' . $filename);
+        if (strlen($content) == 0) {
+            return YAPI_NOT_SUPPORTED;
+        }
+        return YAPI_SUCCESS;
     }
 
     /**

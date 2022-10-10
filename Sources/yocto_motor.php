@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_motor.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_motor.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YMotor, the high-level API for Motor functions
  *
@@ -123,19 +123,19 @@ class YMotor extends YFunction
             $this->_motorStatus = intval($val);
             return 1;
         case 'drivingForce':
-            $this->_drivingForce = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_drivingForce = round($val / 65.536) / 1000.0;
             return 1;
         case 'brakingForce':
-            $this->_brakingForce = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_brakingForce = round($val / 65.536) / 1000.0;
             return 1;
         case 'cutOffVoltage':
-            $this->_cutOffVoltage = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_cutOffVoltage = round($val / 65.536) / 1000.0;
             return 1;
         case 'overCurrentLimit':
             $this->_overCurrentLimit = intval($val);
             return 1;
         case 'frequency':
-            $this->_frequency = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_frequency = round($val / 65.536) / 1000.0;
             return 1;
         case 'starterTime':
             $this->_starterTime = intval($val);

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_genericsensor.php 49903 2022-05-25 14:18:36Z mvuilleu $
+ *  $Id: yocto_genericsensor.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -115,7 +115,7 @@ class YGenericSensor extends YSensor
     {
         switch($name) {
         case 'signalValue':
-            $this->_signalValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_signalValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'signalUnit':
             $this->_signalUnit = $val;
@@ -127,7 +127,7 @@ class YGenericSensor extends YSensor
             $this->_valueRange = $val;
             return 1;
         case 'signalBias':
-            $this->_signalBias = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_signalBias = round($val / 65.536) / 1000.0;
             return 1;
         case 'signalSampling':
             $this->_signalSampling = intval($val);

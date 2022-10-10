@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 45843 2021-08-04 07:51:59Z mvuilleu $
+ *  $Id: yocto_buzzer.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -94,7 +94,7 @@ class YBuzzer extends YFunction
     {
         switch($name) {
         case 'frequency':
-            $this->_frequency = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_frequency = round($val / 65.536) / 1000.0;
             return 1;
         case 'volume':
             $this->_volume = intval($val);

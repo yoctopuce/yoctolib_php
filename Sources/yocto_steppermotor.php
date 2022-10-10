@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_steppermotor.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_steppermotor.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YStepperMotor, the high-level API for StepperMotor functions
  *
@@ -149,16 +149,16 @@ class YStepperMotor extends YFunction
             $this->_stepPos = $val / 16.0;
             return 1;
         case 'speed':
-            $this->_speed = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_speed = round($val / 65.536) / 1000.0;
             return 1;
         case 'pullinSpeed':
-            $this->_pullinSpeed = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_pullinSpeed = round($val / 65.536) / 1000.0;
             return 1;
         case 'maxAccel':
-            $this->_maxAccel = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_maxAccel = round($val / 65.536) / 1000.0;
             return 1;
         case 'maxSpeed':
-            $this->_maxSpeed = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_maxSpeed = round($val / 65.536) / 1000.0;
             return 1;
         case 'stepping':
             $this->_stepping = intval($val);

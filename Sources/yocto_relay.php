@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_relay.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_relay.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YRelay, the high-level API for Relay functions
  *
@@ -398,7 +398,7 @@ class YRelay extends YFunction
 
     public function set_delayedPulseTimer($newval)
     {
-        $rest_val = strval($newval["target"]).':'.strval($newval["ms"]);
+        $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("delayedPulseTimer",$rest_val);
     }
 
@@ -414,7 +414,7 @@ class YRelay extends YFunction
      */
     public function delayedPulse($ms_delay,$ms_duration)
     {
-        $rest_val = strval($ms_delay).':'.strval($ms_duration);
+        $rest_val = $ms_delay.':'.$ms_duration;
         return $this->_setAttr("delayedPulseTimer",$rest_val);
     }
 

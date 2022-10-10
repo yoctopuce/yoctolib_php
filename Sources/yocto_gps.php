@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_gps.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_gps.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YGps, the high-level API for Gps functions
  *
@@ -159,7 +159,7 @@ class YGps extends YFunction
             $this->_satPerConst = intval($val);
             return 1;
         case 'gpsRefreshRate':
-            $this->_gpsRefreshRate = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_gpsRefreshRate = round($val / 65.536) / 1000.0;
             return 1;
         case 'coordSystem':
             $this->_coordSystem = intval($val);
@@ -174,16 +174,16 @@ class YGps extends YFunction
             $this->_longitude = $val;
             return 1;
         case 'dilution':
-            $this->_dilution = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_dilution = round($val / 65.536) / 1000.0;
             return 1;
         case 'altitude':
-            $this->_altitude = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_altitude = round($val / 65.536) / 1000.0;
             return 1;
         case 'groundSpeed':
-            $this->_groundSpeed = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_groundSpeed = round($val / 65.536) / 1000.0;
             return 1;
         case 'direction':
-            $this->_direction = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_direction = round($val / 65.536) / 1000.0;
             return 1;
         case 'unixTime':
             $this->_unixTime = intval($val);

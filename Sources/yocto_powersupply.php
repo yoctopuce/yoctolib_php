@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_powersupply.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -122,10 +122,10 @@ class YPowerSupply extends YFunction
     {
         switch($name) {
         case 'voltageSetPoint':
-            $this->_voltageSetPoint = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_voltageSetPoint = round($val / 65.536) / 1000.0;
             return 1;
         case 'currentLimit':
-            $this->_currentLimit = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentLimit = round($val / 65.536) / 1000.0;
             return 1;
         case 'powerOutput':
             $this->_powerOutput = intval($val);
@@ -134,28 +134,28 @@ class YPowerSupply extends YFunction
             $this->_voltageSense = intval($val);
             return 1;
         case 'measuredVoltage':
-            $this->_measuredVoltage = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_measuredVoltage = round($val / 65.536) / 1000.0;
             return 1;
         case 'measuredCurrent':
-            $this->_measuredCurrent = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_measuredCurrent = round($val / 65.536) / 1000.0;
             return 1;
         case 'inputVoltage':
-            $this->_inputVoltage = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_inputVoltage = round($val / 65.536) / 1000.0;
             return 1;
         case 'vInt':
-            $this->_vInt = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_vInt = round($val / 65.536) / 1000.0;
             return 1;
         case 'ldoTemperature':
-            $this->_ldoTemperature = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_ldoTemperature = round($val / 65.536) / 1000.0;
             return 1;
         case 'voltageTransition':
             $this->_voltageTransition = $val;
             return 1;
         case 'voltageAtStartUp':
-            $this->_voltageAtStartUp = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_voltageAtStartUp = round($val / 65.536) / 1000.0;
             return 1;
         case 'currentAtStartUp':
-            $this->_currentAtStartUp = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentAtStartUp = round($val / 65.536) / 1000.0;
             return 1;
         case 'command':
             $this->_command = $val;

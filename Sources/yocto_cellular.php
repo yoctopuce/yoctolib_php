@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_cellular.php 50281 2022-06-30 07:21:14Z mvuilleu $
+ * $Id: yocto_cellular.php 50494 2022-07-19 16:08:56Z mvuilleu $
  *
  * Implements YCellular, the high-level API for Cellular functions
  *
@@ -5635,7 +5635,7 @@ class YCellular extends YFunction
             $cpos = Ystrpos($line,':');
             if ($cpos > 0) {
                 $profno = intVal(substr($line,  0, $cpos));
-                if ($profno > 0) {
+                if ($profno > 1) {
                     $res[] = $line;
                 }
             }

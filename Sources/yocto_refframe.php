@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 43619 2021-01-29 09:14:45Z mvuilleu $
+ *  $Id: yocto_refframe.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -154,7 +154,7 @@ class YRefFrame extends YFunction
             $this->_mountPos = intval($val);
             return 1;
         case 'bearing':
-            $this->_bearing = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_bearing = round($val / 65.536) / 1000.0;
             return 1;
         case 'calibrationParam':
             $this->_calibrationParam = $val;

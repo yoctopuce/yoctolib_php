@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_currentloopoutput.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_currentloopoutput.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -93,13 +93,13 @@ class YCurrentLoopOutput extends YFunction
     {
         switch($name) {
         case 'current':
-            $this->_current = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_current = round($val / 65.536) / 1000.0;
             return 1;
         case 'currentTransition':
             $this->_currentTransition = $val;
             return 1;
         case 'currentAtStartUp':
-            $this->_currentAtStartUp = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentAtStartUp = round($val / 65.536) / 1000.0;
             return 1;
         case 'loopPower':
             $this->_loopPower = intval($val);

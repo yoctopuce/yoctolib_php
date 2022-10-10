@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_voltageoutput.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -82,13 +82,13 @@ class YVoltageOutput extends YFunction
     {
         switch($name) {
         case 'currentVoltage':
-            $this->_currentVoltage = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentVoltage = round($val / 65.536) / 1000.0;
             return 1;
         case 'voltageTransition':
             $this->_voltageTransition = $val;
             return 1;
         case 'voltageAtStartUp':
-            $this->_voltageAtStartUp = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_voltageAtStartUp = round($val / 65.536) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);

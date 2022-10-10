@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 43619 2021-01-29 09:14:45Z mvuilleu $
+ * $Id: yocto_display.php 50892 2022-09-13 09:50:13Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -379,7 +379,7 @@ class YDisplayLayer
      *
      * @param integer $x : the distance from left of layer to the text anchor point, in pixels
      * @param integer $y : the distance from top of layer to the text anchor point, in pixels
-     * @param ALIGN $anchor : the text anchor point, chosen among the YDisplayLayer::ALIGN enumeration:
+     * @param integer $anchor : the text anchor point, chosen among the YDisplayLayer::ALIGN enumeration:
      *         YDisplayLayer::ALIGN_TOP_LEFT,         YDisplayLayer::ALIGN_CENTER_LEFT,
      *         YDisplayLayer::ALIGN_BASELINE_LEFT,    YDisplayLayer::ALIGN_BOTTOM_LEFT,
      *         YDisplayLayer::ALIGN_TOP_CENTER,       YDisplayLayer::ALIGN_CENTER,

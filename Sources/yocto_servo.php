@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_servo.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_servo.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YServo, the high-level API for Servo functions
  *
@@ -293,7 +293,7 @@ class YServo extends YFunction
 
     public function set_move($newval)
     {
-        $rest_val = strval($newval["target"]).':'.strval($newval["ms"]);
+        $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("move",$rest_val);
     }
 
@@ -309,7 +309,7 @@ class YServo extends YFunction
      */
     public function move($target,$ms_duration)
     {
-        $rest_val = strval($target).':'.strval($ms_duration);
+        $rest_val = $target.':'.$ms_duration;
         return $this->_setAttr("move",$rest_val);
     }
 

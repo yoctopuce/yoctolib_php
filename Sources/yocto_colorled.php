@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorled.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_colorled.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -218,7 +218,7 @@ class YColorLed extends YFunction
 
     public function set_rgbMove($newval)
     {
-        $rest_val = strval($newval["target"]).':'.strval($newval["ms"]);
+        $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("rgbMove",$rest_val);
     }
 
@@ -234,7 +234,7 @@ class YColorLed extends YFunction
      */
     public function rgbMove($rgb_target,$ms_duration)
     {
-        $rest_val = strval($rgb_target).':'.strval($ms_duration);
+        $rest_val = $rgb_target.':'.$ms_duration;
         return $this->_setAttr("rgbMove",$rest_val);
     }
 
@@ -252,7 +252,7 @@ class YColorLed extends YFunction
 
     public function set_hslMove($newval)
     {
-        $rest_val = strval($newval["target"]).':'.strval($newval["ms"]);
+        $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("hslMove",$rest_val);
     }
 
@@ -268,7 +268,7 @@ class YColorLed extends YFunction
      */
     public function hslMove($hsl_target,$ms_duration)
     {
-        $rest_val = strval($hsl_target).':'.strval($ms_duration);
+        $rest_val = $hsl_target.':'.$ms_duration;
         return $this->_setAttr("hslMove",$rest_val);
     }
 

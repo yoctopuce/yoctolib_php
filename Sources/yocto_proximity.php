@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_proximity.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_proximity.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YProximity, the high-level API for Proximity functions
  *
@@ -120,7 +120,7 @@ class YProximity extends YSensor
     {
         switch($name) {
         case 'signalValue':
-            $this->_signalValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_signalValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'detectionThreshold':
             $this->_detectionThreshold = intval($val);

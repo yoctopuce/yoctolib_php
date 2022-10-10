@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 48183 2022-01-20 10:26:11Z mvuilleu $
+ *  $Id: yocto_realtimeclock.php 50595 2022-07-28 07:54:15Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -44,6 +44,9 @@
 if(!defined('Y_TIMESET_FALSE'))              define('Y_TIMESET_FALSE',             0);
 if(!defined('Y_TIMESET_TRUE'))               define('Y_TIMESET_TRUE',              1);
 if(!defined('Y_TIMESET_INVALID'))            define('Y_TIMESET_INVALID',           -1);
+if(!defined('Y_DISABLEHOSTSYNC_FALSE'))      define('Y_DISABLEHOSTSYNC_FALSE',     0);
+if(!defined('Y_DISABLEHOSTSYNC_TRUE'))       define('Y_DISABLEHOSTSYNC_TRUE',      1);
+if(!defined('Y_DISABLEHOSTSYNC_INVALID'))    define('Y_DISABLEHOSTSYNC_INVALID',   -1);
 if(!defined('Y_UNIXTIME_INVALID'))           define('Y_UNIXTIME_INVALID',          YAPI_INVALID_LONG);
 if(!defined('Y_DATETIME_INVALID'))           define('Y_DATETIME_INVALID',          YAPI_INVALID_STRING);
 if(!defined('Y_UTCOFFSET_INVALID'))          define('Y_UTCOFFSET_INVALID',         YAPI_INVALID_INT);
@@ -70,6 +73,9 @@ class YRealTimeClock extends YFunction
     const TIMESET_FALSE                  = 0;
     const TIMESET_TRUE                   = 1;
     const TIMESET_INVALID                = -1;
+    const DISABLEHOSTSYNC_FALSE          = 0;
+    const DISABLEHOSTSYNC_TRUE           = 1;
+    const DISABLEHOSTSYNC_INVALID        = -1;
     //--- (end of YRealTimeClock declaration)
 
     //--- (YRealTimeClock attributes)
@@ -77,6 +83,7 @@ class YRealTimeClock extends YFunction
     protected $_dateTime                 = Y_DATETIME_INVALID;           // Text
     protected $_utcOffset                = Y_UTCOFFSET_INVALID;          // Int
     protected $_timeSet                  = Y_TIMESET_INVALID;            // Bool
+    protected $_disableHostSync          = Y_DISABLEHOSTSYNC_INVALID;    // Bool
     //--- (end of YRealTimeClock attributes)
 
     function __construct($str_func)
@@ -104,6 +111,9 @@ class YRealTimeClock extends YFunction
             return 1;
         case 'timeSet':
             $this->_timeSet = intval($val);
+            return 1;
+        case 'disableHostSync':
+            $this->_disableHostSync = intval($val);
             return 1;
         }
         return parent::_parseAttr($name, $val);
@@ -223,6 +233,47 @@ class YRealTimeClock extends YFunction
     }
 
     /**
+     * Returns true if the automatic clock synchronization with host has been disabled,
+     * and false otherwise.
+     *
+     * @return integer : either YRealTimeClock::DISABLEHOSTSYNC_FALSE or
+     * YRealTimeClock::DISABLEHOSTSYNC_TRUE, according to true if the automatic clock synchronization with
+     * host has been disabled,
+     *         and false otherwise
+     *
+     * On failure, throws an exception or returns YRealTimeClock::DISABLEHOSTSYNC_INVALID.
+     */
+    public function get_disableHostSync()
+    {
+        // $res                    is a enumBOOL;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI_SUCCESS) {
+                return Y_DISABLEHOSTSYNC_INVALID;
+            }
+        }
+        $res = $this->_disableHostSync;
+        return $res;
+    }
+
+    /**
+     * Changes the automatic clock synchronization with host working state.
+     * To disable automatic synchronization, set the value to true.
+     * To enable automatic synchronization (default), set the value to false.
+     *
+     * @param integer $newval : either YRealTimeClock::DISABLEHOSTSYNC_FALSE or
+     * YRealTimeClock::DISABLEHOSTSYNC_TRUE, according to the automatic clock synchronization with host working state
+     *
+     * @return integer : YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     */
+    public function set_disableHostSync($newval)
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("disableHostSync",$rest_val);
+    }
+
+    /**
      * Retrieves a real-time clock for a given identifier.
      * The identifier can be specified using several formats:
      * <ul>
@@ -278,6 +329,12 @@ class YRealTimeClock extends YFunction
 
     public function timeSet()
     { return $this->get_timeSet(); }
+
+    public function disableHostSync()
+    { return $this->get_disableHostSync(); }
+
+    public function setDisableHostSync($newval)
+    { return $this->set_disableHostSync($newval); }
 
     /**
      * Continues the enumeration of real-time clocks started using yFirstRealTimeClock().

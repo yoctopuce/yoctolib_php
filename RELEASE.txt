@@ -1,3 +1,5 @@
-PHP v1.10.50357
+PHP v1.10.51266
 
-- Add support for retrieving communication profiles list on YoctoHub-GSM-4G
+- Add addFileToHTTPCallback methode to YModule
+- Fix type hint for method drawText
+- Fix non detected devices in HTTP Callback with JZON encoding.

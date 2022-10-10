@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_pwmoutput.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -110,16 +110,16 @@ class YPwmOutput extends YFunction
             $this->_enabled = intval($val);
             return 1;
         case 'frequency':
-            $this->_frequency = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_frequency = round($val / 65.536) / 1000.0;
             return 1;
         case 'period':
-            $this->_period = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_period = round($val / 65.536) / 1000.0;
             return 1;
         case 'dutyCycle':
-            $this->_dutyCycle = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_dutyCycle = round($val / 65.536) / 1000.0;
             return 1;
         case 'pulseDuration':
-            $this->_pulseDuration = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_pulseDuration = round($val / 65.536) / 1000.0;
             return 1;
         case 'pwmTransition':
             $this->_pwmTransition = $val;
@@ -128,7 +128,7 @@ class YPwmOutput extends YFunction
             $this->_enabledAtPowerOn = intval($val);
             return 1;
         case 'dutyCycleAtPowerOn':
-            $this->_dutyCycleAtPowerOn = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_dutyCycleAtPowerOn = round($val / 65.536) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);

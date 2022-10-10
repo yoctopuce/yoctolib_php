@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_accelerometer.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_accelerometer.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YAccelerometer, the high-level API for Accelerometer functions
  *
@@ -100,13 +100,13 @@ class YAccelerometer extends YSensor
             $this->_bandwidth = intval($val);
             return 1;
         case 'xValue':
-            $this->_xValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_xValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'yValue':
-            $this->_yValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_yValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'zValue':
-            $this->_zValue = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_zValue = round($val / 65.536) / 1000.0;
             return 1;
         case 'gravityCancellation':
             $this->_gravityCancellation = intval($val);

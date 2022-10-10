@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_rangefinder.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_rangefinder.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -115,7 +115,7 @@ class YRangeFinder extends YSensor
             $this->_hardwareCalibration = $val;
             return 1;
         case 'currentTemperature':
-            $this->_currentTemperature = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_currentTemperature = round($val / 65.536) / 1000.0;
             return 1;
         case 'command':
             $this->_command = $val;

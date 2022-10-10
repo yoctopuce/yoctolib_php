@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_humidity.php 43580 2021-01-26 17:46:01Z mvuilleu $
+ *  $Id: yocto_humidity.php 50689 2022-08-17 14:37:15Z mvuilleu $
  *
  *  Implements YHumidity, the high-level API for Humidity functions
  *
@@ -82,10 +82,10 @@ class YHumidity extends YSensor
     {
         switch($name) {
         case 'relHum':
-            $this->_relHum = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_relHum = round($val / 65.536) / 1000.0;
             return 1;
         case 'absHum':
-            $this->_absHum = round($val * 1000.0 / 65536.0) / 1000.0;
+            $this->_absHum = round($val / 65.536) / 1000.0;
             return 1;
         }
         return parent::_parseAttr($name, $val);
