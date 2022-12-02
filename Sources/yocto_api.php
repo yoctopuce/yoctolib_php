@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 51266 2022-10-10 09:18:25Z seb $
+ * $Id: yocto_api.php 51903 2022-11-29 17:25:59Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -248,7 +248,9 @@ class YTcpHub
     // attributes
     public $rooturl;                    // root url of the hub (without auth parameters)
     public $streamaddr;                 // stream address of the hub ("tcp://addr:port")
+    public $url_info;                   // $url parsed
     public $notifurl;                   // notification file used by this hub
+    public $use_pure_http;              // boolean that is true if the hub is VirtualHub-4web
     /** @var  YTcpReq */
     public $notifReq;                   // notification request, or null if not open
     public $notifPos;                   // absolute position in notification stream
@@ -273,17 +275,19 @@ class YTcpHub
     protected $ha1;                     // our authentication ha1 string
     protected $nc;                      // nounce usage count
 
-    function __construct($rooturl, $auth)
+    function __construct($url_info)
     {
-        $this->rooturl = $rooturl;
-        $this->streamaddr = str_replace('http://', 'tcp://', $rooturl);
-        $colon = strpos($auth, ':');
+        $this->rooturl = $url_info['rooturl'];
+        $this->url_info = $url_info;
+        $this->streamaddr = str_replace('http://', 'tcp://', $this->rooturl);
+        $this->streamaddr = str_replace('https://', 'tls://', $this->streamaddr);
+        $colon = strpos( $url_info['auth'], ':');
         if ($colon === false) {
-            $this->user = $auth;
+            $this->user = $url_info['auth'];
             $this->pwd = '';
         } else {
-            $this->user = substr($auth, 0, $colon);
-            $this->pwd = substr($auth, $colon + 1);
+            $this->user = substr($url_info['auth'], 0, $colon);
+            $this->pwd = substr($url_info['auth'], $colon + 1);
         }
         $this->notifurl = 'not.byn';
         $this->notifHandle = null;
@@ -294,6 +298,7 @@ class YTcpHub
         $this->retryDelay = 15;
         $this->retryExpires = 0;
         $this->writeProtected = false;
+        $this->use_pure_http = false;
     }
 
     /**
@@ -386,7 +391,7 @@ class YTcpHub
 
     function verfiyStreamAddr($fullTest = true, &$errmsg = '')
     {
-        if ($this->streamaddr == 'tcp://CALLBACK/') {
+        if ($this->streamaddr == 'tcp://CALLBACK') {
 
             if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST') {
                 $errmsg = "invalid request method";
@@ -483,7 +488,7 @@ class YTcpHub
                                         // "/bySerial/" = 10 chars
                                         $serial = substr($req, 10, $pos - 10);
                                     }
-                                    $firm = substr($req, $fwpos + 4);
+                                    $firm = str_replace([' ',':'], '_', substr($req, $fwpos + 4));
                                     $base = substr($serial, 0, YOCTO_BASE_SERIAL_LEN);
                                     if (!is_file("{$jzonCacheDir}{$base}_{$firm}.json")) {
                                         $errmsg = "No JZON reference file for {$serial}/{$firm}";
@@ -508,7 +513,7 @@ class YTcpHub
                                 } else {
                                     $serial = $value['module']['serialNumber'];
                                     $base = substr($serial, 0, YOCTO_BASE_SERIAL_LEN);
-                                    $firm = $value['module']['firmwareRelease'];
+                                    $firm = str_replace([' ',':'], '_', $value['module']['firmwareRelease']);
                                     $clean_struct = self::cleanJsonRef($value);
                                     file_put_contents("{$jzonCacheDir}{$base}_{$firm}.json", json_encode($clean_struct));
                                     $mergedCache[$req] = $value;
@@ -537,6 +542,12 @@ class YTcpHub
                 }
             }
         } else {
+            $info_json_url = $this->rooturl.$this->url_info['subdomain'].'/info.json';
+            $info_json = @file_get_contents($info_json_url);
+            $jsonData = json_decode($info_json, true);
+            if ($jsonData != null &&array_key_exists('protocol', $jsonData) && $jsonData['protocol'] =='HTTP/1.1') {
+                $this->use_pure_http = true;
+            }
             $this->callbackCache = NULL;
         }
         return 0;
@@ -625,6 +636,7 @@ class YTcpHub
         if (strpos($str_query, '?') === FALSE ||
             strpos($str_query, '/@YCB+') !== FALSE ||
             strpos($str_query, '/logs.txt') !== FALSE ||
+            strpos($str_query, '/tRep.bin') !== FALSE ||
             strpos($str_query, '/logger.json') !== FALSE ||
             strpos($str_query, '/ping.txt') !== FALSE ||
             strpos($str_query, '/files.json?a=dir') !== FALSE) {
@@ -730,6 +742,20 @@ class YTcpReq
         }
         if ($this->meta != '' && $this->errorType == YAPI_SUCCESS) {
             // connection was done and ended successfully
+            // check we need to unchunk the response
+            $t_ofs = strpos($this->meta,"Transfer-Encoding");
+            if ($t_ofs > 0) {
+                $t_ofs += 17;
+                $t_endl = strpos($this->meta,"\r\n", $t_ofs);
+                $t_chunk = strpos($this->meta,"chunked", $t_ofs);
+                if ($t_chunk!==false  && $t_endl!==false && $t_chunk < $t_endl) {
+                    // chuck encoded
+                    $new = $this->http_chunked_decode($this->reply);
+                    $this->reply = $new;
+                    $this->meta= substr($this->meta, 0 , $t_ofs). substr($this->meta,$t_endl+2);
+                }
+            }
+
             return true;
         }
         if ($this->retryCount > 3) {
@@ -738,6 +764,33 @@ class YTcpReq
         }
         // connection is expected to be reopened
         return false;
+    }
+
+
+    function http_chunked_decode($data) {
+        $data_length = strlen($data);
+        $dechunk = '';
+        $ofs = 0;
+        do {
+            $hexstr = '';
+            while ($ofs < $data_length && ($c = $data[$ofs]) != "\n") {
+                if (($c >= '0' && $c <= '9') || ($c >= 'A' && $c <= 'F') || ($c >= 'a' && $c <= 'f')) {
+                    $hexstr.=$c;
+                }
+                $ofs++;
+            }
+            if ($ofs < $data_length){
+                $len = hexdec($hexstr);
+                if ($ofs + 3 + $len < $data_length) {
+                    $ofs++;
+                    $dechunk .= substr($data,$ofs, $len);
+                    $ofs+=2;
+                } else{
+                    $ofs+=1;
+                }
+            }
+        } while($ofs < $data_length);
+        return $dechunk;
     }
 
     function newsocket(&$errno, &$errstr, $mstimeout)
@@ -783,7 +836,7 @@ class YTcpReq
                     $this->retryCount = 99;
                     return YAPI_SUCCESS; // will propagate error later if needed
                 }
-                stream_set_blocking($skt, 0);
+                stream_set_blocking($skt, false);
                 $this->skt = $skt;
             } else {
                 $skt = null;
@@ -806,17 +859,8 @@ class YTcpReq
                         return YAPI_SUCCESS; // will retry later
                     }
                 }
-                stream_set_blocking($skt, 0);
-                $request = $this->request . " \r\n" . // no HTTP/1.1 suffix for light queries
-                    $this->hub->getAuthorization($this->request);
-                if ($this->boundary != '') {
-                    $request .= "Content-Type: multipart/form-data; boundary={$this->boundary}\r\n";
-                }
-                if (substr($this->request, -2) == "&.") {
-                    $request .= "\r\n";
-                } else {
-                    $request .= "Connection: close\r\n\r\n";
-                }
+                stream_set_blocking($skt, false);
+                $request = $this->format_request();
                 $reqlen = strlen($request);
                 if (fwrite($skt, $request, $reqlen) != $reqlen) {
                     fclose($skt);
@@ -894,6 +938,33 @@ class YTcpReq
             }
         }
         return YAPI_SUCCESS;
+    }
+
+    function  format_request()
+    {
+        $parts = explode(' ', $this->request);
+        if (sizeof($parts)==2) {
+            $req = $parts[0] . ' ' . $this->hub->url_info['subdomain'] . $parts[1];
+        }else{
+            $req = $this->request;
+        }
+        if ($this->hub->use_pure_http) {
+            $request = $req . " HTTP/1.1\r\n";
+            $host = $this->hub->url_info['host'];
+            $request .= "Host: " . $host . "\r\n";
+        }else {
+            $request = $req. " \r\n"; // no HTTP/1.1 suffix for light queries
+        }
+        $request.=$this->hub->getAuthorization($req);
+        if ($this->boundary != '') {
+            $request .= "Content-Type: multipart/form-data; boundary={$this->boundary}\r\n";
+        }
+        if (substr($this->request, -2) == "&." && !$this->hub->use_pure_http) {
+            $request .= "\r\n";
+        } else {
+            $request .= "Connection: close\r\n\r\n";
+        }
+        return $request;
     }
 
     function close()
@@ -2102,7 +2173,7 @@ class YAPI
                     $serial = $devinfo['serialNumber'];
                     $rooturl = substr($devinfo['networkUrl'], 0, -3);
                     if ($rooturl[0] == '/')
-                        $rooturl = $hub->rooturl . substr($rooturl, 1);
+                        $rooturl = $hub->rooturl . $rooturl;
                     $currdev = null;
                     if (isset(self::$_devs[$serial])) {
                         $currdev = self::$_devs[$serial];
@@ -2211,7 +2282,7 @@ class YAPI
             $req = $hub->notifReq;
             if ($req) {
                 if ($req->eof()) {
-                    Printf("Event channel at eof, reopen\n");
+                    //Printf("Event channel at eof, reopen\n");
                     $something_done = true;
                     $hub->notifReq = $req = null;
                     self::monitorEvents($hub);
@@ -2912,7 +2983,7 @@ class YAPI
         } else {
             $devUrl = "/$devUrl";
         }
-        $rooturl = "http://$baseUrl/";
+        $rooturl = "http://$baseUrl";
         if (!isset(self::$_hubs[$rooturl])) {
             return new YAPI_YReq("", YAPI_DEVICE_NOT_FOUND, 'No hub registered on ' . $baseUrl, null);
         }
@@ -2989,7 +3060,8 @@ class YAPI
                     $tcpreq->reply);
             }
             $matches = null;
-            if (!preg_match('/^HTTP[^ ]* (?P<status>\d+) (?P<statusmsg>.)+$/', $tcpreq->meta, $matches)) {
+            $preg_match = preg_match('/^HTTP[^ ]* (?P<status>\d+) (?P<statusmsg>.)+\r\n/', $tcpreq->meta, $matches);
+            if (!$preg_match) {
                 return new YAPI_YReq("", YAPI_IO_ERROR,
                     'Unexpected HTTP response header: ' . $tcpreq->meta,
                     null);
@@ -3304,7 +3376,7 @@ class YAPI
      */
     public static function GetAPIVersion()
     {
-        return "1.10.51266";
+        return "1.10.52094";
     }
 
     /**
@@ -3455,33 +3527,50 @@ class YAPI
         self::$exceptionsDisabled = false;
     }
 
-    private static function _parseRegisteredURL($str_url, &$rooturl, &$auth)
+    private static function _parseRegisteredURL($str_url)
     {
-        $proto = 'http';
+        $res = [];
+        $res['proto'] = 'http';
         if (substr($str_url, 0, 7) == 'http://') {
             $str_url = substr($str_url, 7);
+        } else if (substr($str_url, 0, 8) == 'https://') {
+            $str_url = substr($str_url, 8);
+            $res['proto'] = "https";
         } else if (substr($str_url, 0, 5) == 'ws://') {
             $str_url = substr($str_url, 5);
-            $proto = "ws";
+            $res['proto'] = "ws";
         }
-        while (substr($str_url, -1) == '/') {
-            $str_url = substr($str_url, 0, -1);
+        $subdompos = strpos($str_url, '/');
+        if ($subdompos===false){
+            $res['subdomain']='';
+        } else {
+            $res['subdomain'] = substr($str_url,$subdompos);
+            while (substr($res['subdomain'], -1) == '/') {
+                $res['subdomain'] = substr($res['subdomain'], 0, -1);
+            }
+            $str_url = substr($str_url, 0, $subdompos);
         }
         $authpos = strpos($str_url, '@');
         if ($authpos === false) {
-            $auth = '';
+            $res['auth'] = '';
         } else {
-            $auth = substr($str_url, 0, $authpos);
+            $res['auth'] = substr($str_url, 0, $authpos);
             $str_url = substr($str_url, $authpos + 1);
         }
-        if (strcasecmp(substr($str_url, 0, 8), "callback") == 0) {
-            $rooturl = "http://" . strtoupper($str_url) . "/";
+        $res['port'] = 4444;
+        $p_ofs = strpos($str_url, ':');
+        if ($p_ofs !== false) {
+            $res['host'] = substr($str_url,0,$p_ofs);
+            $res['port'] = (int)substr($str_url,$p_ofs+1);
         } else {
-            if (strpos($str_url, ':') === false) {
-                $str_url .= ':4444';
-            }
-            $rooturl = "{$proto}://{$str_url}/";
+            $res['host'] = $str_url;
         }
+        if (strcasecmp(substr($str_url, 0, 8), "callback") == 0) {
+            $res['rooturl'] = "http://" . strtoupper($str_url) ;
+        } else {
+            $res['rooturl'] = "{$res['proto']}://{$res['host']}:{$res['port']}";
+        }
+        return $res;
     }
 
     /**
@@ -3535,12 +3624,9 @@ class YAPI
     {
         if (is_null(self::$_hubs)) self::_init();
 
-        $rooturl = $url;
-        $auth = '';
-        self::_parseRegisteredURL($url, $rooturl, $auth);
-
+        $url_detail = self::_parseRegisteredURL($url);
         // Test hub
-        $tcphub = new YTcpHub($rooturl, $auth);
+        $tcphub = new YTcpHub($url_detail);
         $res = $tcphub->verfiyStreamAddr(true, $errmsg);
         if ($res < 0) {
             return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
@@ -3569,8 +3655,8 @@ class YAPI
         }
 
         // Add hub to known list
-        if (!isset(self::$_hubs[$rooturl])) {
-            self::$_hubs[$rooturl] = $tcphub;
+        if (!isset(self::$_hubs[$url_detail['rooturl']])) {
+            self::$_hubs[$url_detail['rooturl']] = $tcphub;
         }
 
         // Register device list
@@ -3602,14 +3688,11 @@ class YAPI
     {
         if (is_null(self::$_hubs)) self::_init();
 
-        $rooturl = $url;
-        $auth = '';
-        self::_parseRegisteredURL($url, $rooturl, $auth);
-
+        $url_detail = self::_parseRegisteredURL($url);
         // Add hub to known list
-        if (!isset(self::$_hubs[$rooturl])) {
-            self::$_hubs[$rooturl] = new YTcpHub($rooturl, $auth);
-            if (self::$_hubs[$rooturl]->verfiyStreamAddr(true, $errmsg) < 0) {
+        if (!isset(self::$_hubs[$url_detail['rooturl']])) {
+            self::$_hubs[$url_detail['rooturl']] = new YTcpHub($url_detail);
+            if (self::$_hubs[$url_detail['rooturl']]->verfiyStreamAddr(true, $errmsg) < 0) {
                 return self::_throw(YAPI_IO_ERROR, $errmsg, YAPI_IO_ERROR);
             }
         }
@@ -3630,12 +3713,10 @@ class YAPI
         if (is_null(self::$_hubs))
             return;
 
-        $rooturl = $url;
-        $auth = '';
-        self::_parseRegisteredURL($url, $str_url, $auth);
+        $url_detail = self::_parseRegisteredURL($url);
         $new_hubs = array();
         foreach (self::$_hubs as $hub_url => $hubst) {
-            if ($hub_url == $str_url) {
+            if ($hub_url == $url_detail['rooturl']) {
                 // leave max 10 second to finish pending requests
                 $timeout = YAPI::GetTickCount() + 10000;
                 foreach (self::$_pendingRequests as $tcpreq) {
@@ -3655,6 +3736,12 @@ class YAPI
                 }
                 if ($hubst->notifReq) {
                     $hubst->notifReq->close();
+                    for ($idx = 0; $idx < sizeof(self::$_pendingRequests); $idx++) {
+                        $req = self::$_pendingRequests[$idx];
+                        if ($req == $hubst->notifReq) {
+                            array_splice(self::$_pendingRequests, $idx, 1);
+                        }
+                    }
                 }
             } else {
                 $new_hubs[$hub_url] = self::$_hubs[$hub_url];
@@ -3682,17 +3769,14 @@ class YAPI
     {
         if (is_null(self::$_hubs)) self::_init();
 
-        $rooturl = $url;
-        $auth = '';
-        self::_parseRegisteredURL($url, $rooturl, $auth);
-
+        $url_detail = self::_parseRegisteredURL($url);
         // Test hub
-        $tcphub = new YTcpHub($rooturl, $auth);
+        $tcphub = new YTcpHub($url_detail);
         $res = $tcphub->verfiyStreamAddr(false, $errmsg);
         if ($res < 0) {
             return YAPI_IO_ERROR;
         }
-        if ($tcphub->streamaddr == 'tcp://CALLBACK/') {
+        if ($tcphub->streamaddr == 'tcp://CALLBACK') {
             return YAPI_SUCCESS;
         }
         $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false, '', $mstimeout);
@@ -3749,7 +3833,7 @@ class YAPI
         }
         $bodylen = strlen($cbdata);
         fwrite($skt, $cbdata, $bodylen);
-        stream_set_blocking($skt, 0);
+        stream_set_blocking($skt, false);
         $header = '';
         $headerOK = false;
         $chunked = false;
@@ -3874,10 +3958,9 @@ class YAPI
     public static function ForwardHTTPCallback($url, &$errmsg = "")
     {
         $rooturl = 'callback';
-        $auth = '';
-        self::_parseRegisteredURL('callback', $rooturl, $auth);
-        if (isset(self::$_hubs[$rooturl])) {
-            $cb_hub = self::$_hubs[$rooturl];
+        $url_detail = self::_parseRegisteredURL('callback');
+        if (isset(self::$_hubs[$url_detail['rooturl']])) {
+            $cb_hub = self::$_hubs[$url_detail['rooturl']];
             // data to post is found in $cb_hub->callbackData
             $url = str_replace('http://', '', $url);
             $pos = strpos($url, '/');
@@ -4552,6 +4635,7 @@ class YDataStream
     protected $_calraw                   = Array();                      // floatArr
     protected $_calref                   = Array();                      // floatArr
     protected $_values                   = Array();                      // floatArrArr
+    protected $_isLoaded                 = 0;                            // bool
     //--- (end of generated code: YDataStream attributes)
 
     public function __construct($obj_parent, $obj_dataset = null, $encoded = null)
@@ -4670,6 +4754,9 @@ class YDataStream
         // $idx                    is a int;
         $udat = Array();        // intArr;
         $dat = Array();         // floatArr;
+        if ($this->_isLoaded && !($this->_isClosed)) {
+            return YAPI_SUCCESS;
+        }
         if (strlen($sdata) == 0) {
             $this->_nRows = 0;
             return YAPI_SUCCESS;
@@ -4707,7 +4794,13 @@ class YDataStream
         }
 
         $this->_nRows = sizeof($this->_values);
+        $this->_isLoaded = true;
         return YAPI_SUCCESS;
+    }
+
+    public function _wasLoaded()
+    {
+        return $this->_isLoaded;
     }
 
     public function _get_url()
@@ -4715,6 +4808,21 @@ class YDataStream
         // $url                    is a str;
         $url = sprintf('logger.json?id=%s&run=%d&utc=%u',
                        $this->_functionId,$this->_runNo,$this->_utcStamp);
+        return $url;
+    }
+
+    public function _get_baseurl()
+    {
+        // $url                    is a str;
+        $url = sprintf('logger.json?id=%s&run=%d&utc=',
+                       $this->_functionId,$this->_runNo);
+        return $url;
+    }
+
+    public function _get_urlsuffix()
+    {
+        // $url                    is a str;
+        $url = sprintf('%u',$this->_utcStamp);
         return $url;
     }
 
@@ -5045,6 +5153,7 @@ class YDataSet
     protected $_hardwareId               = "";                           // str
     protected $_functionId               = "";                           // str
     protected $_unit                     = "";                           // str
+    protected $_bulkLoad                 = 0;                            // int
     protected $_startTimeMs              = 0;                            // float
     protected $_endTimeMs                = 0;                            // float
     protected $_progress                 = 0;                            // int
@@ -5159,9 +5268,11 @@ class YDataSet
             } else {
                 // stream that are partially in the dataset
                 // we need to parse data to filter value outside the dataset
-                $url = $each->_get_url();
-                $data = $this->_parent->_download($url);
-                $each->_parseStream($data);
+                if (!($each->_wasLoaded())) {
+                    $url = $each->_get_url();
+                    $data = $this->_parent->_download($url);
+                    $each->_parseStream($data);
+                }
                 $dataRows = $each->get_dataRows();
                 if (sizeof($dataRows) == 0) {
                     return $this->get_progress();
@@ -5212,8 +5323,10 @@ class YDataSet
                         if ($previewMaxVal < $maxVal) {
                             $previewMaxVal = $maxVal;
                         }
-                        $previewTotalAvg = $previewTotalAvg + ($avgVal * $mitv);
-                        $previewTotalTime = $previewTotalTime + $mitv;
+                        if (!(is_nan($avgVal))) {
+                            $previewTotalAvg = $previewTotalAvg + ($avgVal * $mitv);
+                            $previewTotalTime = $previewTotalTime + $mitv;
+                        }
                     }
                     $tim = $end_;
                     $m_pos = $m_pos + 1;
@@ -5270,6 +5383,15 @@ class YDataSet
         // $avgCol                 is a int;
         // $maxCol                 is a int;
         // $firstMeasure           is a bool;
+        // $baseurl                is a str;
+        // $url                    is a str;
+        // $suffix                 is a str;
+        $suffixes = Array();    // strArr;
+        // $idx                    is a int;
+        // $bulkFile               is a bin;
+        $streamStr = Array();   // strArr;
+        // $urlIdx                 is a int;
+        // $streamBin              is a bin;
 
         if ($progress != $this->_progress) {
             return $this->_progress;
@@ -5278,7 +5400,9 @@ class YDataSet
             return $this->loadSummary($data);
         }
         $stream = $this->_streams[$this->_progress];
-        $stream->_parseStream($data);
+        if (!($stream->_wasLoaded())) {
+            $stream->_parseStream($data);
+        }
         $dataRows = $stream->get_dataRows();
         $this->_progress = $this->_progress + 1;
         if (sizeof($dataRows) == 0) {
@@ -5319,6 +5443,40 @@ class YDataSet
                 $this->_measures[] = new YMeasure($tim / 1000, $end_ / 1000, $each[$minCol], $avgv, $each[$maxCol]);
             }
             $tim = $end_;
+        }
+        // Perform bulk preload to speed-up network transfer
+        if (($this->_bulkLoad > 0) && ($this->_progress < sizeof($this->_streams))) {
+            $stream = $this->_streams[$this->_progress];
+            if ($stream->_wasLoaded()) {
+                return $this->get_progress();
+            }
+            $baseurl = $stream->_get_baseurl();
+            $url = $stream->_get_url();
+            $suffix = $stream->_get_urlsuffix();
+            $suffixes[] = $suffix;
+            $idx = $this->_progress+1;
+            while (($idx < sizeof($this->_streams)) && (sizeof($suffixes) < $this->_bulkLoad)) {
+                $stream = $this->_streams[$idx];
+                if (!($stream->_wasLoaded()) && ($stream->_get_baseurl() == $baseurl)) {
+                    $suffix = $stream->_get_urlsuffix();
+                    $suffixes[] = $suffix;
+                    $url = $url . ',' . $suffix;
+                }
+                $idx = $idx + 1;
+            }
+            $bulkFile = $this->_parent->_download($url);
+            $streamStr = $this->_parent->_json_get_array($bulkFile);
+            $urlIdx = 0;
+            $idx = $this->_progress;
+            while (($idx < sizeof($this->_streams)) && ($urlIdx < sizeof($suffixes)) && ($urlIdx < sizeof($streamStr))) {
+                $stream = $this->_streams[$idx];
+                if (($stream->_get_baseurl() == $baseurl) && ($stream->_get_urlsuffix() == $suffixes[$urlIdx])) {
+                    $streamBin = $streamStr[$urlIdx];
+                    $stream->_parseStream($streamBin);
+                    $urlIdx = $urlIdx + 1;
+                }
+                $idx = $idx + 1;
+            }
         }
         return $this->get_progress();
     }
@@ -5468,6 +5626,10 @@ class YDataSet
                 return 100;
             } else {
                 $stream = $this->_streams[$this->_progress];
+                if ($stream->_wasLoaded()) {
+                    // Do not reload stream if it was already loaded
+                    return $this->processMore($this->_progress, '');
+                }
                 $url = $stream->_get_url();
             }
         }
@@ -5628,6 +5790,7 @@ class YDataSet
 
         $this->_functionId = $loadval['id'];
         $this->_unit = $loadval['unit'];
+        $this->_bulkLoad = (isset($loadval['bulk']) ? intval($loadval['bulk']) : 0);
         if (isset($loadval['calib'])) {
             $this->_calib = YAPI::_decodeFloats($loadval['calib']);
             $this->_calib[0] = intVal($this->_calib[0] / 1000);

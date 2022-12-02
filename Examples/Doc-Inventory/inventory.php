@@ -11,18 +11,9 @@
     $module = YModule::FirstModule();
     while (!is_null($module)) {
         printf("%s (%s)<br>", $module->get_serialNumber(),
-            $module->get_upTime());
-        $module->clearCache();
-        $module = $module->nextModule();
+               $module->get_productName());
+        $module=$module->nextModule();
     }
-    print("\n\n");
-    $module = YModule::FirstModule();
-    while (!is_null($module)) {
-        printf("%s (%s)<br>", $module->get_serialNumber(),
-            $module->get_upTime());
-        $module = $module->nextModule();
-    }
-
     YAPI::FreeAPI();
     ?>
 </TT>

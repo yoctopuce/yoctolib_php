@@ -1,113 +1,23 @@
 <?php
 include('../../Sources/yocto_api.php');
-include('../../Sources/yocto_network.php');
-include('../../Sources/yocto_files.php');
-include('../../Sources/yocto_display.php');
+YAPI::DisableExceptions();
 
 $error = "";
-//YAPI::DisableExceptions();
-function saveLog2DB($serial, $logs)
-{
-    print("Logs of $serial\n");
-    //print($logs);
-}
-
-
 if (YAPI::TestHub("callback", 10, $error) == YAPI::SUCCESS) {
-    YAPI::SetHTTPCallbackCacheDir("cache_dir");
-
-    try {
-        YAPI::RegisterHub("callback");
-        $debug_msg = sprintf("\ncallback time is %s \n", date("h:i:sa"));
-        $module = YModule::FirstModule();
-        while (!is_null($module)) {
-            $debug_msg .= " - " . $module->get_serialNumber() . " " . $module->get_logicalName() . "\n";
-            $module->clearCache();
-            $module = $module->nextModule();
-        }
-
-        $module = YModule::FirstModule();
-        while (!is_null($module)) {
-            $debug_msg .= " - " . $module->get_serialNumber() . " " . $module->get_upTime() . "\n";
-            $module = $module->nextModule();
-        }
-
-        file_put_contents("debug.txt", $debug_msg, FILE_APPEND);
-        print($debug_msg);
-    } catch (YAPI_Exception $ex) {
-        $message = "Exeption:" . $ex->getMessage() . "\n";
-        $message .= $ex->getTraceAsString();
-        print($message);
-        file_put_contents("debug.txt", $message, FILE_APPEND);
-    }
-    die();
-
-    /*
-    $YFiles = YFiles::FirstFiles();
-    $YFiles->get_module()->addFileToHTTPCallback("myconfig.txt");
-
-        $download = $YFiles->download("myconfig.txt");
-        print($download);
-
-        $display = YDisplay::FirstDisplay();
-        $YModule = $display->get_module();
-        $YModule->addFileToHTTPCallback("display.gif");
-
-        $gif_preview = $YModule->download("display.gif");
-        file_put_contents("last_preview.gif", $gif_preview);
-
+    YAPI::RegisterHub("callback");
     $module = YModule::FirstModule();
+    $debug_msg = "\ndebugLogs:\n";
     while (!is_null($module)) {
-        $module->addFileToHTTPCallback("logs.txt");
-        $logs = $module->get_lastLogs();
-        saveLog2DB($module->get_serialNumber(), $logs);
+        $debug_msg .= 'change beacon state of ' . $module->get_serialNumber() . "\n";
+        if ($module->get_beacon() == Y_BEACON_ON) {
+            $module->set_beacon(Y_BEACON_OFF);
+        } else {
+            $module->set_beacon(Y_BEACON_ON);
+        }
         $module = $module->nextModule();
     }
-
-
-    //$network = YNetwork::FirstNetwork();
-    //$yhub = $network->get_module();
-    //$yhub->download("")
-    // or use any connected module suitable for the demo
-    //$sensor = YSensor::FirstSensor();
-    //$sensor->get_module()->addFileToHTTPCallback("logger.json?id=genericSensor2");
-    //dumpSensor($sensor);
-    */
-
-
-}
-
-
-function dumpSensor($sensor)
-{
-    $dataset = $sensor->get_recordedData(0, 0);
-    $progress = 0;
-    Printf("Using DataLogger of %s\n", $sensor->get_friendlyName());
-    print("loading summary...\n");
-    if (ob_get_level()) ob_flush();
-    flush();
-    $dataset->loadMore();
-    $summary = $dataset->get_summary();
-    Printf("%s | %s | %.3f | %.3f | %.3f\n",
-        date("Y-m-d H:i:s", $summary->get_startTimeUTC()),
-        date("Y-m-d H:i:s", $summary->get_endTimeUTC()),
-        $summary->get_minValue(), $summary->get_averageValue(), $summary->get_maxValue());
-
-    while ($progress < 100) {
-        if (ob_get_level()) ob_flush();
-        flush();
-        $progress = $dataset->loadMore();
-    }
-    // load completed: show all results
-    $details = $dataset->get_measures();
-    print("from |   to   |  min |  avg | max\n");
-    foreach ($details as $measure) {
-        Printf("%s | %s | %.3f | %.3f | %.3f\n",
-            date("Y-m-d H:i:s", $measure->get_startTimeUTC()),
-            date("Y-m-d H:i:s", $measure->get_endTimeUTC()),
-            $measure->get_minValue(), $measure->get_averageValue(), $measure->get_maxValue());
-    }
-
+    print($debug_msg);
+    die();
 }
 
 ?>

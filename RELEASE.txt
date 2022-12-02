@@ -1,5 +1,4 @@
-PHP v1.10.51266
+PHP v1.10.52094
 
-- Add addFileToHTTPCallback methode to YModule
-- Fix type hint for method drawText
-- Fix non detected devices in HTTP Callback with JZON encoding.
+- Improve HTTP Callback to support VirtualHub-4web
+- Fix caching issue with beacon state
