@@ -73,7 +73,7 @@ class YCarbonDioxide extends YSensor
      * Remember to call the saveToFlash() method of the
      * module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to Automatic Baseline Calibration period, in hours
+     * @param int $newval : an integer corresponding to Automatic Baseline Calibration period, in hours
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -126,7 +126,7 @@ class YCarbonDioxide extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the CO2 sensor, for instance
+     * @param string $func : a string that uniquely characterizes the CO2 sensor, for instance
      *         YCO2MK02.carbonDioxide.
      *
      * @return YCarbonDioxide  a YCarbonDioxide object allowing you to drive the CO2 sensor.
@@ -148,7 +148,7 @@ class YCarbonDioxide extends YSensor
      * have been maintained within the specified CO2 density during at least two
      * minutes.
      *
-     * @param float $refVal  reference CO2 density for the calibration
+     * @param float $refVal : reference CO2 density for the calibration
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *

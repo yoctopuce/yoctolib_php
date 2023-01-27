@@ -68,7 +68,7 @@ class YBuzzer extends YFunction
     /**
      * Changes the frequency of the signal sent to the buzzer. A zero value stops the buzzer.
      *
-     * @param float $newval  a floating point number corresponding to the frequency of the signal sent to the buzzer
+     * @param float $newval : a floating point number corresponding to the frequency of the signal sent to the buzzer
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -122,7 +122,7 @@ class YBuzzer extends YFunction
      * Changes the volume of the signal sent to the buzzer/speaker. Remember to call the
      * saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the volume of the signal sent to the buzzer/speaker
+     * @param int $newval : an integer corresponding to the volume of the signal sent to the buzzer/speaker
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -235,7 +235,7 @@ class YBuzzer extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the buzzer, for instance
+     * @param string $func : a string that uniquely characterizes the buzzer, for instance
      *         YBUZZER2.buzzer.
      *
      * @return YBuzzer  a YBuzzer object allowing you to drive the buzzer.
@@ -259,8 +259,8 @@ class YBuzzer extends YFunction
     /**
      * Adds a new frequency transition to the playing sequence.
      *
-     * @param freq    : desired frequency when the transition is completed, in Hz
-     * @param int $msDelay  duration of the frequency transition, in milliseconds.
+     * @param int $freq    : desired frequency when the transition is completed, in Hz
+     * @param int $msDelay : duration of the frequency transition, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -273,8 +273,8 @@ class YBuzzer extends YFunction
     /**
      * Adds a pulse to the playing sequence.
      *
-     * @param int $freq  pulse frequency, in Hz
-     * @param int $msDuration  pulse duration, in milliseconds.
+     * @param int $freq : pulse frequency, in Hz
+     * @param int $msDuration : pulse duration, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -288,8 +288,8 @@ class YBuzzer extends YFunction
      * Adds a new volume transition to the playing sequence. Frequency stays untouched:
      * if frequency is at zero, the transition has no effect.
      *
-     * @param volume    : desired volume when the transition is completed, as a percentage.
-     * @param int $msDuration  duration of the volume transition, in milliseconds.
+     * @param int $volume    : desired volume when the transition is completed, as a percentage.
+     * @param int $msDuration : duration of the volume transition, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -307,7 +307,7 @@ class YBuzzer extends YFunction
      * ' and , to move to the upper/lower octave, . to enlarge
      * the note duration.
      *
-     * @param string $notes  notes to be played, as a text string.
+     * @param string $notes : notes to be played, as a text string.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -543,8 +543,8 @@ class YBuzzer extends YFunction
     /**
      * Activates the buzzer for a short duration.
      *
-     * @param int $frequency  pulse frequency, in hertz
-     * @param int $duration  pulse duration in milliseconds
+     * @param int $frequency : pulse frequency, in hertz
+     * @param int $duration : pulse duration in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -558,8 +558,8 @@ class YBuzzer extends YFunction
     /**
      * Makes the buzzer frequency change over a period of time.
      *
-     * @param int $frequency  frequency to reach, in hertz. A frequency under 25Hz stops the buzzer.
-     * @param int $duration   pulse duration in milliseconds
+     * @param int $frequency : frequency to reach, in hertz. A frequency under 25Hz stops the buzzer.
+     * @param int $duration :  pulse duration in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -573,8 +573,8 @@ class YBuzzer extends YFunction
     /**
      * Makes the buzzer volume change over a period of time, frequency  stays untouched.
      *
-     * @param int $volume  volume to reach in %
-     * @param int $duration  change duration in milliseconds
+     * @param int $volume : volume to reach in %
+     * @param int $duration : change duration in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -593,7 +593,7 @@ class YBuzzer extends YFunction
      * ' and , to move to the upper/lower octave, . to enlarge
      * the note duration.
      *
-     * @param string $notes  notes to be played, as a text string.
+     * @param string $notes : notes to be played, as a text string.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.

@@ -26,7 +26,7 @@ class YRangeFinder extends YSensor
 
     //--- (YRangeFinder attributes)
     protected int $_rangeFinderMode = self::RANGEFINDERMODE_INVALID; // RangeFinderMode
-    protected int $_timeFrame = self::TIMEFRAME_INVALID;      // Time
+    protected float $_timeFrame = self::TIMEFRAME_INVALID;      // Time
     protected int $_quality = self::QUALITY_INVALID;        // Percent
     protected string $_hardwareCalibration = self::HARDWARECALIBRATION_INVALID; // RangeFinderCalib
     protected float $_currentTemperature = self::CURRENTTEMPERATURE_INVALID; // MeasureVal
@@ -77,7 +77,7 @@ class YRangeFinder extends YSensor
      * WARNING: if a specific calibration is defined for the rangeFinder function, a
      * unit system change will probably break it.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the measured range
+     * @param string $newval : a string corresponding to the measuring unit for the measured range
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -116,7 +116,7 @@ class YRangeFinder extends YSensor
      * precision, speed or maximum range.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YRangeFinder::RANGEFINDERMODE_DEFAULT,
+     * @param int $newval : a value among YRangeFinder::RANGEFINDERMODE_DEFAULT,
      * YRangeFinder::RANGEFINDERMODE_LONG_RANGE, YRangeFinder::RANGEFINDERMODE_HIGH_ACCURACY and
      * YRangeFinder::RANGEFINDERMODE_HIGH_SPEED corresponding to the rangefinder running mode, allowing you
      * to put priority on
@@ -136,12 +136,12 @@ class YRangeFinder extends YSensor
      * Returns the time frame used to measure the distance and estimate the measure
      * reliability. The time frame is expressed in milliseconds.
      *
-     * @return int  an integer corresponding to the time frame used to measure the distance and estimate the measure
+     * @return float  an integer corresponding to the time frame used to measure the distance and estimate the measure
      *         reliability
      *
      * On failure, throws an exception or returns YRangeFinder::TIMEFRAME_INVALID.
      */
-    public function get_timeFrame(): int
+    public function get_timeFrame(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -160,7 +160,7 @@ class YRangeFinder extends YSensor
      * the detection of events shorter than the time frame.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the time frame used to measure the distance and
+     * @param float $newval : an integer corresponding to the time frame used to measure the distance and
      * estimate the measure
      *         reliability
      *
@@ -168,7 +168,7 @@ class YRangeFinder extends YSensor
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_timeFrame(int $newval): int
+    public function set_timeFrame(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("timeFrame", $rest_val);
@@ -272,7 +272,7 @@ class YRangeFinder extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the range finder, for instance
+     * @param string $func : a string that uniquely characterizes the range finder, for instance
      *         YRNGFND1.rangeFinder1.
      *
      * @return YRangeFinder  a YRangeFinder object allowing you to drive the range finder.
@@ -340,7 +340,7 @@ class YRangeFinder extends YSensor
      * of a cover glass. Make sure to read the chapter about hardware calibration for details
      * on the calibration procedure for proper results.
      *
-     * @param float $targetDist  true distance of the calibration target, in mm or inches, depending
+     * @param float $targetDist : true distance of the calibration target, in mm or inches, depending
      *         on the unit selected in the device
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -363,7 +363,7 @@ class YRangeFinder extends YSensor
      * of a cover glass. Make sure to read the chapter about hardware calibration for details
      * on the calibration procedure for proper results.
      *
-     * @param float $targetDist  true distance of the calibration target, in mm or inches, depending
+     * @param float $targetDist : true distance of the calibration target, in mm or inches, depending
      *         on the unit selected in the device
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -408,12 +408,12 @@ class YRangeFinder extends YSensor
     return $this->set_rangeFinderMode($newval);
 }
 
-    public function timeFrame(): int
+    public function timeFrame(): float
 {
     return $this->get_timeFrame();
 }
 
-    public function setTimeFrame(int $newval)
+    public function setTimeFrame(float $newval)
 {
     return $this->set_timeFrame($newval);
 }

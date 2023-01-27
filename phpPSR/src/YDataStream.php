@@ -22,7 +22,7 @@ class YDataStream
     //--- (generated code: YDataStream attributes)
     protected ?YFunction $_parent = null;                         // YFunction
     protected int $_runNo = 0;                            // int
-    protected int $_utcStamp = 0;                            // u32
+    protected float $_utcStamp = 0;                            // u32
     protected int $_nCols = 0;                            // int
     protected int $_nRows = 0;                            // int
     protected float $_startTime = 0;                            // float
@@ -324,11 +324,11 @@ class YDataStream
      *
      * <b>DEPRECATED</b>: This method has been replaced by get_realStartTimeUTC().
      *
-     * @return int  an unsigned number corresponding to the number of seconds
+     * @return float  an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the beginning of this data
      *         stream (i.e. Unix time representation of the absolute time).
      */
-    public function get_startTimeUTC(): int
+    public function get_startTimeUTC(): float
     {
         return round($this->_startTime);
     }
@@ -523,8 +523,8 @@ class YDataStream
      * This method fetches the whole data stream from the device,
      * if not yet done.
      *
-     * @param int $row  row index
-     * @param int $col  column index
+     * @param int $row : row index
+     * @param int $col : column index
      *
      * @return float  a floating-point number
      *

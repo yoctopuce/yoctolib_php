@@ -29,10 +29,10 @@ class YWakeUpMonitor extends YFunction
     //--- (YWakeUpMonitor attributes)
     protected int $_powerDuration = self::POWERDURATION_INVALID;  // UInt31
     protected int $_sleepCountdown = self::SLEEPCOUNTDOWN_INVALID; // UInt31
-    protected int $_nextWakeUp = self::NEXTWAKEUP_INVALID;     // UTCTime
+    protected float $_nextWakeUp = self::NEXTWAKEUP_INVALID;     // UTCTime
     protected int $_wakeUpReason = self::WAKEUPREASON_INVALID;   // WakeUpReason
     protected int $_wakeUpState = self::WAKEUPSTATE_INVALID;    // WakeUpState
-    protected int $_rtcTime = self::RTCTIME_INVALID;        // UTCTime
+    protected float $_rtcTime = self::RTCTIME_INVALID;        // UTCTime
     protected int $_endOfTime = 2145960000;                   // UInt31 (constant)
 
     //--- (end of YWakeUpMonitor attributes)
@@ -98,7 +98,7 @@ class YWakeUpMonitor extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the maximal wake up time (seconds) before
+     * @param int $newval : an integer corresponding to the maximal wake up time (seconds) before
      * automatically going to sleep
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -133,7 +133,7 @@ class YWakeUpMonitor extends YFunction
     /**
      * Changes the delay before the next sleep period.
      *
-     * @param int $newval  an integer corresponding to the delay before the next sleep period
+     * @param int $newval : an integer corresponding to the delay before the next sleep period
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -148,11 +148,11 @@ class YWakeUpMonitor extends YFunction
     /**
      * Returns the next scheduled wake up date/time (UNIX format).
      *
-     * @return int  an integer corresponding to the next scheduled wake up date/time (UNIX format)
+     * @return float  an integer corresponding to the next scheduled wake up date/time (UNIX format)
      *
      * On failure, throws an exception or returns YWakeUpMonitor::NEXTWAKEUP_INVALID.
      */
-    public function get_nextWakeUp(): int
+    public function get_nextWakeUp(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -167,13 +167,13 @@ class YWakeUpMonitor extends YFunction
     /**
      * Changes the days of the week when a wake up must take place.
      *
-     * @param int $newval  an integer corresponding to the days of the week when a wake up must take place
+     * @param float $newval : an integer corresponding to the days of the week when a wake up must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_nextWakeUp(int $newval): int
+    public function set_nextWakeUp(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("nextWakeUp", $rest_val);
@@ -227,7 +227,7 @@ class YWakeUpMonitor extends YFunction
         return $this->_setAttr("wakeUpState", $rest_val);
     }
 
-    public function get_rtcTime(): int
+    public function get_rtcTime(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -262,7 +262,7 @@ class YWakeUpMonitor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the wake-up monitor, for instance
+     * @param string $func : a string that uniquely characterizes the wake-up monitor, for instance
      *         YHUBGSM5.wakeUpMonitor.
      *
      * @return YWakeUpMonitor  a YWakeUpMonitor object allowing you to drive the wake-up monitor.
@@ -290,7 +290,7 @@ class YWakeUpMonitor extends YFunction
      * Goes to sleep until the next wake up condition is met,  the
      * RTC time must have been set before calling this function.
      *
-     * @param int $secBeforeSleep  number of seconds before going into sleep mode,
+     * @param int $secBeforeSleep : number of seconds before going into sleep mode,
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -311,8 +311,8 @@ class YWakeUpMonitor extends YFunction
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
      *
-     * @param int $secUntilWakeUp  number of seconds before next wake up
-     * @param int $secBeforeSleep  number of seconds before going into sleep mode
+     * @param int $secUntilWakeUp : number of seconds before next wake up
+     * @param int $secBeforeSleep : number of seconds before going into sleep mode
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -333,8 +333,8 @@ class YWakeUpMonitor extends YFunction
      * RTC time must have been set before calling this function. The count down before sleep
      * can be canceled with resetSleepCountDown.
      *
-     * @param int $wakeUpTime  wake-up datetime (UNIX format)
-     * @param int $secBeforeSleep  number of seconds before going into sleep mode
+     * @param int $wakeUpTime : wake-up datetime (UNIX format)
+     * @param int $secBeforeSleep : number of seconds before going into sleep mode
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -383,12 +383,12 @@ class YWakeUpMonitor extends YFunction
     return $this->set_sleepCountdown($newval);
 }
 
-    public function nextWakeUp(): int
+    public function nextWakeUp(): float
 {
     return $this->get_nextWakeUp();
 }
 
-    public function setNextWakeUp(int $newval)
+    public function setNextWakeUp(float $newval)
 {
     return $this->set_nextWakeUp($newval);
 }
@@ -408,7 +408,7 @@ class YWakeUpMonitor extends YFunction
     return $this->set_wakeUpState($newval);
 }
 
-    public function rtcTime(): int
+    public function rtcTime(): float
 {
     return $this->get_rtcTime();
 }

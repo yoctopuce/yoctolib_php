@@ -50,7 +50,7 @@ class YVoltageOutput extends YFunction
     /**
      * Changes the output voltage, in V. Valid range is from 0 to 10V.
      *
-     * @param float $newval  a floating point number corresponding to the output voltage, in V
+     * @param float $newval : a floating point number corresponding to the output voltage, in V
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -103,7 +103,7 @@ class YVoltageOutput extends YFunction
      * Changes the output voltage at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param float $newval  a floating point number corresponding to the output voltage at device start up
+     * @param float $newval : a floating point number corresponding to the output voltage at device start up
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -157,7 +157,7 @@ class YVoltageOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the voltage output, for instance
+     * @param string $func : a string that uniquely characterizes the voltage output, for instance
      *         TX010V01.voltageOutput1.
      *
      * @return YVoltageOutput  a YVoltageOutput object allowing you to drive the voltage output.
@@ -177,9 +177,9 @@ class YVoltageOutput extends YFunction
      * Performs a smooth transition of output voltage. Any explicit voltage
      * change cancels any ongoing transition process.
      *
-     * @param V_target   : new output voltage value at the end of the transition
+     * @param float $V_target   : new output voltage value at the end of the transition
      *         (floating-point number, representing the end voltage in V)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      */

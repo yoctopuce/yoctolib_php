@@ -62,8 +62,8 @@ class YCurrentLoopOutput extends YFunction
      * not properly powered, the  target current is not reached and
      * loopPower is set to LOWPWR.
      *
-     * @param float $newval  a floating point number corresponding to the current loop, the valid range is
-     * from 3 to 21mA
+     * @param float $newval : a floating point number corresponding to the current loop, the valid range
+     * is from 3 to 21mA
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -116,7 +116,7 @@ class YCurrentLoopOutput extends YFunction
      * Changes the loop current at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param float $newval  a floating point number corresponding to the loop current at device start up
+     * @param float $newval : a floating point number corresponding to the loop current at device start up
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -192,7 +192,7 @@ class YCurrentLoopOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the 4-20mA output, for instance
+     * @param string $func : a string that uniquely characterizes the 4-20mA output, for instance
      *         TX420MA1.currentLoopOutput.
      *
      * @return YCurrentLoopOutput  a YCurrentLoopOutput object allowing you to drive the 4-20mA output.
@@ -212,9 +212,9 @@ class YCurrentLoopOutput extends YFunction
      * Performs a smooth transition of current flowing in the loop. Any current explicit
      * change cancels any ongoing transition process.
      *
-     * @param mA_target   : new current value at the end of the transition
+     * @param float $mA_target   : new current value at the end of the transition
      *         (floating-point number, representing the end current in mA)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      */

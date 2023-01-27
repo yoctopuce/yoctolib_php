@@ -83,7 +83,7 @@ class YAudioOut extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to audio output volume, in per cents
+     * @param int $newval : an integer corresponding to audio output volume, in per cents
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -118,7 +118,7 @@ class YAudioOut extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param int $newval  either YAudioOut::MUTE_FALSE or YAudioOut::MUTE_TRUE, according to the state of
+     * @param int $newval : either YAudioOut::MUTE_FALSE or YAudioOut::MUTE_TRUE, according to the state of
      * the mute function
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -214,7 +214,7 @@ class YAudioOut extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the audio output, for instance
+     * @param string $func : a string that uniquely characterizes the audio output, for instance
      *         MyDevice.audioOut1.
      *
      * @return YAudioOut  a YAudioOut object allowing you to drive the audio output.

@@ -44,10 +44,10 @@ class YAnButton extends YFunction
     protected int $_calibrationMin = self::CALIBRATIONMIN_INVALID; // UInt31
     protected int $_sensitivity = self::SENSITIVITY_INVALID;    // UInt31
     protected int $_isPressed = self::ISPRESSED_INVALID;      // Bool
-    protected int $_lastTimePressed = self::LASTTIMEPRESSED_INVALID; // Time
-    protected int $_lastTimeReleased = self::LASTTIMERELEASED_INVALID; // Time
-    protected int $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
-    protected int $_pulseTimer = self::PULSETIMER_INVALID;     // Time
+    protected float $_lastTimePressed = self::LASTTIMEPRESSED_INVALID; // Time
+    protected float $_lastTimeReleased = self::LASTTIMERELEASED_INVALID; // Time
+    protected float $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
+    protected float $_pulseTimer = self::PULSETIMER_INVALID;     // Time
     protected int $_inputType = self::INPUTTYPE_INVALID;      // InputType
 
     //--- (end of YAnButton attributes)
@@ -167,7 +167,7 @@ class YAnButton extends YFunction
      * Starts or stops the calibration process. Remember to call the saveToFlash()
      * method of the module at the end of the calibration if the modification must be kept.
      *
-     * @param int $newval  either YAnButton::ANALOGCALIBRATION_OFF or YAnButton::ANALOGCALIBRATION_ON
+     * @param int $newval : either YAnButton::ANALOGCALIBRATION_OFF or YAnButton::ANALOGCALIBRATION_ON
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -204,7 +204,7 @@ class YAnButton extends YFunction
      * starting the automated calibration.  Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the maximal calibration value for the input
+     * @param int $newval : an integer corresponding to the maximal calibration value for the input
      * (between 0 and 4095, included), without actually
      *         starting the automated calibration
      *
@@ -243,7 +243,7 @@ class YAnButton extends YFunction
      * starting the automated calibration.  Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minimal calibration value for the input
+     * @param int $newval : an integer corresponding to the minimal calibration value for the input
      * (between 0 and 4095, included), without actually
      *         starting the automated calibration
      *
@@ -285,7 +285,7 @@ class YAnButton extends YFunction
      * of the input switches from pressed to released and back.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the sensibility for the input (between 1 and 1000)
+     * @param int $newval : an integer corresponding to the sensibility for the input (between 1 and 1000)
      * for triggering user callbacks
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -322,13 +322,13 @@ class YAnButton extends YFunction
      * Returns the number of elapsed milliseconds between the module power on and the last time
      * the input button was pressed (the input contact transitioned from open to closed).
      *
-     * @return int  an integer corresponding to the number of elapsed milliseconds between the module
+     * @return float  an integer corresponding to the number of elapsed milliseconds between the module
      * power on and the last time
      *         the input button was pressed (the input contact transitioned from open to closed)
      *
      * On failure, throws an exception or returns YAnButton::LASTTIMEPRESSED_INVALID.
      */
-    public function get_lastTimePressed(): int
+    public function get_lastTimePressed(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -344,13 +344,13 @@ class YAnButton extends YFunction
      * Returns the number of elapsed milliseconds between the module power on and the last time
      * the input button was released (the input contact transitioned from closed to open).
      *
-     * @return int  an integer corresponding to the number of elapsed milliseconds between the module
+     * @return float  an integer corresponding to the number of elapsed milliseconds between the module
      * power on and the last time
      *         the input button was released (the input contact transitioned from closed to open)
      *
      * On failure, throws an exception or returns YAnButton::LASTTIMERELEASED_INVALID.
      */
-    public function get_lastTimeReleased(): int
+    public function get_lastTimeReleased(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -367,11 +367,11 @@ class YAnButton extends YFunction
      * of overflow (>=2^32), the counter will wrap. To reset the counter, just
      * call the resetCounter() method.
      *
-     * @return int  an integer corresponding to the pulse counter value
+     * @return float  an integer corresponding to the pulse counter value
      *
      * On failure, throws an exception or returns YAnButton::PULSECOUNTER_INVALID.
      */
-    public function get_pulseCounter(): int
+    public function get_pulseCounter(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -383,7 +383,7 @@ class YAnButton extends YFunction
         return $res;
     }
 
-    public function set_pulseCounter(int $newval): int
+    public function set_pulseCounter(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("pulseCounter", $rest_val);
@@ -392,11 +392,11 @@ class YAnButton extends YFunction
     /**
      * Returns the timer of the pulses counter (ms).
      *
-     * @return int  an integer corresponding to the timer of the pulses counter (ms)
+     * @return float  an integer corresponding to the timer of the pulses counter (ms)
      *
      * On failure, throws an exception or returns YAnButton::PULSETIMER_INVALID.
      */
-    public function get_pulseTimer(): int
+    public function get_pulseTimer(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -433,9 +433,9 @@ class YAnButton extends YFunction
      * Changes the decoding method applied to the input (analog or multiplexed binary switches).
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YAnButton::INPUTTYPE_ANALOG_FAST, YAnButton::INPUTTYPE_DIGITAL4 and
-     * YAnButton::INPUTTYPE_ANALOG_SMOOTH corresponding to the decoding method applied to the input (analog
-     * or multiplexed binary switches)
+     * @param int $newval : a value among YAnButton::INPUTTYPE_ANALOG_FAST, YAnButton::INPUTTYPE_DIGITAL4
+     * and YAnButton::INPUTTYPE_ANALOG_SMOOTH corresponding to the decoding method applied to the input
+     * (analog or multiplexed binary switches)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -470,7 +470,7 @@ class YAnButton extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the analog input, for instance
+     * @param string $func : a string that uniquely characterizes the analog input, for instance
      *         YBUZZER2.anButton1.
      *
      * @return YAnButton  a YAnButton object allowing you to drive the analog input.
@@ -553,27 +553,27 @@ class YAnButton extends YFunction
     return $this->get_isPressed();
 }
 
-    public function lastTimePressed(): int
+    public function lastTimePressed(): float
 {
     return $this->get_lastTimePressed();
 }
 
-    public function lastTimeReleased(): int
+    public function lastTimeReleased(): float
 {
     return $this->get_lastTimeReleased();
 }
 
-    public function pulseCounter(): int
+    public function pulseCounter(): float
 {
     return $this->get_pulseCounter();
 }
 
-    public function setPulseCounter(int $newval)
+    public function setPulseCounter(float $newval)
 {
     return $this->set_pulseCounter($newval);
 }
 
-    public function pulseTimer(): int
+    public function pulseTimer(): float
 {
     return $this->get_pulseTimer();
 }

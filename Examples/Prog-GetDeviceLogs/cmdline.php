@@ -1,7 +1,7 @@
 <?php
 // this example is not a web page, it is meant to be started in php command line mode.
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-include("../../Sources/yocto_api.php");
+include("../../php8/yocto_api.php");
 
 function logfun($obj_module, $str_line)
 {

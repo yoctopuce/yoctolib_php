@@ -123,7 +123,7 @@ class YDigitalIO extends YFunction
      * Only channels configured as outputs will be affecter, according to the value
      * configured using set_portDirection.
      *
-     * @param int $newval  an integer corresponding to the state of all digital IO port's channels at
+     * @param int $newval : an integer corresponding to the state of all digital IO port's channels at
      * once: the parameter
      *         is an integer where each bit represents a channel, with bit 0 matching channel #0
      *
@@ -161,7 +161,7 @@ class YDigitalIO extends YFunction
      * Changes the I/O direction of all channels of the port (bitmap): 0 makes a bit an input, 1 makes it an output.
      * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
      *
-     * @param int $newval  an integer corresponding to the I/O direction of all channels of the port
+     * @param int $newval : an integer corresponding to the I/O direction of all channels of the port
      * (bitmap): 0 makes a bit an input, 1 makes it an output
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -200,7 +200,7 @@ class YDigitalIO extends YFunction
      * it an open-drain (open-collector) input/output. Remember to call the
      * saveToFlash() method  to make sure the setting is kept after a reboot.
      *
-     * @param int $newval  an integer corresponding to the electrical interface for each bit of the port
+     * @param int $newval : an integer corresponding to the electrical interface for each bit of the port
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -237,7 +237,7 @@ class YDigitalIO extends YFunction
      * intuitive way; for each bit set to 1, the I/O works in reverse mode.
      * Remember to call the saveToFlash() method  to make sure the setting will be kept after a reboot.
      *
-     * @param int $newval  an integer corresponding to the polarity of all the bits of the port: For each
+     * @param int $newval : an integer corresponding to the polarity of all the bits of the port: For each
      * bit set to 0, the matching I/O works the regular,
      *         intuitive way; for each bit set to 1, the I/O works in reverse mode
      *
@@ -315,7 +315,7 @@ class YDigitalIO extends YFunction
      * Changes the voltage source used to drive output bits.
      * Remember to call the saveToFlash() method  to make sure the setting is kept after a reboot.
      *
-     * @param int $newval  a value among YDigitalIO::OUTPUTVOLTAGE_USB_5V, YDigitalIO::OUTPUTVOLTAGE_USB_3V
+     * @param int $newval : a value among YDigitalIO::OUTPUTVOLTAGE_USB_5V, YDigitalIO::OUTPUTVOLTAGE_USB_3V
      * and YDigitalIO::OUTPUTVOLTAGE_EXT_V corresponding to the voltage source used to drive output bits
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -369,7 +369,7 @@ class YDigitalIO extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the digital IO port, for instance
+     * @param string $func : a string that uniquely characterizes the digital IO port, for instance
      *         YMINIIO0.digitalIO.
      *
      * @return YDigitalIO  a YDigitalIO object allowing you to drive the digital IO port.
@@ -388,8 +388,8 @@ class YDigitalIO extends YFunction
     /**
      * Sets a single bit (i.e. channel) of the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
-     * @param int $bitstate  the state of the bit (1 or 0)
+     * @param int $bitno : the bit number; lowest bit has index 0
+     * @param int $bitstate : the state of the bit (1 or 0)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -405,7 +405,7 @@ class YDigitalIO extends YFunction
     /**
      * Returns the state of a single bit (i.e. channel)  of the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
+     * @param int $bitno : the bit number; lowest bit has index 0
      *
      * @return int  the bit state (0 or 1)
      *
@@ -421,7 +421,7 @@ class YDigitalIO extends YFunction
     /**
      * Reverts a single bit (i.e. channel) of the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
+     * @param int $bitno : the bit number; lowest bit has index 0
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -435,8 +435,8 @@ class YDigitalIO extends YFunction
     /**
      * Changes  the direction of a single bit (i.e. channel) from the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
-     * @param int $bitdirection  direction to set, 0 makes the bit an input, 1 makes it an output.
+     * @param int $bitno : the bit number; lowest bit has index 0
+     * @param int $bitdirection : direction to set, 0 makes the bit an input, 1 makes it an output.
      *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -454,7 +454,7 @@ class YDigitalIO extends YFunction
      * Returns the direction of a single bit (i.e. channel) from the I/O port (0 means the bit is an
      * input, 1  an output).
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
+     * @param int $bitno : the bit number; lowest bit has index 0
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -470,8 +470,8 @@ class YDigitalIO extends YFunction
     /**
      * Changes the polarity of a single bit from the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0.
-     * @param int $bitpolarity  polarity to set, 0 makes the I/O work in regular mode, 1 makes the I/O 
+     * @param int $bitno : the bit number; lowest bit has index 0.
+     * @param int $bitpolarity : polarity to set, 0 makes the I/O work in regular mode, 1 makes the I/O 
      * works in reverse mode.
      *         Remember to call the   saveToFlash() method to make sure the setting is kept after a reboot.
      *
@@ -490,7 +490,7 @@ class YDigitalIO extends YFunction
      * Returns the polarity of a single bit from the I/O port (0 means the I/O works in regular mode, 1
      * means the I/O  works in reverse mode).
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
+     * @param int $bitno : the bit number; lowest bit has index 0
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -506,8 +506,8 @@ class YDigitalIO extends YFunction
     /**
      * Changes  the electrical interface of a single bit from the I/O port.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
-     * @param int $opendrain  0 makes a bit a regular input/output, 1 makes
+     * @param int $bitno : the bit number; lowest bit has index 0
+     * @param int $opendrain : 0 makes a bit a regular input/output, 1 makes
      *         it an open-drain (open-collector) input/output. Remember to call the
      *         saveToFlash() method to make sure the setting is kept after a reboot.
      *
@@ -526,7 +526,7 @@ class YDigitalIO extends YFunction
      * Returns the type of electrical interface of a single bit from the I/O port. (0 means the bit is an
      * input, 1  an output).
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
+     * @param int $bitno : the bit number; lowest bit has index 0
      *
      * @return int    0 means the a bit is a regular input/output, 1 means the bit is an open-drain
      *         (open-collector) input/output.
@@ -544,8 +544,8 @@ class YDigitalIO extends YFunction
      * Triggers a pulse on a single bit for a specified duration. The specified bit
      * will be turned to 1, and then back to 0 after the given duration.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
-     * @param int $ms_duration  desired pulse duration in milliseconds. Be aware that the device time
+     * @param int $bitno : the bit number; lowest bit has index 0
+     * @param int $ms_duration : desired pulse duration in milliseconds. Be aware that the device time
      *         resolution is not guaranteed up to the millisecond.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -561,9 +561,9 @@ class YDigitalIO extends YFunction
      * Schedules a pulse on a single bit for a specified duration. The specified bit
      * will be turned to 1, and then back to 0 after the given duration.
      *
-     * @param int $bitno  the bit number; lowest bit has index 0
-     * @param int $ms_delay  waiting time before the pulse, in milliseconds
-     * @param int $ms_duration  desired pulse duration in milliseconds. Be aware that the device time
+     * @param int $bitno : the bit number; lowest bit has index 0
+     * @param int $ms_delay : waiting time before the pulse, in milliseconds
+     * @param int $ms_duration : desired pulse duration in milliseconds. Be aware that the device time
      *         resolution is not guaranteed up to the millisecond.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.

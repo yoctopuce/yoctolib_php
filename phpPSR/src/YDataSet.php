@@ -419,16 +419,16 @@ class YDataSet
      * <b>DEPRECATED</b>: This method has been replaced by get_summary()
      * which contain more precise informations.
      *
-     * @return int  an unsigned number corresponding to the number of seconds
+     * @return float  an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the beginning of this data
      *         set (i.e. Unix time representation of the absolute time).
      */
-    public function get_startTimeUTC(): int
+    public function get_startTimeUTC(): float
     {
         return $this->imm_get_startTimeUTC();
     }
 
-    public function imm_get_startTimeUTC(): int
+    public function imm_get_startTimeUTC(): float
     {
         return ($this->_startTimeMs / 1000.0);
     }
@@ -444,16 +444,16 @@ class YDataSet
      * <b>DEPRECATED</b>: This method has been replaced by get_summary()
      * which contain more precise informations.
      *
-     * @return int  an unsigned number corresponding to the number of seconds
+     * @return float  an unsigned number corresponding to the number of seconds
      *         between the Jan 1, 1970 and the end of this data
      *         set (i.e. Unix time representation of the absolute time).
      */
-    public function get_endTimeUTC(): int
+    public function get_endTimeUTC(): float
     {
         return $this->imm_get_endTimeUTC();
     }
 
-    public function imm_get_endTimeUTC(): int
+    public function imm_get_endTimeUTC(): float
     {
         return round($this->_endTimeMs / 1000.0);
     }
@@ -565,7 +565,7 @@ class YDataSet
      * to a given condensed measures previously returned by get_preview().
      * The result is provided as a list of YMeasure objects.
      *
-     * @param YMeasure $measure  condensed measure from the list previously returned by
+     * @param YMeasure $measure : condensed measure from the list previously returned by
      *         get_preview().
      *
      * @return YMeasure[]  a table of records, where each record depicts the

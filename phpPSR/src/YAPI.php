@@ -187,7 +187,7 @@ class YAPI
 
         self::$_fnByType['Module'] = new YFunctionType('Module');
 
-        register_shutdown_function('self::flushConnections');
+        register_shutdown_function('Yoctopuce\YoctoAPI\YAPI::flushConnections');
     }
 
     // numeric strpos helper
@@ -1445,7 +1445,7 @@ class YAPI
      * nor the working of module arrival/removal callbacks.
      * Note: you must call this function after yInitAPI.
      *
-     * @param int $deviceListValidity  nubmer of seconds between each enumeration.
+     * @param int $deviceListValidity : nubmer of seconds between each enumeration.
      * @noreturn
      */
     public static function SetDeviceListValidity(int $deviceListValidity): void
@@ -1467,7 +1467,7 @@ class YAPI
      * connected to the USB ports. This function works only under Linux. The process that
      * calls this method must have root privileges because this method changes the Linux configuration.
      *
-     * @param boolean $force  if true, overwrites any existing rule.
+     * @param boolean $force : if true, overwrites any existing rule.
      *
      * @return string  an empty string if the rule has been added.
      *
@@ -1484,7 +1484,7 @@ class YAPI
      * but depending or you network you may want to change this delay,
      * gor example if your network infrastructure is based on a GSM connection.
      *
-     * @param int $networkMsTimeout  the network connection delay in milliseconds.
+     * @param int $networkMsTimeout : the network connection delay in milliseconds.
      * @noreturn
      */
     public static function SetNetworkTimeout(int $networkMsTimeout): void
@@ -1513,11 +1513,11 @@ class YAPI
      * does not affect value change callbacks
      * Note: This function must be called after yInitAPI.
      *
-     * @param int $cacheValidityMs  an integer corresponding to the validity attributed to the
+     * @param float $cacheValidityMs : an integer corresponding to the validity attributed to the
      *         loaded function parameters, in milliseconds.
      * @noreturn
      */
-    public static function SetCacheValidity(int $cacheValidityMs): void
+    public static function SetCacheValidity(float $cacheValidityMs): void
     {
         self::$_yapiContext->SetCacheValidity($cacheValidityMs);
     }
@@ -1527,10 +1527,10 @@ class YAPI
      * module functions.
      * Note: This function must be called after yInitAPI .
      *
-     * @return int  an integer corresponding to the validity attributed to the
+     * @return float  an integer corresponding to the validity attributed to the
      *         loaded function parameters, in milliseconds
      */
-    public static function GetCacheValidity(): int
+    public static function GetCacheValidity(): float
     {
         return self::$_yapiContext->GetCacheValidity();
     }
@@ -1555,7 +1555,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.52892";
+        return "1.10.52948";
     }
 
     /**
@@ -1630,7 +1630,7 @@ class YAPI
      * you must explicitly use yRegisterHub() to point the API to the
      * VirtualHub on which your devices are connected before trying to access them.
      *
-     * @param int $mode  an integer corresponding to the type of automatic
+     * @param int $mode : an integer corresponding to the type of automatic
      *         device detection to use. Possible values are
      *         YAPI::DETECT_NONE, YAPI::DETECT_USB, YAPI::DETECT_NET,
      *         and YAPI::DETECT_ALL.
@@ -1803,7 +1803,7 @@ class YAPI
      * the other hand, it is useless and even counterproductive to call <i>RegisterHub</i>
      * with to same address multiple times during the life of the application.
      *
-     * @param string $url  a string containing either "usb","callback" or the
+     * @param string $url : a string containing either "usb","callback" or the
      *         root URL of the hub to monitor
      * @param string errmsg  : a string passed by reference to receive any error message.
      *
@@ -1869,7 +1869,7 @@ class YAPI
      * This makes it possible to register a network hub independently of the current
      * connectivity, and to try to contact it only when a device is actively needed.
      *
-     * @param string $url  a string containing either "usb","callback" or the
+     * @param string $url : a string containing either "usb","callback" or the
      *         root URL of the hub to monitor
      * @param string errmsg  : a string passed by reference to receive any error message.
      *
@@ -1900,7 +1900,7 @@ class YAPI
      * Setup the Yoctopuce library to no more use modules connected on a previously
      * registered machine with RegisterHub.
      *
-     * @param string $url  a string containing either "usb" or the
+     * @param string $url : a string containing either "usb" or the
      *         root URL of the hub to monitor
      */
     public static function UnregisterHub(string $url): void
@@ -1952,9 +1952,9 @@ class YAPI
      * method. This method is useful to verify the authentication parameters for a hub. It
      * is possible to force this method to return after mstimeout milliseconds.
      *
-     * @param string $url  a string containing either "usb","callback" or the
+     * @param string $url : a string containing either "usb","callback" or the
      *         root URL of the hub to monitor
-     * @param int $mstimeout  the number of millisecond available to test the connection.
+     * @param int $mstimeout : the number of millisecond available to test the connection.
      * @param string errmsg  : a string passed by reference to receive any error message.
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
@@ -2262,7 +2262,7 @@ class YAPI
      * This function may signal an error in case there is a communication problem
      * while contacting a module.
      *
-     * @param int $ms_duration  an integer corresponding to the duration of the pause,
+     * @param float $ms_duration : an integer corresponding to the duration of the pause,
      *         in milliseconds.
      * @param string errmsg  : a string passed by reference to receive any error message.
      *
@@ -2293,11 +2293,11 @@ class YAPI
      * This counter can be used to compute delays in relation with
      * Yoctopuce devices, which also uses the millisecond as timebase.
      *
-     * @return int  a long integer corresponding to the millisecond counter.
+     * @return float  a long integer corresponding to the millisecond counter.
      */
-    public static function GetTickCount(): int
+    public static function GetTickCount(): float
     {
-        return (int) round(microtime(true) * 1000);
+        return round(microtime(true) * 1000);
     }
 
     /**
@@ -2307,7 +2307,7 @@ class YAPI
      * If you try to configure a logical name with an incorrect string,
      * the invalid characters are ignored.
      *
-     * @param string $name  a string containing the name to check.
+     * @param string $name : a string containing the name to check.
      *
      * @return boolean  true if the name is valid, false otherwise.
      */
@@ -2330,7 +2330,7 @@ class YAPI
      * a device is plugged. This callback will be invoked while yUpdateDeviceList
      * is running. You will have to call this function on a regular basis.
      *
-     * @param function $arrivalCallback  a procedure taking a YModule parameter, or null
+     * @param callable $arrivalCallback : a procedure taking a YModule parameter, or null
      *         to unregister a previously registered  callback.
      */
     public static function RegisterDeviceArrivalCallback(callable $arrivalCallback): void
@@ -2351,7 +2351,7 @@ class YAPI
      * a device is unplugged. This callback will be invoked while yUpdateDeviceList
      * is running. You will have to call this function on a regular basis.
      *
-     * @param function $removalCallback  a procedure taking a YModule parameter, or null
+     * @param callable $removalCallback : a procedure taking a YModule parameter, or null
      *         to unregister a previously registered  callback.
      */
     public static function RegisterDeviceRemovalCallback(callable $removalCallback): void

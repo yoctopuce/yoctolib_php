@@ -44,16 +44,16 @@ class YWatchdog extends YFunction
     //--- (YWatchdog attributes)
     protected int $_state = self::STATE_INVALID;          // Toggle
     protected int $_stateAtPowerOn = self::STATEATPOWERON_INVALID; // ToggleAtPowerOn
-    protected int $_maxTimeOnStateA = self::MAXTIMEONSTATEA_INVALID; // Time
-    protected int $_maxTimeOnStateB = self::MAXTIMEONSTATEB_INVALID; // Time
+    protected float $_maxTimeOnStateA = self::MAXTIMEONSTATEA_INVALID; // Time
+    protected float $_maxTimeOnStateB = self::MAXTIMEONSTATEB_INVALID; // Time
     protected int $_output = self::OUTPUT_INVALID;         // OnOff
-    protected int $_pulseTimer = self::PULSETIMER_INVALID;     // Time
-    protected  $_delayedPulseTimer = self::DELAYEDPULSETIMER_INVALID; // DelayedPulse
-    protected int $_countdown = self::COUNTDOWN_INVALID;      // Time
+    protected float $_pulseTimer = self::PULSETIMER_INVALID;     // Time
+    protected mixed $_delayedPulseTimer = self::DELAYEDPULSETIMER_INVALID; // DelayedPulse
+    protected float $_countdown = self::COUNTDOWN_INVALID;      // Time
     protected int $_autoStart = self::AUTOSTART_INVALID;      // OnOff
     protected int $_running = self::RUNNING_INVALID;        // OnOff
-    protected int $_triggerDelay = self::TRIGGERDELAY_INVALID;   // Time
-    protected int $_triggerDuration = self::TRIGGERDURATION_INVALID; // Time
+    protected float $_triggerDelay = self::TRIGGERDELAY_INVALID;   // Time
+    protected float $_triggerDuration = self::TRIGGERDURATION_INVALID; // Time
     protected int $_lastTrigger = self::LASTTRIGGER_INVALID;    // UInt31
     protected int $_firm = 0;                            // int
 
@@ -139,7 +139,7 @@ class YWatchdog extends YFunction
     /**
      * Changes the state of the watchdog (A for the idle position, B for the active position).
      *
-     * @param int $newval  either YWatchdog::STATE_A or YWatchdog::STATE_B, according to the state of the
+     * @param int $newval : either YWatchdog::STATE_A or YWatchdog::STATE_B, according to the state of the
      * watchdog (A for the idle position, B for the active position)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -181,7 +181,7 @@ class YWatchdog extends YFunction
      * Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param int $newval  a value among YWatchdog::STATEATPOWERON_UNCHANGED, YWatchdog::STATEATPOWERON_A
+     * @param int $newval : a value among YWatchdog::STATEATPOWERON_UNCHANGED, YWatchdog::STATEATPOWERON_A
      * and YWatchdog::STATEATPOWERON_B corresponding to the state of the watchdog at device startup (A for
      * the idle position,
      *         B for the active position, UNCHANGED to leave the relay state as is)
@@ -200,12 +200,12 @@ class YWatchdog extends YFunction
      * Returns the maximum time (ms) allowed for the watchdog to stay in state
      * A before automatically switching back in to B state. Zero means no time limit.
      *
-     * @return int  an integer corresponding to the maximum time (ms) allowed for the watchdog to stay in state
+     * @return float  an integer corresponding to the maximum time (ms) allowed for the watchdog to stay in state
      *         A before automatically switching back in to B state
      *
      * On failure, throws an exception or returns YWatchdog::MAXTIMEONSTATEA_INVALID.
      */
-    public function get_maxTimeOnStateA(): int
+    public function get_maxTimeOnStateA(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -223,15 +223,15 @@ class YWatchdog extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the maximum time (ms) allowed for the watchdog to
-     * stay in state A
+     * @param float $newval : an integer corresponding to the maximum time (ms) allowed for the watchdog
+     * to stay in state A
      *         before automatically switching back in to B state
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_maxTimeOnStateA(int $newval): int
+    public function set_maxTimeOnStateA(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("maxTimeOnStateA", $rest_val);
@@ -241,11 +241,11 @@ class YWatchdog extends YFunction
      * Retourne the maximum time (ms) allowed for the watchdog to stay in state B
      * before automatically switching back in to A state. Zero means no time limit.
      *
-     * @return int  an integer
+     * @return float  an integer
      *
      * On failure, throws an exception or returns YWatchdog::MAXTIMEONSTATEB_INVALID.
      */
-    public function get_maxTimeOnStateB(): int
+    public function get_maxTimeOnStateB(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -263,15 +263,15 @@ class YWatchdog extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the maximum time (ms) allowed for the watchdog to
-     * stay in state B before
+     * @param float $newval : an integer corresponding to the maximum time (ms) allowed for the watchdog
+     * to stay in state B before
      *         automatically switching back in to A state
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_maxTimeOnStateB(int $newval): int
+    public function set_maxTimeOnStateB(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("maxTimeOnStateB", $rest_val);
@@ -300,7 +300,7 @@ class YWatchdog extends YFunction
     /**
      * Changes the output state of the watchdog, when used as a simple switch (single throw).
      *
-     * @param int $newval  either YWatchdog::OUTPUT_OFF or YWatchdog::OUTPUT_ON, according to the output
+     * @param int $newval : either YWatchdog::OUTPUT_OFF or YWatchdog::OUTPUT_ON, according to the output
      * state of the watchdog, when used as a simple switch (single throw)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -317,13 +317,13 @@ class YWatchdog extends YFunction
      * Returns the number of milliseconds remaining before the watchdog is returned to idle position
      * (state A), during a measured pulse generation. When there is no ongoing pulse, returns zero.
      *
-     * @return int  an integer corresponding to the number of milliseconds remaining before the watchdog
+     * @return float  an integer corresponding to the number of milliseconds remaining before the watchdog
      * is returned to idle position
      *         (state A), during a measured pulse generation
      *
      * On failure, throws an exception or returns YWatchdog::PULSETIMER_INVALID.
      */
-    public function get_pulseTimer(): int
+    public function get_pulseTimer(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -335,7 +335,7 @@ class YWatchdog extends YFunction
         return $res;
     }
 
-    public function set_pulseTimer(int $newval): int
+    public function set_pulseTimer(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("pulseTimer", $rest_val);
@@ -345,19 +345,19 @@ class YWatchdog extends YFunction
      * Sets the relay to output B (active) for a specified duration, then brings it
      * automatically back to output A (idle state).
      *
-     * @param int $ms_duration  pulse duration, in milliseconds
+     * @param int $ms_duration : pulse duration, in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function pulse(int $ms_duration)
+    public function pulse(int $ms_duration): int
     {
         $rest_val = strval($ms_duration);
         return $this->_setAttr("pulseTimer",$rest_val);
     }
 
-    public function get_delayedPulseTimer(): ?YDelayedPulse
+    public function get_delayedPulseTimer(): mixed
     {
         // $res                    is a YDelayedPulse;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -369,7 +369,7 @@ class YWatchdog extends YFunction
         return $res;
     }
 
-    public function set_delayedPulseTimer(YDelayedPulse $newval): int
+    public function set_delayedPulseTimer(mixed $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("delayedPulseTimer", $rest_val);
@@ -378,14 +378,14 @@ class YWatchdog extends YFunction
     /**
      * Schedules a pulse.
      *
-     * @param int $ms_delay  waiting time before the pulse, in milliseconds
-     * @param int $ms_duration  pulse duration, in milliseconds
+     * @param int $ms_delay : waiting time before the pulse, in milliseconds
+     * @param int $ms_duration : pulse duration, in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function delayedPulse(int $ms_delay,int $ms_duration)
+    public function delayedPulse(int $ms_delay,int $ms_duration): int
     {
         $rest_val = $ms_delay.':'.$ms_duration;
         return $this->_setAttr("delayedPulseTimer",$rest_val);
@@ -395,13 +395,13 @@ class YWatchdog extends YFunction
      * Returns the number of milliseconds remaining before a pulse (delayedPulse() call)
      * When there is no scheduled pulse, returns zero.
      *
-     * @return int  an integer corresponding to the number of milliseconds remaining before a pulse
+     * @return float  an integer corresponding to the number of milliseconds remaining before a pulse
      * (delayedPulse() call)
      *         When there is no scheduled pulse, returns zero
      *
      * On failure, throws an exception or returns YWatchdog::COUNTDOWN_INVALID.
      */
-    public function get_countdown(): int
+    public function get_countdown(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -437,7 +437,7 @@ class YWatchdog extends YFunction
      * Changes the watchdog running state at module power on. Remember to call the
      * saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param int $newval  either YWatchdog::AUTOSTART_OFF or YWatchdog::AUTOSTART_ON, according to the
+     * @param int $newval : either YWatchdog::AUTOSTART_OFF or YWatchdog::AUTOSTART_ON, according to the
      * watchdog running state at module power on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -472,7 +472,7 @@ class YWatchdog extends YFunction
     /**
      * Changes the running state of the watchdog.
      *
-     * @param int $newval  either YWatchdog::RUNNING_OFF or YWatchdog::RUNNING_ON, according to the running
+     * @param int $newval : either YWatchdog::RUNNING_OFF or YWatchdog::RUNNING_ON, according to the running
      * state of the watchdog
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -494,7 +494,7 @@ class YWatchdog extends YFunction
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function resetWatchdog()
+    public function resetWatchdog(): int
     {
         $rest_val = '1';
         return $this->_setAttr("running",$rest_val);
@@ -503,12 +503,12 @@ class YWatchdog extends YFunction
     /**
      * Returns  the waiting duration before a reset is automatically triggered by the watchdog, in milliseconds.
      *
-     * @return int  an integer corresponding to  the waiting duration before a reset is automatically
+     * @return float  an integer corresponding to  the waiting duration before a reset is automatically
      * triggered by the watchdog, in milliseconds
      *
      * On failure, throws an exception or returns YWatchdog::TRIGGERDELAY_INVALID.
      */
-    public function get_triggerDelay(): int
+    public function get_triggerDelay(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -525,14 +525,15 @@ class YWatchdog extends YFunction
      * in milliseconds. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the waiting delay before a reset is triggered by the watchdog,
+     * @param float $newval : an integer corresponding to the waiting delay before a reset is triggered by
+     * the watchdog,
      *         in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_triggerDelay(int $newval): int
+    public function set_triggerDelay(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("triggerDelay", $rest_val);
@@ -541,11 +542,11 @@ class YWatchdog extends YFunction
     /**
      * Returns the duration of resets caused by the watchdog, in milliseconds.
      *
-     * @return int  an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
+     * @return float  an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
      *
      * On failure, throws an exception or returns YWatchdog::TRIGGERDURATION_INVALID.
      */
-    public function get_triggerDuration(): int
+    public function get_triggerDuration(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -562,13 +563,14 @@ class YWatchdog extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the duration of resets caused by the watchdog, in milliseconds
+     * @param float $newval : an integer corresponding to the duration of resets caused by the watchdog,
+     * in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_triggerDuration(int $newval): int
+    public function set_triggerDuration(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("triggerDuration", $rest_val);
@@ -616,7 +618,7 @@ class YWatchdog extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the watchdog, for instance
+     * @param string $func : a string that uniquely characterizes the watchdog, for instance
      *         WDOGDC01.watchdog1.
      *
      * @return YWatchdog  a YWatchdog object allowing you to drive the watchdog.
@@ -688,22 +690,22 @@ class YWatchdog extends YFunction
     return $this->set_stateAtPowerOn($newval);
 }
 
-    public function maxTimeOnStateA(): int
+    public function maxTimeOnStateA(): float
 {
     return $this->get_maxTimeOnStateA();
 }
 
-    public function setMaxTimeOnStateA(int $newval)
+    public function setMaxTimeOnStateA(float $newval)
 {
     return $this->set_maxTimeOnStateA($newval);
 }
 
-    public function maxTimeOnStateB(): int
+    public function maxTimeOnStateB(): float
 {
     return $this->get_maxTimeOnStateB();
 }
 
-    public function setMaxTimeOnStateB(int $newval)
+    public function setMaxTimeOnStateB(float $newval)
 {
     return $this->set_maxTimeOnStateB($newval);
 }
@@ -718,27 +720,27 @@ class YWatchdog extends YFunction
     return $this->set_output($newval);
 }
 
-    public function pulseTimer(): int
+    public function pulseTimer(): float
 {
     return $this->get_pulseTimer();
 }
 
-    public function setPulseTimer(int $newval)
+    public function setPulseTimer(float $newval)
 {
     return $this->set_pulseTimer($newval);
 }
 
-    public function delayedPulseTimer(): YDelayedPulse
+    public function delayedPulseTimer(): mixed
 {
     return $this->get_delayedPulseTimer();
 }
 
-    public function setDelayedPulseTimer(YDelayedPulse $newval)
+    public function setDelayedPulseTimer(mixed $newval)
 {
     return $this->set_delayedPulseTimer($newval);
 }
 
-    public function countdown(): int
+    public function countdown(): float
 {
     return $this->get_countdown();
 }
@@ -763,22 +765,22 @@ class YWatchdog extends YFunction
     return $this->set_running($newval);
 }
 
-    public function triggerDelay(): int
+    public function triggerDelay(): float
 {
     return $this->get_triggerDelay();
 }
 
-    public function setTriggerDelay(int $newval)
+    public function setTriggerDelay(float $newval)
 {
     return $this->set_triggerDelay($newval);
 }
 
-    public function triggerDuration(): int
+    public function triggerDuration(): float
 {
     return $this->get_triggerDuration();
 }
 
-    public function setTriggerDuration(int $newval)
+    public function setTriggerDuration(float $newval)
 {
     return $this->set_triggerDuration($newval);
 }

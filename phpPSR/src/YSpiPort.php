@@ -270,7 +270,7 @@ class YSpiPort extends YFunction
      * Selects a job file to run immediately. If an empty string is
      * given as argument, stops running current job file.
      *
-     * @param string $newval  a string
+     * @param string $newval : a string
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -306,7 +306,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the job to use when the device is powered on
+     * @param string $newval : a string corresponding to the job to use when the device is powered on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -408,7 +408,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the type of protocol used over the serial line
+     * @param string $newval : a string corresponding to the type of protocol used over the serial line
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -451,7 +451,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YSpiPort::VOLTAGELEVEL_OFF, YSpiPort::VOLTAGELEVEL_TTL3V,
+     * @param int $newval : a value among YSpiPort::VOLTAGELEVEL_OFF, YSpiPort::VOLTAGELEVEL_TTL3V,
      * YSpiPort::VOLTAGELEVEL_TTL3VR, YSpiPort::VOLTAGELEVEL_TTL5V, YSpiPort::VOLTAGELEVEL_TTL5VR,
      * YSpiPort::VOLTAGELEVEL_RS232, YSpiPort::VOLTAGELEVEL_RS485, YSpiPort::VOLTAGELEVEL_TTL1V8 and
      * YSpiPort::VOLTAGELEVEL_SDI12 corresponding to the voltage type used on the serial line
@@ -495,7 +495,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the SPI port communication parameters, with a string such as
+     * @param string $newval : a string corresponding to the SPI port communication parameters, with a string such as
      *         "125000,0,msb"
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -533,7 +533,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  either YSpiPort::SSPOLARITY_ACTIVE_LOW or YSpiPort::SSPOLARITY_ACTIVE_HIGH,
+     * @param int $newval : either YSpiPort::SSPOLARITY_ACTIVE_LOW or YSpiPort::SSPOLARITY_ACTIVE_HIGH,
      * according to the SS line polarity
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -573,7 +573,7 @@ class YSpiPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  either YSpiPort::SHIFTSAMPLING_OFF or YSpiPort::SHIFTSAMPLING_ON, according to
+     * @param int $newval : either YSpiPort::SHIFTSAMPLING_OFF or YSpiPort::SHIFTSAMPLING_ON, according to
      * the SDI line sampling shift
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -609,7 +609,7 @@ class YSpiPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the SPI port, for instance
+     * @param string $func : a string that uniquely characterizes the SPI port, for instance
      *         YSPIMK01.spiPort.
      *
      * @return YSpiPort  a YSpiPort object allowing you to drive the SPI port.
@@ -677,11 +677,11 @@ class YSpiPort extends YFunction
      * If no matching message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param string $pattern  a limited regular expression describing the expected message format,
+     * @param string $pattern : a limited regular expression describing the expected message format,
      *         or an empty string if all messages should be returned (no filtering).
      *         When using binary protocols, the format applies to the hexadecimal
      *         representation of the message.
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return string[]  an array of strings containing the messages found, if any.
@@ -721,7 +721,7 @@ class YSpiPort extends YFunction
      * does not affect the device, it only changes the value stored in the API object
      * for the next read operations.
      *
-     * @param int $absPos  the absolute position index for next read operations.
+     * @param int $absPos : the absolute position index for next read operations.
      *
      * @return int  nothing.
      */
@@ -779,8 +779,8 @@ class YSpiPort extends YFunction
      * Sends a text line query to the serial port, and reads the reply, if any.
      * This function is intended to be used when the serial port is configured for 'Line' protocol.
      *
-     * @param string $query  the line query to send (without CR/LF)
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $query : the line query to send (without CR/LF)
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next text line received after sending the text query, as a string.
      *         Additional lines can be obtained by calling readLine or readMessages.
@@ -826,8 +826,8 @@ class YSpiPort extends YFunction
      * This function is intended to be used when the serial port is configured for
      * Frame-based protocol.
      *
-     * @param string $hexString  the message to send, coded in hexadecimal
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $hexString : the message to send, coded in hexadecimal
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next frame received after sending the message, as a hex string.
      *         Additional frames can be obtained by calling readHex or readMessages.
@@ -872,8 +872,8 @@ class YSpiPort extends YFunction
      * Saves the job definition string (JSON data) into a job file.
      * The job file can be later enabled using selectJob().
      *
-     * @param string $jobfile  name of the job file to save on the device filesystem
-     * @param string $jsonDef  a string containing a JSON definition of the job
+     * @param string $jobfile : name of the job file to save on the device filesystem
+     * @param string $jsonDef : a string containing a JSON definition of the job
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -890,7 +890,7 @@ class YSpiPort extends YFunction
      * been previously created using the user interface or uploaded on the
      * device filesystem using the uploadJob() function.
      *
-     * @param string $jobfile  name of the job file (on the device filesystem)
+     * @param string $jobfile : name of the job file (on the device filesystem)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -921,7 +921,7 @@ class YSpiPort extends YFunction
     /**
      * Sends a single byte to the serial port.
      *
-     * @param int $code  the byte to send
+     * @param int $code : the byte to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -935,7 +935,7 @@ class YSpiPort extends YFunction
     /**
      * Sends an ASCII string to the serial port, as is.
      *
-     * @param string $text  the text string to send
+     * @param string $text : the text string to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -972,7 +972,7 @@ class YSpiPort extends YFunction
     /**
      * Sends a binary buffer to the serial port, as is.
      *
-     * @param string $buff  the binary buffer to send
+     * @param string $buff : the binary buffer to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -986,7 +986,7 @@ class YSpiPort extends YFunction
     /**
      * Sends a byte sequence (provided as a list of bytes) to the serial port.
      *
-     * @param Integer[] $byteList  a list of byte codes
+     * @param Integer[] $byteList : a list of byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1015,7 +1015,7 @@ class YSpiPort extends YFunction
     /**
      * Sends a byte sequence (provided as a hexadecimal string) to the serial port.
      *
-     * @param string $hexString  a string of hexadecimal byte codes
+     * @param string $hexString : a string of hexadecimal byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1048,7 +1048,7 @@ class YSpiPort extends YFunction
     /**
      * Sends an ASCII string to the serial port, followed by a line break (CR LF).
      *
-     * @param string $text  the text string to send
+     * @param string $text : the text string to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1156,7 +1156,7 @@ class YSpiPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of characters to read
+     * @param int $nChars : the maximum number of characters to read
      *
      * @return string  a string with receive buffer contents
      *
@@ -1192,7 +1192,7 @@ class YSpiPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of bytes to read
+     * @param int $nChars : the maximum number of bytes to read
      *
      * @return string  a binary object with receive buffer contents
      *
@@ -1234,7 +1234,7 @@ class YSpiPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of bytes to read
+     * @param int $nChars : the maximum number of bytes to read
      *
      * @return Integer[]  a sequence of bytes with receive buffer contents
      *
@@ -1280,7 +1280,7 @@ class YSpiPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nBytes  the maximum number of bytes to read
+     * @param int $nBytes : the maximum number of bytes to read
      *
      * @return string  a string with receive buffer contents, encoded in hexadecimal
      *
@@ -1325,7 +1325,7 @@ class YSpiPort extends YFunction
      * Manually sets the state of the SS line. This function has no effect when
      * the SS line is handled automatically.
      *
-     * @param int $val  1 to turn SS active, 0 to release SS.
+     * @param int $val : 1 to turn SS active, 0 to release SS.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1342,7 +1342,7 @@ class YSpiPort extends YFunction
      * If no message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return YSpiSnoopingRecord[]  an array of YSpiSnoopingRecord objects containing the messages found, if any.
@@ -1566,7 +1566,7 @@ class YSpiPort extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func  a string that uniquely characterizes the SPI port, for instance
+ * @param string $func : a string that uniquely characterizes the SPI port, for instance
  *         YSPIMK01.spiPort.
  *
  * @return YSpiPort  a YSpiPort object allowing you to drive the SPI port.

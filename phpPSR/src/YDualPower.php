@@ -104,7 +104,7 @@ class YDualPower extends YFunction
      * Changes the selected power source for module functions that require lots of current.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YDualPower::POWERCONTROL_AUTO, YDualPower::POWERCONTROL_FROM_USB,
+     * @param int $newval : a value among YDualPower::POWERCONTROL_AUTO, YDualPower::POWERCONTROL_FROM_USB,
      * YDualPower::POWERCONTROL_FROM_EXT and YDualPower::POWERCONTROL_OFF corresponding to the selected
      * power source for module functions that require lots of current
      *
@@ -160,7 +160,7 @@ class YDualPower extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the dual power switch, for instance
+     * @param string $func : a string that uniquely characterizes the dual power switch, for instance
      *         SERVORC1.dualPower.
      *
      * @return YDualPower  a YDualPower object allowing you to drive the dual power switch.

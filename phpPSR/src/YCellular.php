@@ -294,7 +294,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash() method of the module to save the
      * new value in the device flash.
      *
-     * @param string $newval  a string corresponding to the PIN code used by the module to access the SIM card
+     * @param string $newval : a string corresponding to the PIN code used by the module to access the SIM card
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -340,7 +340,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the type of protocol used over the serial line
+     * @param string $newval : a string corresponding to the type of protocol used over the serial line
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -383,7 +383,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the name of the cell operator to be used
+     * @param string $newval : a string corresponding to the name of the cell operator to be used
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -418,7 +418,7 @@ class YCellular extends YFunction
     /**
      * Changes the activation state of airplane mode (radio turned off).
      *
-     * @param int $newval  either YCellular::AIRPLANEMODE_OFF or YCellular::AIRPLANEMODE_ON, according to
+     * @param int $newval : either YCellular::AIRPLANEMODE_OFF or YCellular::AIRPLANEMODE_ON, according to
      * the activation state of airplane mode (radio turned off)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -463,7 +463,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YCellular::ENABLEDATA_HOMENETWORK, YCellular::ENABLEDATA_ROAMING,
+     * @param int $newval : a value among YCellular::ENABLEDATA_HOMENETWORK, YCellular::ENABLEDATA_ROAMING,
      * YCellular::ENABLEDATA_NEVER and YCellular::ENABLEDATA_NEUTRALITY corresponding to the condition for
      * enabling IP data services (GPRS)
      *
@@ -503,7 +503,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string
+     * @param string $newval : a string
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -567,7 +567,7 @@ class YCellular extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the automated connectivity check interval, in seconds
+     * @param int $newval : an integer corresponding to the automated connectivity check interval, in seconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -601,7 +601,7 @@ class YCellular extends YFunction
     /**
      * Changes the value of the outgoing data counter.
      *
-     * @param int $newval  an integer corresponding to the value of the outgoing data counter
+     * @param int $newval : an integer corresponding to the value of the outgoing data counter
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -635,7 +635,7 @@ class YCellular extends YFunction
     /**
      * Changes the value of the incoming data counter.
      *
-     * @param int $newval  an integer corresponding to the value of the incoming data counter
+     * @param int $newval : an integer corresponding to the value of the incoming data counter
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -688,7 +688,7 @@ class YCellular extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the cellular interface, for instance
+     * @param string $func : a string that uniquely characterizes the cellular interface, for instance
      *         YHUBGSM1.cellular.
      *
      * @return YCellular  a YCellular object allowing you to drive the cellular interface.
@@ -711,8 +711,8 @@ class YCellular extends YFunction
      * to use it again. Note that after calling this method, you have usually to invoke
      * method set_pin() to tell the YoctoHub which PIN to use in the future.
      *
-     * @param string $puk  the SIM PUK code
-     * @param string $newPin  new PIN code to configure into the SIM card
+     * @param string $puk : the SIM PUK code
+     * @param string $newPin : new PIN code to configure into the SIM card
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -733,8 +733,8 @@ class YCellular extends YFunction
      * Configure authentication parameters to connect to the APN. Both
      * PAP and CHAP authentication are supported.
      *
-     * @param string $username  APN username
-     * @param string $password  APN password
+     * @param string $username : APN username
+     * @param string $password : APN password
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -770,7 +770,7 @@ class YCellular extends YFunction
      * command state, and should leave it in the exact same state.
      * Use this function with great care !
      *
-     * @param string $cmd  the AT command to execute, like for instance: "+CCLK?".
+     * @param string $cmd : the AT command to execute, like for instance: "+CCLK?".
      *
      * @return string  a string with the result of the commands. Empty lines are
      *         automatically removed from the output.
@@ -5400,7 +5400,7 @@ class YCellular extends YFunction
     /**
      * Returns the cell operator brand for a given MCC/MNC pair.
      *
-     * @param string $mccmnc  a string starting with a MCC code followed by a MNC code,
+     * @param string $mccmnc : a string starting with a MCC code followed by a MNC code,
      *
      * @return string  a string containing the corresponding cell operator brand name.
      */

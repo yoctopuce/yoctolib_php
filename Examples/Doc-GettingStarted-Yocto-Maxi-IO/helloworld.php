@@ -5,8 +5,8 @@
 <BODY>
 <FORM  name='myform' method='get'>
 <?php
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_digitalio.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_digitalio.php');
 
   // Use explicit error handling rather than exceptions
   YAPI::DisableExceptions();

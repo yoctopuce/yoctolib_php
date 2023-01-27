@@ -124,7 +124,7 @@ class YDisplayLayer
      * For grayscale or monochrome displays, the value is
      * automatically converted to the proper range.
      *
-     * @param int $color  the desired pen color, as a 24-bit RGB value
+     * @param int $color : the desired pen color, as a 24-bit RGB value
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -143,7 +143,7 @@ class YDisplayLayer
      * lower than 128 is rendered as black, and any value equal
      * or above to 128 is non-black.
      *
-     * @param int $graylevel  the desired gray level, from 0 to 255
+     * @param int $graylevel : the desired gray level, from 0 to 255
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -178,7 +178,7 @@ class YDisplayLayer
      * but you can disable it if you prefer. This setting has no effect
      * on monochrome displays.
      *
-     * @param boolean $mode  true to enable anti-aliasing, false to
+     * @param boolean $mode : true to enable anti-aliasing, false to
      *         disable it.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -193,8 +193,8 @@ class YDisplayLayer
     /**
      * Draws a single pixel at the specified position.
      *
-     * @param int $x  the distance from left of layer, in pixels
-     * @param int $y  the distance from top of layer, in pixels
+     * @param int $x : the distance from left of layer, in pixels
+     * @param int $y : the distance from top of layer, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -208,10 +208,10 @@ class YDisplayLayer
     /**
      * Draws an empty rectangle at a specified position.
      *
-     * @param int $x1  the distance from left of layer to the left border of the rectangle, in pixels
-     * @param int $y1  the distance from top of layer to the top border of the rectangle, in pixels
-     * @param int $x2  the distance from left of layer to the right border of the rectangle, in pixels
-     * @param int $y2  the distance from top of layer to the bottom border of the rectangle, in pixels
+     * @param int $x1 : the distance from left of layer to the left border of the rectangle, in pixels
+     * @param int $y1 : the distance from top of layer to the top border of the rectangle, in pixels
+     * @param int $x2 : the distance from left of layer to the right border of the rectangle, in pixels
+     * @param int $y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -225,10 +225,10 @@ class YDisplayLayer
     /**
      * Draws a filled rectangular bar at a specified position.
      *
-     * @param int $x1  the distance from left of layer to the left border of the rectangle, in pixels
-     * @param int $y1  the distance from top of layer to the top border of the rectangle, in pixels
-     * @param int $x2  the distance from left of layer to the right border of the rectangle, in pixels
-     * @param int $y2  the distance from top of layer to the bottom border of the rectangle, in pixels
+     * @param int $x1 : the distance from left of layer to the left border of the rectangle, in pixels
+     * @param int $y1 : the distance from top of layer to the top border of the rectangle, in pixels
+     * @param int $x2 : the distance from left of layer to the right border of the rectangle, in pixels
+     * @param int $y2 : the distance from top of layer to the bottom border of the rectangle, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -242,9 +242,9 @@ class YDisplayLayer
     /**
      * Draws an empty circle at a specified position.
      *
-     * @param int $x  the distance from left of layer to the center of the circle, in pixels
-     * @param int $y  the distance from top of layer to the center of the circle, in pixels
-     * @param int $r  the radius of the circle, in pixels
+     * @param int $x : the distance from left of layer to the center of the circle, in pixels
+     * @param int $y : the distance from top of layer to the center of the circle, in pixels
+     * @param int $r : the radius of the circle, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -258,9 +258,9 @@ class YDisplayLayer
     /**
      * Draws a filled disc at a given position.
      *
-     * @param int $x  the distance from left of layer to the center of the disc, in pixels
-     * @param int $y  the distance from top of layer to the center of the disc, in pixels
-     * @param int $r  the radius of the disc, in pixels
+     * @param int $x : the distance from left of layer to the center of the disc, in pixels
+     * @param int $y : the distance from top of layer to the center of the disc, in pixels
+     * @param int $r : the radius of the disc, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -278,7 +278,7 @@ class YDisplayLayer
      * file, check the device logs for any error message such as missing font file or bad font
      * file format.
      *
-     * @param string $fontname  the font file name, embedded fonts are 8x8.yfm, Small.yfm, Medium.yfm,
+     * @param string $fontname : the font file name, embedded fonts are 8x8.yfm, Small.yfm, Medium.yfm,
      * Large.yfm (not available on Yocto-MiniDisplay).
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -295,9 +295,9 @@ class YDisplayLayer
      * to the specified pixel position is called the anchor point, and can be chosen among
      * several options. Text is rendered from left to right, without implicit wrapping.
      *
-     * @param int $x  the distance from left of layer to the text anchor point, in pixels
-     * @param int $y  the distance from top of layer to the text anchor point, in pixels
-     * @param int $anchor  the text anchor point, chosen among the YDisplayLayer::ALIGN enumeration:
+     * @param int $x : the distance from left of layer to the text anchor point, in pixels
+     * @param int $y : the distance from top of layer to the text anchor point, in pixels
+     * @param int $anchor : the text anchor point, chosen among the YDisplayLayer::ALIGN enumeration:
      *         YDisplayLayer::ALIGN_TOP_LEFT,         YDisplayLayer::ALIGN_CENTER_LEFT,
      *         YDisplayLayer::ALIGN_BASELINE_LEFT,    YDisplayLayer::ALIGN_BOTTOM_LEFT,
      *         YDisplayLayer::ALIGN_TOP_CENTER,       YDisplayLayer::ALIGN_CENTER,
@@ -306,7 +306,7 @@ class YDisplayLayer
      *         YDisplayLayer::ALIGN_BASELINE_DECIMAL, YDisplayLayer::ALIGN_BOTTOM_DECIMAL,
      *         YDisplayLayer::ALIGN_TOP_RIGHT,        YDisplayLayer::ALIGN_CENTER_RIGHT,
      *         YDisplayLayer::ALIGN_BASELINE_RIGHT,   YDisplayLayer::ALIGN_BOTTOM_RIGHT.
-     * @param string $text  the text string to draw
+     * @param string $text : the text string to draw
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -323,9 +323,9 @@ class YDisplayLayer
      * file, check the device logs for any error message such as missing image file or bad
      * image file format.
      *
-     * @param int $x  the distance from left of layer to the left of the image, in pixels
-     * @param int $y  the distance from top of layer to the top of the image, in pixels
-     * @param string $imagename  the GIF file name
+     * @param int $x : the distance from left of layer to the left of the image, in pixels
+     * @param int $y : the distance from top of layer to the top of the image, in pixels
+     * @param string $imagename : the GIF file name
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -345,11 +345,11 @@ class YDisplayLayer
      * gray level, unless -1 is specified, in which case they are not drawn at all
      * (as if transparent).
      *
-     * @param int $x  the distance from left of layer to the left of the bitmap, in pixels
-     * @param int $y  the distance from top of layer to the top of the bitmap, in pixels
-     * @param int $w  the width of the bitmap, in pixels
-     * @param string $bitmap  a binary object
-     * @param int $bgcol  the background gray level to use for zero bits (0 = black,
+     * @param int $x : the distance from left of layer to the left of the bitmap, in pixels
+     * @param int $y : the distance from top of layer to the top of the bitmap, in pixels
+     * @param int $w : the width of the bitmap, in pixels
+     * @param string $bitmap : a binary object
+     * @param int $bgcol : the background gray level to use for zero bits (0 = black,
      *         255 = white), or -1 to leave the pixels unchanged
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -366,8 +366,8 @@ class YDisplayLayer
     /**
      * Moves the drawing pointer of this layer to the specified position.
      *
-     * @param int $x  the distance from left of layer, in pixels
-     * @param int $y  the distance from top of layer, in pixels
+     * @param int $x : the distance from left of layer, in pixels
+     * @param int $y : the distance from top of layer, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -383,8 +383,8 @@ class YDisplayLayer
      * The specified destination pixel is included in the line. The pointer position
      * is then moved to the end point of the line.
      *
-     * @param int $x  the distance from left of layer to the end point of the line, in pixels
-     * @param int $y  the distance from top of layer to the end point of the line, in pixels
+     * @param int $x : the distance from left of layer to the end point of the line, in pixels
+     * @param int $y : the distance from top of layer to the end point of the line, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -402,7 +402,7 @@ class YDisplayLayer
      * is hit. When the new text to display extends below the lower margin, the
      * console area is automatically scrolled up.
      *
-     * @param string $text  the message to display
+     * @param string $text : the message to display
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -416,10 +416,10 @@ class YDisplayLayer
     /**
      * Sets up display margins for the consoleOut function.
      *
-     * @param int $x1  the distance from left of layer to the left margin, in pixels
-     * @param int $y1  the distance from top of layer to the top margin, in pixels
-     * @param int $x2  the distance from left of layer to the right margin, in pixels
-     * @param int $y2  the distance from top of layer to the bottom margin, in pixels
+     * @param int $x1 : the distance from left of layer to the left margin, in pixels
+     * @param int $y1 : the distance from top of layer to the top margin, in pixels
+     * @param int $x2 : the distance from left of layer to the right margin, in pixels
+     * @param int $y2 : the distance from top of layer to the bottom margin, in pixels
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -434,7 +434,7 @@ class YDisplayLayer
      * Sets up the background color used by the clearConsole function and by
      * the console scrolling feature.
      *
-     * @param int $bgcol  the background gray level to use when scrolling (0 = black,
+     * @param int $bgcol : the background gray level to use when scrolling (0 = black,
      *         255 = white), or -1 for transparent
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -449,7 +449,7 @@ class YDisplayLayer
     /**
      * Sets up the wrapping behavior used by the consoleOut function.
      *
-     * @param boolean $wordwrap  true to wrap only between words,
+     * @param boolean $wordwrap : true to wrap only between words,
      *         false to wrap on the last column anyway.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -479,9 +479,9 @@ class YDisplayLayer
      * When smooth scrolling is used, the display offset of the layer is
      * automatically updated during the next milliseconds to animate the move of the layer.
      *
-     * @param int $x  the distance from left of display to the upper left corner of the layer
-     * @param int $y  the distance from top of display to the upper left corner of the layer
-     * @param int $scrollTime  number of milliseconds to use for smooth scrolling, or
+     * @param int $x : the distance from left of display to the upper left corner of the layer
+     * @param int $y : the distance from top of display to the upper left corner of the layer
+     * @param int $scrollTime : number of milliseconds to use for smooth scrolling, or
      *         0 if the scrolling should be immediate.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.

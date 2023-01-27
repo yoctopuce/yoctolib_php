@@ -13,7 +13,7 @@ class YAPIContext
     public $_deviceListValidityMs = 10000;                        // ulong
     public $_networkTimeoutMs = YAPI_BLOCKING_REQUEST_TIMEOUT;
     //--- (generated code: YAPIContext attributes)
-    protected int $_defaultCacheValidity = 5;                            // ulong
+    protected float $_defaultCacheValidity = 5;                            // ulong
 
     //--- (end of generated code: YAPIContext attributes)
 
@@ -38,7 +38,7 @@ class YAPIContext
      * nor the working of module arrival/removal callbacks.
      * Note: you must call this function after yInitAPI.
      *
-     * @param int $deviceListValidity  nubmer of seconds between each enumeration.
+     * @param int $deviceListValidity : nubmer of seconds between each enumeration.
      * @noreturn
      */
     public function SetDeviceListValidity(int $deviceListValidity): void
@@ -68,7 +68,7 @@ class YAPIContext
      * connected to the USB ports. This function works only under Linux. The process that
      * calls this method must have root privileges because this method changes the Linux configuration.
      *
-     * @param boolean $force  if true, overwrites any existing rule.
+     * @param boolean $force : if true, overwrites any existing rule.
      *
      * @return string  an empty string if the rule has been added.
      *
@@ -89,7 +89,7 @@ class YAPIContext
      * but depending or you network you may want to change this delay,
      * gor example if your network infrastructure is based on a GSM connection.
      *
-     * @param int $networkMsTimeout  the network connection delay in milliseconds.
+     * @param int $networkMsTimeout : the network connection delay in milliseconds.
      * @noreturn
      */
     public function SetNetworkTimeout(int $networkMsTimeout): void
@@ -126,11 +126,11 @@ class YAPIContext
      * does not affect value change callbacks
      * Note: This function must be called after yInitAPI.
      *
-     * @param int $cacheValidityMs  an integer corresponding to the validity attributed to the
+     * @param float $cacheValidityMs : an integer corresponding to the validity attributed to the
      *         loaded function parameters, in milliseconds.
      * @noreturn
      */
-    public function SetCacheValidity(int $cacheValidityMs): void
+    public function SetCacheValidity(float $cacheValidityMs): void
     {
         $this->_defaultCacheValidity = $cacheValidityMs;
     }
@@ -141,10 +141,10 @@ class YAPIContext
      * module functions.
      * Note: This function must be called after yInitAPI .
      *
-     * @return int  an integer corresponding to the validity attributed to the
+     * @return float  an integer corresponding to the validity attributed to the
      *         loaded function parameters, in milliseconds
      */
-    public function GetCacheValidity(): int
+    public function GetCacheValidity(): float
     {
         return $this->_defaultCacheValidity;
     }

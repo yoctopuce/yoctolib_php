@@ -43,7 +43,7 @@ class YFunction
     protected string $_logicalName = self::LOGICALNAME_INVALID;    // Text
     protected string $_advertisedValue = self::ADVERTISEDVALUE_INVALID; // PubText
     protected mixed $_valueCallbackFunction = null;                         // YFunctionValueCallback
-    protected int $_cacheExpiration = 0;                            // ulong
+    protected float $_cacheExpiration = 0;                            // ulong
     protected string $_serial = "";                           // str
     protected string $_funId = "";                           // str
     protected string $_hwId = "";                           // str
@@ -121,7 +121,7 @@ class YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the logical name of the function
+     * @param string $newval : a string corresponding to the logical name of the function
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -184,7 +184,7 @@ class YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the function, for instance
+     * @param string $func : a string that uniquely characterizes the function, for instance
      *         MyDevice..
      *
      * @return YFunction  a YFunction object allowing you to drive the function.
@@ -206,7 +206,7 @@ class YFunction
      * This provides control over the time when the callback is triggered. For good responsiveness, remember to call
      * one of these two functions periodically. To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to call, or a null pointer. The callback function
+     * @param callable $callback : the callback function to call, or a null pointer. The callback function
      * should take two
      *         arguments: the function object of which the value has changed, and the character string describing
      *         the new advertised value.
@@ -275,7 +275,7 @@ class YFunction
      * Returns the current value of a single function attribute, as a text string, as quickly as
      * possible but without using the cached value.
      *
-     * @param string $attrName  the name of the requested attribute
+     * @param string $attrName : the name of the requested attribute
      *
      * @return string  a string with the value of the the attribute
      *
@@ -532,7 +532,7 @@ class YFunction
 
     // Store and parse a an API request for current function
     //
-    protected function _parse($yreq, $msValidity)
+    protected function _parse(YAPI_YReq $yreq, float $msValidity): void
     {
         // save the whole structure for backward-compatibility
         $yreq->result["_expiration"] = YAPI::GetTickCount() + $msValidity;
@@ -549,7 +549,7 @@ class YFunction
 
     // Return the value of an attribute from function cache, after reloading it from device if needed
     // Note: the function cache is a typed (parsed) cache, contrarily to the agnostic device cache
-    protected function _getAttr($str_attr)
+    protected function _getAttr(string $str_attr)
     {
         if ($this->_cache['_expiration'] <= YAPI::GetTickCount()) {
             // no valid cached value, reload from device
@@ -589,7 +589,7 @@ class YFunction
 
     // Change the value of an attribute on a device, and update cache on the fly
     // Note: the function cache is a typed (parsed) cache, contrarily to the agnostic device cache
-    protected function _setAttr($str_attr, $str_newval)
+    protected function _setAttr(string $str_attr, string $str_newval): int
     {
         if (!isset($str_newval)) {
             $this->_throw(YAPI::INVALID_ARGUMENT, "Undefined value to set for attribute $str_attr", null);
@@ -839,14 +839,14 @@ class YFunction
      * used to temporarily mark the cache as valid for a longer period, in order
      * to reduce network traffic for instance.
      *
-     * @param int $msValidity  an integer corresponding to the validity attributed to the
+     * @param float $msValidity : an integer corresponding to the validity attributed to the
      *         loaded function parameters, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function load($msValidity)
+    public function load(float $msValidity): int
     {
         $yreq = YAPI::funcRequest($this->_className, $this->_func, '');
         if ($yreq->errorType != YAPI::SUCCESS) {
@@ -984,7 +984,7 @@ class YFunction
      * Stores a user context provided as argument in the userData attribute of the function.
      * This attribute is never touched by the API, and is at disposal of the caller to store a context.
      *
-     * @param Object $data  any kind of object to be stored
+     * @param Object $data : any kind of object to be stored
      * @noreturn
      */
     public function set_userData($data)

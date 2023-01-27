@@ -134,7 +134,7 @@ class YMotor extends YFunction
      * to reverse full power is a very bad idea. Each time the driving power is modified, the
      * braking power is set to zero.
      *
-     * @param float $newval  a floating point number corresponding to immediately the power sent to the motor
+     * @param float $newval : a floating point number corresponding to immediately the power sent to the motor
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -171,7 +171,7 @@ class YMotor extends YFunction
      * The value 0 corresponds to no braking (free wheel). When the braking force
      * is changed, the driving power is set to zero. The value is a percentage.
      *
-     * @param float $newval  a floating point number corresponding to immediately the braking force
+     * @param float $newval : a floating point number corresponding to immediately the braking force
      * applied to the motor (in percents)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -213,7 +213,7 @@ class YMotor extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the threshold voltage under which
+     * @param float $newval : a floating point number corresponding to the threshold voltage under which
      * the controller automatically switches to error state
      *         and prevents further current draw
      *
@@ -278,7 +278,7 @@ class YMotor extends YFunction
      * goes above 32A, even for a very brief time. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the current threshold (in mA) above which the
+     * @param int $newval : an integer corresponding to the current threshold (in mA) above which the
      * controller automatically
      *         switches to error state
      *
@@ -299,7 +299,7 @@ class YMotor extends YFunction
      * into heat. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the PWM frequency used to control the motor
+     * @param float $newval : a floating point number corresponding to the PWM frequency used to control the motor
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -357,7 +357,7 @@ class YMotor extends YFunction
      * it start up. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the duration (in ms) during which the motor is
+     * @param int $newval : an integer corresponding to the duration (in ms) during which the motor is
      * driven at low frequency to help
      *         it start up
      *
@@ -403,7 +403,7 @@ class YMotor extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the delay in milliseconds allowed for the
+     * @param int $newval : an integer corresponding to the delay in milliseconds allowed for the
      * controller to run autonomously without
      *         receiving any instruction from the control process
      *
@@ -458,7 +458,7 @@ class YMotor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the motor, for instance
+     * @param string $func : a string that uniquely characterizes the motor, for instance
      *         MOTORCTL.motor.
      *
      * @return YMotor  a YMotor object allowing you to drive the motor.
@@ -497,8 +497,8 @@ class YMotor extends YFunction
     /**
      * Changes progressively the power sent to the motor for a specific duration.
      *
-     * @param float $targetPower  desired motor power, in percents (between -100% and +100%)
-     * @param int $delay  duration (in ms) of the transition
+     * @param float $targetPower : desired motor power, in percents (between -100% and +100%)
+     * @param int $delay : duration (in ms) of the transition
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -512,8 +512,8 @@ class YMotor extends YFunction
     /**
      * Changes progressively the braking force applied to the motor for a specific duration.
      *
-     * @param float $targetPower  desired braking force, in percents
-     * @param int $delay  duration (in ms) of the transition
+     * @param float $targetPower : desired braking force, in percents
+     * @param int $delay : duration (in ms) of the transition
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *

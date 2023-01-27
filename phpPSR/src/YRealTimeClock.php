@@ -25,7 +25,7 @@ class YRealTimeClock extends YFunction
     //--- (end of YRealTimeClock declaration)
 
     //--- (YRealTimeClock attributes)
-    protected int $_unixTime = self::UNIXTIME_INVALID;       // UTCTime
+    protected float $_unixTime = self::UNIXTIME_INVALID;       // UTCTime
     protected string $_dateTime = self::DATETIME_INVALID;       // Text
     protected int $_utcOffset = self::UTCOFFSET_INVALID;      // Int
     protected int $_timeSet = self::TIMESET_INVALID;        // Bool
@@ -69,12 +69,12 @@ class YRealTimeClock extends YFunction
     /**
      * Returns the current time in Unix format (number of elapsed seconds since Jan 1st, 1970).
      *
-     * @return int  an integer corresponding to the current time in Unix format (number of elapsed seconds
-     * since Jan 1st, 1970)
+     * @return float  an integer corresponding to the current time in Unix format (number of elapsed
+     * seconds since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns YRealTimeClock::UNIXTIME_INVALID.
      */
-    public function get_unixTime(): int
+    public function get_unixTime(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -89,13 +89,13 @@ class YRealTimeClock extends YFunction
     /**
      * Changes the current time. Time is specifid in Unix format (number of elapsed seconds since Jan 1st, 1970).
      *
-     * @param int $newval  an integer corresponding to the current time
+     * @param float $newval : an integer corresponding to the current time
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_unixTime(int $newval): int
+    public function set_unixTime(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("unixTime", $rest_val);
@@ -145,7 +145,7 @@ class YRealTimeClock extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the number of seconds between current time and UTC
+     * @param int $newval : an integer corresponding to the number of seconds between current time and UTC
      * time (time zone)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -205,7 +205,7 @@ class YRealTimeClock extends YFunction
      * To disable automatic synchronization, set the value to true.
      * To enable automatic synchronization (default), set the value to false.
      *
-     * @param int $newval  either YRealTimeClock::DISABLEHOSTSYNC_FALSE or
+     * @param int $newval : either YRealTimeClock::DISABLEHOSTSYNC_FALSE or
      * YRealTimeClock::DISABLEHOSTSYNC_TRUE, according to the automatic clock synchronization with host working state
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -241,7 +241,7 @@ class YRealTimeClock extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the real-time clock, for instance
+     * @param string $func : a string that uniquely characterizes the real-time clock, for instance
      *         YHUBGSM5.realTimeClock.
      *
      * @return YRealTimeClock  a YRealTimeClock object allowing you to drive the real-time clock.
@@ -257,12 +257,12 @@ class YRealTimeClock extends YFunction
         return $obj;
     }
 
-    public function unixTime(): int
+    public function unixTime(): float
 {
     return $this->get_unixTime();
 }
 
-    public function setUnixTime(int $newval)
+    public function setUnixTime(float $newval)
 {
     return $this->set_unixTime($newval);
 }

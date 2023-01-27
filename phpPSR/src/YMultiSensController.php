@@ -87,7 +87,7 @@ class YMultiSensController extends YFunction
      * device with  module->reboot() after modifying
      * (and saving) this settings.
      *
-     * @param int $newval  an integer corresponding to the number of sensors to poll
+     * @param int $newval : an integer corresponding to the number of sensors to poll
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -143,7 +143,7 @@ class YMultiSensController extends YFunction
      * This way, the device does not automatically restart when it cannot
      * communicate with one of the sensors.
      *
-     * @param int $newval  either YMultiSensController::MAINTENANCEMODE_FALSE or
+     * @param int $newval : either YMultiSensController::MAINTENANCEMODE_FALSE or
      * YMultiSensController::MAINTENANCEMODE_TRUE, according to the device mode to enable maintenance and
      * to stop sensor polling
      *
@@ -220,7 +220,7 @@ class YMultiSensController extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the multi-sensor controller, for instance
+     * @param string $func : a string that uniquely characterizes the multi-sensor controller, for instance
      *         YTEMPIR1.multiSensController.
      *
      * @return YMultiSensController  a YMultiSensController object allowing you to drive the multi-sensor controller.
@@ -246,7 +246,7 @@ class YMultiSensController extends YFunction
      * Note that the device is expecting to find a sensor or a string of sensors with specific
      * addresses. Check the device documentation to find out which addresses should be used.
      *
-     * @param int $addr  new address of the connected sensor
+     * @param int $addr : new address of the connected sensor
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.

@@ -140,7 +140,7 @@ class YBluetoothLink extends YFunction
      * Remember to call the saveToFlash() method of the module to save the
      * new value in the device flash.
      *
-     * @param string $newval  a string corresponding to the PIN code used by the module for bluetooth pairing
+     * @param string $newval : a string corresponding to the PIN code used by the module for bluetooth pairing
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -176,7 +176,7 @@ class YBluetoothLink extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the MAC-48 address defining which remote device to connect to
+     * @param string $newval : a string corresponding to the MAC-48 address defining which remote device to connect to
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -232,7 +232,7 @@ class YBluetoothLink extends YFunction
      * Changes the state of the mute function. Remember to call the matching module
      * saveToFlash() method to save the setting permanently.
      *
-     * @param int $newval  either YBluetoothLink::MUTE_FALSE or YBluetoothLink::MUTE_TRUE, according to the
+     * @param int $newval : either YBluetoothLink::MUTE_FALSE or YBluetoothLink::MUTE_TRUE, according to the
      * state of the mute function
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -269,7 +269,7 @@ class YBluetoothLink extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the audio pre-amplifier volume, in per cents
+     * @param int $newval : an integer corresponding to the audio pre-amplifier volume, in per cents
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -303,7 +303,7 @@ class YBluetoothLink extends YFunction
     /**
      * Changes the connected headset volume, in per cents.
      *
-     * @param int $newval  an integer corresponding to the connected headset volume, in per cents
+     * @param int $newval : an integer corresponding to the connected headset volume, in per cents
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -397,7 +397,7 @@ class YBluetoothLink extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the Bluetooth sound controller, for instance
+     * @param string $func : a string that uniquely characterizes the Bluetooth sound controller, for instance
      *         MyDevice.bluetoothLink1.
      *
      * @return YBluetoothLink  a YBluetoothLink object allowing you to drive the Bluetooth sound controller.

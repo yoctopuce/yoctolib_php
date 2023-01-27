@@ -120,7 +120,7 @@ class YDaisyChain extends YFunction
      * the count does not match. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the number of child nodes expected in normal conditions
+     * @param int $newval : an integer corresponding to the number of child nodes expected in normal conditions
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -155,7 +155,7 @@ class YDaisyChain extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the module chain, for instance
+     * @param string $func : a string that uniquely characterizes the module chain, for instance
      *         MyDevice.daisyChain.
      *
      * @return YDaisyChain  a YDaisyChain object allowing you to drive the module chain.

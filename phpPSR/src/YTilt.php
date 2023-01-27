@@ -78,7 +78,7 @@ class YTilt extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the measure update frequency, measured in Hz
+     * @param int $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -125,7 +125,7 @@ class YTilt extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the tilt sensor, for instance
+     * @param string $func : a string that uniquely characterizes the tilt sensor, for instance
      *         Y3DMK002.tilt1.
      *
      * @return YTilt  a YTilt object allowing you to drive the tilt sensor.

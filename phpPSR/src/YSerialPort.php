@@ -259,7 +259,7 @@ class YSerialPort extends YFunction
      * Selects a job file to run immediately. If an empty string is
      * given as argument, stops running current job file.
      *
-     * @param string $newval  a string
+     * @param string $newval : a string
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -295,7 +295,7 @@ class YSerialPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the job to use when the device is powered on
+     * @param string $newval : a string corresponding to the job to use when the device is powered on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -407,7 +407,7 @@ class YSerialPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the type of protocol used over the serial line
+     * @param string $newval : a string corresponding to the type of protocol used over the serial line
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -450,7 +450,7 @@ class YSerialPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YSerialPort::VOLTAGELEVEL_OFF, YSerialPort::VOLTAGELEVEL_TTL3V,
+     * @param int $newval : a value among YSerialPort::VOLTAGELEVEL_OFF, YSerialPort::VOLTAGELEVEL_TTL3V,
      * YSerialPort::VOLTAGELEVEL_TTL3VR, YSerialPort::VOLTAGELEVEL_TTL5V, YSerialPort::VOLTAGELEVEL_TTL5VR,
      * YSerialPort::VOLTAGELEVEL_RS232, YSerialPort::VOLTAGELEVEL_RS485, YSerialPort::VOLTAGELEVEL_TTL1V8 and
      * YSerialPort::VOLTAGELEVEL_SDI12 corresponding to the voltage type used on the serial line
@@ -500,7 +500,8 @@ class YSerialPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the serial port communication parameters, with a string such as
+     * @param string $newval : a string corresponding to the serial port communication parameters, with a
+     * string such as
      *         "9600,8N1"
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -536,7 +537,7 @@ class YSerialPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the serial port, for instance
+     * @param string $func : a string that uniquely characterizes the serial port, for instance
      *         RS232MK1.serialPort.
      *
      * @return YSerialPort  a YSerialPort object allowing you to drive the serial port.
@@ -604,11 +605,11 @@ class YSerialPort extends YFunction
      * If no matching message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param string $pattern  a limited regular expression describing the expected message format,
+     * @param string $pattern : a limited regular expression describing the expected message format,
      *         or an empty string if all messages should be returned (no filtering).
      *         When using binary protocols, the format applies to the hexadecimal
      *         representation of the message.
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return string[]  an array of strings containing the messages found, if any.
@@ -648,7 +649,7 @@ class YSerialPort extends YFunction
      * does not affect the device, it only changes the value stored in the API object
      * for the next read operations.
      *
-     * @param int $absPos  the absolute position index for next read operations.
+     * @param int $absPos : the absolute position index for next read operations.
      *
      * @return int  nothing.
      */
@@ -706,8 +707,8 @@ class YSerialPort extends YFunction
      * Sends a text line query to the serial port, and reads the reply, if any.
      * This function is intended to be used when the serial port is configured for 'Line' protocol.
      *
-     * @param string $query  the line query to send (without CR/LF)
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $query : the line query to send (without CR/LF)
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next text line received after sending the text query, as a string.
      *         Additional lines can be obtained by calling readLine or readMessages.
@@ -753,8 +754,8 @@ class YSerialPort extends YFunction
      * This function is intended to be used when the serial port is configured for
      * Frame-based protocol.
      *
-     * @param string $hexString  the message to send, coded in hexadecimal
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $hexString : the message to send, coded in hexadecimal
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next frame received after sending the message, as a hex string.
      *         Additional frames can be obtained by calling readHex or readMessages.
@@ -799,8 +800,8 @@ class YSerialPort extends YFunction
      * Saves the job definition string (JSON data) into a job file.
      * The job file can be later enabled using selectJob().
      *
-     * @param string $jobfile  name of the job file to save on the device filesystem
-     * @param string $jsonDef  a string containing a JSON definition of the job
+     * @param string $jobfile : name of the job file to save on the device filesystem
+     * @param string $jsonDef : a string containing a JSON definition of the job
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -817,7 +818,7 @@ class YSerialPort extends YFunction
      * been previously created using the user interface or uploaded on the
      * device filesystem using the uploadJob() function.
      *
-     * @param string $jobfile  name of the job file (on the device filesystem)
+     * @param string $jobfile : name of the job file (on the device filesystem)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -848,7 +849,7 @@ class YSerialPort extends YFunction
     /**
      * Sends a single byte to the serial port.
      *
-     * @param int $code  the byte to send
+     * @param int $code : the byte to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -862,7 +863,7 @@ class YSerialPort extends YFunction
     /**
      * Sends an ASCII string to the serial port, as is.
      *
-     * @param string $text  the text string to send
+     * @param string $text : the text string to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -899,7 +900,7 @@ class YSerialPort extends YFunction
     /**
      * Sends a binary buffer to the serial port, as is.
      *
-     * @param string $buff  the binary buffer to send
+     * @param string $buff : the binary buffer to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -913,7 +914,7 @@ class YSerialPort extends YFunction
     /**
      * Sends a byte sequence (provided as a list of bytes) to the serial port.
      *
-     * @param Integer[] $byteList  a list of byte codes
+     * @param Integer[] $byteList : a list of byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -942,7 +943,7 @@ class YSerialPort extends YFunction
     /**
      * Sends a byte sequence (provided as a hexadecimal string) to the serial port.
      *
-     * @param string $hexString  a string of hexadecimal byte codes
+     * @param string $hexString : a string of hexadecimal byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -975,7 +976,7 @@ class YSerialPort extends YFunction
     /**
      * Sends an ASCII string to the serial port, followed by a line break (CR LF).
      *
-     * @param string $text  the text string to send
+     * @param string $text : the text string to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1083,7 +1084,7 @@ class YSerialPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of characters to read
+     * @param int $nChars : the maximum number of characters to read
      *
      * @return string  a string with receive buffer contents
      *
@@ -1119,7 +1120,7 @@ class YSerialPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of bytes to read
+     * @param int $nChars : the maximum number of bytes to read
      *
      * @return string  a binary object with receive buffer contents
      *
@@ -1161,7 +1162,7 @@ class YSerialPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nChars  the maximum number of bytes to read
+     * @param int $nChars : the maximum number of bytes to read
      *
      * @return Integer[]  a sequence of bytes with receive buffer contents
      *
@@ -1207,7 +1208,7 @@ class YSerialPort extends YFunction
      * If data at current stream position is not available anymore in the receive buffer, the
      * function performs a short read.
      *
-     * @param int $nBytes  the maximum number of bytes to read
+     * @param int $nBytes : the maximum number of bytes to read
      *
      * @return string  a string with receive buffer contents, encoded in hexadecimal
      *
@@ -1254,7 +1255,7 @@ class YSerialPort extends YFunction
      * When the duration is between 1 and 100, the BREAK condition will
      * be hold for the specified number of milliseconds.
      *
-     * @param int $duration  0 for a standard BREAK, or duration between 1 and 100 ms
+     * @param int $duration : 0 for a standard BREAK, or duration between 1 and 100 ms
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1269,7 +1270,7 @@ class YSerialPort extends YFunction
      * Manually sets the state of the RTS line. This function has no effect when
      * hardware handshake is enabled, as the RTS line is driven automatically.
      *
-     * @param int $val  1 to turn RTS on, 0 to turn RTS off
+     * @param int $val : 1 to turn RTS on, 0 to turn RTS off
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1307,7 +1308,7 @@ class YSerialPort extends YFunction
      * If no message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return YSnoopingRecord[]  an array of YSnoopingRecord objects containing the messages found, if any.
@@ -1349,7 +1350,7 @@ class YSerialPort extends YFunction
      * the callback is triggered. For good responsiveness, remember to call one of these
      * two functions periodically. To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to call, or a null pointer.
+     * @param callable $callback : the callback function to call, or a null pointer.
      *         The callback function should take four arguments:
      *         the YSerialPort object that emitted the event, and
      *         the YSnoopingRecord object that describes the message
@@ -1408,7 +1409,7 @@ class YSerialPort extends YFunction
      * Sends an ASCII string to the serial port, preceeded with an STX code and
      * followed by an ETX code.
      *
-     * @param string $text  the text string to send
+     * @param string $text : the text string to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1427,7 +1428,7 @@ class YSerialPort extends YFunction
      * The message must start with the slave address. The MODBUS CRC/LRC is
      * automatically added by the function. This function does not wait for a reply.
      *
-     * @param string $hexString  a hexadecimal message string, including device address but no CRC/LRC
+     * @param string $hexString : a hexadecimal message string, including device address but no CRC/LRC
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1442,8 +1443,8 @@ class YSerialPort extends YFunction
      * Sends a message to a specified MODBUS slave connected to the serial port, and reads the
      * reply, if any. The message is the PDU, provided as a vector of bytes.
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to query
-     * @param Integer[] $pduBytes  the message to send (PDU), as a vector of bytes. The first byte of the
+     * @param int $slaveNo : the address of the slave MODBUS device to query
+     * @param Integer[] $pduBytes : the message to send (PDU), as a vector of bytes. The first byte of the
      *         PDU is the MODBUS function code.
      *
      * @return Integer[]  the received reply, as a vector of bytes.
@@ -1511,9 +1512,9 @@ class YSerialPort extends YFunction
      * Reads one or more contiguous internal bits (or coil status) from a MODBUS serial device.
      * This method uses the MODBUS function code 0x01 (Read Coils).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to query
-     * @param int $pduAddr  the relative address of the first bit/coil to read (zero-based)
-     * @param int $nBits  the number of bits/coils to read
+     * @param int $slaveNo : the address of the slave MODBUS device to query
+     * @param int $pduAddr : the relative address of the first bit/coil to read (zero-based)
+     * @param int $nBits : the number of bits/coils to read
      *
      * @return Integer[]  a vector of integers, each corresponding to one bit.
      *
@@ -1567,9 +1568,9 @@ class YSerialPort extends YFunction
      * Reads one or more contiguous input bits (or discrete inputs) from a MODBUS serial device.
      * This method uses the MODBUS function code 0x02 (Read Discrete Inputs).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to query
-     * @param int $pduAddr  the relative address of the first bit/input to read (zero-based)
-     * @param int $nBits  the number of bits/inputs to read
+     * @param int $slaveNo : the address of the slave MODBUS device to query
+     * @param int $pduAddr : the relative address of the first bit/input to read (zero-based)
+     * @param int $nBits : the number of bits/inputs to read
      *
      * @return Integer[]  a vector of integers, each corresponding to one bit.
      *
@@ -1623,9 +1624,9 @@ class YSerialPort extends YFunction
      * Reads one or more contiguous internal registers (holding registers) from a MODBUS serial device.
      * This method uses the MODBUS function code 0x03 (Read Holding Registers).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to query
-     * @param int $pduAddr  the relative address of the first holding register to read (zero-based)
-     * @param int $nWords  the number of holding registers to read
+     * @param int $slaveNo : the address of the slave MODBUS device to query
+     * @param int $pduAddr : the relative address of the first holding register to read (zero-based)
+     * @param int $nWords : the number of holding registers to read
      *
      * @return Integer[]  a vector of integers, each corresponding to one 16-bit register value.
      *
@@ -1670,9 +1671,9 @@ class YSerialPort extends YFunction
      * Reads one or more contiguous input registers (read-only registers) from a MODBUS serial device.
      * This method uses the MODBUS function code 0x04 (Read Input Registers).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to query
-     * @param int $pduAddr  the relative address of the first input register to read (zero-based)
-     * @param int $nWords  the number of input registers to read
+     * @param int $slaveNo : the address of the slave MODBUS device to query
+     * @param int $pduAddr : the relative address of the first input register to read (zero-based)
+     * @param int $nWords : the number of input registers to read
      *
      * @return Integer[]  a vector of integers, each corresponding to one 16-bit input value.
      *
@@ -1716,9 +1717,9 @@ class YSerialPort extends YFunction
      * Sets a single internal bit (or coil) on a MODBUS serial device.
      * This method uses the MODBUS function code 0x05 (Write Single Coil).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to drive
-     * @param int $pduAddr  the relative address of the bit/coil to set (zero-based)
-     * @param int $value  the value to set (0 for OFF state, non-zero for ON state)
+     * @param int $slaveNo : the address of the slave MODBUS device to drive
+     * @param int $pduAddr : the relative address of the bit/coil to set (zero-based)
+     * @param int $value : the value to set (0 for OFF state, non-zero for ON state)
      *
      * @return int  the number of bits/coils affected on the device (1)
      *
@@ -1754,9 +1755,9 @@ class YSerialPort extends YFunction
      * Sets several contiguous internal bits (or coils) on a MODBUS serial device.
      * This method uses the MODBUS function code 0x0f (Write Multiple Coils).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to drive
-     * @param int $pduAddr  the relative address of the first bit/coil to set (zero-based)
-     * @param Integer[] $bits  the vector of bits to be set (one integer per bit)
+     * @param int $slaveNo : the address of the slave MODBUS device to drive
+     * @param int $pduAddr : the relative address of the first bit/coil to set (zero-based)
+     * @param Integer[] $bits : the vector of bits to be set (one integer per bit)
      *
      * @return int  the number of bits/coils affected on the device
      *
@@ -1817,9 +1818,9 @@ class YSerialPort extends YFunction
      * Sets a single internal register (or holding register) on a MODBUS serial device.
      * This method uses the MODBUS function code 0x06 (Write Single Register).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to drive
-     * @param int $pduAddr  the relative address of the register to set (zero-based)
-     * @param int $value  the 16 bit value to set
+     * @param int $slaveNo : the address of the slave MODBUS device to drive
+     * @param int $pduAddr : the relative address of the register to set (zero-based)
+     * @param int $value : the 16 bit value to set
      *
      * @return int  the number of registers affected on the device (1)
      *
@@ -1852,9 +1853,9 @@ class YSerialPort extends YFunction
      * Sets several contiguous internal registers (or holding registers) on a MODBUS serial device.
      * This method uses the MODBUS function code 0x10 (Write Multiple Registers).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to drive
-     * @param int $pduAddr  the relative address of the first internal register to set (zero-based)
-     * @param Integer[] $values  the vector of 16 bit values to set
+     * @param int $slaveNo : the address of the slave MODBUS device to drive
+     * @param int $pduAddr : the relative address of the first internal register to set (zero-based)
+     * @param Integer[] $values : the vector of 16 bit values to set
      *
      * @return int  the number of registers affected on the device
      *
@@ -1903,11 +1904,11 @@ class YSerialPort extends YFunction
      * then performs a contiguous read of a set of (possibly different) internal registers.
      * This method uses the MODBUS function code 0x17 (Read/Write Multiple Registers).
      *
-     * @param int $slaveNo  the address of the slave MODBUS device to drive
-     * @param int $pduWriteAddr  the relative address of the first internal register to set (zero-based)
-     * @param Integer[] $values  the vector of 16 bit values to set
-     * @param int $pduReadAddr  the relative address of the first internal register to read (zero-based)
-     * @param int $nReadWords  the number of 16 bit values to read
+     * @param int $slaveNo : the address of the slave MODBUS device to drive
+     * @param int $pduWriteAddr : the relative address of the first internal register to set (zero-based)
+     * @param Integer[] $values : the vector of 16 bit values to set
+     * @param int $pduReadAddr : the relative address of the first internal register to read (zero-based)
+     * @param int $nReadWords : the number of 16 bit values to read
      *
      * @return Integer[]  a vector of integers, each corresponding to one 16-bit register value read.
      *

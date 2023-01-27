@@ -4,8 +4,8 @@
 </HEAD>
 <BODY>
 <?php
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_gps.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_gps.php');
 
   // Use explicit error handling rather than exceptions
   //YAPI::DisableExceptions();

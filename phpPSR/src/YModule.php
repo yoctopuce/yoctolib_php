@@ -38,7 +38,7 @@ class YModule extends YFunction
     protected int $_persistentSettings = self::PERSISTENTSETTINGS_INVALID; // FlashSettings
     protected int $_luminosity = self::LUMINOSITY_INVALID;     // Percent
     protected int $_beacon = self::BEACON_INVALID;         // OnOff
-    protected int $_upTime = self::UPTIME_INVALID;         // Time
+    protected float $_upTime = self::UPTIME_INVALID;         // Time
     protected int $_usbCurrent = self::USBCURRENT_INVALID;     // UsedCurrent
     protected int $_rebootCountdown = self::REBOOTCOUNTDOWN_INVALID; // Int
     protected int $_userVar = self::USERVAR_INVALID;        // Int
@@ -93,8 +93,8 @@ class YModule extends YFunction
     /**
      * Retrieves the hardware identifier of the <i>n</i>th function on the module.
      *
-     * @param int $functionIndex  the index of the function for which the information is desired, starting
-     * at 0 for the first function.
+     * @param int $functionIndex : the index of the function for which the information is desired,
+     * starting at 0 for the first function.
      *
      * @return string  a string corresponding to the unambiguous hardware identifier of the requested module function
      *
@@ -109,8 +109,8 @@ class YModule extends YFunction
     /**
      * Retrieves the type of the <i>n</i>th function on the module.
      *
-     * @param int $functionIndex  the index of the function for which the information is desired, starting
-     * at 0 for the first function.
+     * @param int $functionIndex : the index of the function for which the information is desired,
+     * starting at 0 for the first function.
      *
      * @return string  a string corresponding to the type of the function
      *
@@ -126,8 +126,8 @@ class YModule extends YFunction
      * Retrieves the base type of the <i>n</i>th function on the module.
      * For instance, the base type of all measuring functions is "Sensor".
      *
-     * @param int $functionIndex  the index of the function for which the information is desired, starting
-     * at 0 for the first function.
+     * @param int $functionIndex : the index of the function for which the information is desired,
+     * starting at 0 for the first function.
      *
      * @return string  a string corresponding to the base type of the function
      *
@@ -143,8 +143,8 @@ class YModule extends YFunction
     /**
      * Retrieves the logical name of the <i>n</i>th function on the module.
      *
-     * @param int $functionIndex  the index of the function for which the information is desired, starting
-     * at 0 for the first function.
+     * @param int $functionIndex : the index of the function for which the information is desired,
+     * starting at 0 for the first function.
      *
      * @return string  a string corresponding to the logical name of the requested module function
      *
@@ -164,8 +164,8 @@ class YModule extends YFunction
     /**
      * Retrieves the advertised value of the <i>n</i>th function on the module.
      *
-     * @param int $functionIndex  the index of the function for which the information is desired, starting
-     * at 0 for the first function.
+     * @param int $functionIndex : the index of the function for which the information is desired,
+     * starting at 0 for the first function.
      *
      * @return string  a short string (up to 6 characters) corresponding to the advertised value of the
      * requested module function
@@ -442,7 +442,7 @@ class YModule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the luminosity of the module informative leds
+     * @param int $newval : an integer corresponding to the luminosity of the module informative leds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -481,7 +481,7 @@ class YModule extends YFunction
     /**
      * Turns on or off the module localization beacon.
      *
-     * @param int $newval  either YModule::BEACON_OFF or YModule::BEACON_ON
+     * @param int $newval : either YModule::BEACON_OFF or YModule::BEACON_ON
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -496,11 +496,11 @@ class YModule extends YFunction
     /**
      * Returns the number of milliseconds spent since the module was powered on.
      *
-     * @return int  an integer corresponding to the number of milliseconds spent since the module was powered on
+     * @return float  an integer corresponding to the number of milliseconds spent since the module was powered on
      *
      * On failure, throws an exception or returns YModule::UPTIME_INVALID.
      */
-    public function get_upTime(): int
+    public function get_upTime(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -584,7 +584,7 @@ class YModule extends YFunction
      * should he need to store a state variable.
      * On startup and after a device reboot, the value is always reset to zero.
      *
-     * @param int $newval  an integer
+     * @param int $newval : an integer
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -612,7 +612,7 @@ class YModule extends YFunction
      * you are certain that the device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string containing either the serial number or
+     * @param string $func : a string containing either the serial number or
      *         the logical name of the desired module
      *
      * @return YModule  a YModule object allowing you to drive the module
@@ -682,7 +682,7 @@ class YModule extends YFunction
     /**
      * Schedules a simple module reboot after the given number of seconds.
      *
-     * @param int $secBeforeReboot  number of seconds before rebooting
+     * @param int $secBeforeReboot : number of seconds before rebooting
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -696,7 +696,7 @@ class YModule extends YFunction
     /**
      * Schedules a module reboot into special firmware update mode.
      *
-     * @param int $secBeforeReboot  number of seconds before rebooting
+     * @param int $secBeforeReboot : number of seconds before rebooting
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -719,7 +719,7 @@ class YModule extends YFunction
      * Registers a device log callback function. This callback will be called each time
      * that a module sends a new log message. Mostly useful to debug a Yoctopuce module.
      *
-     * @param function $callback  the callback function to call, or a null pointer. The callback function
+     * @param callable $callback : the callback function to call, or a null pointer. The callback function
      * should take two
      *         arguments: the module object that emitted the log message, and the character string containing the log.
      *         On failure, throws an exception or returns a negative error code.
@@ -746,7 +746,7 @@ class YModule extends YFunction
      * Register a callback function, to be called when a persistent settings in
      * a device configuration has been changed (e.g. change of unit, etc).
      *
-     * @param function $callback  a procedure taking a YModule parameter, or null
+     * @param callable $callback : a procedure taking a YModule parameter, or null
      *         to unregister a previously registered  callback.
      */
     public function registerConfigChangeCallback(mixed $callback): int
@@ -773,7 +773,7 @@ class YModule extends YFunction
      * has been changed. The callback function should take two arguments: the YModule object of
      * which the beacon has changed, and an integer describing the new beacon state.
      *
-     * @param function $callback  The callback function to call, or null to unregister a
+     * @param callable $callback : The callback function to call, or null to unregister a
      *         previously registered callback.
      */
     public function registerBeaconCallback(mixed $callback): int
@@ -812,8 +812,8 @@ class YModule extends YFunction
      * appropriate .byn file. If the parameter onlynew is true, the function discards firmwares that are older or
      * equal to the installed firmware.
      *
-     * @param string $path  the path of a byn file or a directory that contains byn files
-     * @param boolean $onlynew  returns only files that are strictly newer
+     * @param string $path : the path of a byn file or a directory that contains byn files
+     * @param boolean $onlynew : returns only files that are strictly newer
      *
      * @return string  the path of the byn file to use or a empty string if no byn files matches the requirement
      *
@@ -842,8 +842,8 @@ class YModule extends YFunction
      * Prepares a firmware update of the module. This method returns a YFirmwareUpdate object which
      * handles the firmware update process.
      *
-     * @param string $path  the path of the .byn file to use.
-     * @param boolean $force  true to force the firmware update even if some prerequisites appear not to be met
+     * @param string $path : the path of the .byn file to use.
+     * @param boolean $force : true to force the firmware update even if some prerequisites appear not to be met
      *
      * @return YFirmwareUpdate  a YFirmwareUpdate object or NULL on error.
      */
@@ -865,7 +865,7 @@ class YModule extends YFunction
      * Prepares a firmware update of the module. This method returns a YFirmwareUpdate object which
      * handles the firmware update process.
      *
-     * @param string $path  the path of the .byn file to use.
+     * @param string $path : the path of the .byn file to use.
      *
      * @return YFirmwareUpdate  a YFirmwareUpdate object or NULL on error.
      */
@@ -997,7 +997,7 @@ class YModule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modifications must be kept.
      *
-     * @param string $settings  a binary buffer with all the settings.
+     * @param string $settings : a binary buffer with all the settings.
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -1056,7 +1056,7 @@ class YModule extends YFunction
      * Tests if the device includes a specific function. This method takes a function identifier
      * and returns a boolean.
      *
-     * @param string $funcId  the requested function identifier
+     * @param string $funcId : the requested function identifier
      *
      * @return boolean  true if the device has the function identifier
      */
@@ -1081,7 +1081,7 @@ class YModule extends YFunction
     /**
      * Retrieve all hardware identifier that match the type passed in argument.
      *
-     * @param string $funType  The type of function (Relay, LightSensor, Voltage,...)
+     * @param string $funType : The type of function (Relay, LightSensor, Voltage,...)
      *
      * @return string[]  an array of strings.
      */
@@ -1368,7 +1368,7 @@ class YModule extends YFunction
      * of a module from a backup.Remember to call the saveToFlash() method of the module if the
      * modifications must be kept.
      *
-     * @param string $settings  a binary buffer with all the settings.
+     * @param string $settings : a binary buffer with all the settings.
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -1681,7 +1681,7 @@ class YModule extends YFunction
      * This function only affects the next HTTP callback and only works in
      * HTTP callback mode.
      *
-     * @param string $filename  the name of the file to upload at the next HTTP callback
+     * @param string $filename : the name of the file to upload at the next HTTP callback
      *
      * @return int  nothing.
      */
@@ -1714,7 +1714,7 @@ class YModule extends YFunction
     /**
      * Downloads the specified built-in file and returns a binary buffer with its content.
      *
-     * @param string $pathname  name of the new file to load
+     * @param string $pathname : name of the new file to load
      *
      * @return string  a binary buffer with the file content
      *
@@ -1757,7 +1757,7 @@ class YModule extends YFunction
      * particular to trace the execution of HTTP callbacks. If a newline
      * is desired after the message, it must be included in the string.
      *
-     * @param string $text  the string to append to the logs.
+     * @param string $text : the string to append to the logs.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1867,7 +1867,7 @@ class YModule extends YFunction
     return $this->set_beacon($newval);
 }
 
-    public function upTime(): int
+    public function upTime(): float
 {
     return $this->get_upTime();
 }

@@ -70,7 +70,7 @@ class YCurrent extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  either YCurrent::ENABLED_FALSE or YCurrent::ENABLED_TRUE, according to the
+     * @param int $newval : either YCurrent::ENABLED_FALSE or YCurrent::ENABLED_TRUE, according to the
      * activation state of this voltage input
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -106,7 +106,7 @@ class YCurrent extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the current sensor, for instance
+     * @param string $func : a string that uniquely characterizes the current sensor, for instance
      *         YAMPMK01.current1.
      *
      * @return YCurrent  a YCurrent object allowing you to drive the current sensor.

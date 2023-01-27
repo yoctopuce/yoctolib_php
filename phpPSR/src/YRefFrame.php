@@ -132,7 +132,7 @@ class YRefFrame extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the reference bearing used by the compass
+     * @param float $newval : a floating point number corresponding to the reference bearing used by the compass
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -209,7 +209,7 @@ class YRefFrame extends YFunction
      * Change the sensor fusion mode. Note that available sensor fusion modes depend on the sensor type.
      * Remember to call the matching module saveToFlash() method to save the setting permanently.
      *
-     * @param int $newval  a value among YRefFrame::FUSIONMODE_NDOF, YRefFrame::FUSIONMODE_NDOF_FMC_OFF,
+     * @param int $newval : a value among YRefFrame::FUSIONMODE_NDOF, YRefFrame::FUSIONMODE_NDOF_FMC_OFF,
      * YRefFrame::FUSIONMODE_M4G, YRefFrame::FUSIONMODE_COMPASS, YRefFrame::FUSIONMODE_IMU,
      * YRefFrame::FUSIONMODE_INCLIN_90DEG_1G8, YRefFrame::FUSIONMODE_INCLIN_90DEG_3G6 and
      * YRefFrame::FUSIONMODE_INCLIN_10DEG
@@ -247,7 +247,7 @@ class YRefFrame extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the reference frame, for instance
+     * @param string $func : a string that uniquely characterizes the reference frame, for instance
      *         Y3DMK002.refFrame.
      *
      * @return YRefFrame  a YRefFrame object allowing you to drive the reference frame.
@@ -268,7 +268,7 @@ class YRefFrame extends YFunction
      * in order to define the reference frame for the compass and the
      * pitch/roll tilt sensors.
      *
-     * @return MOUNTPOSITION  a value among the YRefFrame::MOUNTPOSITION enumeration
+     * @return int  a value among the YRefFrame::MOUNTPOSITION enumeration
      *         (YRefFrame::MOUNTPOSITION_BOTTOM,  YRefFrame::MOUNTPOSITION_TOP,
      *         YRefFrame::MOUNTPOSITION_FRONT,    YRefFrame::MOUNTPOSITION_RIGHT,
      *         YRefFrame::MOUNTPOSITION_REAR,     YRefFrame::MOUNTPOSITION_LEFT),
@@ -291,7 +291,7 @@ class YRefFrame extends YFunction
      * in order to define the reference frame for the compass and the
      * pitch/roll tilt sensors.
      *
-     * @return MOUNTORIENTATION  a value among the enumeration YRefFrame::MOUNTORIENTATION
+     * @return int  a value among the enumeration YRefFrame::MOUNTORIENTATION
      *         (YRefFrame::MOUNTORIENTATION_TWELVE, YRefFrame::MOUNTORIENTATION_THREE,
      *         YRefFrame::MOUNTORIENTATION_SIX,     YRefFrame::MOUNTORIENTATION_NINE)
      *         corresponding to the orientation of the "X" arrow on the device,
@@ -318,12 +318,12 @@ class YRefFrame extends YFunction
      * and horizontally, you must select its reference orientation (parallel to
      * the earth surface) so that the measures are made relative to this position.
      *
-     * @param MOUNTPOSITION $position  a value among the YRefFrame::MOUNTPOSITION enumeration
+     * @param int $position : a value among the YRefFrame::MOUNTPOSITION enumeration
      *         (YRefFrame::MOUNTPOSITION_BOTTOM,  YRefFrame::MOUNTPOSITION_TOP,
      *         YRefFrame::MOUNTPOSITION_FRONT,    YRefFrame::MOUNTPOSITION_RIGHT,
      *         YRefFrame::MOUNTPOSITION_REAR,     YRefFrame::MOUNTPOSITION_LEFT),
      *         corresponding to the installation in a box, on one of the six faces.
-     * @param MOUNTORIENTATION $orientation  a value among the enumeration YRefFrame::MOUNTORIENTATION
+     * @param int $orientation : a value among the enumeration YRefFrame::MOUNTORIENTATION
      *         (YRefFrame::MOUNTORIENTATION_TWELVE, YRefFrame::MOUNTORIENTATION_THREE,
      *         YRefFrame::MOUNTORIENTATION_SIX,     YRefFrame::MOUNTORIENTATION_NINE)
      *         corresponding to the orientation of the "X" arrow on the device,

@@ -101,7 +101,7 @@ class YPwmOutput extends YFunction
     /**
      * Stops or starts the PWM.
      *
-     * @param int $newval  either YPwmOutput::ENABLED_FALSE or YPwmOutput::ENABLED_TRUE
+     * @param int $newval : either YPwmOutput::ENABLED_FALSE or YPwmOutput::ENABLED_TRUE
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -122,7 +122,7 @@ class YPwmOutput extends YFunction
      * To stop the PWM signal, do not set the frequency to zero, use the set_enabled()
      * method instead.
      *
-     * @param float $newval  a floating point number corresponding to the PWM frequency
+     * @param float $newval : a floating point number corresponding to the PWM frequency
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -160,7 +160,7 @@ class YPwmOutput extends YFunction
      * time at low frequencies. If you call the matching module saveToFlash()
      * method, the frequency will be kept after a device power cycle.
      *
-     * @param float $newval  a floating point number corresponding to the PWM period in milliseconds
+     * @param float $newval : a floating point number corresponding to the PWM period in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -194,7 +194,7 @@ class YPwmOutput extends YFunction
     /**
      * Changes the PWM duty cycle, in per cents.
      *
-     * @param float $newval  a floating point number corresponding to the PWM duty cycle, in per cents
+     * @param float $newval : a floating point number corresponding to the PWM duty cycle, in per cents
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -229,7 +229,7 @@ class YPwmOutput extends YFunction
      * Changes the PWM pulse length, in milliseconds. A pulse length cannot be longer than period,
      * otherwise it is truncated.
      *
-     * @param float $newval  a floating point number corresponding to the PWM pulse length, in milliseconds
+     * @param float $newval : a floating point number corresponding to the PWM pulse length, in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -303,7 +303,7 @@ class YPwmOutput extends YFunction
      * Changes the state of the PWM at device power on. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param int $newval  either YPwmOutput::ENABLEDATPOWERON_FALSE or YPwmOutput::ENABLEDATPOWERON_TRUE,
+     * @param int $newval : either YPwmOutput::ENABLEDATPOWERON_FALSE or YPwmOutput::ENABLEDATPOWERON_TRUE,
      * according to the state of the PWM at device power on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -320,7 +320,7 @@ class YPwmOutput extends YFunction
      * Changes the PWM duty cycle at device power on. Remember to call the matching
      * module saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param float $newval  a floating point number corresponding to the PWM duty cycle at device power on
+     * @param float $newval : a floating point number corresponding to the PWM duty cycle at device power on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -375,7 +375,7 @@ class YPwmOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the PWM generator, for instance
+     * @param string $func : a string that uniquely characterizes the PWM generator, for instance
      *         YPWMTX01.pwmOutput1.
      *
      * @return YPwmOutput  a YPwmOutput object allowing you to drive the PWM generator.
@@ -395,9 +395,9 @@ class YPwmOutput extends YFunction
      * Performs a smooth transition of the pulse duration toward a given value.
      * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
-     * @param ms_target   : new pulse duration at the end of the transition
+     * @param float $ms_target   : new pulse duration at the end of the transition
      *         (floating-point number, representing the pulse duration in milliseconds)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -417,9 +417,9 @@ class YPwmOutput extends YFunction
      * Performs a smooth change of the duty cycle toward a given value.
      * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
-     * @param target      : new duty cycle at the end of the transition
+     * @param float $target      : new duty cycle at the end of the transition
      *         (percentage, floating-point number between 0 and 100)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -442,8 +442,8 @@ class YPwmOutput extends YFunction
      * Performs a smooth frequency change toward a given value.
      * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
-     * @param target      : new frequency at the end of the transition (floating-point number)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param float $target      : new frequency at the end of the transition (floating-point number)
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -466,8 +466,8 @@ class YPwmOutput extends YFunction
      * are running, either at the same frequency, or at a multiple of the channel frequency.
      * Any period, frequency, duty cycle or pulse width change will cancel any ongoing transition process.
      *
-     * @param target      : phase shift at the end of the transition, in milliseconds (floating-point number)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param float $target      : phase shift at the end of the transition, in milliseconds (floating-point number)
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -484,9 +484,9 @@ class YPwmOutput extends YFunction
      * Trigger a given number of pulses of specified duration, at current frequency.
      * At the end of the pulse train, revert to the original state of the PWM generator.
      *
-     * @param float $ms_target  desired pulse duration
+     * @param float $ms_target : desired pulse duration
      *         (floating-point number, representing the pulse duration in milliseconds)
-     * @param n_pulses  : desired pulse count
+     * @param int $n_pulses  : desired pulse count
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -506,9 +506,9 @@ class YPwmOutput extends YFunction
      * Trigger a given number of pulses of specified duration, at current frequency.
      * At the end of the pulse train, revert to the original state of the PWM generator.
      *
-     * @param target   : desired duty cycle for the generated pulses
+     * @param float $target   : desired duty cycle for the generated pulses
      *         (percentage, floating-point number between 0 and 100)
-     * @param int $n_pulses  desired pulse count
+     * @param int $n_pulses : desired pulse count
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -531,8 +531,8 @@ class YPwmOutput extends YFunction
      * Trigger a given number of pulses at the specified frequency, using current duty cycle.
      * At the end of the pulse train, revert to the original state of the PWM generator.
      *
-     * @param target   : desired frequency for the generated pulses (floating-point number)
-     * @param int $n_pulses  desired pulse count
+     * @param float $target   : desired frequency for the generated pulses (floating-point number)
+     * @param int $n_pulses : desired pulse count
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *

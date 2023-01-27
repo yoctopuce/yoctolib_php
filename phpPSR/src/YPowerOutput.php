@@ -70,7 +70,7 @@ class YPowerOutput extends YFunction
      * module. Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YPowerOutput::VOLTAGE_OFF, YPowerOutput::VOLTAGE_OUT3V3,
+     * @param int $newval : a value among YPowerOutput::VOLTAGE_OFF, YPowerOutput::VOLTAGE_OUT3V3,
      * YPowerOutput::VOLTAGE_OUT5V, YPowerOutput::VOLTAGE_OUT4V7 and YPowerOutput::VOLTAGE_OUT1V8
      * corresponding to the voltage on the power output provided by the
      *         module
@@ -108,7 +108,7 @@ class YPowerOutput extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the power output, for instance
+     * @param string $func : a string that uniquely characterizes the power output, for instance
      *         YI2CMK01.powerOutput.
      *
      * @return YPowerOutput  a YPowerOutput object allowing you to drive the power output.

@@ -4,11 +4,11 @@
 </HEAD>
 <BODY>
 <?php
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_tilt.php');
-  include('../../Sources/yocto_compass.php');
-  include('../../Sources/yocto_gyro.php');
-  include('../../Sources/yocto_accelerometer.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_tilt.php');
+  include('../../php8/yocto_compass.php');
+  include('../../php8/yocto_gyro.php');
+  include('../../php8/yocto_accelerometer.php');
 
   // Use explicit error handling rather than exceptions
   YAPI::DisableExceptions();

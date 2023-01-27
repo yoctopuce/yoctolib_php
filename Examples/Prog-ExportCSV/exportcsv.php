@@ -1,5 +1,5 @@
 <?php
-    include('../../Sources/yocto_api.php');
+    include('../../php8/yocto_api.php');
 
     // Setup the API to use the VirtualHub on local machine
     if(YAPI::RegisterHub('http://127.0.0.1:4444/',$errmsg) != YAPI::SUCCESS) {

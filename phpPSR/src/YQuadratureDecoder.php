@@ -56,8 +56,8 @@ class YQuadratureDecoder extends YSensor
      * Changes the current expected position of the quadrature decoder.
      * Invoking this function implicitly activates the quadrature decoder.
      *
-     * @param float $newval  a floating point number corresponding to the current expected position of the
-     * quadrature decoder
+     * @param float $newval : a floating point number corresponding to the current expected position of
+     * the quadrature decoder
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -113,7 +113,7 @@ class YQuadratureDecoder extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
+     * @param int $newval : either YQuadratureDecoder::DECODING_OFF or YQuadratureDecoder::DECODING_ON,
      * according to the activation state of the quadrature decoder
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -150,7 +150,7 @@ class YQuadratureDecoder extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the edge count per full cycle configuration setting
+     * @param int $newval : an integer corresponding to the edge count per full cycle configuration setting
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -185,7 +185,7 @@ class YQuadratureDecoder extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the quadrature decoder, for instance
+     * @param string $func : a string that uniquely characterizes the quadrature decoder, for instance
      *         YMXBTN01.quadratureDecoder1.
      *
      * @return YQuadratureDecoder  a YQuadratureDecoder object allowing you to drive the quadrature decoder.

@@ -129,7 +129,7 @@ class YInputChain extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the number of nodes expected in the chain
+     * @param int $newval : an integer corresponding to the number of nodes expected in the chain
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -187,7 +187,7 @@ class YInputChain extends YFunction
      * The connectivity test requires a cable connecting the end of the chain
      * to the loopback test connector.
      *
-     * @param int $newval  either YInputChain::LOOPBACKTEST_OFF or YInputChain::LOOPBACKTEST_ON, according
+     * @param int $newval : either YInputChain::LOOPBACKTEST_OFF or YInputChain::LOOPBACKTEST_ON, according
      * to the activation state of the exhaustive chain connectivity test
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -228,7 +228,7 @@ class YInputChain extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the desired refresh rate, measured in Hz
+     * @param int $newval : an integer corresponding to the desired refresh rate, measured in Hz
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -420,7 +420,7 @@ class YInputChain extends YFunction
      * timeout error. Remember to call the saveToFlash() method
      * of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the wait time in seconds before triggering an inactivity
+     * @param int $newval : an integer corresponding to the wait time in seconds before triggering an inactivity
      *         timeout error
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -477,7 +477,7 @@ class YInputChain extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the digital input chain, for instance
+     * @param string $func : a string that uniquely characterizes the digital input chain, for instance
      *         MyDevice.inputChain.
      *
      * @return YInputChain  a YInputChain object allowing you to drive the digital input chain.
@@ -531,7 +531,7 @@ class YInputChain extends YFunction
      * the callback is triggered. For good responsiveness, remember to call one of these
      * two functions periodically. To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to call, or a null pointer.
+     * @param callable $callback : the callback function to call, or a null pointer.
      *         The callback function should take four arguments:
      *         the YInputChain object that emitted the event, the
      *         UTC timestamp of the event, a character string describing

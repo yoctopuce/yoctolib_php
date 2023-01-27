@@ -51,13 +51,13 @@ class YConsolidatedDataSet
      * a large set of measures from multiple sensors, consolidating data on the fly
      * to align records based on measurement timestamps.
      *
-     * @param string[] $sensorNames  array of logical names or hardware identifiers of the sensors
+     * @param string[] $sensorNames : array of logical names or hardware identifiers of the sensors
      *         for which data must be loaded from their data logger.
-     * @param float $startTime  the start of the desired measure time interval,
+     * @param float $startTime : the start of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any measure, without initial limit.
-     * @param float $endTime  the end of the desired measure time interval,
+     * @param float $endTime : the end of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any measure, without ending limit.
@@ -93,7 +93,7 @@ class YConsolidatedDataSet
      * Extracts the next data record from the data logger of all sensors linked to this
      * object.
      *
-     * @param float[] $datarec  array of floating point numbers, that will be filled by the
+     * @param float[] $datarec : array of floating point numbers, that will be filled by the
      *         function with the timestamp of the measure in first position,
      *         followed by the measured value in next positions.
      *

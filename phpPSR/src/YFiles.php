@@ -107,7 +107,7 @@ class YFiles extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the filesystem, for instance
+     * @param string $func : a string that uniquely characterizes the filesystem, for instance
      *         YRGBLED2.files.
      *
      * @return YFiles  a YFiles object allowing you to drive the filesystem.
@@ -153,7 +153,7 @@ class YFiles extends YFunction
      * Returns a list of YFileRecord objects that describe files currently loaded
      * in the filesystem.
      *
-     * @param string $pattern  an optional filter pattern, using star and question marks
+     * @param string $pattern : an optional filter pattern, using star and question marks
      *         as wild cards. When an empty pattern is provided, all file records
      *         are returned.
      *
@@ -181,7 +181,7 @@ class YFiles extends YFunction
     /**
      * Test if a file exist on the filesystem of the module.
      *
-     * @param string $filename  the file name to test.
+     * @param string $filename : the file name to test.
      *
      * @return boolean  a true if the file exist, false otherwise.
      *
@@ -205,7 +205,7 @@ class YFiles extends YFunction
     /**
      * Downloads the requested file and returns a binary buffer with its content.
      *
-     * @param string $pathname  path and name of the file to download
+     * @param string $pathname : path and name of the file to download
      *
      * @return string  a binary buffer with the file content
      *
@@ -220,8 +220,8 @@ class YFiles extends YFunction
      * Uploads a file to the filesystem, to the specified full path name.
      * If a file already exists with the same path name, its content is overwritten.
      *
-     * @param string $pathname  path and name of the new file to create
-     * @param string $content  binary buffer with the content to set
+     * @param string $pathname : path and name of the new file to create
+     * @param string $content : binary buffer with the content to set
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -240,7 +240,7 @@ class YFiles extends YFunction
      * If you need to ensure that no space is taken by previously deleted files,
      * you can use format_fs to fully reinitialize the filesystem.
      *
-     * @param string $pathname  path and name of the file to remove.
+     * @param string $pathname : path and name of the file to remove.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *

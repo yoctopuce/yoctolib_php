@@ -166,7 +166,7 @@ class YStepperMotor extends YFunction
      * To trigger a motor move, use methods moveTo() or moveRel()
      * instead.
      *
-     * @param float $newval  a floating point number corresponding to the current logical motor position,
+     * @param float $newval : a floating point number corresponding to the current logical motor position,
      * measured in steps
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -222,7 +222,7 @@ class YStepperMotor extends YFunction
     /**
      * Changes the motor speed immediately reachable from stop state, measured in steps per second.
      *
-     * @param float $newval  a floating point number corresponding to the motor speed immediately
+     * @param float $newval : a floating point number corresponding to the motor speed immediately
      * reachable from stop state, measured in steps per second
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -258,7 +258,7 @@ class YStepperMotor extends YFunction
     /**
      * Changes the maximal motor acceleration, measured in steps per second^2.
      *
-     * @param float $newval  a floating point number corresponding to the maximal motor acceleration,
+     * @param float $newval : a floating point number corresponding to the maximal motor acceleration,
      * measured in steps per second^2
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -294,8 +294,8 @@ class YStepperMotor extends YFunction
     /**
      * Changes the maximal motor speed, measured in steps per second.
      *
-     * @param float $newval  a floating point number corresponding to the maximal motor speed, measured in
-     * steps per second
+     * @param float $newval : a floating point number corresponding to the maximal motor speed, measured
+     * in steps per second
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -350,7 +350,7 @@ class YStepperMotor extends YFunction
     /**
      * Changes the stepping mode used to drive the motor.
      *
-     * @param int $newval  a value among YStepperMotor::STEPPING_MICROSTEP16,
+     * @param int $newval : a value among YStepperMotor::STEPPING_MICROSTEP16,
      * YStepperMotor::STEPPING_MICROSTEP8, YStepperMotor::STEPPING_MICROSTEP4,
      * YStepperMotor::STEPPING_HALFSTEP and YStepperMotor::STEPPING_FULLSTEP corresponding to the stepping
      * mode used to drive the motor
@@ -387,8 +387,8 @@ class YStepperMotor extends YFunction
     /**
      * Changes the overcurrent alert and emergency stop threshold, measured in mA.
      *
-     * @param int $newval  an integer corresponding to the overcurrent alert and emergency stop threshold,
-     * measured in mA
+     * @param int $newval : an integer corresponding to the overcurrent alert and emergency stop
+     * threshold, measured in mA
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -422,7 +422,7 @@ class YStepperMotor extends YFunction
     /**
      * Changes the torque regulation current when the motor is stopped, measured in mA.
      *
-     * @param int $newval  an integer corresponding to the torque regulation current when the motor is
+     * @param int $newval : an integer corresponding to the torque regulation current when the motor is
      * stopped, measured in mA
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -457,7 +457,7 @@ class YStepperMotor extends YFunction
     /**
      * Changes the torque regulation current when the motor is running, measured in mA.
      *
-     * @param int $newval  an integer corresponding to the torque regulation current when the motor is
+     * @param int $newval : an integer corresponding to the torque regulation current when the motor is
      * running, measured in mA
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -529,7 +529,7 @@ class YStepperMotor extends YFunction
      * Changes the value of the signal generated on the auxiliary output.
      * Acceptable values depend on the auxiliary output signal type configured.
      *
-     * @param int $newval  an integer corresponding to the value of the signal generated on the auxiliary output
+     * @param int $newval : an integer corresponding to the value of the signal generated on the auxiliary output
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -582,7 +582,7 @@ class YStepperMotor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the stepper motor, for instance
+     * @param string $func : a string that uniquely characterizes the stepper motor, for instance
      *         MyDevice.stepperMotor1.
      *
      * @return YStepperMotor  a YStepperMotor object allowing you to drive the stepper motor.
@@ -632,7 +632,7 @@ class YStepperMotor extends YFunction
     /**
      * Starts the motor backward at the specified speed, to search for the motor home position.
      *
-     * @param float $speed  desired speed, in steps per second.
+     * @param float $speed : desired speed, in steps per second.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -646,7 +646,7 @@ class YStepperMotor extends YFunction
      * Starts the motor at a given speed. The time needed to reach the requested speed
      * will depend on the acceleration parameters configured for the motor.
      *
-     * @param float $speed  desired speed, in steps per second. The minimal non-zero speed
+     * @param float $speed : desired speed, in steps per second. The minimal non-zero speed
      *         is 0.001 pulse per second.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -662,7 +662,7 @@ class YStepperMotor extends YFunction
      * position will depend on the acceleration and max speed parameters configured for
      * the motor.
      *
-     * @param float $absPos  absolute position, measured in steps from the origin.
+     * @param float $absPos : absolute position, measured in steps from the origin.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -677,7 +677,7 @@ class YStepperMotor extends YFunction
      * position will depend on the acceleration and max speed parameters configured for
      * the motor.
      *
-     * @param float $relPos  relative position, measured in steps from the current position.
+     * @param float $relPos : relative position, measured in steps from the current position.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -692,8 +692,8 @@ class YStepperMotor extends YFunction
      * specified limit. The time needed to reach the requested position will depend on
      * the acceleration parameters configured for the motor.
      *
-     * @param float $relPos  relative position, measured in steps from the current position.
-     * @param float $maxSpeed  limit speed, in steps per second.
+     * @param float $relPos : relative position, measured in steps from the current position.
+     * @param float $maxSpeed : limit speed, in steps per second.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -706,7 +706,7 @@ class YStepperMotor extends YFunction
     /**
      * Keep the motor in the same state for the specified amount of time, before processing next command.
      *
-     * @param int $waitMs  wait time, specified in milliseconds.
+     * @param int $waitMs : wait time, specified in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -745,7 +745,7 @@ class YStepperMotor extends YFunction
      * The move occurs even if the system is still in alert mode (end switch depressed). Caution.
      * use this function with great care as it may cause mechanical damages !
      *
-     * @param int $dir  Value +1 or -1, according to the desired direction of the move
+     * @param int $dir : Value +1 or -1, according to the desired direction of the move
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.

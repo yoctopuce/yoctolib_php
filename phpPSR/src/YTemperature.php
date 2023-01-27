@@ -86,7 +86,7 @@ class YTemperature extends YSensor
      * WARNING: if a specific calibration is defined for the temperature function, a
      * unit system change will probably break it.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the measured temperature
+     * @param string $newval : a string corresponding to the measuring unit for the measured temperature
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -132,7 +132,7 @@ class YTemperature extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YTemperature::SENSORTYPE_DIGITAL, YTemperature::SENSORTYPE_TYPE_K,
+     * @param int $newval : a value among YTemperature::SENSORTYPE_DIGITAL, YTemperature::SENSORTYPE_TYPE_K,
      * YTemperature::SENSORTYPE_TYPE_E, YTemperature::SENSORTYPE_TYPE_J, YTemperature::SENSORTYPE_TYPE_N,
      * YTemperature::SENSORTYPE_TYPE_R, YTemperature::SENSORTYPE_TYPE_S, YTemperature::SENSORTYPE_TYPE_T,
      * YTemperature::SENSORTYPE_PT100_4WIRES, YTemperature::SENSORTYPE_PT100_3WIRES,
@@ -232,7 +232,7 @@ class YTemperature extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the temperature sensor, for instance
+     * @param string $func : a string that uniquely characterizes the temperature sensor, for instance
      *         METEOMK2.temperature.
      *
      * @return YTemperature  a YTemperature object allowing you to drive the temperature sensor.
@@ -254,8 +254,8 @@ class YTemperature extends YSensor
      * table using set_thermistorResponseTable. This function can only be used with a
      * temperature sensor based on thermistors.
      *
-     * @param float $res25  thermistor resistance at 25 degrees Celsius
-     * @param float $beta  Beta value
+     * @param float $res25 : thermistor resistance at 25 degrees Celsius
+     * @param float $beta : Beta value
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -289,10 +289,10 @@ class YTemperature extends YSensor
      * the measured resistance. This function can only be used with a temperature
      * sensor based on thermistors.
      *
-     * @param float[] $tempValues  array of floating point numbers, corresponding to all
+     * @param float[] $tempValues : array of floating point numbers, corresponding to all
      *         temperatures (in degrees Celsius) for which the resistance of the
      *         thermistor is specified.
-     * @param float[] $resValues  array of floating point numbers, corresponding to the resistance
+     * @param float[] $resValues : array of floating point numbers, corresponding to the resistance
      *         values (in Ohms) for each of the temperature included in the first
      *         argument, index by index.
      *
@@ -347,10 +347,10 @@ class YTemperature extends YSensor
      * set_thermistorResponseTable function. This function can only be used with a
      * temperature sensor based on thermistors.
      *
-     * @param float[] $tempValues  array of floating point numbers, that is filled by the function
+     * @param float[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all temperatures (in degrees Celsius) for which the resistance
      *         of the thermistor is specified.
-     * @param float[] $resValues  array of floating point numbers, that is filled by the function
+     * @param float[] $resValues : array of floating point numbers, that is filled by the function
      *         with the value (in Ohms) for each of the temperature included in the
      *         first argument, index by index.
      *

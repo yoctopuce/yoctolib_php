@@ -45,8 +45,8 @@ class YGps extends YFunction
 
     //--- (YGps attributes)
     protected int $_isFixed = self::ISFIXED_INVALID;        // Bool
-    protected int $_satCount = self::SATCOUNT_INVALID;       // UInt
-    protected int $_satPerConst = self::SATPERCONST_INVALID;    // UInt
+    protected float $_satCount = self::SATCOUNT_INVALID;       // UInt
+    protected float $_satPerConst = self::SATPERCONST_INVALID;    // UInt
     protected float $_gpsRefreshRate = self::GPSREFRESHRATE_INVALID; // MeasureVal
     protected int $_coordSystem = self::COORDSYSTEM_INVALID;    // GPSCoordinateSystem
     protected int $_constellation = self::CONSTELLATION_INVALID;  // GPSConstellation
@@ -56,7 +56,7 @@ class YGps extends YFunction
     protected float $_altitude = self::ALTITUDE_INVALID;       // MeasureVal
     protected float $_groundSpeed = self::GROUNDSPEED_INVALID;    // MeasureVal
     protected float $_direction = self::DIRECTION_INVALID;      // MeasureVal
-    protected int $_unixTime = self::UNIXTIME_INVALID;       // UTCTime
+    protected float $_unixTime = self::UNIXTIME_INVALID;       // UTCTime
     protected string $_dateTime = self::DATETIME_INVALID;       // Text
     protected int $_utcOffset = self::UTCOFFSET_INVALID;      // Int
     protected string $_command = self::COMMAND_INVALID;        // Text
@@ -152,11 +152,11 @@ class YGps extends YFunction
     /**
      * Returns the total count of satellites used to compute GPS position.
      *
-     * @return int  an integer corresponding to the total count of satellites used to compute GPS position
+     * @return float  an integer corresponding to the total count of satellites used to compute GPS position
      *
      * On failure, throws an exception or returns YGps::SATCOUNT_INVALID.
      */
-    public function get_satCount(): int
+    public function get_satCount(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -173,12 +173,12 @@ class YGps extends YFunction
      * on a 32 bit integer: bits 0..5: GPS satellites count,  bits 6..11 : Glonass, bits 12..17 : Galileo.
      * this value is refreshed every 5 seconds only.
      *
-     * @return int  an integer corresponding to the count of visible satellites per constellation encoded
+     * @return float  an integer corresponding to the count of visible satellites per constellation encoded
      *         on a 32 bit integer: bits 0.
      *
      * On failure, throws an exception or returns YGps::SATPERCONST_INVALID.
      */
-    public function get_satPerConst(): int
+    public function get_satPerConst(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -235,7 +235,7 @@ class YGps extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YGps::COORDSYSTEM_GPS_DMS, YGps::COORDSYSTEM_GPS_DM and
+     * @param int $newval : a value among YGps::COORDSYSTEM_GPS_DMS, YGps::COORDSYSTEM_GPS_DM and
      * YGps::COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -277,7 +277,7 @@ class YGps extends YFunction
      * positioning data. Possible  constellations are GNSS ( = all supported constellations),
      * GPS, Glonass, Galileo , and the 3 possible pairs. This setting has  no effect on Yocto-GPS (V1).
      *
-     * @param int $newval  a value among YGps::CONSTELLATION_GNSS, YGps::CONSTELLATION_GPS,
+     * @param int $newval : a value among YGps::CONSTELLATION_GNSS, YGps::CONSTELLATION_GPS,
      * YGps::CONSTELLATION_GLONASS, YGps::CONSTELLATION_GALILEO, YGps::CONSTELLATION_GPS_GLONASS,
      * YGps::CONSTELLATION_GPS_GALILEO and YGps::CONSTELLATION_GLONASS_GALILEO corresponding to the
      * satellites constellation used to compute
@@ -416,12 +416,12 @@ class YGps extends YFunction
      * Returns the current time in Unix format (number of
      * seconds elapsed since Jan 1st, 1970).
      *
-     * @return int  an integer corresponding to the current time in Unix format (number of
+     * @return float  an integer corresponding to the current time in Unix format (number of
      *         seconds elapsed since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns YGps::UNIXTIME_INVALID.
      */
-    public function get_unixTime(): int
+    public function get_unixTime(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -478,7 +478,7 @@ class YGps extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the number of seconds between current time and UTC
+     * @param int $newval : an integer corresponding to the number of seconds between current time and UTC
      * time (time zone)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -532,7 +532,7 @@ class YGps extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the geolocalization module, for instance
+     * @param string $func : a string that uniquely characterizes the geolocalization module, for instance
      *         YGNSSMK2.gps.
      *
      * @return YGps  a YGps object allowing you to drive the geolocalization module.
@@ -553,12 +553,12 @@ class YGps extends YFunction
     return $this->get_isFixed();
 }
 
-    public function satCount(): int
+    public function satCount(): float
 {
     return $this->get_satCount();
 }
 
-    public function satPerConst(): int
+    public function satPerConst(): float
 {
     return $this->get_satPerConst();
 }
@@ -618,7 +618,7 @@ class YGps extends YFunction
     return $this->get_direction();
 }
 
-    public function unixTime(): int
+    public function unixTime(): float
 {
     return $this->get_unixTime();
 }

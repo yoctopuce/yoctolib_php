@@ -89,7 +89,7 @@ class YOsControl extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the OS control, for instance
+     * @param string $func : a string that uniquely characterizes the OS control, for instance
      *         MyDevice.osControl.
      *
      * @return YOsControl  a YOsControl object allowing you to drive the OS control.
@@ -108,7 +108,7 @@ class YOsControl extends YFunction
     /**
      * Schedules an OS shutdown after a given number of seconds.
      *
-     * @param int $secBeforeShutDown  number of seconds before shutdown
+     * @param int $secBeforeShutDown : number of seconds before shutdown
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *

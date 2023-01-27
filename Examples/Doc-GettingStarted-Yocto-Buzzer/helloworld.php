@@ -5,10 +5,10 @@
 <BODY>
 <FORM method='get'>
     <?php
-    include('../../Sources/yocto_api.php');
-    include('../../Sources/yocto_buzzer.php');
-    include('../../Sources/yocto_led.php');
-    include('../../Sources/yocto_anbutton.php');
+    include('../../php8/yocto_api.php');
+    include('../../php8/yocto_buzzer.php');
+    include('../../php8/yocto_led.php');
+    include('../../php8/yocto_anbutton.php');
     // Use explicit error handling rather than exceptions
     YAPI::DisableExceptions();
 

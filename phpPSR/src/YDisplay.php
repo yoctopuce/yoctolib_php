@@ -135,7 +135,7 @@ class YDisplay extends YFunction
     /**
      * Changes the power state of the display.
      *
-     * @param int $newval  either YDisplay::ENABLED_FALSE or YDisplay::ENABLED_TRUE, according to the power
+     * @param int $newval : either YDisplay::ENABLED_FALSE or YDisplay::ENABLED_TRUE, according to the power
      * state of the display
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -172,7 +172,7 @@ class YDisplay extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the name of the sequence to play when the
+     * @param string $newval : a string corresponding to the name of the sequence to play when the
      * displayed is powered on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -209,7 +209,7 @@ class YDisplay extends YFunction
      * 100. Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the brightness of the display
+     * @param int $newval : an integer corresponding to the brightness of the display
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -246,7 +246,7 @@ class YDisplay extends YFunction
      * Changes the display orientation. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YDisplay::ORIENTATION_LEFT, YDisplay::ORIENTATION_UP,
+     * @param int $newval : a value among YDisplay::ORIENTATION_LEFT, YDisplay::ORIENTATION_UP,
      * YDisplay::ORIENTATION_RIGHT and YDisplay::ORIENTATION_DOWN corresponding to the display orientation
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -415,7 +415,7 @@ class YDisplay extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the display, for instance
+     * @param string $func : a string that uniquely characterizes the display, for instance
      *         YD128X32.display.
      *
      * @return YDisplay  a YDisplay object allowing you to drive the display.
@@ -451,8 +451,8 @@ class YDisplay extends YFunction
      * Smoothly changes the brightness of the screen to produce a fade-in or fade-out
      * effect.
      *
-     * @param int $brightness  the new screen brightness
-     * @param int $duration  duration of the brightness transition, in milliseconds.
+     * @param int $brightness : the new screen brightness
+     * @param int $duration : duration of the brightness transition, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -486,7 +486,7 @@ class YDisplay extends YFunction
      * file on the display internal memory. The sequence can be later replayed
      * using playSequence().
      *
-     * @param string $sequenceName  the name of the newly created sequence
+     * @param string $sequenceName : the name of the newly created sequence
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -506,7 +506,7 @@ class YDisplay extends YFunction
      * Replays a display sequence previously recorded using
      * newSequence() and saveSequence().
      *
-     * @param string $sequenceName  the name of the newly created sequence
+     * @param string $sequenceName : the name of the newly created sequence
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -526,7 +526,7 @@ class YDisplay extends YFunction
      * playing a pre-recorded sequence, to suspend or resume the execution of
      * the sequence. To cancel a delay, call the same method with a zero delay.
      *
-     * @param int $delay_ms  the duration to wait, in milliseconds
+     * @param int $delay_ms : the duration to wait, in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -557,8 +557,8 @@ class YDisplay extends YFunction
      * specified full path name. If a file already exists with the same path name,
      * its content is overwritten.
      *
-     * @param string $pathname  path and name of the new file to create
-     * @param string $content  binary buffer with the content to set
+     * @param string $pathname : path and name of the new file to create
+     * @param string $content : binary buffer with the content to set
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -576,8 +576,8 @@ class YDisplay extends YFunction
      * property of the layer object.
      * Note that layer 0 has no transparency support (it is always completely opaque).
      *
-     * @param int $srcLayerId  the identifier of the source layer (a number in range 0..layerCount-1)
-     * @param int $dstLayerId  the identifier of the destination layer (a number in range 0..layerCount-1)
+     * @param int $srcLayerId : the identifier of the source layer (a number in range 0..layerCount-1)
+     * @param int $dstLayerId : the identifier of the destination layer (a number in range 0..layerCount-1)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -597,8 +597,8 @@ class YDisplay extends YFunction
      * this method makes it possible to easily implement double-buffering.
      * Note that layer 0 has no transparency support (it is always completely opaque).
      *
-     * @param int $layerIdA  the first layer (a number in range 0..layerCount-1)
-     * @param int $layerIdB  the second layer (a number in range 0..layerCount-1)
+     * @param int $layerIdA : the first layer (a number in range 0..layerCount-1)
+     * @param int $layerIdB : the second layer (a number in range 0..layerCount-1)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -615,7 +615,7 @@ class YDisplay extends YFunction
      * layer. The content is displayed only when the layer is active on the
      * screen (and not masked by other overlapping layers).
      *
-     * @param int $layerId  the identifier of the layer (a number in range 0..layerCount-1)
+     * @param int $layerId : the identifier of the layer (a number in range 0..layerCount-1)
      *
      * @return YDisplayLayer  an YDisplayLayer object
      *

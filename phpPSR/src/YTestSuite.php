@@ -103,7 +103,7 @@ class YTestSuite extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the function, for instance
+     * @param string $func : a string that uniquely characterizes the function, for instance
      *         MyDevice.testSuite.
      *
      * @return YTestSuite  a YTestSuite object allowing you to drive the function.
@@ -1669,7 +1669,7 @@ class YTestSuite extends YFunction
         }
         if (!($this->_lang == 'PHP') && !($this->_lang == 'EcmaScript') && !($this->_lang == 'TypeScript')) {
             $this->test_log('Test USB connections.');
-            $res = $this->RunOnUSB();
+            //res = $this->RunOnUSB();
             if (!($res == '')) {
                 return $res;
             }
@@ -1824,7 +1824,7 @@ class YTestSuite extends YFunction
  * you are certain that the matching device is plugged, make sure that you did
  * call registerHub() at application initialization time.
  *
- * @param string $func  a string that uniquely characterizes the function, for instance
+ * @param string $func : a string that uniquely characterizes the function, for instance
  *         MyDevice.testSuite.
  *
  * @return YTestSuite  a YTestSuite object allowing you to drive the function.

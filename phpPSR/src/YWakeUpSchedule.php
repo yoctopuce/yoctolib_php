@@ -27,7 +27,7 @@ class YWakeUpSchedule extends YFunction
     protected int $_weekDays = self::WEEKDAYS_INVALID;       // DaysOfWeekBits
     protected int $_monthDays = self::MONTHDAYS_INVALID;      // DaysOfMonthBits
     protected int $_months = self::MONTHS_INVALID;         // MonthsOfYearBits
-    protected int $_nextOccurence = self::NEXTOCCURENCE_INVALID;  // UTCTime
+    protected float $_nextOccurence = self::NEXTOCCURENCE_INVALID;  // UTCTime
 
     //--- (end of YWakeUpSchedule attributes)
 
@@ -94,7 +94,8 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minutes in the 00-29 interval when a wake up must take place
+     * @param int $newval : an integer corresponding to the minutes in the 00-29 interval when a wake up
+     * must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -130,7 +131,8 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minutes in the 30-59 interval when a wake up must take place
+     * @param int $newval : an integer corresponding to the minutes in the 30-59 interval when a wake up
+     * must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -166,7 +168,7 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the hours when a wake up must take place
+     * @param int $newval : an integer corresponding to the hours when a wake up must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -202,7 +204,7 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the days of the week when a wake up must take place
+     * @param int $newval : an integer corresponding to the days of the week when a wake up must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -238,7 +240,7 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the days of the month when a wake up must take place
+     * @param int $newval : an integer corresponding to the days of the month when a wake up must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -274,7 +276,7 @@ class YWakeUpSchedule extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the months when a wake up must take place
+     * @param int $newval : an integer corresponding to the months when a wake up must take place
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -289,11 +291,11 @@ class YWakeUpSchedule extends YFunction
     /**
      * Returns the date/time (seconds) of the next wake up occurrence.
      *
-     * @return int  an integer corresponding to the date/time (seconds) of the next wake up occurrence
+     * @return float  an integer corresponding to the date/time (seconds) of the next wake up occurrence
      *
      * On failure, throws an exception or returns YWakeUpSchedule::NEXTOCCURENCE_INVALID.
      */
-    public function get_nextOccurence(): int
+    public function get_nextOccurence(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -328,7 +330,7 @@ class YWakeUpSchedule extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the wake up schedule, for instance
+     * @param string $func : a string that uniquely characterizes the wake up schedule, for instance
      *         YHUBGSM5.wakeUpSchedule1.
      *
      * @return YWakeUpSchedule  a YWakeUpSchedule object allowing you to drive the wake up schedule.
@@ -347,7 +349,7 @@ class YWakeUpSchedule extends YFunction
     /**
      * Returns all the minutes of each hour that are scheduled for wake up.
      */
-    public function get_minutes(): int
+    public function get_minutes(): float
     {
         // $res                    is a long;
 
@@ -360,13 +362,13 @@ class YWakeUpSchedule extends YFunction
     /**
      * Changes all the minutes where a wake up must take place.
      *
-     * @param int $bitmap  Minutes 00-59 of each hour scheduled for wake up.
+     * @param float $bitmap : Minutes 00-59 of each hour scheduled for wake up.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_minutes(int $bitmap): int
+    public function set_minutes(float $bitmap): int
     {
         $this->set_minutesA((($bitmap) & (0x3fffffff)));
         $bitmap = (($bitmap) >> (30));
@@ -433,7 +435,7 @@ class YWakeUpSchedule extends YFunction
     return $this->set_months($newval);
 }
 
-    public function nextOccurence(): int
+    public function nextOccurence(): float
 {
     return $this->get_nextOccurence();
 }

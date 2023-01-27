@@ -51,7 +51,7 @@ class YTvoc extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the Total  Volatile Organic Compound
+     * @param string $func : a string that uniquely characterizes the Total  Volatile Organic Compound
      * sensor, for instance
      *         YVOCMK03.tvoc.
      *

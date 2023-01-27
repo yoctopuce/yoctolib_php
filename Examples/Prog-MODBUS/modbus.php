@@ -7,8 +7,8 @@
 <?php
 
   function readModBus($serialPort,$slave,$reg)
-   {  if($reg >= 40001)  $res = $serialPort->modbusReadInputRegisters($slave, $reg-40001, 1);
-      else if($reg >= 30001) $res = $serialPort->modbusReadRegisters($slave, $reg-30001, 1);
+   {  if($reg >= 40001)  $res = $serialPort->modbusReadRegisters($slave, $reg-40001, 1);
+      else if($reg >= 30001) $res = $serialPort->modbusReadInputRegisters($slave, $reg-30001, 1);
       else if($reg >= 10001) $res = $serialPort->modbusReadInputBits($slave, $reg-10001, 1);
       else $res = $serialPort->modbusReadBits($slave, $reg-1, 1);
       return $res[0];
@@ -40,8 +40,8 @@
   { print("<b>$slave</b><input name='slave' value='$slave' type='hidden'><br>");
     $reg="";
     if (isset($_GET["reg"]))  $reg=$_GET["reg"];
-    print("Please select a Coil No (>=1), Input Bit No (>=10001+),<br>");
-    print("       Register No (>=30001) or Input Register No (>=40001)<br>");
+    print("Please select a Coil No (>=1), Input Bit No (>=10001),<br>");
+    print("Input Register No (>=30001) or Holding Register No (>=40001)<br>");
     Print("No:");
     if ($reg=='') Printf("<input name='reg'>");
      else
@@ -50,13 +50,13 @@
         $v = readModBus($serialPort,$slave,$reg);
         print("Current value: <b><span id='value'>$v</span></b><br>");
 
-        if(($reg % 30000) < 10000)
+        if(($reg % 40000) < 10000)
           { printf(" Enter a new value: <input name='value'><br>");
             $value='';
             if (isset($_GET["value"]))  $value=$_GET["value"];
             if ($value!='')
-              { if($reg >= 30001)
-                 $serialPort->modbusWriteRegister($slave, $reg-30001, intval($value));
+              { if($reg >= 40001)
+                 $serialPort->modbusWriteRegister($slave, $reg-40001, intval($value));
                 else
                  $serialPort->modbusWriteBit($slave, $reg-1,  intval($value));
                 $v = readModBus($serialPort,$slave,$reg);

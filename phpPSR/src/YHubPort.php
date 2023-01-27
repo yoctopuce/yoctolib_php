@@ -82,7 +82,7 @@ class YHubPort extends YFunction
      * Changes the activation of the YoctoHub port. If the port is enabled, the
      * connected module is powered. Otherwise, port power is shut down.
      *
-     * @param int $newval  either YHubPort::ENABLED_FALSE or YHubPort::ENABLED_TRUE, according to the
+     * @param int $newval : either YHubPort::ENABLED_FALSE or YHubPort::ENABLED_TRUE, according to the
      * activation of the YoctoHub port
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -159,7 +159,7 @@ class YHubPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the YoctoHub slave port, for instance
+     * @param string $func : a string that uniquely characterizes the YoctoHub slave port, for instance
      *         YHUBETH1.hubPort1.
      *
      * @return YHubPort  a YHubPort object allowing you to drive the YoctoHub slave port.

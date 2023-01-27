@@ -72,7 +72,7 @@ class YPwmPowerSource extends YFunction
      * If you want the change to be kept after a device reboot, make sure  to call the matching
      * module saveToFlash().
      *
-     * @param int $newval  a value among YPwmPowerSource::POWERMODE_USB_5V,
+     * @param int $newval : a value among YPwmPowerSource::POWERMODE_USB_5V,
      * YPwmPowerSource::POWERMODE_USB_3V, YPwmPowerSource::POWERMODE_EXT_V and
      * YPwmPowerSource::POWERMODE_OPNDRN corresponding to  the PWM power source
      *
@@ -109,7 +109,7 @@ class YPwmPowerSource extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the PWM generator power source, for instance
+     * @param string $func : a string that uniquely characterizes the PWM generator power source, for instance
      *         YPWMTX01.pwmPowerSource.
      *
      * @return YPwmPowerSource  a YPwmPowerSource object allowing you to drive the PWM generator power source.

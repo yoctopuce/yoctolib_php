@@ -103,9 +103,9 @@ class YFirmwareUpdate
      * In that case, this method returns the path of the most recent appropriate byn file. This method will
      * ignore any firmware older than minrelease.
      *
-     * @param string $serial  the serial number of the module to update
-     * @param string $path  the path of a byn file or a directory that contains byn files
-     * @param int $minrelease  a positive integer
+     * @param string $serial : the serial number of the module to update
+     * @param string $path : the path of a byn file or a directory that contains byn files
+     * @param int $minrelease : a positive integer
      *
      * @return string  : the path of the byn file to use, or an empty string if no byn files matches the requirement
      *

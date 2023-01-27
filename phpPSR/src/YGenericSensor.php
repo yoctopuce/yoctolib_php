@@ -85,7 +85,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the measured value
+     * @param string $newval : a string corresponding to the measuring unit for the measured value
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -169,7 +169,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the input signal range used by the sensor
+     * @param string $newval : a string corresponding to the input signal range used by the sensor
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -210,7 +210,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the output value range, corresponding to the
+     * @param string $newval : a string corresponding to the output value range, corresponding to the
      * physical value measured
      *         by the sensor
      *
@@ -231,7 +231,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the electric signal bias for zero
+     * @param float $newval : a floating point number corresponding to the electric signal bias for zero
      * shift adjustment
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -302,7 +302,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YGenericSensor::SIGNALSAMPLING_HIGH_RATE,
+     * @param int $newval : a value among YGenericSensor::SIGNALSAMPLING_HIGH_RATE,
      * YGenericSensor::SIGNALSAMPLING_HIGH_RATE_FILTERED, YGenericSensor::SIGNALSAMPLING_LOW_NOISE,
      * YGenericSensor::SIGNALSAMPLING_LOW_NOISE_FILTERED, YGenericSensor::SIGNALSAMPLING_HIGHEST_RATE and
      * YGenericSensor::SIGNALSAMPLING_AC corresponding to the electric signal sampling method to use
@@ -344,7 +344,7 @@ class YGenericSensor extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  either YGenericSensor::ENABLED_FALSE or YGenericSensor::ENABLED_TRUE, according
+     * @param int $newval : either YGenericSensor::ENABLED_FALSE or YGenericSensor::ENABLED_TRUE, according
      * to the activation state of this input
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -380,7 +380,7 @@ class YGenericSensor extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the generic sensor, for instance
+     * @param string $func : a string that uniquely characterizes the generic sensor, for instance
      *         RX010V01.genericSensor1.
      *
      * @return YGenericSensor  a YGenericSensor object allowing you to drive the generic sensor.

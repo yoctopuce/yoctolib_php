@@ -13,13 +13,17 @@
   ],
   "support": {
     "email": "support@yoctopuce.com",
-    "source": "http://github.com/yoctopuce/yoctolib_php",
+    "source": "https://github.com/yoctopuce/yoctolib_php",
     "docs": "https://www.yoctopuce.com/EN/doc/reference/yoctolib-php-EN.pdf"
   },
   "homepage": "https://www.yoctopuce.com/",
   "autoload": {
     "classmap": [
-      "Sources/"
+      "php8/"
     ]
+  },
+  "require": {
+    "ext-iconv": "*",
+    "php": ">=8.0.0"
   }
 }

@@ -252,7 +252,7 @@ class YWireless extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the wireless LAN interface, for instance
+     * @param string $func : a string that uniquely characterizes the wireless LAN interface, for instance
      *         YHUBWLN1.wireless.
      *
      * @return YWireless  a YWireless object allowing you to drive the wireless LAN interface.
@@ -291,8 +291,8 @@ class YWireless extends YFunction
      * access point (infrastructure mode).
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $ssid  the name of the network to connect to
-     * @param string $securityKey  the network key, as a character string
+     * @param string $ssid : the name of the network to connect to
+     * @param string $securityKey : the network key, as a character string
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -317,8 +317,8 @@ class YWireless extends YFunction
      * Remember to call the saveToFlash() method and then to reboot the module
      * to apply this setting.
      *
-     * @param string $ssid  the name of the network to connect to
-     * @param string $securityKey  the network key, as a character string
+     * @param string $ssid : the name of the network to connect to
+     * @param string $securityKey : the network key, as a character string
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -344,8 +344,8 @@ class YWireless extends YFunction
      *
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $ssid  the name of the network to connect to
-     * @param string $securityKey  the network key, as a character string
+     * @param string $ssid : the name of the network to connect to
+     * @param string $securityKey : the network key, as a character string
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *

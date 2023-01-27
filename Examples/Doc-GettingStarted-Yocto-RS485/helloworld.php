@@ -15,8 +15,8 @@
         return $res[0];
     }
 
-    include('../../Sources/yocto_api.php');
-    include('../../Sources/yocto_serialport.php');
+    include('../../php8/yocto_api.php');
+    include('../../php8/yocto_serialport.php');
 
     // Use explicit error handling rather than exceptions
     YAPI::DisableExceptions();
@@ -42,8 +42,8 @@
         print("<b>$slave</b><input name='slave' value='$slave' type='hidden'><br>");
         $reg = "";
         if(isset($_GET["reg"])) $reg = $_GET["reg"];
-        print("Please select a Coil No (>=1), Input Bit No (>=10001+),<br>");
-        print("       Input Register No (>=30001) or Register No (>=40001)<br>");
+        print("Please select a Coil No (>=1), Input Bit No (>=10001),<br>");
+        print("Input Register No (>=30001) or Holding Register No (>=40001)<br>");
         Print("No:");
         if($reg == '') Printf("<input name='reg'>");
         else {
@@ -52,13 +52,13 @@
             $v = readModBus($serialPort, $slave, $reg);
             print("Current value: <b><span id='value'>$v</span></b><br>");
 
-            if(($reg % 30000) < 10000) {
+            if(($reg % 40000) < 10000) {
                 printf(" Enter a new value: <input name='value'><br>");
                 $value = '';
                 if(isset($_GET["value"])) $value = $_GET["value"];
                 if($value != '') {
-                    if($reg >= 30001)
-                        $serialPort->modbusWriteRegister($slave, $reg - 30001, intval($value));
+                    if($reg >= 40001)
+                        $serialPort->modbusWriteRegister($slave, $reg - 40001, intval($value));
                     else
                         $serialPort->modbusWriteBit($slave, $reg - 1, intval($value));
                     $v = readModBus($serialPort, $slave, $reg);

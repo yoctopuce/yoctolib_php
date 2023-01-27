@@ -143,7 +143,7 @@ class YMessageBox extends YFunction
     /**
      * Changes the value of the outgoing SMS units counter.
      *
-     * @param int $newval  an integer corresponding to the value of the outgoing SMS units counter
+     * @param int $newval : an integer corresponding to the value of the outgoing SMS units counter
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -177,7 +177,7 @@ class YMessageBox extends YFunction
     /**
      * Changes the value of the incoming SMS units counter.
      *
-     * @param int $newval  an integer corresponding to the value of the incoming SMS units counter
+     * @param int $newval : an integer corresponding to the value of the incoming SMS units counter
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -230,7 +230,7 @@ class YMessageBox extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the SMS message box interface, for instance
+     * @param string $func : a string that uniquely characterizes the SMS message box interface, for instance
      *         YHUBGSM1.messageBox.
      *
      * @return YMessageBox  a YMessageBox object allowing you to drive the SMS message box interface.
@@ -874,9 +874,9 @@ class YMessageBox extends YFunction
      * characters and emoticons, use newMessage to create a new message and define
      * the content of using methods addText and addUnicodeData.
      *
-     * @param string $recipient  a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
-     * @param string $message  the text to be sent in the message
+     * @param string $message : the text to be sent in the message
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -900,9 +900,9 @@ class YMessageBox extends YFunction
      * characters and emoticons, use newMessage to create a new message and define
      * the content of using methods addText et addUnicodeData.
      *
-     * @param string $recipient  a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
-     * @param string $message  the text to be sent in the message
+     * @param string $message : the text to be sent in the message
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -922,7 +922,7 @@ class YMessageBox extends YFunction
     /**
      * Creates a new empty SMS message, to be configured and sent later on.
      *
-     * @param string $recipient  a text string with the recipient phone number, either as a
+     * @param string $recipient : a text string with the recipient phone number, either as a
      *         national number, or in international format starting with a plus sign
      *
      * @return YSms  YAPI::SUCCESS when the call succeeds.

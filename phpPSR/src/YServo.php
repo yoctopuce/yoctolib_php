@@ -30,7 +30,7 @@ class YServo extends YFunction
     protected int $_enabled = self::ENABLED_INVALID;        // Bool
     protected int $_range = self::RANGE_INVALID;          // Percent
     protected int $_neutral = self::NEUTRAL_INVALID;        // MicroSeconds
-    protected  $_move = self::MOVE_INVALID;           // Move
+    protected mixed $_move = self::MOVE_INVALID;           // Move
     protected int $_positionAtPowerOn = self::POSITIONATPOWERON_INVALID; // Int
     protected int $_enabledAtPowerOn = self::ENABLEDATPOWERON_INVALID; // Bool
 
@@ -97,7 +97,7 @@ class YServo extends YFunction
     /**
      * Changes immediately the servo driving position.
      *
-     * @param int $newval  an integer corresponding to immediately the servo driving position
+     * @param int $newval : an integer corresponding to immediately the servo driving position
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -131,7 +131,7 @@ class YServo extends YFunction
     /**
      * Stops or starts the RC servo motor.
      *
-     * @param int $newval  either YServo::ENABLED_FALSE or YServo::ENABLED_TRUE
+     * @param int $newval : either YServo::ENABLED_FALSE or YServo::ENABLED_TRUE
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -171,7 +171,7 @@ class YServo extends YFunction
      * is likely to damage the servo. Remember to call the matching module
      * saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param int $newval  an integer corresponding to the range of use of the servo, specified in per cents
+     * @param int $newval : an integer corresponding to the range of use of the servo, specified in per cents
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -210,7 +210,7 @@ class YServo extends YFunction
      * likely to damage the servo. Remember to call the matching module
      * saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param int $newval  an integer corresponding to the duration of the pulse corresponding to the
+     * @param int $newval : an integer corresponding to the duration of the pulse corresponding to the
      * neutral position of the servo
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -223,7 +223,7 @@ class YServo extends YFunction
         return $this->_setAttr("neutral", $rest_val);
     }
 
-    public function get_move(): ?YMove
+    public function get_move(): mixed
     {
         // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -235,7 +235,7 @@ class YServo extends YFunction
         return $res;
     }
 
-    public function set_move(YMove $newval): int
+    public function set_move(mixed $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("move", $rest_val);
@@ -244,14 +244,14 @@ class YServo extends YFunction
     /**
      * Performs a smooth move at constant speed toward a given position.
      *
-     * @param target      : new position at the end of the move
-     * @param int $ms_duration  total duration of the move, in milliseconds
+     * @param int $target      : new position at the end of the move
+     * @param int $ms_duration : total duration of the move, in milliseconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function move(int $target,int $ms_duration)
+    public function move(int $target,int $ms_duration): int
     {
         $rest_val = $target.':'.$ms_duration;
         return $this->_setAttr("move",$rest_val);
@@ -280,7 +280,7 @@ class YServo extends YFunction
      * Configure the servo position at device power up. Remember to call the matching
      * module saveToFlash() method, otherwise this call will have no effect.
      *
-     * @param int $newval  an integer
+     * @param int $newval : an integer
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -316,7 +316,7 @@ class YServo extends YFunction
      * Configure the servo signal generator state at power up. Remember to call the matching module saveToFlash()
      * method, otherwise this call will have no effect.
      *
-     * @param int $newval  either YServo::ENABLEDATPOWERON_FALSE or YServo::ENABLEDATPOWERON_TRUE
+     * @param int $newval : either YServo::ENABLEDATPOWERON_FALSE or YServo::ENABLEDATPOWERON_TRUE
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -351,7 +351,7 @@ class YServo extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the RC servo motor, for instance
+     * @param string $func : a string that uniquely characterizes the RC servo motor, for instance
      *         SERVORC1.servo1.
      *
      * @return YServo  a YServo object allowing you to drive the RC servo motor.
@@ -407,7 +407,7 @@ class YServo extends YFunction
     return $this->set_neutral($newval);
 }
 
-    public function setMove(YMove $newval)
+    public function setMove(mixed $newval)
 {
     return $this->set_move($newval);
 }

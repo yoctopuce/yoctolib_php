@@ -51,7 +51,7 @@ class YArithmeticSensor extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the arithmetic sensor
+     * @param string $newval : a string corresponding to the measuring unit for the arithmetic sensor
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -123,7 +123,7 @@ class YArithmeticSensor extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the arithmetic sensor, for instance
+     * @param string $func : a string that uniquely characterizes the arithmetic sensor, for instance
      *         RXUVOLT1.arithmeticSensor1.
      *
      * @return YArithmeticSensor  a YArithmeticSensor object allowing you to drive the arithmetic sensor.
@@ -144,8 +144,8 @@ class YArithmeticSensor extends YSensor
      * may include references to device sensors, by their physical or logical name, to
      * usual math functions and to auxiliary functions defined separately.
      *
-     * @param string $expr  the algebraic expression defining the function.
-     * @param string $descr  short informative description of the expression.
+     * @param string $expr : the algebraic expression defining the function.
+     * @param string $descr : short informative description of the expression.
      *
      * @return float  the current expression value if the call succeeds.
      *
@@ -205,9 +205,9 @@ class YArithmeticSensor extends YSensor
      * device. Up to nine auxiliary function can be defined in a device, each containing up to
      * 96 reference points.
      *
-     * @param string $name  auxiliary function name, up to 16 characters.
-     * @param float[] $inputValues  array of floating point numbers, corresponding to the function input value.
-     * @param float[] $outputValues  array of floating point numbers, corresponding to the output value
+     * @param string $name : auxiliary function name, up to 16 characters.
+     * @param float[] $inputValues : array of floating point numbers, corresponding to the function input value.
+     * @param float[] $outputValues : array of floating point numbers, corresponding to the output value
      *         desired for each of the input value, index by index.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -242,10 +242,10 @@ class YArithmeticSensor extends YSensor
      * Retrieves the reference points table defining an auxiliary function previously
      * configured using the defineAuxiliaryFunction function.
      *
-     * @param string $name  auxiliary function name, up to 16 characters.
-     * @param float[] $inputValues  array of floating point numbers, that is filled by the function
+     * @param string $name : auxiliary function name, up to 16 characters.
+     * @param float[] $inputValues : array of floating point numbers, that is filled by the function
      *         with all the function reference input value.
-     * @param float[] $outputValues  array of floating point numbers, that is filled by the function
+     * @param float[] $outputValues : array of floating point numbers, that is filled by the function
      *         output value for each of the input value, index by index.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.

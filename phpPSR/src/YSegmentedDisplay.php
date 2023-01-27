@@ -68,7 +68,7 @@ class YSegmentedDisplay extends YFunction
     /**
      * Changes the text currently displayed on the screen.
      *
-     * @param string $newval  a string corresponding to the text currently displayed on the screen
+     * @param string $newval : a string corresponding to the text currently displayed on the screen
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -121,7 +121,7 @@ class YSegmentedDisplay extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the segmented display, for instance
+     * @param string $func : a string that uniquely characterizes the segmented display, for instance
      *         MyDevice.segmentedDisplay.
      *
      * @return YSegmentedDisplay  a YSegmentedDisplay object allowing you to drive the segmented display.

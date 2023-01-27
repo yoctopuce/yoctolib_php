@@ -374,7 +374,7 @@ class YNetwork extends YFunction
      * When using DHCP, if a value is specified, it overrides the value received from the DHCP server.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $newval  a string corresponding to the IP address of the primary name server to be
+     * @param string $newval : a string corresponding to the IP address of the primary name server to be
      * used by the module
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -411,7 +411,7 @@ class YNetwork extends YFunction
      * When using DHCP, if a value is specified, it overrides the value received from the DHCP server.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $newval  a string corresponding to the IP address of the secondary name server to be
+     * @param string $newval : a string corresponding to the IP address of the secondary name server to be
      * used by the module
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -448,7 +448,7 @@ class YNetwork extends YFunction
      * string to restore the factory set  address.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $newval  a string corresponding to the IP address of the NTP server to be used by the module
+     * @param string $newval : a string corresponding to the IP address of the NTP server to be used by the module
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -488,7 +488,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the password for the "user" user
+     * @param string $newval : a string corresponding to the password for the "user" user
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -531,7 +531,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the password for the "admin" user
+     * @param string $newval : a string corresponding to the password for the "admin" user
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -572,7 +572,7 @@ class YNetwork extends YFunction
      * API library. When you change this parameter, remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the the TCP port used to serve the hub web UI
+     * @param int $newval : an integer corresponding to the the TCP port used to serve the hub web UI
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -610,7 +610,7 @@ class YNetwork extends YFunction
      * When you change this parameter, remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the default HTML page returned by the hub
+     * @param string $newval : a string corresponding to the default HTML page returned by the hub
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -650,7 +650,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  either YNetwork::DISCOVERABLE_FALSE or YNetwork::DISCOVERABLE_TRUE, according to
+     * @param int $newval : either YNetwork::DISCOVERABLE_FALSE or YNetwork::DISCOVERABLE_TRUE, according to
      * the activation state of the multicast announce protocols to allow easy
      *         discovery of the module in the network neighborhood (uPnP/Bonjour protocol)
      *
@@ -694,7 +694,7 @@ class YNetwork extends YFunction
      * 90 seconds. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the allowed downtime of the WWW link (in seconds)
+     * @param int $newval : an integer corresponding to the allowed downtime of the WWW link (in seconds)
      * before triggering an automated
      *         reboot to try to recover Internet connectivity
      *
@@ -731,7 +731,7 @@ class YNetwork extends YFunction
      * Changes the callback URL to notify significant state changes. Remember to call the
      * saveToFlash() method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the callback URL to notify significant state changes
+     * @param string $newval : a string corresponding to the callback URL to notify significant state changes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -769,7 +769,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YNetwork::CALLBACKMETHOD_POST, YNetwork::CALLBACKMETHOD_GET and
+     * @param int $newval : a value among YNetwork::CALLBACKMETHOD_POST, YNetwork::CALLBACKMETHOD_GET and
      * YNetwork::CALLBACKMETHOD_PUT corresponding to the HTTP method used to notify callbacks for
      * significant state changes
      *
@@ -814,7 +814,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YNetwork::CALLBACKENCODING_FORM, YNetwork::CALLBACKENCODING_JSON,
+     * @param int $newval : a value among YNetwork::CALLBACKENCODING_FORM, YNetwork::CALLBACKENCODING_JSON,
      * YNetwork::CALLBACKENCODING_JSON_ARRAY, YNetwork::CALLBACKENCODING_CSV,
      * YNetwork::CALLBACKENCODING_YOCTO_API, YNetwork::CALLBACKENCODING_JSON_NUM,
      * YNetwork::CALLBACKENCODING_EMONCMS, YNetwork::CALLBACKENCODING_AZURE,
@@ -865,7 +865,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the credentials required to connect to the callback address
+     * @param string $newval : a string corresponding to the credentials required to connect to the callback address
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -883,14 +883,14 @@ class YNetwork extends YFunction
      * copy of the credentials are saved. Remember to call the
      * saveToFlash() method of the module if the modification must be kept.
      *
-     * @param string $username  username required to log to the callback
-     * @param string $password  password required to log to the callback
+     * @param string $username : username required to log to the callback
+     * @param string $password : password required to log to the callback
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function callbackLogin(string $username,string $password)
+    public function callbackLogin(string $username,string $password): int
     {
         $rest_val = sprintf("%s:%s", $username, $password);
         return $this->_setAttr("callbackCredentials",$rest_val);
@@ -920,7 +920,7 @@ class YNetwork extends YFunction
      * Changes the initial waiting time before first callback notifications, in seconds.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the initial waiting time before first callback
+     * @param int $newval : an integer corresponding to the initial waiting time before first callback
      * notifications, in seconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -957,7 +957,7 @@ class YNetwork extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the HTTP callback schedule strategy, as a text string
+     * @param string $newval : a string corresponding to the HTTP callback schedule strategy, as a text string
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -992,7 +992,7 @@ class YNetwork extends YFunction
      * Changes the minimum waiting time between two HTTP callbacks, in seconds.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minimum waiting time between two HTTP callbacks, in seconds
+     * @param int $newval : an integer corresponding to the minimum waiting time between two HTTP callbacks, in seconds
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1027,7 +1027,7 @@ class YNetwork extends YFunction
      * Changes the waiting time between two HTTP callbacks when there is nothing new.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the waiting time between two HTTP callbacks when
+     * @param int $newval : an integer corresponding to the waiting time between two HTTP callbacks when
      * there is nothing new
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -1085,7 +1085,7 @@ class YNetwork extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the network interface, for instance
+     * @param string $func : a string that uniquely characterizes the network interface, for instance
      *         YHUBETH1.network.
      *
      * @return YNetwork  a YNetwork object allowing you to drive the network interface.
@@ -1107,10 +1107,10 @@ class YNetwork extends YFunction
      * server, the module uses the IP parameters specified to this function.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $fallbackIpAddr  fallback IP address, to be used when no DHCP reply is received
-     * @param int $fallbackSubnetMaskLen  fallback subnet mask length when no DHCP reply is received, as an
+     * @param string $fallbackIpAddr : fallback IP address, to be used when no DHCP reply is received
+     * @param int $fallbackSubnetMaskLen : fallback subnet mask length when no DHCP reply is received, as an
      *         integer (e.g. 24 means 255.255.255.0)
-     * @param string $fallbackRouter  fallback router IP address, to be used when no DHCP reply is received
+     * @param string $fallbackRouter : fallback router IP address, to be used when no DHCP reply is received
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -1140,9 +1140,9 @@ class YNetwork extends YFunction
      * Changes the configuration of the network interface to use a static IP address.
      * Remember to call the saveToFlash() method and then to reboot the module to apply this setting.
      *
-     * @param string $ipAddress  device IP address
-     * @param int $subnetMaskLen  subnet mask length, as an integer (e.g. 24 means 255.255.255.0)
-     * @param string $router  router IP address (default gateway)
+     * @param string $ipAddress : device IP address
+     * @param int $subnetMaskLen : subnet mask length, as an integer (e.g. 24 means 255.255.255.0)
+     * @param string $router : router IP address (default gateway)
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
@@ -1158,7 +1158,7 @@ class YNetwork extends YFunction
      * module to the target host. This method returns a string with the result of the
      * 4 ICMP ECHO_REQUEST requests.
      *
-     * @param string $host  the hostname or the IP address of the target
+     * @param string $host : the hostname or the IP address of the target
      *
      * @return string  a string with the result of the ping.
      */
@@ -1188,9 +1188,9 @@ class YNetwork extends YFunction
     /**
      * Setup periodic HTTP callbacks (simplified function).
      *
-     * @param string $interval  a string representing the callback periodicity, expressed in
+     * @param string $interval : a string representing the callback periodicity, expressed in
      *         seconds, minutes or hours, eg. "60s", "5m", "1h", "48h".
-     * @param int $offset  an integer representing the time offset relative to the period
+     * @param int $offset : an integer representing the time offset relative to the period
      *         when the callback should occur. For instance, if the periodicity is
      *         24h, an offset of 7 will make the callback occur each day at 7AM.
      *

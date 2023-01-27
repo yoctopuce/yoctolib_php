@@ -50,7 +50,7 @@ class YLatitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the latitude sensor, for instance
+     * @param string $func : a string that uniquely characterizes the latitude sensor, for instance
      *         YGNSSMK2.latitude.
      *
      * @return YLatitude  a YLatitude object allowing you to drive the latitude sensor.

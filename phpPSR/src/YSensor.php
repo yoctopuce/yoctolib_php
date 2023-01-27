@@ -171,7 +171,7 @@ class YSensor extends YFunction
      * Changes the recorded minimal value observed. Can be used to reset the value returned
      * by get_lowestValue().
      *
-     * @param float $newval  a floating point number corresponding to the recorded minimal value observed
+     * @param float $newval : a floating point number corresponding to the recorded minimal value observed
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -209,7 +209,7 @@ class YSensor extends YFunction
      * Changes the recorded maximal value observed. Can be used to reset the value returned
      * by get_lowestValue().
      *
-     * @param float $newval  a floating point number corresponding to the recorded maximal value observed
+     * @param float $newval : a floating point number corresponding to the recorded maximal value observed
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -295,7 +295,7 @@ class YSensor extends YFunction
      * and even counterproductive: those two frequencies are not related.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the datalogger recording frequency for this function
+     * @param string $newval : a string corresponding to the datalogger recording frequency for this function
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -339,7 +339,7 @@ class YSensor extends YFunction
      * frequencies are not related.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the timed value notification frequency for this function
+     * @param string $newval : a string corresponding to the timed value notification frequency for this function
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -376,7 +376,7 @@ class YSensor extends YFunction
      * Changes the measuring mode used for the advertised value pushed to the parent hub.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YSensor.ADVMODE_IMMEDIATE, YSensor.ADVMODE_PERIOD_AVG,
+     * @param int $newval : a value among YSensor.ADVMODE_IMMEDIATE, YSensor.ADVMODE_PERIOD_AVG,
      * YSensor.ADVMODE_PERIOD_MIN and YSensor.ADVMODE_PERIOD_MAX corresponding to the measuring mode used
      * for the advertised value pushed to the parent hub
      *
@@ -413,7 +413,7 @@ class YSensor extends YFunction
      * when displaying value. It does not change the precision of the measure itself.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the resolution of the measured physical values
+     * @param float $newval : a floating point number corresponding to the resolution of the measured physical values
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -491,7 +491,7 @@ class YSensor extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the sensor, for instance
+     * @param string $func : a string that uniquely characterizes the sensor, for instance
      *         MyDevice..
      *
      * @return YSensor  a YSensor object allowing you to drive the sensor.
@@ -731,11 +731,11 @@ class YSensor extends YFunction
      * as YDataSet objects are not supported by firmwares older than
      * version 13000.
      *
-     * @param float $startTime  the start of the desired measure time interval,
+     * @param float $startTime : the start of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any measure, without initial limit.
-     * @param float $endTime  the end of the desired measure time interval,
+     * @param float $endTime : the end of the desired measure time interval,
      *         as a Unix timestamp, i.e. the number of seconds since
      *         January 1, 1970 UTC. The special value 0 can be used
      *         to include any measure, without ending limit.
@@ -760,7 +760,7 @@ class YSensor extends YFunction
      * This provides control over the time when the callback is triggered. For good responsiveness, remember to call
      * one of these two functions periodically. To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to call, or a null pointer. The callback function
+     * @param callable $callback : the callback function to call, or a null pointer. The callback function
      * should take two
      *         arguments: the function object of which the value has changed, and an YMeasure object describing
      *         the new advertised value.
@@ -800,9 +800,9 @@ class YSensor extends YFunction
      * For more information on advanced capabilities to refine the calibration of
      * sensors, please contact support@yoctopuce.com.
      *
-     * @param float[] $rawValues  array of floating point numbers, corresponding to the raw
+     * @param float[] $rawValues : array of floating point numbers, corresponding to the raw
      *         values returned by the sensor for the correction points.
-     * @param float[] $refValues  array of floating point numbers, corresponding to the corrected
+     * @param float[] $refValues : array of floating point numbers, corresponding to the corrected
      *         values for the correction points.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -823,9 +823,9 @@ class YSensor extends YFunction
      * Retrieves error correction data points previously entered using the method
      * calibrateFromPoints.
      *
-     * @param float[] $rawValues  array of floating point numbers, that will be filled by the
+     * @param float[] $rawValues : array of floating point numbers, that will be filled by the
      *         function with the raw sensor values for the correction points.
-     * @param float[] $refValues  array of floating point numbers, that will be filled by the
+     * @param float[] $refValues : array of floating point numbers, that will be filled by the
      *         function with the desired values for the correction points.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.

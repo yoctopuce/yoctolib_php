@@ -40,8 +40,8 @@ class YPwmInput extends YSensor
     protected float $_pulseDuration = self::PULSEDURATION_INVALID;  // MeasureVal
     protected float $_frequency = self::FREQUENCY_INVALID;      // MeasureVal
     protected float $_period = self::PERIOD_INVALID;         // MeasureVal
-    protected int $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
-    protected int $_pulseTimer = self::PULSETIMER_INVALID;     // Time
+    protected float $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
+    protected float $_pulseTimer = self::PULSETIMER_INVALID;     // Time
     protected int $_pwmReportMode = self::PWMREPORTMODE_INVALID;  // PwmReportModeType
     protected int $_debouncePeriod = self::DEBOUNCEPERIOD_INVALID; // UInt31
     protected int $_bandwidth = self::BANDWIDTH_INVALID;      // UInt31
@@ -104,7 +104,7 @@ class YPwmInput extends YSensor
      * arbitrary value.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the measured quantity
+     * @param string $newval : a string corresponding to the measuring unit for the measured quantity
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -198,11 +198,11 @@ class YPwmInput extends YSensor
      * counter is incremented twice per period. That counter is
      * limited  to 1 billion.
      *
-     * @return int  an integer corresponding to the pulse counter value
+     * @return float  an integer corresponding to the pulse counter value
      *
      * On failure, throws an exception or returns YPwmInput::PULSECOUNTER_INVALID.
      */
-    public function get_pulseCounter(): int
+    public function get_pulseCounter(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -214,7 +214,7 @@ class YPwmInput extends YSensor
         return $res;
     }
 
-    public function set_pulseCounter(int $newval): int
+    public function set_pulseCounter(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("pulseCounter", $rest_val);
@@ -223,11 +223,11 @@ class YPwmInput extends YSensor
     /**
      * Returns the timer of the pulses counter (ms).
      *
-     * @return int  an integer corresponding to the timer of the pulses counter (ms)
+     * @return float  an integer corresponding to the timer of the pulses counter (ms)
      *
      * On failure, throws an exception or returns YPwmInput::PULSETIMER_INVALID.
      */
-    public function get_pulseTimer(): int
+    public function get_pulseTimer(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -273,7 +273,7 @@ class YPwmInput extends YSensor
      * get_pulseCounter().
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YPwmInput::PWMREPORTMODE_PWM_DUTYCYCLE,
+     * @param int $newval : a value among YPwmInput::PWMREPORTMODE_PWM_DUTYCYCLE,
      * YPwmInput::PWMREPORTMODE_PWM_FREQUENCY, YPwmInput::PWMREPORTMODE_PWM_PULSEDURATION,
      * YPwmInput::PWMREPORTMODE_PWM_EDGECOUNT, YPwmInput::PWMREPORTMODE_PWM_PULSECOUNT,
      * YPwmInput::PWMREPORTMODE_PWM_CPS, YPwmInput::PWMREPORTMODE_PWM_CPM,
@@ -315,7 +315,7 @@ class YPwmInput extends YSensor
      * Changes the shortest expected pulse duration, in ms. Any shorter pulse will be automatically ignored (debounce).
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the shortest expected pulse duration, in ms
+     * @param int $newval : an integer corresponding to the shortest expected pulse duration, in ms
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -353,7 +353,7 @@ class YPwmInput extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the input signal sampling rate, measured in kHz
+     * @param int $newval : an integer corresponding to the input signal sampling rate, measured in kHz
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -408,7 +408,7 @@ class YPwmInput extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the PWM input, for instance
+     * @param string $func : a string that uniquely characterizes the PWM input, for instance
      *         YPWMRX01.pwmInput1.
      *
      * @return YPwmInput  a YPwmInput object allowing you to drive the PWM input.
@@ -461,17 +461,17 @@ class YPwmInput extends YSensor
     return $this->get_period();
 }
 
-    public function pulseCounter(): int
+    public function pulseCounter(): float
 {
     return $this->get_pulseCounter();
 }
 
-    public function setPulseCounter(int $newval)
+    public function setPulseCounter(float $newval)
 {
     return $this->set_pulseCounter($newval);
 }
 
-    public function pulseTimer(): int
+    public function pulseTimer(): float
 {
     return $this->get_pulseTimer();
 }

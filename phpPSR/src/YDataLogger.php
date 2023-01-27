@@ -33,7 +33,7 @@ class YDataLogger extends YFunction
 
     //--- (generated code: YDataLogger attributes)
     protected int $_currentRunIndex = self::CURRENTRUNINDEX_INVALID; // UInt31
-    protected int $_timeUTC = self::TIMEUTC_INVALID;        // UTCTime
+    protected float $_timeUTC = self::TIMEUTC_INVALID;        // UTCTime
     protected int $_recording = self::RECORDING_INVALID;      // OffOnPending
     protected int $_autoStart = self::AUTOSTART_INVALID;      // OnOff
     protected int $_beaconDriven = self::BEACONDRIVEN_INVALID;   // OnOff
@@ -137,11 +137,11 @@ class YDataLogger extends YFunction
     /**
      * Returns the Unix timestamp for current UTC time, if known.
      *
-     * @return int  an integer corresponding to the Unix timestamp for current UTC time, if known
+     * @return float  an integer corresponding to the Unix timestamp for current UTC time, if known
      *
      * On failure, throws an exception or returns YDataLogger::TIMEUTC_INVALID.
      */
-    public function get_timeUTC(): int
+    public function get_timeUTC(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -156,13 +156,13 @@ class YDataLogger extends YFunction
     /**
      * Changes the current UTC time reference used for recorded data.
      *
-     * @param int $newval  an integer corresponding to the current UTC time reference used for recorded data
+     * @param float $newval : an integer corresponding to the current UTC time reference used for recorded data
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function set_timeUTC(int $newval): int
+    public function set_timeUTC(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("timeUTC", $rest_val);
@@ -191,7 +191,7 @@ class YDataLogger extends YFunction
     /**
      * Changes the activation state of the data logger to start/stop recording data.
      *
-     * @param int $newval  a value among YDataLogger::RECORDING_OFF, YDataLogger::RECORDING_ON and
+     * @param int $newval : a value among YDataLogger::RECORDING_OFF, YDataLogger::RECORDING_ON and
      * YDataLogger::RECORDING_PENDING corresponding to the activation state of the data logger to
      * start/stop recording data
      *
@@ -232,7 +232,7 @@ class YDataLogger extends YFunction
      * starting up, it will wait for ~8 seconds before automatically starting to record  with
      * an arbitrary timestamp
      *
-     * @param int $newval  either YDataLogger::AUTOSTART_OFF or YDataLogger::AUTOSTART_ON, according to the
+     * @param int $newval : either YDataLogger::AUTOSTART_OFF or YDataLogger::AUTOSTART_ON, according to the
      * default activation state of the data logger on power up
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -270,7 +270,7 @@ class YDataLogger extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  either YDataLogger::BEACONDRIVEN_OFF or YDataLogger::BEACONDRIVEN_ON, according
+     * @param int $newval : either YDataLogger::BEACONDRIVEN_OFF or YDataLogger::BEACONDRIVEN_ON, according
      * to the type of synchronisation of the data logger
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -343,7 +343,7 @@ class YDataLogger extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the data logger, for instance
+     * @param string $func : a string that uniquely characterizes the data logger, for instance
      *         LIGHTMK4.dataLogger.
      *
      * @return YDataLogger  a YDataLogger object allowing you to drive the data logger.
@@ -412,12 +412,12 @@ class YDataLogger extends YFunction
     return $this->get_currentRunIndex();
 }
 
-    public function timeUTC(): int
+    public function timeUTC(): float
 {
     return $this->get_timeUTC();
 }
 
-    public function setTimeUTC(int $newval)
+    public function setTimeUTC(float $newval)
 {
     return $this->set_timeUTC($newval);
 }

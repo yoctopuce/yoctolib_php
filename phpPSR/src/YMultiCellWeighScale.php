@@ -97,7 +97,7 @@ class YMultiCellWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the weight
+     * @param string $newval : a string corresponding to the measuring unit for the weight
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -132,7 +132,7 @@ class YMultiCellWeighScale extends YSensor
      * Changes the number of load cells in use. Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the number of load cells in use
+     * @param int $newval : an integer corresponding to the number of load cells in use
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -170,7 +170,7 @@ class YMultiCellWeighScale extends YSensor
      * 6-wires load cells. Remember to call the saveToFlash() method of the
      * module if the modification must be kept.
      *
-     * @param int $newval  either YMultiCellWeighScale::EXTERNALSENSE_FALSE or
+     * @param int $newval : either YMultiCellWeighScale::EXTERNALSENSE_FALSE or
      * YMultiCellWeighScale::EXTERNALSENSE_TRUE, according to the configuration to tell if entry 4 is used
      * as external sense for
      *         6-wires load cells
@@ -210,7 +210,7 @@ class YMultiCellWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YMultiCellWeighScale::EXCITATION_OFF,
+     * @param int $newval : a value among YMultiCellWeighScale::EXCITATION_OFF,
      * YMultiCellWeighScale::EXCITATION_DC and YMultiCellWeighScale::EXCITATION_AC corresponding to the
      * current load cell bridge excitation method
      *
@@ -233,7 +233,7 @@ class YMultiCellWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the averaged temperature update
+     * @param float $newval : a floating point number corresponding to the averaged temperature update
      * rate, in per mille
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -277,7 +277,7 @@ class YMultiCellWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the temperature change update rate, in per mille
+     * @param float $newval : a floating point number corresponding to the temperature change update rate, in per mille
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -377,7 +377,7 @@ class YMultiCellWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the zero tracking threshold value
+     * @param float $newval : a floating point number corresponding to the zero tracking threshold value
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -451,7 +451,7 @@ class YMultiCellWeighScale extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the multi-cell weighing scale sensor, for instance
+     * @param string $func : a string that uniquely characterizes the multi-cell weighing scale sensor, for instance
      *         YWMBRDG1.multiCellWeighScale.
      *
      * @return YMultiCellWeighScale  a YMultiCellWeighScale object allowing you to drive the multi-cell
@@ -486,8 +486,8 @@ class YMultiCellWeighScale extends YSensor
      * Configures the load cells span parameters (stored in the corresponding genericSensors)
      * so that the current signal corresponds to the specified reference weight.
      *
-     * @param float $currWeight  reference weight presently on the load cell.
-     * @param float $maxWeight  maximum weight to be expected on the load cell.
+     * @param float $currWeight : reference weight presently on the load cell.
+     * @param float $maxWeight : maximum weight to be expected on the load cell.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *

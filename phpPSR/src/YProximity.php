@@ -37,10 +37,10 @@ class YProximity extends YSensor
     protected int $_presenceMinTime = self::PRESENCEMINTIME_INVALID; // UInt31
     protected int $_removalMinTime = self::REMOVALMINTIME_INVALID; // UInt31
     protected int $_isPresent = self::ISPRESENT_INVALID;      // Bool
-    protected int $_lastTimeApproached = self::LASTTIMEAPPROACHED_INVALID; // Time
-    protected int $_lastTimeRemoved = self::LASTTIMEREMOVED_INVALID; // Time
-    protected int $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
-    protected int $_pulseTimer = self::PULSETIMER_INVALID;     // Time
+    protected float $_lastTimeApproached = self::LASTTIMEAPPROACHED_INVALID; // Time
+    protected float $_lastTimeRemoved = self::LASTTIMEREMOVED_INVALID; // Time
+    protected float $_pulseCounter = self::PULSECOUNTER_INVALID;   // UInt
+    protected float $_pulseTimer = self::PULSETIMER_INVALID;     // Time
     protected int $_proximityReportMode = self::PROXIMITYREPORTMODE_INVALID; // ProximityReportModeType
 
     //--- (end of YProximity attributes)
@@ -143,7 +143,7 @@ class YProximity extends YSensor
      * as a binary input (on/off).
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the threshold used to determine the logical state
+     * @param int $newval : an integer corresponding to the threshold used to determine the logical state
      * of the proximity sensor, when considered
      *         as a binary input (on/off)
      *
@@ -184,7 +184,7 @@ class YProximity extends YSensor
      * as a binary input (on/off).
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the hysteresis used to determine the logical state
+     * @param int $newval : an integer corresponding to the hysteresis used to determine the logical state
      * of the proximity sensor, when considered
      *         as a binary input (on/off)
      *
@@ -223,7 +223,7 @@ class YProximity extends YSensor
      * considered as noise or bounce (false positive) and filtered out.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minimal detection duration before signalling a
+     * @param int $newval : an integer corresponding to the minimal detection duration before signalling a
      * presence event
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -261,7 +261,8 @@ class YProximity extends YSensor
      * considered as noise or bounce (false positive) and filtered out.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the minimal detection duration before signalling a removal event
+     * @param int $newval : an integer corresponding to the minimal detection duration before signalling a
+     * removal event
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -299,13 +300,13 @@ class YProximity extends YSensor
      * Returns the number of elapsed milliseconds between the module power on and the last observed
      * detection (the input contact transitioned from absent to present).
      *
-     * @return int  an integer corresponding to the number of elapsed milliseconds between the module
+     * @return float  an integer corresponding to the number of elapsed milliseconds between the module
      * power on and the last observed
      *         detection (the input contact transitioned from absent to present)
      *
      * On failure, throws an exception or returns YProximity::LASTTIMEAPPROACHED_INVALID.
      */
-    public function get_lastTimeApproached(): int
+    public function get_lastTimeApproached(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -321,13 +322,13 @@ class YProximity extends YSensor
      * Returns the number of elapsed milliseconds between the module power on and the last observed
      * detection (the input contact transitioned from present to absent).
      *
-     * @return int  an integer corresponding to the number of elapsed milliseconds between the module
+     * @return float  an integer corresponding to the number of elapsed milliseconds between the module
      * power on and the last observed
      *         detection (the input contact transitioned from present to absent)
      *
      * On failure, throws an exception or returns YProximity::LASTTIMEREMOVED_INVALID.
      */
-    public function get_lastTimeRemoved(): int
+    public function get_lastTimeRemoved(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -344,11 +345,11 @@ class YProximity extends YSensor
      * of overflow (>=2^32), the counter will wrap. To reset the counter, just
      * call the resetCounter() method.
      *
-     * @return int  an integer corresponding to the pulse counter value
+     * @return float  an integer corresponding to the pulse counter value
      *
      * On failure, throws an exception or returns YProximity::PULSECOUNTER_INVALID.
      */
-    public function get_pulseCounter(): int
+    public function get_pulseCounter(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -360,7 +361,7 @@ class YProximity extends YSensor
         return $res;
     }
 
-    public function set_pulseCounter(int $newval): int
+    public function set_pulseCounter(float $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("pulseCounter", $rest_val);
@@ -369,11 +370,11 @@ class YProximity extends YSensor
     /**
      * Returns the timer of the pulse counter (ms).
      *
-     * @return int  an integer corresponding to the timer of the pulse counter (ms)
+     * @return float  an integer corresponding to the timer of the pulse counter (ms)
      *
      * On failure, throws an exception or returns YProximity::PULSETIMER_INVALID.
      */
-    public function get_pulseTimer(): int
+    public function get_pulseTimer(): float
     {
         // $res                    is a long;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -414,7 +415,7 @@ class YProximity extends YSensor
      * get_pulseCounter().
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  a value among YProximity::PROXIMITYREPORTMODE_NUMERIC,
+     * @param int $newval : a value among YProximity::PROXIMITYREPORTMODE_NUMERIC,
      * YProximity::PROXIMITYREPORTMODE_PRESENCE and YProximity::PROXIMITYREPORTMODE_PULSECOUNT corresponding
      * to the  parameter  type (sensor value, presence or pulse count) returned by the get_currentValue
      * function and callbacks
@@ -452,7 +453,7 @@ class YProximity extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the proximity sensor, for instance
+     * @param string $func : a string that uniquely characterizes the proximity sensor, for instance
      *         YPROXIM1.proximity1.
      *
      * @return YProximity  a YProximity object allowing you to drive the proximity sensor.
@@ -530,27 +531,27 @@ class YProximity extends YSensor
     return $this->get_isPresent();
 }
 
-    public function lastTimeApproached(): int
+    public function lastTimeApproached(): float
 {
     return $this->get_lastTimeApproached();
 }
 
-    public function lastTimeRemoved(): int
+    public function lastTimeRemoved(): float
 {
     return $this->get_lastTimeRemoved();
 }
 
-    public function pulseCounter(): int
+    public function pulseCounter(): float
 {
     return $this->get_pulseCounter();
 }
 
-    public function setPulseCounter(int $newval)
+    public function setPulseCounter(float $newval)
 {
     return $this->set_pulseCounter($newval);
 }
 
-    public function pulseTimer(): int
+    public function pulseTimer(): float
 {
     return $this->get_pulseTimer();
 }

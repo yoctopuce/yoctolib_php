@@ -70,7 +70,7 @@ class YVoltage extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  either YVoltage::ENABLED_FALSE or YVoltage::ENABLED_TRUE, according to the
+     * @param int $newval : either YVoltage::ENABLED_FALSE or YVoltage::ENABLED_TRUE, according to the
      * activation state of this voltage input
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -106,7 +106,7 @@ class YVoltage extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the voltage sensor, for instance
+     * @param string $func : a string that uniquely characterizes the voltage sensor, for instance
      *         MOTORCTL.voltage.
      *
      * @return YVoltage  a YVoltage object allowing you to drive the voltage sensor.

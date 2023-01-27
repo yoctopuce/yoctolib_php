@@ -53,7 +53,7 @@ class YAltitude extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the current estimated altitude
+     * @param float $newval : a floating point number corresponding to the current estimated altitude
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -72,7 +72,7 @@ class YAltitude extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the barometric pressure adjusted to
+     * @param float $newval : a floating point number corresponding to the barometric pressure adjusted to
      * sea level used to compute
      *         the altitude (QNH)
      *
@@ -152,7 +152,7 @@ class YAltitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the altimeter, for instance
+     * @param string $func : a string that uniquely characterizes the altimeter, for instance
      *         YALTIMK2.altitude.
      *
      * @return YAltitude  a YAltitude object allowing you to drive the altimeter.

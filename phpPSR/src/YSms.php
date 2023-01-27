@@ -355,7 +355,7 @@ class YSms
      * are supported. For messages with special unicode characters such as asian
      * characters and emoticons, use the  addUnicodeData method.
      *
-     * @param string $val  the text to be sent in the message
+     * @param string $val : the text to be sent in the message
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      */
@@ -420,7 +420,7 @@ class YSms
      * Add a unicode text to the SMS. This function support messages
      * of more than 160 characters, using SMS concatenation.
      *
-     * @param Integer[] $val  an array of special unicode characters
+     * @param Integer[] $val : an array of special unicode characters
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      */

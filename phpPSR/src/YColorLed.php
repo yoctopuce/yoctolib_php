@@ -28,8 +28,8 @@ class YColorLed extends YFunction
     //--- (YColorLed attributes)
     protected int $_rgbColor = self::RGBCOLOR_INVALID;       // U24Color
     protected int $_hslColor = self::HSLCOLOR_INVALID;       // U24Color
-    protected  $_rgbMove = self::RGBMOVE_INVALID;        // Move
-    protected  $_hslMove = self::HSLMOVE_INVALID;        // Move
+    protected mixed $_rgbMove = self::RGBMOVE_INVALID;        // Move
+    protected mixed $_hslMove = self::HSLMOVE_INVALID;        // Move
     protected int $_rgbColorAtPowerOn = self::RGBCOLORATPOWERON_INVALID; // U24Color
     protected int $_blinkSeqSize = self::BLINKSEQSIZE_INVALID;   // UInt31
     protected int $_blinkSeqMaxSize = self::BLINKSEQMAXSIZE_INVALID; // UInt31
@@ -105,7 +105,7 @@ class YColorLed extends YFunction
     /**
      * Changes the current color of the LED, using an RGB color. Encoding is done as follows: 0xRRGGBB.
      *
-     * @param int $newval  an integer corresponding to the current color of the LED, using an RGB color
+     * @param int $newval : an integer corresponding to the current color of the LED, using an RGB color
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -139,7 +139,7 @@ class YColorLed extends YFunction
     /**
      * Changes the current color of the LED, using a color HSL. Encoding is done as follows: 0xHHSSLL.
      *
-     * @param int $newval  an integer corresponding to the current color of the LED, using a color HSL
+     * @param int $newval : an integer corresponding to the current color of the LED, using a color HSL
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -151,7 +151,7 @@ class YColorLed extends YFunction
         return $this->_setAttr("hslColor", $rest_val);
     }
 
-    public function get_rgbMove(): ?YMove
+    public function get_rgbMove(): mixed
     {
         // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -163,7 +163,7 @@ class YColorLed extends YFunction
         return $res;
     }
 
-    public function set_rgbMove(YMove $newval): int
+    public function set_rgbMove(mixed $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("rgbMove", $rest_val);
@@ -172,20 +172,20 @@ class YColorLed extends YFunction
     /**
      * Performs a smooth transition in the RGB color space between the current color and a target color.
      *
-     * @param rgb_target  : desired RGB color at the end of the transition
-     * @param int $ms_duration  duration of the transition, in millisecond
+     * @param int $rgb_target  : desired RGB color at the end of the transition
+     * @param int $ms_duration : duration of the transition, in millisecond
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function rgbMove(int $rgb_target,int $ms_duration)
+    public function rgbMove(int $rgb_target,int $ms_duration): int
     {
         $rest_val = $rgb_target.':'.$ms_duration;
         return $this->_setAttr("rgbMove",$rest_val);
     }
 
-    public function get_hslMove(): ?YMove
+    public function get_hslMove(): mixed
     {
         // $res                    is a YMove;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
@@ -197,7 +197,7 @@ class YColorLed extends YFunction
         return $res;
     }
 
-    public function set_hslMove(YMove $newval): int
+    public function set_hslMove(mixed $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
         return $this->_setAttr("hslMove", $rest_val);
@@ -206,14 +206,14 @@ class YColorLed extends YFunction
     /**
      * Performs a smooth transition in the HSL color space between the current color and a target color.
      *
-     * @param hsl_target  : desired HSL color at the end of the transition
-     * @param int $ms_duration  duration of the transition, in millisecond
+     * @param int $hsl_target  : desired HSL color at the end of the transition
+     * @param int $ms_duration : duration of the transition, in millisecond
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function hslMove(int $hsl_target,int $ms_duration)
+    public function hslMove(int $hsl_target,int $ms_duration): int
     {
         $rest_val = $hsl_target.':'.$ms_duration;
         return $this->_setAttr("hslMove",$rest_val);
@@ -243,8 +243,8 @@ class YColorLed extends YFunction
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the color that the LED displays by default when the
-     * module is turned on
+     * @param int $newval : an integer corresponding to the color that the LED displays by default when
+     * the module is turned on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -357,7 +357,7 @@ class YColorLed extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the RGB LED, for instance
+     * @param string $func : a string that uniquely characterizes the RGB LED, for instance
      *         YRGBLED2.colorLed1.
      *
      * @return YColorLed  a YColorLed object allowing you to drive the RGB LED.
@@ -382,8 +382,8 @@ class YColorLed extends YFunction
      * Add a new transition to the blinking sequence, the move will
      * be performed in the HSL space.
      *
-     * @param int $HSLcolor  desired HSL color when the transition is completed
-     * @param int $msDelay  duration of the color transition, in milliseconds.
+     * @param int $HSLcolor : desired HSL color when the transition is completed
+     * @param int $msDelay : duration of the color transition, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -397,8 +397,8 @@ class YColorLed extends YFunction
      * Adds a new transition to the blinking sequence, the move is
      * performed in the RGB space.
      *
-     * @param int $RGBcolor  desired RGB color when the transition is completed
-     * @param int $msDelay  duration of the color transition, in milliseconds.
+     * @param int $RGBcolor : desired RGB color when the transition is completed
+     * @param int $msDelay : duration of the color transition, in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -463,12 +463,12 @@ class YColorLed extends YFunction
     return $this->set_hslColor($newval);
 }
 
-    public function setRgbMove(YMove $newval)
+    public function setRgbMove(mixed $newval)
 {
     return $this->set_rgbMove($newval);
 }
 
-    public function setHslMove(YMove $newval)
+    public function setHslMove(mixed $newval)
 {
     return $this->set_hslMove($newval);
 }

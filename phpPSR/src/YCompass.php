@@ -77,7 +77,7 @@ class YCompass extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the measure update frequency, measured in Hz
+     * @param int $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -144,7 +144,7 @@ class YCompass extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the compass function, for instance
+     * @param string $func : a string that uniquely characterizes the compass function, for instance
      *         Y3DMK002.compass.
      *
      * @return YCompass  a YCompass object allowing you to drive the compass function.

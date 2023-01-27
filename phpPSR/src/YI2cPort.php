@@ -249,7 +249,7 @@ class YI2cPort extends YFunction
      * Selects a job file to run immediately. If an empty string is
      * given as argument, stops running current job file.
      *
-     * @param string $newval  a string
+     * @param string $newval : a string
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -285,7 +285,7 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the job to use when the device is powered on
+     * @param string $newval : a string corresponding to the job to use when the device is powered on
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -385,7 +385,7 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the type of protocol used to send I2C messages
+     * @param string $newval : a string corresponding to the type of protocol used to send I2C messages
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -422,7 +422,7 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YI2cPort::I2CVOLTAGELEVEL_OFF, YI2cPort::I2CVOLTAGELEVEL_3V3 and
+     * @param int $newval : a value among YI2cPort::I2CVOLTAGELEVEL_OFF, YI2cPort::I2CVOLTAGELEVEL_3V3 and
      * YI2cPort::I2CVOLTAGELEVEL_1V8 corresponding to the voltage level used on the I2C bus
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -468,7 +468,7 @@ class YI2cPort extends YFunction
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the I2C port communication parameters, with a string such as
+     * @param string $newval : a string corresponding to the I2C port communication parameters, with a string such as
      *         "400kbps,2000ms"
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -504,7 +504,7 @@ class YI2cPort extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the I2C port, for instance
+     * @param string $func : a string that uniquely characterizes the I2C port, for instance
      *         YI2CMK01.i2cPort.
      *
      * @return YI2cPort  a YI2cPort object allowing you to drive the I2C port.
@@ -572,11 +572,11 @@ class YI2cPort extends YFunction
      * If no matching message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param string $pattern  a limited regular expression describing the expected message format,
+     * @param string $pattern : a limited regular expression describing the expected message format,
      *         or an empty string if all messages should be returned (no filtering).
      *         When using binary protocols, the format applies to the hexadecimal
      *         representation of the message.
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return string[]  an array of strings containing the messages found, if any.
@@ -616,7 +616,7 @@ class YI2cPort extends YFunction
      * does not affect the device, it only changes the value stored in the API object
      * for the next read operations.
      *
-     * @param int $absPos  the absolute position index for next read operations.
+     * @param int $absPos : the absolute position index for next read operations.
      *
      * @return int  nothing.
      */
@@ -674,8 +674,8 @@ class YI2cPort extends YFunction
      * Sends a text line query to the serial port, and reads the reply, if any.
      * This function is intended to be used when the serial port is configured for 'Line' protocol.
      *
-     * @param string $query  the line query to send (without CR/LF)
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $query : the line query to send (without CR/LF)
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next text line received after sending the text query, as a string.
      *         Additional lines can be obtained by calling readLine or readMessages.
@@ -721,8 +721,8 @@ class YI2cPort extends YFunction
      * This function is intended to be used when the serial port is configured for
      * Frame-based protocol.
      *
-     * @param string $hexString  the message to send, coded in hexadecimal
-     * @param int $maxWait  the maximum number of milliseconds to wait for a reply.
+     * @param string $hexString : the message to send, coded in hexadecimal
+     * @param int $maxWait : the maximum number of milliseconds to wait for a reply.
      *
      * @return string  the next frame received after sending the message, as a hex string.
      *         Additional frames can be obtained by calling readHex or readMessages.
@@ -767,8 +767,8 @@ class YI2cPort extends YFunction
      * Saves the job definition string (JSON data) into a job file.
      * The job file can be later enabled using selectJob().
      *
-     * @param string $jobfile  name of the job file to save on the device filesystem
-     * @param string $jsonDef  a string containing a JSON definition of the job
+     * @param string $jobfile : name of the job file to save on the device filesystem
+     * @param string $jsonDef : a string containing a JSON definition of the job
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -785,7 +785,7 @@ class YI2cPort extends YFunction
      * been previously created using the user interface or uploaded on the
      * device filesystem using the uploadJob() function.
      *
-     * @param string $jobfile  name of the job file (on the device filesystem)
+     * @param string $jobfile : name of the job file (on the device filesystem)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -816,8 +816,8 @@ class YI2cPort extends YFunction
      * Sends a one-way message (provided as a a binary buffer) to a device on the I2C bus.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param int $slaveAddr  the 7-bit address of the slave device (without the direction bit)
-     * @param string $buff  the binary buffer to be sent
+     * @param int $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param string $buff : the binary buffer to be sent
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -852,8 +852,8 @@ class YI2cPort extends YFunction
      * Sends a one-way message (provided as a list of integer) to a device on the I2C bus.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param int $slaveAddr  the 7-bit address of the slave device (without the direction bit)
-     * @param Integer[] $values  a list of data bytes to be sent
+     * @param int $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param Integer[] $values : a list of data bytes to be sent
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -889,9 +889,9 @@ class YI2cPort extends YFunction
      * then read back the specified number of bytes from device.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param int $slaveAddr  the 7-bit address of the slave device (without the direction bit)
-     * @param string $buff  the binary buffer to be sent
-     * @param int $rcvCount  the number of bytes to receive once the data bytes are sent
+     * @param int $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param string $buff : the binary buffer to be sent
+     * @param int $rcvCount : the number of bytes to receive once the data bytes are sent
      *
      * @return string  a list of bytes with the data received from slave device.
      *
@@ -922,7 +922,7 @@ class YI2cPort extends YFunction
                 $idx = $idx + 255;
             }
             if ($rcvCount - $idx > 2) {
-                $msg = sprintf('%sxx*%02X', $msg, $rcvCount - $idx);
+                $msg = sprintf('%sxx*%02X', $msg, ($rcvCount - $idx));
                 $idx = $rcvCount;
             }
         }
@@ -947,9 +947,9 @@ class YI2cPort extends YFunction
      * then read back the specified number of bytes from device.
      * This function checks and reports communication errors on the I2C bus.
      *
-     * @param int $slaveAddr  the 7-bit address of the slave device (without the direction bit)
-     * @param Integer[] $values  a list of data bytes to be sent
-     * @param int $rcvCount  the number of bytes to receive once the data bytes are sent
+     * @param int $slaveAddr : the 7-bit address of the slave device (without the direction bit)
+     * @param Integer[] $values : a list of data bytes to be sent
+     * @param int $rcvCount : the number of bytes to receive once the data bytes are sent
      *
      * @return Integer[]  a list of bytes with the data received from slave device.
      *
@@ -983,7 +983,7 @@ class YI2cPort extends YFunction
                 $idx = $idx + 255;
             }
             if ($rcvCount - $idx > 2) {
-                $msg = sprintf('%sxx*%02X', $msg, $rcvCount - $idx);
+                $msg = sprintf('%sxx*%02X', $msg, ($rcvCount - $idx));
                 $idx = $rcvCount;
             }
         }
@@ -1026,7 +1026,7 @@ class YI2cPort extends YFunction
      * will be terminated and a newline will also be added to the
      * receive stream.
      *
-     * @param string $codes  the code stream to send
+     * @param string $codes : the code stream to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1074,7 +1074,7 @@ class YI2cPort extends YFunction
      * At the end of the stream, a stop condition is added if missing
      * and a newline is added to the receive buffer as well.
      *
-     * @param string $codes  the code stream to send
+     * @param string $codes : the code stream to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1097,7 +1097,7 @@ class YI2cPort extends YFunction
      * Sends a single byte to the I2C bus. Depending on the I2C bus state, the byte
      * will be interpreted as an address byte or a data byte.
      *
-     * @param int $code  the byte to send
+     * @param int $code : the byte to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1113,7 +1113,7 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted as an
      * address byte or a data byte.
      *
-     * @param string $hexString  a string of hexadecimal byte codes
+     * @param string $hexString : a string of hexadecimal byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1137,7 +1137,7 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted
      * as an address byte or a data byte.
      *
-     * @param string $buff  the binary buffer to send
+     * @param string $buff : the binary buffer to send
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1166,7 +1166,7 @@ class YI2cPort extends YFunction
      * Depending on the I2C bus state, the first byte will be interpreted as an
      * address byte or a data byte.
      *
-     * @param Integer[] $byteList  a list of byte codes
+     * @param Integer[] $byteList : a list of byte codes
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -1196,7 +1196,7 @@ class YI2cPort extends YFunction
      * If no message is found, the search waits for one up to the specified maximum timeout
      * (in milliseconds).
      *
-     * @param int $maxWait  the maximum number of milliseconds to wait for a message if none is found
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
      *
      * @return YI2cSnoopingRecord[]  an array of YI2cSnoopingRecord objects containing the messages found, if any.

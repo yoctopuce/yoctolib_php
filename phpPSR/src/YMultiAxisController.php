@@ -76,7 +76,7 @@ class YMultiAxisController extends YFunction
     /**
      * Changes the number of synchronized controllers.
      *
-     * @param int $newval  an integer corresponding to the number of synchronized controllers
+     * @param int $newval : an integer corresponding to the number of synchronized controllers
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -151,7 +151,7 @@ class YMultiAxisController extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the multi-axis controller, for instance
+     * @param string $func : a string that uniquely characterizes the multi-axis controller, for instance
      *         MyDevice.multiAxisController.
      *
      * @return YMultiAxisController  a YMultiAxisController object allowing you to drive the multi-axis controller.
@@ -198,7 +198,7 @@ class YMultiAxisController extends YFunction
     /**
      * Starts all motors backward at the specified speeds, to search for the motor home position.
      *
-     * @param float[] $speed  desired speed for all axis, in steps per second.
+     * @param float[] $speed : desired speed for all axis, in steps per second.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -224,7 +224,7 @@ class YMultiAxisController extends YFunction
      * acceleration and max speed parameters configured for all motors.
      * The final position will be reached on all axis at the same time.
      *
-     * @param float[] $absPos  absolute position, measured in steps from each origin.
+     * @param float[] $absPos : absolute position, measured in steps from each origin.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -250,7 +250,7 @@ class YMultiAxisController extends YFunction
      * acceleration and max speed parameters configured for all motors.
      * The final position will be reached on all axis at the same time.
      *
-     * @param float[] $relPos  relative position, measured in steps from the current position.
+     * @param float[] $relPos : relative position, measured in steps from the current position.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
@@ -273,7 +273,7 @@ class YMultiAxisController extends YFunction
     /**
      * Keep the motor in the same state for the specified amount of time, before processing next command.
      *
-     * @param int $waitMs  wait time, specified in milliseconds.
+     * @param int $waitMs : wait time, specified in milliseconds.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.

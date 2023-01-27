@@ -60,7 +60,7 @@ class YLightSensor extends YSensor
      * Changes the sensor-specific calibration parameter so that the current value
      * matches a desired target (linear scaling).
      *
-     * @param float $calibratedVal  the desired target value.
+     * @param float $calibratedVal : the desired target value.
      *
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
@@ -69,7 +69,7 @@ class YLightSensor extends YSensor
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public function calibrate(float $calibratedVal)
+    public function calibrate(float $calibratedVal): int
     {
         $rest_val = strval(round($calibratedVal * 65536.0));
         return $this->_setAttr("currentValue",$rest_val);
@@ -104,7 +104,7 @@ class YLightSensor extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YLightSensor::MEASURETYPE_HUMAN_EYE,
+     * @param int $newval : a value among YLightSensor::MEASURETYPE_HUMAN_EYE,
      * YLightSensor::MEASURETYPE_WIDE_SPECTRUM, YLightSensor::MEASURETYPE_INFRARED,
      * YLightSensor::MEASURETYPE_HIGH_RATE, YLightSensor::MEASURETYPE_HIGH_ENERGY and
      * YLightSensor::MEASURETYPE_HIGH_RESOLUTION corresponding to the light sensor type used in the device
@@ -142,7 +142,7 @@ class YLightSensor extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the light sensor, for instance
+     * @param string $func : a string that uniquely characterizes the light sensor, for instance
      *         LIGHTMK4.lightSensor.
      *
      * @return YLightSensor  a YLightSensor object allowing you to drive the light sensor.

@@ -2,8 +2,8 @@
 
 // this example is not a web page, it is meant to be started in php command line mode.
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-include("../../Sources/yocto_api.php");
-include("../../Sources/yocto_anbutton.php");
+include("../../php8/yocto_api.php");
+include("../../php8/yocto_anbutton.php");
 
 function valueChangeCallBack($obj_fct, $str_value)
 {

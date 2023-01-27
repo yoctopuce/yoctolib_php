@@ -1,4 +1,3 @@
-PHP v1.10.52094
+PHP v1.10.52948
 
-- Improve HTTP Callback to support VirtualHub-4web
-- Fix caching issue with beacon state
+- New updated PHP lib with type definition

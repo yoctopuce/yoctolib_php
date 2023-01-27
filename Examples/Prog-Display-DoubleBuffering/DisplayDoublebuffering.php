@@ -6,8 +6,8 @@
 <BODY>
 <FORM method='get'>
 <?php
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_display.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_display.php');
 
   function recursiveLine($layer,$x0,$y0,$x1,$y1,$deep)
      { if ($deep<=0)

@@ -80,7 +80,7 @@ class YLed extends YFunction
     /**
      * Changes the state of the LED.
      *
-     * @param int $newval  either YLed::POWER_OFF or YLed::POWER_ON, according to the state of the LED
+     * @param int $newval : either YLed::POWER_OFF or YLed::POWER_ON, according to the state of the LED
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -115,7 +115,7 @@ class YLed extends YFunction
      * Changes the current LED intensity (in per cent). Remember to call the
      * saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the current LED intensity (in per cent)
+     * @param int $newval : an integer corresponding to the current LED intensity (in per cent)
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -150,7 +150,7 @@ class YLed extends YFunction
     /**
      * Changes the current LED signaling mode.
      *
-     * @param int $newval  a value among YLed::BLINKING_STILL, YLed::BLINKING_RELAX, YLed::BLINKING_AWARE,
+     * @param int $newval : a value among YLed::BLINKING_STILL, YLed::BLINKING_RELAX, YLed::BLINKING_AWARE,
      * YLed::BLINKING_RUN, YLed::BLINKING_CALL and YLed::BLINKING_PANIC corresponding to the current LED signaling mode
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -186,7 +186,7 @@ class YLed extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the monochrome LED, for instance
+     * @param string $func : a string that uniquely characterizes the monochrome LED, for instance
      *         YBUZZER2.led1.
      *
      * @return YLed  a YLed object allowing you to drive the monochrome LED.

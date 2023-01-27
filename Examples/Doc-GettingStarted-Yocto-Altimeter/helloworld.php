@@ -4,10 +4,10 @@
 </HEAD>
 <BODY>
 <?php
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_altitude.php');
-  include('../../Sources/yocto_pressure.php');
-  include('../../Sources/yocto_temperature.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_altitude.php');
+  include('../../php8/yocto_pressure.php');
+  include('../../php8/yocto_temperature.php');
 
   // Use explicit error handling rather than exceptions
   YAPI::DisableExceptions();

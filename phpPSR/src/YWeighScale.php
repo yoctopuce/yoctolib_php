@@ -85,7 +85,7 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param string $newval  a string corresponding to the measuring unit for the weight
+     * @param string $newval : a string corresponding to the measuring unit for the weight
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -122,7 +122,7 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param int $newval  a value among YWeighScale::EXCITATION_OFF, YWeighScale::EXCITATION_DC and
+     * @param int $newval : a value among YWeighScale::EXCITATION_OFF, YWeighScale::EXCITATION_DC and
      * YWeighScale::EXCITATION_AC corresponding to the current load cell bridge excitation method
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -144,7 +144,7 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the averaged temperature update
+     * @param float $newval : a floating point number corresponding to the averaged temperature update
      * rate, in per mille
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -188,7 +188,7 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the temperature change update rate, in per mille
+     * @param float $newval : a floating point number corresponding to the temperature change update rate, in per mille
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -288,7 +288,7 @@ class YWeighScale extends YSensor
      * Remember to call the saveToFlash() method of the module if the
      * modification must be kept.
      *
-     * @param float $newval  a floating point number corresponding to the zero tracking threshold value
+     * @param float $newval : a floating point number corresponding to the zero tracking threshold value
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -362,7 +362,7 @@ class YWeighScale extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the weighing scale sensor, for instance
+     * @param string $func : a string that uniquely characterizes the weighing scale sensor, for instance
      *         YWBRIDG1.weighScale1.
      *
      * @return YWeighScale  a YWeighScale object allowing you to drive the weighing scale sensor.
@@ -396,8 +396,8 @@ class YWeighScale extends YSensor
      * Configures the load cell span parameters (stored in the corresponding genericSensor)
      * so that the current signal corresponds to the specified reference weight.
      *
-     * @param float $currWeight  reference weight presently on the load cell.
-     * @param float $maxWeight  maximum weight to be expected on the load cell.
+     * @param float $currWeight : reference weight presently on the load cell.
+     * @param float $maxWeight : maximum weight to be expected on the load cell.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -488,9 +488,9 @@ class YWeighScale extends YSensor
      * measured weight based on the averaged compensation temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, corresponding to all averaged
+     * @param float[] $tempValues : array of floating point numbers, corresponding to all averaged
      *         temperatures for which an offset correction is specified.
-     * @param float[] $compValues  array of floating point numbers, corresponding to the offset correction
+     * @param float[] $compValues : array of floating point numbers, corresponding to the offset correction
      *         to apply for each of the temperature included in the first
      *         argument, index by index.
      *
@@ -508,9 +508,9 @@ class YWeighScale extends YSensor
      * set_offsetAvgCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, that is filled by the function
+     * @param float[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all averaged temperatures for which an offset correction is specified.
-     * @param float[] $compValues  array of floating point numbers, that is filled by the function
+     * @param float[] $compValues : array of floating point numbers, that is filled by the function
      *         with the offset correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
@@ -528,9 +528,9 @@ class YWeighScale extends YSensor
      * measured weight based on the variation of temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, corresponding to temperature
+     * @param float[] $tempValues : array of floating point numbers, corresponding to temperature
      *         variations for which an offset correction is specified.
-     * @param float[] $compValues  array of floating point numbers, corresponding to the offset correction
+     * @param float[] $compValues : array of floating point numbers, corresponding to the offset correction
      *         to apply for each of the temperature variation included in the first
      *         argument, index by index.
      *
@@ -548,9 +548,9 @@ class YWeighScale extends YSensor
      * set_offsetChgCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, that is filled by the function
+     * @param float[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all temperature variations for which an offset correction is specified.
-     * @param float[] $compValues  array of floating point numbers, that is filled by the function
+     * @param float[] $compValues : array of floating point numbers, that is filled by the function
      *         with the offset correction applied for each of the temperature
      *         variation included in the first argument, index by index.
      *
@@ -568,9 +568,9 @@ class YWeighScale extends YSensor
      * measured weight based on the compensation temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, corresponding to all averaged
+     * @param float[] $tempValues : array of floating point numbers, corresponding to all averaged
      *         temperatures for which a span correction is specified.
-     * @param float[] $compValues  array of floating point numbers, corresponding to the span correction
+     * @param float[] $compValues : array of floating point numbers, corresponding to the span correction
      *         (in percents) to apply for each of the temperature included in the first
      *         argument, index by index.
      *
@@ -588,9 +588,9 @@ class YWeighScale extends YSensor
      * set_spanAvgCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, that is filled by the function
+     * @param float[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all averaged temperatures for which an span correction is specified.
-     * @param float[] $compValues  array of floating point numbers, that is filled by the function
+     * @param float[] $compValues : array of floating point numbers, that is filled by the function
      *         with the span correction applied for each of the temperature
      *         included in the first argument, index by index.
      *
@@ -608,9 +608,9 @@ class YWeighScale extends YSensor
      * measured weight based on the variation of temperature.
      * The weight correction will be applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, corresponding to all variations of
+     * @param float[] $tempValues : array of floating point numbers, corresponding to all variations of
      *         temperatures for which a span correction is specified.
-     * @param float[] $compValues  array of floating point numbers, corresponding to the span correction
+     * @param float[] $compValues : array of floating point numbers, corresponding to the span correction
      *         (in percents) to apply for each of the temperature variation included
      *         in the first argument, index by index.
      *
@@ -628,9 +628,9 @@ class YWeighScale extends YSensor
      * set_spanChgCompensationTable function.
      * The weight correction is applied by linear interpolation between specified points.
      *
-     * @param float[] $tempValues  array of floating point numbers, that is filled by the function
+     * @param float[] $tempValues : array of floating point numbers, that is filled by the function
      *         with all variation of temperature for which an span correction is specified.
-     * @param float[] $compValues  array of floating point numbers, that is filled by the function
+     * @param float[] $compValues : array of floating point numbers, that is filled by the function
      *         with the span correction applied for each of variation of temperature
      *         included in the first argument, index by index.
      *

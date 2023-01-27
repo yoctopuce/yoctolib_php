@@ -97,7 +97,7 @@ class YGyro extends YSensor
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.
      *
-     * @param int $newval  an integer corresponding to the measure update frequency, measured in Hz
+     * @param int $newval : an integer corresponding to the measure update frequency, measured in Hz
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -192,7 +192,7 @@ class YGyro extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the gyroscope, for instance
+     * @param string $func : a string that uniquely characterizes the gyroscope, for instance
      *         Y3DMK002.gyro.
      *
      * @return YGyro  a YGyro object allowing you to drive the gyroscope.
@@ -406,7 +406,7 @@ class YGyro extends YSensor
      * For good responsiveness, remember to call one of these two functions periodically.
      * To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to invoke, or a null pointer.
+     * @param callable $callback : the callback function to invoke, or a null pointer.
      *         The callback function should take five arguments:
      *         the YGyro object of the turning device, and the floating
      *         point values of the four components w, x, y and z
@@ -447,7 +447,7 @@ class YGyro extends YSensor
      * For good responsiveness, remember to call one of these two functions periodically.
      * To unregister a callback, pass a null pointer as argument.
      *
-     * @param function $callback  the callback function to invoke, or a null pointer.
+     * @param callable $callback : the callback function to invoke, or a null pointer.
      *         The callback function should take four arguments:
      *         the YGyro object of the turning device, and the floating
      *         point values of the three angles roll, pitch and heading

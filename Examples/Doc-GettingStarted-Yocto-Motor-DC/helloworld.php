@@ -6,11 +6,11 @@
 <FORM method='get'>
 <?php
 
-  include('../../Sources/yocto_api.php');
-  include('../../Sources/yocto_motor.php');
-  include('../../Sources/yocto_current.php');
-  include('../../Sources/yocto_voltage.php');
-  include('../../Sources/yocto_temperature.php');
+  include('../../php8/yocto_api.php');
+  include('../../php8/yocto_motor.php');
+  include('../../php8/yocto_current.php');
+  include('../../php8/yocto_voltage.php');
+  include('../../php8/yocto_temperature.php');
 
   // Use explicit error handling rather than exceptions
   YAPI::DisableExceptions();

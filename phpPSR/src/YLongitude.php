@@ -50,7 +50,7 @@ class YLongitude extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the longitude sensor, for instance
+     * @param string $func : a string that uniquely characterizes the longitude sensor, for instance
      *         YGNSSMK2.longitude.
      *
      * @return YLongitude  a YLongitude object allowing you to drive the longitude sensor.

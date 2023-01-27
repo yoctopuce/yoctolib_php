@@ -106,7 +106,7 @@ class YPowerSupply extends YFunction
     /**
      * Changes the voltage set point, in V.
      *
-     * @param float $newval  a floating point number corresponding to the voltage set point, in V
+     * @param float $newval : a floating point number corresponding to the voltage set point, in V
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -140,7 +140,7 @@ class YPowerSupply extends YFunction
     /**
      * Changes the current limit, in mA.
      *
-     * @param float $newval  a floating point number corresponding to the current limit, in mA
+     * @param float $newval : a floating point number corresponding to the current limit, in mA
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -194,7 +194,7 @@ class YPowerSupply extends YFunction
     /**
      * Changes the power supply output switch state.
      *
-     * @param int $newval  either YPowerSupply::POWEROUTPUT_OFF or YPowerSupply::POWEROUTPUT_ON, according
+     * @param int $newval : either YPowerSupply::POWEROUTPUT_OFF or YPowerSupply::POWEROUTPUT_ON, according
      * to the power supply output switch state
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -230,7 +230,7 @@ class YPowerSupply extends YFunction
     /**
      * Changes the voltage control point.
      *
-     * @param int $newval  either YPowerSupply::VOLTAGESENSE_INT or YPowerSupply::VOLTAGESENSE_EXT,
+     * @param int $newval : either YPowerSupply::VOLTAGESENSE_INT or YPowerSupply::VOLTAGESENSE_EXT,
      * according to the voltage control point
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
@@ -360,7 +360,7 @@ class YPowerSupply extends YFunction
      * Changes the voltage set point at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param float $newval  a floating point number corresponding to the voltage set point at device start up
+     * @param float $newval : a floating point number corresponding to the voltage set point at device start up
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -395,7 +395,7 @@ class YPowerSupply extends YFunction
      * Changes the current limit at device start up. Remember to call the matching
      * module saveToFlash() method, otherwise this call has no effect.
      *
-     * @param float $newval  a floating point number corresponding to the current limit at device start up
+     * @param float $newval : a floating point number corresponding to the current limit at device start up
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -467,7 +467,7 @@ class YPowerSupply extends YFunction
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the regulated power supply, for instance
+     * @param string $func : a string that uniquely characterizes the regulated power supply, for instance
      *         MyDevice.powerSupply.
      *
      * @return YPowerSupply  a YPowerSupply object allowing you to drive the regulated power supply.
@@ -487,9 +487,9 @@ class YPowerSupply extends YFunction
      * Performs a smooth transition of output voltage. Any explicit voltage
      * change cancels any ongoing transition process.
      *
-     * @param V_target   : new output voltage value at the end of the transition
+     * @param float $V_target   : new output voltage value at the end of the transition
      *         (floating-point number, representing the end voltage in V)
-     * @param int $ms_duration  total duration of the transition, in milliseconds
+     * @param int $ms_duration : total duration of the transition, in milliseconds
      *
      * @return int  YAPI::SUCCESS when the call succeeds.
      */

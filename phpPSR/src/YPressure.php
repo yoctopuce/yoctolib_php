@@ -51,7 +51,7 @@ class YPressure extends YSensor
      * you are certain that the matching device is plugged, make sure that you did
      * call registerHub() at application initialization time.
      *
-     * @param string $func  a string that uniquely characterizes the pressure sensor, for instance
+     * @param string $func : a string that uniquely characterizes the pressure sensor, for instance
      *         YALTIMK2.pressure.
      *
      * @return YPressure  a YPressure object allowing you to drive the pressure sensor.
