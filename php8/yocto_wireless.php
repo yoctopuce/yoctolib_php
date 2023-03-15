@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 52899 2023-01-25 11:45:44Z seb $
+ * $Id: yocto_wireless.php 52998 2023-01-31 10:49:23Z seb $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *
@@ -229,7 +229,7 @@ class YWireless extends YFunction
 
     //--- (generated code: YWireless implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'linkQuality':
@@ -263,6 +263,7 @@ class YWireless extends YFunction
      * @return int  an integer corresponding to the link quality, expressed in percent
      *
      * On failure, throws an exception or returns YWireless::LINKQUALITY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_linkQuality(): int
     {
@@ -282,6 +283,7 @@ class YWireless extends YFunction
      * @return string  a string corresponding to the wireless network name (SSID)
      *
      * On failure, throws an exception or returns YWireless::SSID_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_ssid(): string
     {
@@ -302,6 +304,7 @@ class YWireless extends YFunction
      * network has not been found
      *
      * On failure, throws an exception or returns YWireless::CHANNEL_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_channel(): int
     {
@@ -323,6 +326,7 @@ class YWireless extends YFunction
      * security algorithm used by the selected wireless network
      *
      * On failure, throws an exception or returns YWireless::SECURITY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_security(): int
     {
@@ -342,6 +346,7 @@ class YWireless extends YFunction
      * @return string  a string corresponding to the latest status message from the wireless interface
      *
      * On failure, throws an exception or returns YWireless::MESSAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_message(): string
     {
@@ -355,6 +360,9 @@ class YWireless extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_wlanConfig(): string
     {
         // $res                    is a string;
@@ -367,6 +375,9 @@ class YWireless extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_wlanConfig(string $newval): int
     {
         $rest_val = $newval;
@@ -394,6 +405,7 @@ class YWireless extends YFunction
      * of the wireless interface
      *
      * On failure, throws an exception or returns YWireless::WLANSTATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_wlanState(): int
     {
@@ -435,7 +447,7 @@ class YWireless extends YFunction
      *
      * @return YWireless  a YWireless object allowing you to drive the wireless LAN interface.
      */
-    public static function FindWireless(string $func): ?YWireless
+    public static function FindWireless(string $func): YWireless
     {
         // $obj                    is a YWireless;
         $obj = YFunction::_FindFromCache('Wireless', $func);
@@ -455,6 +467,7 @@ class YWireless extends YFunction
      * point, the list of detected network can be retrieved with the get_detectedWlans() method.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function startWlanScan(): int
     {
@@ -475,6 +488,7 @@ class YWireless extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function joinNetwork(string $ssid, string $securityKey): int
     {
@@ -501,6 +515,7 @@ class YWireless extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function adhocNetwork(string $ssid, string $securityKey): int
     {
@@ -528,6 +543,7 @@ class YWireless extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function softAPNetwork(string $ssid, string $securityKey): int
     {
@@ -544,6 +560,7 @@ class YWireless extends YFunction
      *         link quality and the type of security of the wireless network.
      *
      * On failure, throws an exception or returns an empty list.
+     * @throws YAPI_Exception on error
      */
     public function get_detectedWlans(): array
     {
@@ -562,41 +579,65 @@ class YWireless extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function linkQuality(): int
 {
     return $this->get_linkQuality();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function ssid(): string
 {
     return $this->get_ssid();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function channel(): int
 {
     return $this->get_channel();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function security(): int
 {
     return $this->get_security();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function message(): string
 {
     return $this->get_message();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function wlanConfig(): string
 {
     return $this->get_wlanConfig();
 }
 
-    public function setWlanConfig(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setWlanConfig(string $newval): int
 {
     return $this->set_wlanConfig($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function wlanState(): int
 {
     return $this->get_wlanState();
@@ -608,7 +649,7 @@ class YWireless extends YFunction
      * If you want to find a specific a wireless LAN interface, use Wireless.findWireless()
      * and a hardwareID or a logical name.
      *
-     * @return YWireless  a pointer to a YWireless object, corresponding to
+     * @return ?YWireless  a pointer to a YWireless object, corresponding to
      *         a wireless LAN interface currently online, or a null pointer
      *         if there are no more wireless LAN interfaces to enumerate.
      */
@@ -630,11 +671,11 @@ class YWireless extends YFunction
      * Use the method YWireless::nextWireless() to iterate on
      * next wireless LAN interfaces.
      *
-     * @return YWireless  a pointer to a YWireless object, corresponding to
+     * @return ?YWireless  a pointer to a YWireless object, corresponding to
      *         the first wireless LAN interface currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstWireless()
+    public static function FirstWireless(): ?YWireless
     {
         $next_hwid = YAPI::getFirstHardwareId('Wireless');
         if ($next_hwid == null) {
@@ -686,7 +727,7 @@ function yFindWireless(string $func): YWireless
  * Use the method YWireless::nextWireless() to iterate on
  * next wireless LAN interfaces.
  *
- * @return YWireless  a pointer to a YWireless object, corresponding to
+ * @return ?YWireless  a pointer to a YWireless object, corresponding to
  *         the first wireless LAN interface currently online, or a null pointer
  *         if there are none.
  */
@@ -696,4 +737,3 @@ function yFirstWireless(): ?YWireless
 }
 
 //--- (end of generated code: YWireless functions)
-?>

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_arithmeticsensor.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_arithmeticsensor.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YArithmeticSensor, the high-level API for ArithmeticSensor functions
  *
@@ -76,7 +76,7 @@ class YArithmeticSensor extends YSensor
 
     //--- (end of YArithmeticSensor attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YArithmeticSensor constructor)
         parent::__construct($str_func);
@@ -87,7 +87,7 @@ class YArithmeticSensor extends YSensor
 
     //--- (YArithmeticSensor implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'description':
@@ -110,6 +110,7 @@ class YArithmeticSensor extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_unit(string $newval): int
     {
@@ -123,6 +124,7 @@ class YArithmeticSensor extends YSensor
      * @return string  a string corresponding to a short informative description of the formula
      *
      * On failure, throws an exception or returns YArithmeticSensor::DESCRIPTION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_description(): string
     {
@@ -136,6 +138,9 @@ class YArithmeticSensor extends YSensor
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -148,6 +153,9 @@ class YArithmeticSensor extends YSensor
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -182,7 +190,7 @@ class YArithmeticSensor extends YSensor
      *
      * @return YArithmeticSensor  a YArithmeticSensor object allowing you to drive the arithmetic sensor.
      */
-    public static function FindArithmeticSensor(string $func): ?YArithmeticSensor
+    public static function FindArithmeticSensor(string $func): YArithmeticSensor
     {
         // $obj                    is a YArithmeticSensor;
         $obj = YFunction::_FindFromCache('ArithmeticSensor', $func);
@@ -204,6 +212,7 @@ class YArithmeticSensor extends YSensor
      * @return float  the current expression value if the call succeeds.
      *
      * On failure, throws an exception or returns YAPI::INVALID_DOUBLE.
+     * @throws YAPI_Exception on error
      */
     public function defineExpression(string $expr, string $descr): float
     {
@@ -232,6 +241,7 @@ class YArithmeticSensor extends YSensor
      * @return string  a string containing the mathematical expression.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadExpression(): string
     {
@@ -267,6 +277,7 @@ class YArithmeticSensor extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function defineAuxiliaryFunction(string $name, array $inputValues, array $outputValues): int
     {
@@ -305,6 +316,7 @@ class YArithmeticSensor extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadAuxiliaryFunction(string $name, array &$inputValues, array &$outputValues): int
     {
@@ -326,22 +338,34 @@ class YArithmeticSensor extends YSensor
         return YAPI::SUCCESS;
     }
 
-    public function setUnit(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUnit(string $newval): int
 {
     return $this->set_unit($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function description(): string
 {
     return $this->get_description();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -352,7 +376,7 @@ class YArithmeticSensor extends YSensor
      * If you want to find a specific an arithmetic sensor, use ArithmeticSensor.findArithmeticSensor()
      * and a hardwareID or a logical name.
      *
-     * @return YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
+     * @return ?YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
      *         an arithmetic sensor currently online, or a null pointer
      *         if there are no more arithmetic sensors to enumerate.
      */
@@ -374,11 +398,11 @@ class YArithmeticSensor extends YSensor
      * Use the method YArithmeticSensor::nextArithmeticSensor() to iterate on
      * next arithmetic sensors.
      *
-     * @return YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
+     * @return ?YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
      *         the first arithmetic sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstArithmeticSensor()
+    public static function FirstArithmeticSensor(): ?YArithmeticSensor
     {
         $next_hwid = YAPI::getFirstHardwareId('ArithmeticSensor');
         if ($next_hwid == null) {
@@ -432,7 +456,7 @@ function yFindArithmeticSensor(string $func): YArithmeticSensor
  * Use the method YArithmeticSensor::nextArithmeticSensor() to iterate on
  * next arithmetic sensors.
  *
- * @return YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
+ * @return ?YArithmeticSensor  a pointer to a YArithmeticSensor object, corresponding to
  *         the first arithmetic sensor currently online, or a null pointer
  *         if there are none.
  */

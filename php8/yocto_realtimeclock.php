@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_realtimeclock.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -108,7 +108,7 @@ class YRealTimeClock extends YFunction
 
     //--- (end of YRealTimeClock attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YRealTimeClock constructor)
         parent::__construct($str_func);
@@ -119,7 +119,7 @@ class YRealTimeClock extends YFunction
 
     //--- (YRealTimeClock implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'unixTime':
@@ -148,6 +148,7 @@ class YRealTimeClock extends YFunction
      * seconds since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns YRealTimeClock::UNIXTIME_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_unixTime(): float
     {
@@ -169,6 +170,7 @@ class YRealTimeClock extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_unixTime(float $newval): int
     {
@@ -182,6 +184,7 @@ class YRealTimeClock extends YFunction
      * @return string  a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
      * On failure, throws an exception or returns YRealTimeClock::DATETIME_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_dateTime(): string
     {
@@ -201,6 +204,7 @@ class YRealTimeClock extends YFunction
      * @return int  an integer corresponding to the number of seconds between current time and UTC time (time zone)
      *
      * On failure, throws an exception or returns YRealTimeClock::UTCOFFSET_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_utcOffset(): int
     {
@@ -226,6 +230,7 @@ class YRealTimeClock extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_utcOffset(int $newval): int
     {
@@ -240,6 +245,7 @@ class YRealTimeClock extends YFunction
      * if the clock has been set, and false otherwise
      *
      * On failure, throws an exception or returns YRealTimeClock::TIMESET_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_timeSet(): int
     {
@@ -262,6 +268,7 @@ class YRealTimeClock extends YFunction
      *         and false otherwise
      *
      * On failure, throws an exception or returns YRealTimeClock::DISABLEHOSTSYNC_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_disableHostSync(): int
     {
@@ -286,6 +293,7 @@ class YRealTimeClock extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_disableHostSync(int $newval): int
     {
@@ -321,7 +329,7 @@ class YRealTimeClock extends YFunction
      *
      * @return YRealTimeClock  a YRealTimeClock object allowing you to drive the real-time clock.
      */
-    public static function FindRealTimeClock(string $func): ?YRealTimeClock
+    public static function FindRealTimeClock(string $func): YRealTimeClock
     {
         // $obj                    is a YRealTimeClock;
         $obj = YFunction::_FindFromCache('RealTimeClock', $func);
@@ -332,42 +340,66 @@ class YRealTimeClock extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function unixTime(): float
 {
     return $this->get_unixTime();
 }
 
-    public function setUnixTime(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUnixTime(float $newval): int
 {
     return $this->set_unixTime($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function dateTime(): string
 {
     return $this->get_dateTime();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function utcOffset(): int
 {
     return $this->get_utcOffset();
 }
 
-    public function setUtcOffset(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUtcOffset(int $newval): int
 {
     return $this->set_utcOffset($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function timeSet(): int
 {
     return $this->get_timeSet();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function disableHostSync(): int
 {
     return $this->get_disableHostSync();
 }
 
-    public function setDisableHostSync(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDisableHostSync(int $newval): int
 {
     return $this->set_disableHostSync($newval);
 }
@@ -378,7 +410,7 @@ class YRealTimeClock extends YFunction
      * If you want to find a specific a real-time clock, use RealTimeClock.findRealTimeClock()
      * and a hardwareID or a logical name.
      *
-     * @return YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
+     * @return ?YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
      *         a real-time clock currently online, or a null pointer
      *         if there are no more real-time clocks to enumerate.
      */
@@ -400,11 +432,11 @@ class YRealTimeClock extends YFunction
      * Use the method YRealTimeClock::nextRealTimeClock() to iterate on
      * next real-time clocks.
      *
-     * @return YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
+     * @return ?YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
      *         the first real-time clock currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstRealTimeClock()
+    public static function FirstRealTimeClock(): ?YRealTimeClock
     {
         $next_hwid = YAPI::getFirstHardwareId('RealTimeClock');
         if ($next_hwid == null) {
@@ -458,7 +490,7 @@ function yFindRealTimeClock(string $func): YRealTimeClock
  * Use the method YRealTimeClock::nextRealTimeClock() to iterate on
  * next real-time clocks.
  *
- * @return YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
+ * @return ?YRealTimeClock  a pointer to a YRealTimeClock object, corresponding to
  *         the first real-time clock currently online, or a null pointer
  *         if there are none.
  */

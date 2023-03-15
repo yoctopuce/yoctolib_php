@@ -41,20 +41,22 @@ function deviceArrival($module)
         if (strpos($hardwareId, ".anButton") !== false) {
             Print("- {$hardwareId}\n");
             $button = YAnButton::FindAnButton($hardwareId);
-            $button->set_userData(Array('name' => $hardwareId, 'unit' => ''));
-            $button->registerValueCallback('valueChangeCallBack');
+            //$button->set_userData(Array('name' => $hardwareId, 'unit' => ''));
+            //$button->registerValueCallback('valueChangeCallBack');
         }
     }
 
     // Alternate solution: register any kind of sensor on the device
     $sensor = YSensor::FirstSensor();
     while ($sensor) {
+        $se= $sensor->get_hardwareId();
+        //print("enum:$se\n");
         if ($sensor->get_module()->get_serialNumber() == $serial) {
             $hardwareId = $sensor->get_hardwareId();
-            Print("- {$hardwareId}\n");
-            $sensor->set_userData(Array('name' => $hardwareId, 'unit' => $sensor->get_unit()));
-            $sensor->registerValueCallback('valueChangeCallBack');
-            $sensor->registerTimedReportCallback('timedReportCallBack');
+            //Print("- {$hardwareId}\n");
+            //$sensor->set_userData(Array('name' => $hardwareId, 'unit' => $sensor->get_unit()));
+            //$sensor->registerValueCallback('valueChangeCallBack');
+            //$sensor->registerTimedReportCallback('timedReportCallBack');
         }
         $sensor = $sensor->nextSensor();
     }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 52931 2023-01-26 09:31:41Z seb $
+ *  $Id: yocto_network.php 53420 2023-03-06 10:38:51Z mvuilleu $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -121,6 +121,15 @@ if (!defined('Y_CALLBACKENCODING_INFLUXDB_V2')) {
 }
 if (!defined('Y_CALLBACKENCODING_INVALID')) {
     define('Y_CALLBACKENCODING_INVALID', -1);
+}
+if (!defined('Y_CALLBACKTEMPLATE_OFF')) {
+    define('Y_CALLBACKTEMPLATE_OFF', 0);
+}
+if (!defined('Y_CALLBACKTEMPLATE_ON')) {
+    define('Y_CALLBACKTEMPLATE_ON', 1);
+}
+if (!defined('Y_CALLBACKTEMPLATE_INVALID')) {
+    define('Y_CALLBACKTEMPLATE_INVALID', -1);
 }
 if (!defined('Y_MACADDRESS_INVALID')) {
     define('Y_MACADDRESS_INVALID', YAPI_INVALID_STRING);
@@ -244,6 +253,9 @@ class YNetwork extends YFunction
     const CALLBACKENCODING_PRTG = 11;
     const CALLBACKENCODING_INFLUXDB_V2 = 12;
     const CALLBACKENCODING_INVALID = -1;
+    const CALLBACKTEMPLATE_OFF = 0;
+    const CALLBACKTEMPLATE_ON = 1;
+    const CALLBACKTEMPLATE_INVALID = -1;
     const CALLBACKCREDENTIALS_INVALID = YAPI::INVALID_STRING;
     const CALLBACKINITIALDELAY_INVALID = YAPI::INVALID_UINT;
     const CALLBACKSCHEDULE_INVALID = YAPI::INVALID_STRING;
@@ -272,6 +284,7 @@ class YNetwork extends YFunction
     protected string $_callbackUrl = self::CALLBACKURL_INVALID;    // Text
     protected int $_callbackMethod = self::CALLBACKMETHOD_INVALID; // HTTPMethod
     protected int $_callbackEncoding = self::CALLBACKENCODING_INVALID; // CallbackEncoding
+    protected int $_callbackTemplate = self::CALLBACKTEMPLATE_INVALID; // OnOff
     protected string $_callbackCredentials = self::CALLBACKCREDENTIALS_INVALID; // Credentials
     protected int $_callbackInitialDelay = self::CALLBACKINITIALDELAY_INVALID; // UInt31
     protected string $_callbackSchedule = self::CALLBACKSCHEDULE_INVALID; // CallbackSchedule
@@ -281,7 +294,7 @@ class YNetwork extends YFunction
 
     //--- (end of YNetwork attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YNetwork constructor)
         parent::__construct($str_func);
@@ -292,7 +305,7 @@ class YNetwork extends YFunction
 
     //--- (YNetwork implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'readiness':
@@ -352,6 +365,9 @@ class YNetwork extends YFunction
         case 'callbackEncoding':
             $this->_callbackEncoding = intval($val);
             return 1;
+        case 'callbackTemplate':
+            $this->_callbackTemplate = intval($val);
+            return 1;
         case 'callbackCredentials':
             $this->_callbackCredentials = $val;
             return 1;
@@ -395,6 +411,7 @@ class YNetwork extends YFunction
      * the current established working mode of the network interface
      *
      * On failure, throws an exception or returns YNetwork::READINESS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_readiness(): int
     {
@@ -415,6 +432,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the MAC address of the network interface
      *
      * On failure, throws an exception or returns YNetwork::MACADDRESS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_macAddress(): string
     {
@@ -435,6 +453,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address currently in use by the device
      *
      * On failure, throws an exception or returns YNetwork::IPADDRESS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_ipAddress(): string
     {
@@ -454,6 +473,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the subnet mask currently used by the device
      *
      * On failure, throws an exception or returns YNetwork::SUBNETMASK_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_subnetMask(): string
     {
@@ -473,6 +493,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address of the router on the device subnet (default gateway)
      *
      * On failure, throws an exception or returns YNetwork::ROUTER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_router(): string
     {
@@ -492,6 +513,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address of the DNS server currently used by the device
      *
      * On failure, throws an exception or returns YNetwork::CURRENTDNS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_currentDNS(): string
     {
@@ -523,6 +545,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP configuration of the network interface
      *
      * On failure, throws an exception or returns YNetwork::IPCONFIG_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_ipConfig(): string
     {
@@ -536,6 +559,9 @@ class YNetwork extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_ipConfig(string $newval): int
     {
         $rest_val = $newval;
@@ -548,6 +574,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address of the primary name server to be used by the module
      *
      * On failure, throws an exception or returns YNetwork::PRIMARYDNS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_primaryDNS(): string
     {
@@ -572,6 +599,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_primaryDNS(string $newval): int
     {
@@ -585,6 +613,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address of the secondary name server to be used by the module
      *
      * On failure, throws an exception or returns YNetwork::SECONDARYDNS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_secondaryDNS(): string
     {
@@ -609,6 +638,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_secondaryDNS(string $newval): int
     {
@@ -622,6 +652,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the IP address of the NTP server to be used by the device
      *
      * On failure, throws an exception or returns YNetwork::NTPSERVER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_ntpServer(): string
     {
@@ -645,6 +676,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_ntpServer(string $newval): int
     {
@@ -660,6 +692,7 @@ class YNetwork extends YFunction
      *         or an empty string otherwise
      *
      * On failure, throws an exception or returns YNetwork::USERPASSWORD_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_userPassword(): string
     {
@@ -685,6 +718,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_userPassword(string $newval): int
     {
@@ -703,6 +737,7 @@ class YNetwork extends YFunction
      *         or an empty string otherwise
      *
      * On failure, throws an exception or returns YNetwork::ADMINPASSWORD_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_adminPassword(): string
     {
@@ -728,6 +763,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_adminPassword(string $newval): int
     {
@@ -744,6 +780,7 @@ class YNetwork extends YFunction
      * @return int  an integer corresponding to the TCP port used to serve the hub web UI
      *
      * On failure, throws an exception or returns YNetwork::HTTPPORT_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_httpPort(): int
     {
@@ -769,6 +806,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_httpPort(int $newval): int
     {
@@ -782,6 +820,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the HTML page to serve for the URL "/"" of the hub
      *
      * On failure, throws an exception or returns YNetwork::DEFAULTPAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_defaultPage(): string
     {
@@ -807,6 +846,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_defaultPage(string $newval): int
     {
@@ -823,6 +863,7 @@ class YNetwork extends YFunction
      *         discovery of the module in the network neighborhood (uPnP/Bonjour protocol)
      *
      * On failure, throws an exception or returns YNetwork::DISCOVERABLE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_discoverable(): int
     {
@@ -849,6 +890,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_discoverable(int $newval): int
     {
@@ -866,6 +908,7 @@ class YNetwork extends YFunction
      *         reboot to try to recover Internet connectivity
      *
      * On failure, throws an exception or returns YNetwork::WWWWATCHDOGDELAY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_wwwWatchdogDelay(): int
     {
@@ -893,6 +936,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_wwwWatchdogDelay(int $newval): int
     {
@@ -906,6 +950,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the callback URL to notify of significant state changes
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKURL_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackUrl(): string
     {
@@ -928,6 +973,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackUrl(string $newval): int
     {
@@ -943,6 +989,7 @@ class YNetwork extends YFunction
      * significant state changes
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKMETHOD_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackMethod(): int
     {
@@ -968,6 +1015,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackMethod(int $newval): int
     {
@@ -988,6 +1036,7 @@ class YNetwork extends YFunction
      * representing notification values
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKENCODING_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackEncoding(): int
     {
@@ -1018,11 +1067,56 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackEncoding(int $newval): int
     {
         $rest_val = strval($newval);
         return $this->_setAttr("callbackEncoding", $rest_val);
+    }
+
+    /**
+     * Returns the activation state of the custom template file to customize callback
+     * format. If the custom callback template is disabled, it will be ignored even
+     * if present on the YoctoHub.
+     *
+     * @return int  either YNetwork::CALLBACKTEMPLATE_OFF or YNetwork::CALLBACKTEMPLATE_ON, according to the
+     * activation state of the custom template file to customize callback
+     *         format
+     *
+     * On failure, throws an exception or returns YNetwork::CALLBACKTEMPLATE_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_callbackTemplate(): int
+    {
+        // $res                    is a enumONOFF;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::CALLBACKTEMPLATE_INVALID;
+            }
+        }
+        $res = $this->_callbackTemplate;
+        return $res;
+    }
+
+    /**
+     * Enable the use of a template file to customize callbacks format.
+     * When the custom callback template file is enabled, the template file
+     * will be loaded for each callback in order to build the data to post to the
+     * server. If template file does not exist on the YoctoHub, the callback will
+     * fail with an error message indicating the name of the expected template file.
+     *
+     * @param int $newval : either YNetwork::CALLBACKTEMPLATE_OFF or YNetwork::CALLBACKTEMPLATE_ON
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_callbackTemplate(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("callbackTemplate", $rest_val);
     }
 
     /**
@@ -1033,6 +1127,7 @@ class YNetwork extends YFunction
      *         or an empty string otherwise
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKCREDENTIALS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackCredentials(): string
     {
@@ -1062,6 +1157,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackCredentials(string $newval): int
     {
@@ -1081,6 +1177,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function callbackLogin(string $username,string $password): int
     {
@@ -1095,6 +1192,7 @@ class YNetwork extends YFunction
      * notifications, in seconds
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKINITIALDELAY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackInitialDelay(): int
     {
@@ -1118,6 +1216,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackInitialDelay(int $newval): int
     {
@@ -1131,6 +1230,7 @@ class YNetwork extends YFunction
      * @return string  a string corresponding to the HTTP callback schedule strategy, as a text string
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKSCHEDULE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackSchedule(): string
     {
@@ -1154,6 +1254,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackSchedule(string $newval): int
     {
@@ -1167,6 +1268,7 @@ class YNetwork extends YFunction
      * @return int  an integer corresponding to the minimum waiting time between two HTTP callbacks, in seconds
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKMINDELAY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackMinDelay(): int
     {
@@ -1189,6 +1291,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackMinDelay(int $newval): int
     {
@@ -1202,6 +1305,7 @@ class YNetwork extends YFunction
      * @return int  an integer corresponding to the waiting time between two HTTP callbacks when there is nothing new
      *
      * On failure, throws an exception or returns YNetwork::CALLBACKMAXDELAY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_callbackMaxDelay(): int
     {
@@ -1225,6 +1329,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_callbackMaxDelay(int $newval): int
     {
@@ -1241,6 +1346,7 @@ class YNetwork extends YFunction
      * Power-over-Ethernet (PoE), in milliamps
      *
      * On failure, throws an exception or returns YNetwork::POECURRENT_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_poeCurrent(): int
     {
@@ -1282,7 +1388,7 @@ class YNetwork extends YFunction
      *
      * @return YNetwork  a YNetwork object allowing you to drive the network interface.
      */
-    public static function FindNetwork(string $func): ?YNetwork
+    public static function FindNetwork(string $func): YNetwork
     {
         // $obj                    is a YNetwork;
         $obj = YFunction::_FindFromCache('Network', $func);
@@ -1307,6 +1413,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function useDHCP(string $fallbackIpAddr, int $fallbackSubnetMaskLen, string $fallbackRouter): int
     {
@@ -1322,6 +1429,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function useDHCPauto(): int
     {
@@ -1339,6 +1447,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function useStaticIP(string $ipAddress, int $subnetMaskLen, string $router): int
     {
@@ -1371,6 +1480,7 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function triggerCallback(): int
     {
@@ -1389,222 +1499,368 @@ class YNetwork extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_periodicCallbackSchedule(string $interval, int $offset): int
     {
         return $this->set_callbackSchedule(sprintf('every %s+%d',$interval,$offset));
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function readiness(): int
 {
     return $this->get_readiness();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function macAddress(): string
 {
     return $this->get_macAddress();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function ipAddress(): string
 {
     return $this->get_ipAddress();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function subnetMask(): string
 {
     return $this->get_subnetMask();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function router(): string
 {
     return $this->get_router();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function currentDNS(): string
 {
     return $this->get_currentDNS();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function ipConfig(): string
 {
     return $this->get_ipConfig();
 }
 
-    public function setIpConfig(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setIpConfig(string $newval): int
 {
     return $this->set_ipConfig($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function primaryDNS(): string
 {
     return $this->get_primaryDNS();
 }
 
-    public function setPrimaryDNS(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPrimaryDNS(string $newval): int
 {
     return $this->set_primaryDNS($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function secondaryDNS(): string
 {
     return $this->get_secondaryDNS();
 }
 
-    public function setSecondaryDNS(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setSecondaryDNS(string $newval): int
 {
     return $this->set_secondaryDNS($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function ntpServer(): string
 {
     return $this->get_ntpServer();
 }
 
-    public function setNtpServer(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setNtpServer(string $newval): int
 {
     return $this->set_ntpServer($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function userPassword(): string
 {
     return $this->get_userPassword();
 }
 
-    public function setUserPassword(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUserPassword(string $newval): int
 {
     return $this->set_userPassword($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function adminPassword(): string
 {
     return $this->get_adminPassword();
 }
 
-    public function setAdminPassword(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAdminPassword(string $newval): int
 {
     return $this->set_adminPassword($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function httpPort(): int
 {
     return $this->get_httpPort();
 }
 
-    public function setHttpPort(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setHttpPort(int $newval): int
 {
     return $this->set_httpPort($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function defaultPage(): string
 {
     return $this->get_defaultPage();
 }
 
-    public function setDefaultPage(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDefaultPage(string $newval): int
 {
     return $this->set_defaultPage($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function discoverable(): int
 {
     return $this->get_discoverable();
 }
 
-    public function setDiscoverable(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDiscoverable(int $newval): int
 {
     return $this->set_discoverable($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function wwwWatchdogDelay(): int
 {
     return $this->get_wwwWatchdogDelay();
 }
 
-    public function setWwwWatchdogDelay(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setWwwWatchdogDelay(int $newval): int
 {
     return $this->set_wwwWatchdogDelay($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackUrl(): string
 {
     return $this->get_callbackUrl();
 }
 
-    public function setCallbackUrl(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackUrl(string $newval): int
 {
     return $this->set_callbackUrl($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackMethod(): int
 {
     return $this->get_callbackMethod();
 }
 
-    public function setCallbackMethod(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackMethod(int $newval): int
 {
     return $this->set_callbackMethod($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackEncoding(): int
 {
     return $this->get_callbackEncoding();
 }
 
-    public function setCallbackEncoding(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackEncoding(int $newval): int
 {
     return $this->set_callbackEncoding($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
+    public function callbackTemplate(): int
+{
+    return $this->get_callbackTemplate();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackTemplate(int $newval): int
+{
+    return $this->set_callbackTemplate($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackCredentials(): string
 {
     return $this->get_callbackCredentials();
 }
 
-    public function setCallbackCredentials(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackCredentials(string $newval): int
 {
     return $this->set_callbackCredentials($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackInitialDelay(): int
 {
     return $this->get_callbackInitialDelay();
 }
 
-    public function setCallbackInitialDelay(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackInitialDelay(int $newval): int
 {
     return $this->set_callbackInitialDelay($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackSchedule(): string
 {
     return $this->get_callbackSchedule();
 }
 
-    public function setCallbackSchedule(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackSchedule(string $newval): int
 {
     return $this->set_callbackSchedule($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackMinDelay(): int
 {
     return $this->get_callbackMinDelay();
 }
 
-    public function setCallbackMinDelay(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackMinDelay(int $newval): int
 {
     return $this->set_callbackMinDelay($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function callbackMaxDelay(): int
 {
     return $this->get_callbackMaxDelay();
 }
 
-    public function setCallbackMaxDelay(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCallbackMaxDelay(int $newval): int
 {
     return $this->set_callbackMaxDelay($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function poeCurrent(): int
 {
     return $this->get_poeCurrent();
@@ -1616,7 +1872,7 @@ class YNetwork extends YFunction
      * If you want to find a specific a network interface, use Network.findNetwork()
      * and a hardwareID or a logical name.
      *
-     * @return YNetwork  a pointer to a YNetwork object, corresponding to
+     * @return ?YNetwork  a pointer to a YNetwork object, corresponding to
      *         a network interface currently online, or a null pointer
      *         if there are no more network interfaces to enumerate.
      */
@@ -1638,11 +1894,11 @@ class YNetwork extends YFunction
      * Use the method YNetwork::nextNetwork() to iterate on
      * next network interfaces.
      *
-     * @return YNetwork  a pointer to a YNetwork object, corresponding to
+     * @return ?YNetwork  a pointer to a YNetwork object, corresponding to
      *         the first network interface currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstNetwork()
+    public static function FirstNetwork(): ?YNetwork
     {
         $next_hwid = YAPI::getFirstHardwareId('Network');
         if ($next_hwid == null) {
@@ -1696,7 +1952,7 @@ function yFindNetwork(string $func): YNetwork
  * Use the method YNetwork::nextNetwork() to iterate on
  * next network interfaces.
  *
- * @return YNetwork  a pointer to a YNetwork object, corresponding to
+ * @return ?YNetwork  a pointer to a YNetwork object, corresponding to
  *         the first network interface currently online, or a null pointer
  *         if there are none.
  */

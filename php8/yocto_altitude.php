@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_altitude.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_altitude.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YAltitude, the high-level API for Altitude functions
  *
@@ -77,7 +77,7 @@ class YAltitude extends YSensor
 
     //--- (end of YAltitude attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YAltitude constructor)
         parent::__construct($str_func);
@@ -88,7 +88,7 @@ class YAltitude extends YSensor
 
     //--- (YAltitude implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'qnh':
@@ -112,6 +112,7 @@ class YAltitude extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_currentValue(float $newval): int
     {
@@ -133,6 +134,7 @@ class YAltitude extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_qnh(float $newval): int
     {
@@ -149,6 +151,7 @@ class YAltitude extends YSensor
      *         the altitude (QNH)
      *
      * On failure, throws an exception or returns YAltitude::QNH_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_qnh(): float
     {
@@ -170,6 +173,7 @@ class YAltitude extends YSensor
      *         altitude
      *
      * On failure, throws an exception or returns YAltitude::TECHNOLOGY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_technology(): string
     {
@@ -211,7 +215,7 @@ class YAltitude extends YSensor
      *
      * @return YAltitude  a YAltitude object allowing you to drive the altimeter.
      */
-    public static function FindAltitude(string $func): ?YAltitude
+    public static function FindAltitude(string $func): YAltitude
     {
         // $obj                    is a YAltitude;
         $obj = YFunction::_FindFromCache('Altitude', $func);
@@ -222,21 +226,33 @@ class YAltitude extends YSensor
         return $obj;
     }
 
-    public function setCurrentValue(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCurrentValue(float $newval): int
 {
     return $this->set_currentValue($newval);
 }
 
-    public function setQnh(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setQnh(float $newval): int
 {
     return $this->set_qnh($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function qnh(): float
 {
     return $this->get_qnh();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function technology(): string
 {
     return $this->get_technology();
@@ -248,7 +264,7 @@ class YAltitude extends YSensor
      * If you want to find a specific an altimeter, use Altitude.findAltitude()
      * and a hardwareID or a logical name.
      *
-     * @return YAltitude  a pointer to a YAltitude object, corresponding to
+     * @return ?YAltitude  a pointer to a YAltitude object, corresponding to
      *         an altimeter currently online, or a null pointer
      *         if there are no more altimeters to enumerate.
      */
@@ -270,11 +286,11 @@ class YAltitude extends YSensor
      * Use the method YAltitude::nextAltitude() to iterate on
      * next altimeters.
      *
-     * @return YAltitude  a pointer to a YAltitude object, corresponding to
+     * @return ?YAltitude  a pointer to a YAltitude object, corresponding to
      *         the first altimeter currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstAltitude()
+    public static function FirstAltitude(): ?YAltitude
     {
         $next_hwid = YAPI::getFirstHardwareId('Altitude');
         if ($next_hwid == null) {
@@ -328,7 +344,7 @@ function yFindAltitude(string $func): YAltitude
  * Use the method YAltitude::nextAltitude() to iterate on
  * next altimeters.
  *
- * @return YAltitude  a pointer to a YAltitude object, corresponding to
+ * @return ?YAltitude  a pointer to a YAltitude object, corresponding to
  *         the first altimeter currently online, or a null pointer
  *         if there are none.
  */

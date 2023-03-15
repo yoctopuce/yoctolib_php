@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_poweroutput.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_poweroutput.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YPowerOutput, the high-level API for PowerOutput functions
  *
@@ -89,7 +89,7 @@ class YPowerOutput extends YFunction
 
     //--- (end of YPowerOutput attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YPowerOutput constructor)
         parent::__construct($str_func);
@@ -100,7 +100,7 @@ class YPowerOutput extends YFunction
 
     //--- (YPowerOutput implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'voltage':
@@ -118,6 +118,7 @@ class YPowerOutput extends YFunction
      * corresponding to the voltage on the power output featured by the module
      *
      * On failure, throws an exception or returns YPowerOutput::VOLTAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_voltage(): int
     {
@@ -144,6 +145,7 @@ class YPowerOutput extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_voltage(int $newval): int
     {
@@ -179,7 +181,7 @@ class YPowerOutput extends YFunction
      *
      * @return YPowerOutput  a YPowerOutput object allowing you to drive the power output.
      */
-    public static function FindPowerOutput(string $func): ?YPowerOutput
+    public static function FindPowerOutput(string $func): YPowerOutput
     {
         // $obj                    is a YPowerOutput;
         $obj = YFunction::_FindFromCache('PowerOutput', $func);
@@ -190,12 +192,18 @@ class YPowerOutput extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function voltage(): int
 {
     return $this->get_voltage();
 }
 
-    public function setVoltage(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setVoltage(int $newval): int
 {
     return $this->set_voltage($newval);
 }
@@ -206,7 +214,7 @@ class YPowerOutput extends YFunction
      * If you want to find a specific a power output, use PowerOutput.findPowerOutput()
      * and a hardwareID or a logical name.
      *
-     * @return YPowerOutput  a pointer to a YPowerOutput object, corresponding to
+     * @return ?YPowerOutput  a pointer to a YPowerOutput object, corresponding to
      *         a power output currently online, or a null pointer
      *         if there are no more power output to enumerate.
      */
@@ -228,11 +236,11 @@ class YPowerOutput extends YFunction
      * Use the method YPowerOutput::nextPowerOutput() to iterate on
      * next power output.
      *
-     * @return YPowerOutput  a pointer to a YPowerOutput object, corresponding to
+     * @return ?YPowerOutput  a pointer to a YPowerOutput object, corresponding to
      *         the first power output currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstPowerOutput()
+    public static function FirstPowerOutput(): ?YPowerOutput
     {
         $next_hwid = YAPI::getFirstHardwareId('PowerOutput');
         if ($next_hwid == null) {
@@ -286,7 +294,7 @@ function yFindPowerOutput(string $func): YPowerOutput
  * Use the method YPowerOutput::nextPowerOutput() to iterate on
  * next power output.
  *
- * @return YPowerOutput  a pointer to a YPowerOutput object, corresponding to
+ * @return ?YPowerOutput  a pointer to a YPowerOutput object, corresponding to
  *         the first power output currently online, or a null pointer
  *         if there are none.
  */

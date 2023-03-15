@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_gps.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_gps.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YGps, the high-level API for Gps functions
  *
@@ -195,7 +195,7 @@ class YGps extends YFunction
 
     //--- (end of YGps attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YGps constructor)
         parent::__construct($str_func);
@@ -206,7 +206,7 @@ class YGps extends YFunction
 
     //--- (YGps implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'isFixed':
@@ -268,6 +268,7 @@ class YGps extends YFunction
      * found enough satellites to work
      *
      * On failure, throws an exception or returns YGps::ISFIXED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_isFixed(): int
     {
@@ -287,6 +288,7 @@ class YGps extends YFunction
      * @return float  an integer corresponding to the total count of satellites used to compute GPS position
      *
      * On failure, throws an exception or returns YGps::SATCOUNT_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_satCount(): float
     {
@@ -309,6 +311,7 @@ class YGps extends YFunction
      *         on a 32 bit integer: bits 0.
      *
      * On failure, throws an exception or returns YGps::SATPERCONST_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_satPerConst(): float
     {
@@ -329,6 +332,7 @@ class YGps extends YFunction
      * @return float  a floating point number corresponding to effective GPS data refresh frequency
      *
      * On failure, throws an exception or returns YGps::GPSREFRESHRATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_gpsRefreshRate(): float
     {
@@ -349,6 +353,7 @@ class YGps extends YFunction
      * YGps::COORDSYSTEM_GPS_D corresponding to the representation system used for positioning data
      *
      * On failure, throws an exception or returns YGps::COORDSYSTEM_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_coordSystem(): int
     {
@@ -373,6 +378,7 @@ class YGps extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_coordSystem(int $newval): int
     {
@@ -391,6 +397,7 @@ class YGps extends YFunction
      *         positioning data
      *
      * On failure, throws an exception or returns YGps::CONSTELLATION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_constellation(): int
     {
@@ -418,6 +425,7 @@ class YGps extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_constellation(int $newval): int
     {
@@ -431,6 +439,7 @@ class YGps extends YFunction
      * @return string  a string corresponding to the current latitude
      *
      * On failure, throws an exception or returns YGps::LATITUDE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_latitude(): string
     {
@@ -450,6 +459,7 @@ class YGps extends YFunction
      * @return string  a string corresponding to the current longitude
      *
      * On failure, throws an exception or returns YGps::LONGITUDE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_longitude(): string
     {
@@ -471,6 +481,7 @@ class YGps extends YFunction
      *         the smaller that number is, the better
      *
      * On failure, throws an exception or returns YGps::DILUTION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_dilution(): float
     {
@@ -491,6 +502,7 @@ class YGps extends YFunction
      * @return float  a floating point number corresponding to the current altitude
      *
      * On failure, throws an exception or returns YGps::ALTITUDE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_altitude(): float
     {
@@ -510,6 +522,7 @@ class YGps extends YFunction
      * @return float  a floating point number corresponding to the current ground speed in Km/h
      *
      * On failure, throws an exception or returns YGps::GROUNDSPEED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_groundSpeed(): float
     {
@@ -531,6 +544,7 @@ class YGps extends YFunction
      *         is the true (geographic) north
      *
      * On failure, throws an exception or returns YGps::DIRECTION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_direction(): float
     {
@@ -552,6 +566,7 @@ class YGps extends YFunction
      *         seconds elapsed since Jan 1st, 1970)
      *
      * On failure, throws an exception or returns YGps::UNIXTIME_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_unixTime(): float
     {
@@ -571,6 +586,7 @@ class YGps extends YFunction
      * @return string  a string corresponding to the current time in the form "YYYY/MM/DD hh:mm:ss"
      *
      * On failure, throws an exception or returns YGps::DATETIME_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_dateTime(): string
     {
@@ -590,6 +606,7 @@ class YGps extends YFunction
      * @return int  an integer corresponding to the number of seconds between current time and UTC time (time zone)
      *
      * On failure, throws an exception or returns YGps::UTCOFFSET_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_utcOffset(): int
     {
@@ -616,6 +633,7 @@ class YGps extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_utcOffset(int $newval): int
     {
@@ -623,6 +641,9 @@ class YGps extends YFunction
         return $this->_setAttr("utcOffset", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -635,6 +656,9 @@ class YGps extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -669,7 +693,7 @@ class YGps extends YFunction
      *
      * @return YGps  a YGps object allowing you to drive the geolocalization module.
      */
-    public static function FindGps(string $func): ?YGps
+    public static function FindGps(string $func): YGps
     {
         // $obj                    is a YGps;
         $obj = YFunction::_FindFromCache('Gps', $func);
@@ -680,102 +704,162 @@ class YGps extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function isFixed(): int
 {
     return $this->get_isFixed();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function satCount(): float
 {
     return $this->get_satCount();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function satPerConst(): float
 {
     return $this->get_satPerConst();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function gpsRefreshRate(): float
 {
     return $this->get_gpsRefreshRate();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function coordSystem(): int
 {
     return $this->get_coordSystem();
 }
 
-    public function setCoordSystem(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCoordSystem(int $newval): int
 {
     return $this->set_coordSystem($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function constellation(): int
 {
     return $this->get_constellation();
 }
 
-    public function setConstellation(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setConstellation(int $newval): int
 {
     return $this->set_constellation($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function latitude(): string
 {
     return $this->get_latitude();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function longitude(): string
 {
     return $this->get_longitude();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function dilution(): float
 {
     return $this->get_dilution();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function altitude(): float
 {
     return $this->get_altitude();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function groundSpeed(): float
 {
     return $this->get_groundSpeed();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function direction(): float
 {
     return $this->get_direction();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function unixTime(): float
 {
     return $this->get_unixTime();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function dateTime(): string
 {
     return $this->get_dateTime();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function utcOffset(): int
 {
     return $this->get_utcOffset();
 }
 
-    public function setUtcOffset(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUtcOffset(int $newval): int
 {
     return $this->set_utcOffset($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -786,7 +870,7 @@ class YGps extends YFunction
      * If you want to find a specific a geolocalization module, use Gps.findGps()
      * and a hardwareID or a logical name.
      *
-     * @return YGps  a pointer to a YGps object, corresponding to
+     * @return ?YGps  a pointer to a YGps object, corresponding to
      *         a geolocalization module currently online, or a null pointer
      *         if there are no more geolocalization modules to enumerate.
      */
@@ -808,11 +892,11 @@ class YGps extends YFunction
      * Use the method YGps::nextGps() to iterate on
      * next geolocalization modules.
      *
-     * @return YGps  a pointer to a YGps object, corresponding to
+     * @return ?YGps  a pointer to a YGps object, corresponding to
      *         the first geolocalization module currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstGps()
+    public static function FirstGps(): ?YGps
     {
         $next_hwid = YAPI::getFirstHardwareId('Gps');
         if ($next_hwid == null) {
@@ -866,7 +950,7 @@ function yFindGps(string $func): YGps
  * Use the method YGps::nextGps() to iterate on
  * next geolocalization modules.
  *
- * @return YGps  a pointer to a YGps object, corresponding to
+ * @return ?YGps  a pointer to a YGps object, corresponding to
  *         the first geolocalization module currently online, or a null pointer
  *         if there are none.
  */

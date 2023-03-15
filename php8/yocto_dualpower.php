@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_dualpower.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_dualpower.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YDualPower, the high-level API for DualPower functions
  *
@@ -109,7 +109,7 @@ class YDualPower extends YFunction
 
     //--- (end of YDualPower attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YDualPower constructor)
         parent::__construct($str_func);
@@ -120,7 +120,7 @@ class YDualPower extends YFunction
 
     //--- (YDualPower implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'powerState':
@@ -144,6 +144,7 @@ class YDualPower extends YFunction
      * require lots of current
      *
      * On failure, throws an exception or returns YDualPower::POWERSTATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_powerState(): int
     {
@@ -165,6 +166,7 @@ class YDualPower extends YFunction
      * power source for module functions that require lots of current
      *
      * On failure, throws an exception or returns YDualPower::POWERCONTROL_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_powerControl(): int
     {
@@ -189,6 +191,7 @@ class YDualPower extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_powerControl(int $newval): int
     {
@@ -202,6 +205,7 @@ class YDualPower extends YFunction
      * @return int  an integer corresponding to the measured voltage on the external power source, in millivolts
      *
      * On failure, throws an exception or returns YDualPower::EXTVOLTAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_extVoltage(): int
     {
@@ -243,7 +247,7 @@ class YDualPower extends YFunction
      *
      * @return YDualPower  a YDualPower object allowing you to drive the dual power switch.
      */
-    public static function FindDualPower(string $func): ?YDualPower
+    public static function FindDualPower(string $func): YDualPower
     {
         // $obj                    is a YDualPower;
         $obj = YFunction::_FindFromCache('DualPower', $func);
@@ -254,21 +258,33 @@ class YDualPower extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function powerState(): int
 {
     return $this->get_powerState();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function powerControl(): int
 {
     return $this->get_powerControl();
 }
 
-    public function setPowerControl(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPowerControl(int $newval): int
 {
     return $this->set_powerControl($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function extVoltage(): int
 {
     return $this->get_extVoltage();
@@ -280,7 +296,7 @@ class YDualPower extends YFunction
      * If you want to find a specific a dual power switch, use DualPower.findDualPower()
      * and a hardwareID or a logical name.
      *
-     * @return YDualPower  a pointer to a YDualPower object, corresponding to
+     * @return ?YDualPower  a pointer to a YDualPower object, corresponding to
      *         a dual power switch currently online, or a null pointer
      *         if there are no more dual power switches to enumerate.
      */
@@ -302,11 +318,11 @@ class YDualPower extends YFunction
      * Use the method YDualPower::nextDualPower() to iterate on
      * next dual power switches.
      *
-     * @return YDualPower  a pointer to a YDualPower object, corresponding to
+     * @return ?YDualPower  a pointer to a YDualPower object, corresponding to
      *         the first dual power switch currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstDualPower()
+    public static function FirstDualPower(): ?YDualPower
     {
         $next_hwid = YAPI::getFirstHardwareId('DualPower');
         if ($next_hwid == null) {
@@ -360,7 +376,7 @@ function yFindDualPower(string $func): YDualPower
  * Use the method YDualPower::nextDualPower() to iterate on
  * next dual power switches.
  *
- * @return YDualPower  a pointer to a YDualPower object, corresponding to
+ * @return ?YDualPower  a pointer to a YDualPower object, corresponding to
  *         the first dual power switch currently online, or a null pointer
  *         if there are none.
  */

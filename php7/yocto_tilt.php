@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_tilt.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *
@@ -92,7 +92,7 @@ class YTilt extends YSensor
 
     //--- (end of YTilt attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YTilt constructor)
         parent::__construct($str_func);
@@ -103,7 +103,7 @@ class YTilt extends YSensor
 
     //--- (YTilt implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'bandwidth':
@@ -122,6 +122,7 @@ class YTilt extends YSensor
      * @return int  an integer corresponding to the measure update frequency, measured in Hz
      *
      * On failure, throws an exception or returns YTilt::BANDWIDTH_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bandwidth(): int
     {
@@ -146,6 +147,7 @@ class YTilt extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bandwidth(int $newval): int
     {
@@ -153,6 +155,9 @@ class YTilt extends YSensor
         return $this->_setAttr("bandwidth", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_axis(): int
     {
         // $res                    is a enumAXIS;
@@ -193,7 +198,7 @@ class YTilt extends YSensor
      *
      * @return YTilt  a YTilt object allowing you to drive the tilt sensor.
      */
-    public static function FindTilt(string $func): ?YTilt
+    public static function FindTilt(string $func): YTilt
     {
         // $obj                    is a YTilt;
         $obj = YFunction::_FindFromCache('Tilt', $func);
@@ -213,6 +218,7 @@ class YTilt extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function calibrateToZero(): int
     {
@@ -238,22 +244,32 @@ class YTilt extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function restoreZeroCalibration(): int
     {
         return $this->_setAttr('calibrationParam', '0');
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bandwidth(): int
 {
     return $this->get_bandwidth();
 }
 
-    public function setBandwidth(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setBandwidth(int $newval): int
 {
     return $this->set_bandwidth($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function axis(): int
 {
     return $this->get_axis();
@@ -265,7 +281,7 @@ class YTilt extends YSensor
      * If you want to find a specific a tilt sensor, use Tilt.findTilt()
      * and a hardwareID or a logical name.
      *
-     * @return YTilt  a pointer to a YTilt object, corresponding to
+     * @return ?YTilt  a pointer to a YTilt object, corresponding to
      *         a tilt sensor currently online, or a null pointer
      *         if there are no more tilt sensors to enumerate.
      */
@@ -287,11 +303,11 @@ class YTilt extends YSensor
      * Use the method YTilt::nextTilt() to iterate on
      * next tilt sensors.
      *
-     * @return YTilt  a pointer to a YTilt object, corresponding to
+     * @return ?YTilt  a pointer to a YTilt object, corresponding to
      *         the first tilt sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstTilt()
+    public static function FirstTilt(): ?YTilt
     {
         $next_hwid = YAPI::getFirstHardwareId('Tilt');
         if ($next_hwid == null) {
@@ -345,7 +361,7 @@ function yFindTilt(string $func): YTilt
  * Use the method YTilt::nextTilt() to iterate on
  * next tilt sensors.
  *
- * @return YTilt  a pointer to a YTilt object, corresponding to
+ * @return ?YTilt  a pointer to a YTilt object, corresponding to
  *         the first tilt sensor currently online, or a null pointer
  *         if there are none.
  */

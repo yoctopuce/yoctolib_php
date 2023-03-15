@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_steppermotor.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_steppermotor.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YStepperMotor, the high-level API for StepperMotor functions
  *
@@ -181,7 +181,7 @@ class YStepperMotor extends YFunction
 
     //--- (end of YStepperMotor attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YStepperMotor constructor)
         parent::__construct($str_func);
@@ -192,7 +192,7 @@ class YStepperMotor extends YFunction
 
     //--- (YStepperMotor implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'motorState':
@@ -252,6 +252,7 @@ class YStepperMotor extends YFunction
      * YStepperMotor::MOTORSTATE_BATCH corresponding to the motor working state
      *
      * On failure, throws an exception or returns YStepperMotor::MOTORSTATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_motorState(): int
     {
@@ -271,6 +272,7 @@ class YStepperMotor extends YFunction
      * @return int  an integer corresponding to the stepper motor controller diagnostics, as a bitmap
      *
      * On failure, throws an exception or returns YStepperMotor::DIAGS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_diags(): int
     {
@@ -298,6 +300,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_stepPos(float $newval): int
     {
@@ -312,6 +315,7 @@ class YStepperMotor extends YFunction
      * @return float  a floating point number corresponding to the current logical motor position, measured in steps
      *
      * On failure, throws an exception or returns YStepperMotor::STEPPOS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_stepPos(): float
     {
@@ -332,6 +336,7 @@ class YStepperMotor extends YFunction
      * @return float  a floating point number corresponding to current motor speed, measured in steps per second
      *
      * On failure, throws an exception or returns YStepperMotor::SPEED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_speed(): float
     {
@@ -354,6 +359,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_pullinSpeed(float $newval): int
     {
@@ -368,6 +374,7 @@ class YStepperMotor extends YFunction
      * stop state, measured in steps per second
      *
      * On failure, throws an exception or returns YStepperMotor::PULLINSPEED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_pullinSpeed(): float
     {
@@ -390,6 +397,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_maxAccel(float $newval): int
     {
@@ -404,6 +412,7 @@ class YStepperMotor extends YFunction
      * steps per second^2
      *
      * On failure, throws an exception or returns YStepperMotor::MAXACCEL_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_maxAccel(): float
     {
@@ -426,6 +435,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_maxSpeed(float $newval): int
     {
@@ -439,6 +449,7 @@ class YStepperMotor extends YFunction
      * @return float  a floating point number corresponding to the maximal motor speed, measured in steps per second
      *
      * On failure, throws an exception or returns YStepperMotor::MAXSPEED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_maxSpeed(): float
     {
@@ -460,6 +471,7 @@ class YStepperMotor extends YFunction
      * YStepperMotor::STEPPING_FULLSTEP corresponding to the stepping mode used to drive the motor
      *
      * On failure, throws an exception or returns YStepperMotor::STEPPING_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_stepping(): int
     {
@@ -484,6 +496,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_stepping(int $newval): int
     {
@@ -497,6 +510,7 @@ class YStepperMotor extends YFunction
      * @return int  an integer corresponding to the overcurrent alert and emergency stop threshold, measured in mA
      *
      * On failure, throws an exception or returns YStepperMotor::OVERCURRENT_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_overcurrent(): int
     {
@@ -519,6 +533,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_overcurrent(int $newval): int
     {
@@ -532,6 +547,7 @@ class YStepperMotor extends YFunction
      * @return int  an integer corresponding to the torque regulation current when the motor is stopped, measured in mA
      *
      * On failure, throws an exception or returns YStepperMotor::TCURRSTOP_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_tCurrStop(): int
     {
@@ -554,6 +570,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_tCurrStop(int $newval): int
     {
@@ -567,6 +584,7 @@ class YStepperMotor extends YFunction
      * @return int  an integer corresponding to the torque regulation current when the motor is running, measured in mA
      *
      * On failure, throws an exception or returns YStepperMotor::TCURRRUN_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_tCurrRun(): int
     {
@@ -589,6 +607,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_tCurrRun(int $newval): int
     {
@@ -596,6 +615,9 @@ class YStepperMotor extends YFunction
         return $this->_setAttr("tCurrRun", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_alertMode(): string
     {
         // $res                    is a string;
@@ -608,12 +630,18 @@ class YStepperMotor extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_alertMode(string $newval): int
     {
         $rest_val = $newval;
         return $this->_setAttr("alertMode", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_auxMode(): string
     {
         // $res                    is a string;
@@ -626,6 +654,9 @@ class YStepperMotor extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_auxMode(string $newval): int
     {
         $rest_val = $newval;
@@ -638,6 +669,7 @@ class YStepperMotor extends YFunction
      * @return int  an integer corresponding to the current value of the signal generated on the auxiliary output
      *
      * On failure, throws an exception or returns YStepperMotor::AUXSIGNAL_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_auxSignal(): int
     {
@@ -660,6 +692,7 @@ class YStepperMotor extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_auxSignal(int $newval): int
     {
@@ -667,6 +700,9 @@ class YStepperMotor extends YFunction
         return $this->_setAttr("auxSignal", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -679,6 +715,9 @@ class YStepperMotor extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -713,7 +752,7 @@ class YStepperMotor extends YFunction
      *
      * @return YStepperMotor  a YStepperMotor object allowing you to drive the stepper motor.
      */
-    public static function FindStepperMotor(string $func): ?YStepperMotor
+    public static function FindStepperMotor(string $func): YStepperMotor
     {
         // $obj                    is a YStepperMotor;
         $obj = YFunction::_FindFromCache('StepperMotor', $func);
@@ -724,6 +763,9 @@ class YStepperMotor extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function sendCommand(string $command): int
     {
         // $id                     is a str;
@@ -749,6 +791,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function reset(): int
     {
@@ -762,6 +805,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function findHomePosition(float $speed): int
     {
@@ -777,6 +821,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function changeSpeed(float $speed): int
     {
@@ -792,6 +837,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function moveTo(float $absPos): int
     {
@@ -807,6 +853,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function moveRel(float $relPos): int
     {
@@ -823,6 +870,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function moveRelSlow(float $relPos, float $maxSpeed): int
     {
@@ -836,6 +884,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function pause(int $waitMs): int
     {
@@ -847,6 +896,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function emergencyStop(): int
     {
@@ -860,6 +910,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function alertStepOut(): int
     {
@@ -875,6 +926,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function alertStepDir(int $dir): int
     {
@@ -890,6 +942,7 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function abortAndBrake(): int
     {
@@ -901,143 +954,225 @@ class YStepperMotor extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function abortAndHiZ(): int
     {
         return $this->set_command('z');
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function motorState(): int
 {
     return $this->get_motorState();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function diags(): int
 {
     return $this->get_diags();
 }
 
-    public function setStepPos(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setStepPos(float $newval): int
 {
     return $this->set_stepPos($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function stepPos(): float
 {
     return $this->get_stepPos();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function speed(): float
 {
     return $this->get_speed();
 }
 
-    public function setPullinSpeed(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPullinSpeed(float $newval): int
 {
     return $this->set_pullinSpeed($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function pullinSpeed(): float
 {
     return $this->get_pullinSpeed();
 }
 
-    public function setMaxAccel(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setMaxAccel(float $newval): int
 {
     return $this->set_maxAccel($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function maxAccel(): float
 {
     return $this->get_maxAccel();
 }
 
-    public function setMaxSpeed(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setMaxSpeed(float $newval): int
 {
     return $this->set_maxSpeed($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function maxSpeed(): float
 {
     return $this->get_maxSpeed();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function stepping(): int
 {
     return $this->get_stepping();
 }
 
-    public function setStepping(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setStepping(int $newval): int
 {
     return $this->set_stepping($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function overcurrent(): int
 {
     return $this->get_overcurrent();
 }
 
-    public function setOvercurrent(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setOvercurrent(int $newval): int
 {
     return $this->set_overcurrent($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function tCurrStop(): int
 {
     return $this->get_tCurrStop();
 }
 
-    public function setTCurrStop(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setTCurrStop(int $newval): int
 {
     return $this->set_tCurrStop($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function tCurrRun(): int
 {
     return $this->get_tCurrRun();
 }
 
-    public function setTCurrRun(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setTCurrRun(int $newval): int
 {
     return $this->set_tCurrRun($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function alertMode(): string
 {
     return $this->get_alertMode();
 }
 
-    public function setAlertMode(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAlertMode(string $newval): int
 {
     return $this->set_alertMode($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function auxMode(): string
 {
     return $this->get_auxMode();
 }
 
-    public function setAuxMode(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAuxMode(string $newval): int
 {
     return $this->set_auxMode($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function auxSignal(): int
 {
     return $this->get_auxSignal();
 }
 
-    public function setAuxSignal(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAuxSignal(int $newval): int
 {
     return $this->set_auxSignal($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -1048,7 +1183,7 @@ class YStepperMotor extends YFunction
      * If you want to find a specific a stepper motor, use StepperMotor.findStepperMotor()
      * and a hardwareID or a logical name.
      *
-     * @return YStepperMotor  a pointer to a YStepperMotor object, corresponding to
+     * @return ?YStepperMotor  a pointer to a YStepperMotor object, corresponding to
      *         a stepper motor currently online, or a null pointer
      *         if there are no more stepper motors to enumerate.
      */
@@ -1070,11 +1205,11 @@ class YStepperMotor extends YFunction
      * Use the method YStepperMotor::nextStepperMotor() to iterate on
      * next stepper motors.
      *
-     * @return YStepperMotor  a pointer to a YStepperMotor object, corresponding to
+     * @return ?YStepperMotor  a pointer to a YStepperMotor object, corresponding to
      *         the first stepper motor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstStepperMotor()
+    public static function FirstStepperMotor(): ?YStepperMotor
     {
         $next_hwid = YAPI::getFirstHardwareId('StepperMotor');
         if ($next_hwid == null) {
@@ -1128,7 +1263,7 @@ function yFindStepperMotor(string $func): YStepperMotor
  * Use the method YStepperMotor::nextStepperMotor() to iterate on
  * next stepper motors.
  *
- * @return YStepperMotor  a pointer to a YStepperMotor object, corresponding to
+ * @return ?YStepperMotor  a pointer to a YStepperMotor object, corresponding to
  *         the first stepper motor currently online, or a null pointer
  *         if there are none.
  */

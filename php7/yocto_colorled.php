@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorled.php 52931 2023-01-26 09:31:41Z seb $
+ *  $Id: yocto_colorled.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -109,7 +109,7 @@ class YColorLed extends YFunction
 
     //--- (end of YColorLed attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YColorLed constructor)
         parent::__construct($str_func);
@@ -120,7 +120,7 @@ class YColorLed extends YFunction
 
     //--- (YColorLed implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'rgbColor':
@@ -160,6 +160,7 @@ class YColorLed extends YFunction
      * @return int  an integer corresponding to the current RGB color of the LED
      *
      * On failure, throws an exception or returns YColorLed::RGBCOLOR_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_rgbColor(): int
     {
@@ -181,6 +182,7 @@ class YColorLed extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_rgbColor(int $newval): int
     {
@@ -194,6 +196,7 @@ class YColorLed extends YFunction
      * @return int  an integer corresponding to the current HSL color of the LED
      *
      * On failure, throws an exception or returns YColorLed::HSLCOLOR_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_hslColor(): int
     {
@@ -215,6 +218,7 @@ class YColorLed extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_hslColor(int $newval): int
     {
@@ -222,6 +226,9 @@ class YColorLed extends YFunction
         return $this->_setAttr("hslColor", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_rgbMove()
     {
         // $res                    is a YMove;
@@ -234,6 +241,9 @@ class YColorLed extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_rgbMove( $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
@@ -249,6 +259,7 @@ class YColorLed extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function rgbMove(int $rgb_target,int $ms_duration): int
     {
@@ -256,6 +267,9 @@ class YColorLed extends YFunction
         return $this->_setAttr("rgbMove",$rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_hslMove()
     {
         // $res                    is a YMove;
@@ -268,6 +282,9 @@ class YColorLed extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_hslMove( $newval): int
     {
         $rest_val = $newval["target"].':'.$newval["ms"];
@@ -283,6 +300,7 @@ class YColorLed extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function hslMove(int $hsl_target,int $ms_duration): int
     {
@@ -296,6 +314,7 @@ class YColorLed extends YFunction
      * @return int  an integer corresponding to the configured color to be displayed when the module is turned on
      *
      * On failure, throws an exception or returns YColorLed::RGBCOLORATPOWERON_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_rgbColorAtPowerOn(): int
     {
@@ -320,6 +339,7 @@ class YColorLed extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_rgbColorAtPowerOn(int $newval): int
     {
@@ -333,6 +353,7 @@ class YColorLed extends YFunction
      * @return int  an integer corresponding to the current length of the blinking sequence
      *
      * On failure, throws an exception or returns YColorLed::BLINKSEQSIZE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_blinkSeqSize(): int
     {
@@ -352,6 +373,7 @@ class YColorLed extends YFunction
      * @return int  an integer corresponding to the maximum length of the blinking sequence
      *
      * On failure, throws an exception or returns YColorLed::BLINKSEQMAXSIZE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_blinkSeqMaxSize(): int
     {
@@ -374,6 +396,7 @@ class YColorLed extends YFunction
      * @return int  an integer
      *
      * On failure, throws an exception or returns YColorLed::BLINKSEQSIGNATURE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_blinkSeqSignature(): int
     {
@@ -387,6 +410,9 @@ class YColorLed extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -399,6 +425,9 @@ class YColorLed extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -433,7 +462,7 @@ class YColorLed extends YFunction
      *
      * @return YColorLed  a YColorLed object allowing you to drive the RGB LED.
      */
-    public static function FindColorLed(string $func): ?YColorLed
+    public static function FindColorLed(string $func): YColorLed
     {
         // $obj                    is a YColorLed;
         $obj = YFunction::_FindFromCache('ColorLed', $func);
@@ -444,6 +473,9 @@ class YColorLed extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function sendCommand(string $command): int
     {
         return $this->set_command($command);
@@ -458,6 +490,7 @@ class YColorLed extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function addHslMoveToBlinkSeq(int $HSLcolor, int $msDelay): int
     {
@@ -473,6 +506,7 @@ class YColorLed extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function addRgbMoveToBlinkSeq(int $RGBcolor, int $msDelay): int
     {
@@ -486,6 +520,7 @@ class YColorLed extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function startBlinkSeq(): int
     {
@@ -497,6 +532,7 @@ class YColorLed extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function stopBlinkSeq(): int
     {
@@ -508,73 +544,113 @@ class YColorLed extends YFunction
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function resetBlinkSeq(): int
     {
         return $this->sendCommand('Z');
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function rgbColor(): int
 {
     return $this->get_rgbColor();
 }
 
-    public function setRgbColor(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setRgbColor(int $newval): int
 {
     return $this->set_rgbColor($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function hslColor(): int
 {
     return $this->get_hslColor();
 }
 
-    public function setHslColor(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setHslColor(int $newval): int
 {
     return $this->set_hslColor($newval);
 }
 
-    public function setRgbMove( $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setRgbMove( $newval): int
 {
     return $this->set_rgbMove($newval);
 }
 
-    public function setHslMove( $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setHslMove( $newval): int
 {
     return $this->set_hslMove($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function rgbColorAtPowerOn(): int
 {
     return $this->get_rgbColorAtPowerOn();
 }
 
-    public function setRgbColorAtPowerOn(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setRgbColorAtPowerOn(int $newval): int
 {
     return $this->set_rgbColorAtPowerOn($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function blinkSeqSize(): int
 {
     return $this->get_blinkSeqSize();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function blinkSeqMaxSize(): int
 {
     return $this->get_blinkSeqMaxSize();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function blinkSeqSignature(): int
 {
     return $this->get_blinkSeqSignature();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -585,7 +661,7 @@ class YColorLed extends YFunction
      * If you want to find a specific an RGB LED, use ColorLed.findColorLed()
      * and a hardwareID or a logical name.
      *
-     * @return YColorLed  a pointer to a YColorLed object, corresponding to
+     * @return ?YColorLed  a pointer to a YColorLed object, corresponding to
      *         an RGB LED currently online, or a null pointer
      *         if there are no more RGB LEDs to enumerate.
      */
@@ -607,11 +683,11 @@ class YColorLed extends YFunction
      * Use the method YColorLed::nextColorLed() to iterate on
      * next RGB LEDs.
      *
-     * @return YColorLed  a pointer to a YColorLed object, corresponding to
+     * @return ?YColorLed  a pointer to a YColorLed object, corresponding to
      *         the first RGB LED currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstColorLed()
+    public static function FirstColorLed(): ?YColorLed
     {
         $next_hwid = YAPI::getFirstHardwareId('ColorLed');
         if ($next_hwid == null) {
@@ -665,7 +741,7 @@ function yFindColorLed(string $func): YColorLed
  * Use the method YColorLed::nextColorLed() to iterate on
  * next RGB LEDs.
  *
- * @return YColorLed  a pointer to a YColorLed object, corresponding to
+ * @return ?YColorLed  a pointer to a YColorLed object, corresponding to
  *         the first RGB LED currently online, or a null pointer
  *         if there are none.
  */

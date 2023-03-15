@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_current.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_current.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YCurrent, the high-level API for Current functions
  *
@@ -78,7 +78,7 @@ class YCurrent extends YSensor
 
     //--- (end of YCurrent attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YCurrent constructor)
         parent::__construct($str_func);
@@ -89,7 +89,7 @@ class YCurrent extends YSensor
 
     //--- (YCurrent implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'enabled':
@@ -106,6 +106,7 @@ class YCurrent extends YSensor
      * state of this input
      *
      * On failure, throws an exception or returns YCurrent::ENABLED_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_enabled(): int
     {
@@ -133,6 +134,7 @@ class YCurrent extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_enabled(int $newval): int
     {
@@ -168,7 +170,7 @@ class YCurrent extends YSensor
      *
      * @return YCurrent  a YCurrent object allowing you to drive the current sensor.
      */
-    public static function FindCurrent(string $func): ?YCurrent
+    public static function FindCurrent(string $func): YCurrent
     {
         // $obj                    is a YCurrent;
         $obj = YFunction::_FindFromCache('Current', $func);
@@ -179,12 +181,18 @@ class YCurrent extends YSensor
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function enabled(): int
 {
     return $this->get_enabled();
 }
 
-    public function setEnabled(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setEnabled(int $newval): int
 {
     return $this->set_enabled($newval);
 }
@@ -195,7 +203,7 @@ class YCurrent extends YSensor
      * If you want to find a specific a current sensor, use Current.findCurrent()
      * and a hardwareID or a logical name.
      *
-     * @return YCurrent  a pointer to a YCurrent object, corresponding to
+     * @return ?YCurrent  a pointer to a YCurrent object, corresponding to
      *         a current sensor currently online, or a null pointer
      *         if there are no more current sensors to enumerate.
      */
@@ -217,11 +225,11 @@ class YCurrent extends YSensor
      * Use the method YCurrent::nextCurrent() to iterate on
      * next current sensors.
      *
-     * @return YCurrent  a pointer to a YCurrent object, corresponding to
+     * @return ?YCurrent  a pointer to a YCurrent object, corresponding to
      *         the first current sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstCurrent()
+    public static function FirstCurrent(): ?YCurrent
     {
         $next_hwid = YAPI::getFirstHardwareId('Current');
         if ($next_hwid == null) {
@@ -275,7 +283,7 @@ function yFindCurrent(string $func): YCurrent
  * Use the method YCurrent::nextCurrent() to iterate on
  * next current sensors.
  *
- * @return YCurrent  a pointer to a YCurrent object, corresponding to
+ * @return ?YCurrent  a pointer to a YCurrent object, corresponding to
  *         the first current sensor currently online, or a null pointer
  *         if there are none.
  */

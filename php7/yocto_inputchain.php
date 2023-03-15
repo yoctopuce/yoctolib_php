@@ -146,7 +146,7 @@ class YInputChain extends YFunction
 
     //--- (end of YInputChain attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YInputChain constructor)
         parent::__construct($str_func);
@@ -157,7 +157,7 @@ class YInputChain extends YFunction
 
     //--- (YInputChain implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'expectedNodes':
@@ -209,6 +209,7 @@ class YInputChain extends YFunction
      * @return int  an integer corresponding to the number of nodes expected in the chain
      *
      * On failure, throws an exception or returns YInputChain::EXPECTEDNODES_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_expectedNodes(): int
     {
@@ -232,6 +233,7 @@ class YInputChain extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_expectedNodes(int $newval): int
     {
@@ -245,6 +247,7 @@ class YInputChain extends YFunction
      * @return int  an integer corresponding to the number of nodes detected in the chain
      *
      * On failure, throws an exception or returns YInputChain::DETECTEDNODES_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_detectedNodes(): int
     {
@@ -267,6 +270,7 @@ class YInputChain extends YFunction
      * activation state of the exhaustive chain connectivity test
      *
      * On failure, throws an exception or returns YInputChain::LOOPBACKTEST_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_loopbackTest(): int
     {
@@ -291,6 +295,7 @@ class YInputChain extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_loopbackTest(int $newval): int
     {
@@ -306,6 +311,7 @@ class YInputChain extends YFunction
      * @return int  an integer corresponding to the desired refresh rate, measured in Hz
      *
      * On failure, throws an exception or returns YInputChain::REFRESHRATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_refreshRate(): int
     {
@@ -331,6 +337,7 @@ class YInputChain extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_refreshRate(int $newval): int
     {
@@ -347,6 +354,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN1_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain1(): string
     {
@@ -369,6 +377,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN2_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain2(): string
     {
@@ -391,6 +400,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN3_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain3(): string
     {
@@ -413,6 +423,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN4_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain4(): string
     {
@@ -435,6 +446,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN5_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain5(): string
     {
@@ -457,6 +469,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN6_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain6(): string
     {
@@ -479,6 +492,7 @@ class YInputChain extends YFunction
      *         as a hexadecimal string
      *
      * On failure, throws an exception or returns YInputChain::BITCHAIN7_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bitChain7(): string
     {
@@ -500,6 +514,7 @@ class YInputChain extends YFunction
      *         timeout error
      *
      * On failure, throws an exception or returns YInputChain::WATCHDOGPERIOD_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_watchdogPeriod(): int
     {
@@ -524,6 +539,7 @@ class YInputChain extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_watchdogPeriod(int $newval): int
     {
@@ -539,6 +555,7 @@ class YInputChain extends YFunction
      * @return int  an integer corresponding to the controller state diagnostics
      *
      * On failure, throws an exception or returns YInputChain::CHAINDIAGS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_chainDiags(): int
     {
@@ -580,7 +597,7 @@ class YInputChain extends YFunction
      *
      * @return YInputChain  a YInputChain object allowing you to drive the digital input chain.
      */
-    public static function FindInputChain(string $func): ?YInputChain
+    public static function FindInputChain(string $func): YInputChain
     {
         // $obj                    is a YInputChain;
         $obj = YFunction::_FindFromCache('InputChain', $func);
@@ -600,6 +617,7 @@ class YInputChain extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function resetWatchdog(): int
     {
@@ -613,6 +631,7 @@ class YInputChain extends YFunction
      * @return string  a string with last events observed (one per line).
      *
      * On failure, throws an exception or returns  YAPI::INVALID_STRING.
+     * @throws YAPI_Exception on error
      */
     public function get_lastEvents(): string
     {
@@ -635,6 +654,7 @@ class YInputChain extends YFunction
      *         UTC timestamp of the event, a character string describing
      *         the type of event and a character string with the event data.
      *         On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function registerEventCallback( $callback): int
     {
@@ -649,6 +669,9 @@ class YInputChain extends YFunction
         return 0;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function _internalEventHandler(string $cbpos): int
     {
         // $newPos                 is a int;
@@ -736,6 +759,9 @@ class YInputChain extends YFunction
         return YAPI::SUCCESS;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function _strXor(string $a, string $b): string
     {
         // $lenA                   is a int;
@@ -766,6 +792,9 @@ class YInputChain extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function hex2array(string $hexstr): array
     {
         // $hexlen                 is a int;
@@ -788,86 +817,137 @@ class YInputChain extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function expectedNodes(): int
 {
     return $this->get_expectedNodes();
 }
 
-    public function setExpectedNodes(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setExpectedNodes(int $newval): int
 {
     return $this->set_expectedNodes($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function detectedNodes(): int
 {
     return $this->get_detectedNodes();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function loopbackTest(): int
 {
     return $this->get_loopbackTest();
 }
 
-    public function setLoopbackTest(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setLoopbackTest(int $newval): int
 {
     return $this->set_loopbackTest($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function refreshRate(): int
 {
     return $this->get_refreshRate();
 }
 
-    public function setRefreshRate(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setRefreshRate(int $newval): int
 {
     return $this->set_refreshRate($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain1(): string
 {
     return $this->get_bitChain1();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain2(): string
 {
     return $this->get_bitChain2();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain3(): string
 {
     return $this->get_bitChain3();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain4(): string
 {
     return $this->get_bitChain4();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain5(): string
 {
     return $this->get_bitChain5();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain6(): string
 {
     return $this->get_bitChain6();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bitChain7(): string
 {
     return $this->get_bitChain7();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function watchdogPeriod(): int
 {
     return $this->get_watchdogPeriod();
 }
 
-    public function setWatchdogPeriod(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setWatchdogPeriod(int $newval): int
 {
     return $this->set_watchdogPeriod($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function chainDiags(): int
 {
     return $this->get_chainDiags();
@@ -879,7 +959,7 @@ class YInputChain extends YFunction
      * If you want to find a specific a digital input chain, use InputChain.findInputChain()
      * and a hardwareID or a logical name.
      *
-     * @return YInputChain  a pointer to a YInputChain object, corresponding to
+     * @return ?YInputChain  a pointer to a YInputChain object, corresponding to
      *         a digital input chain currently online, or a null pointer
      *         if there are no more digital input chains to enumerate.
      */
@@ -901,11 +981,11 @@ class YInputChain extends YFunction
      * Use the method YInputChain::nextInputChain() to iterate on
      * next digital input chains.
      *
-     * @return YInputChain  a pointer to a YInputChain object, corresponding to
+     * @return ?YInputChain  a pointer to a YInputChain object, corresponding to
      *         the first digital input chain currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstInputChain()
+    public static function FirstInputChain(): ?YInputChain
     {
         $next_hwid = YAPI::getFirstHardwareId('InputChain');
         if ($next_hwid == null) {
@@ -959,7 +1039,7 @@ function yFindInputChain(string $func): YInputChain
  * Use the method YInputChain::nextInputChain() to iterate on
  * next digital input chains.
  *
- * @return YInputChain  a pointer to a YInputChain object, corresponding to
+ * @return ?YInputChain  a pointer to a YInputChain object, corresponding to
  *         the first digital input chain currently online, or a null pointer
  *         if there are none.
  */

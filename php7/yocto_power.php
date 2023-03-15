@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_power.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_power.php 53420 2023-03-06 10:38:51Z mvuilleu $
  *
  *  Implements YPower, the high-level API for Power functions
  *
@@ -41,6 +41,9 @@
 //--- (YPower return codes)
 //--- (end of YPower return codes)
 //--- (YPower definitions)
+if (!defined('Y_POWERFACTOR_INVALID')) {
+    define('Y_POWERFACTOR_INVALID', YAPI_INVALID_DOUBLE);
+}
 if (!defined('Y_COSPHI_INVALID')) {
     define('Y_COSPHI_INVALID', YAPI_INVALID_DOUBLE);
 }
@@ -74,6 +77,7 @@ if (!defined('Y_METERTIMER_INVALID')) {
  */
 class YPower extends YSensor
 {
+    const POWERFACTOR_INVALID = YAPI::INVALID_DOUBLE;
     const COSPHI_INVALID = YAPI::INVALID_DOUBLE;
     const METER_INVALID = YAPI::INVALID_DOUBLE;
     const DELIVEREDENERGYMETER_INVALID = YAPI::INVALID_DOUBLE;
@@ -82,6 +86,7 @@ class YPower extends YSensor
     //--- (end of YPower declaration)
 
     //--- (YPower attributes)
+    protected $_powerFactor = self::POWERFACTOR_INVALID;    // MeasureVal
     protected $_cosPhi = self::COSPHI_INVALID;         // MeasureVal
     protected $_meter = self::METER_INVALID;          // MeasureVal
     protected $_deliveredEnergyMeter = self::DELIVEREDENERGYMETER_INVALID; // MeasureVal
@@ -90,7 +95,7 @@ class YPower extends YSensor
 
     //--- (end of YPower attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YPower constructor)
         parent::__construct($str_func);
@@ -101,9 +106,12 @@ class YPower extends YSensor
 
     //--- (YPower implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
+        case 'powerFactor':
+            $this->_powerFactor = round($val / 65.536) / 1000.0;
+            return 1;
         case 'cosPhi':
             $this->_cosPhi = round($val / 65.536) / 1000.0;
             return 1;
@@ -124,14 +132,40 @@ class YPower extends YSensor
     }
 
     /**
-     * Returns the power factor (the ratio between the real power consumed,
-     * measured in W, and the apparent power provided, measured in VA).
+     * Returns the power factor (PF), i.e. ratio between the active power consumed (in W)
+     * and the apparent power provided (VA).
      *
-     * @return float  a floating point number corresponding to the power factor (the ratio between the
-     * real power consumed,
-     *         measured in W, and the apparent power provided, measured in VA)
+     * @return float  a floating point number corresponding to the power factor (PF), i.e
+     *
+     * On failure, throws an exception or returns YPower::POWERFACTOR_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_powerFactor(): float
+    {
+        // $res                    is a float;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::POWERFACTOR_INVALID;
+            }
+        }
+        $res = $this->_powerFactor;
+        if ($res == self::POWERFACTOR_INVALID) {
+            $res = $this->_cosPhi;
+        }
+        $res = round($res * 1000) / 1000;
+        return $res;
+    }
+
+    /**
+     * Returns the Displacement Power factor (DPF), i.e. cosine of the phase shift between
+     * the voltage and current fundamentals.
+     * On the Yocto-Watt (V1), the value returned by this method correponds to the
+     * power factor as this device is cannot estimate the true DPF.
+     *
+     * @return float  a floating point number corresponding to the Displacement Power factor (DPF), i.e
      *
      * On failure, throws an exception or returns YPower::COSPHI_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_cosPhi(): float
     {
@@ -145,6 +179,9 @@ class YPower extends YSensor
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_meter(float $newval): int
     {
         $rest_val = strval(round($newval * 65536.0));
@@ -162,6 +199,7 @@ class YPower extends YSensor
      *         power consumption over time
      *
      * On failure, throws an exception or returns YPower::METER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_meter(): float
     {
@@ -184,6 +222,7 @@ class YPower extends YSensor
      *         but only when positive
      *
      * On failure, throws an exception or returns YPower::DELIVEREDENERGYMETER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_deliveredEnergyMeter(): float
     {
@@ -206,6 +245,7 @@ class YPower extends YSensor
      *         but only when negative
      *
      * On failure, throws an exception or returns YPower::RECEIVEDENERGYMETER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_receivedEnergyMeter(): float
     {
@@ -225,6 +265,7 @@ class YPower extends YSensor
      * @return int  an integer corresponding to the elapsed time since last energy counter reset, in seconds
      *
      * On failure, throws an exception or returns YPower::METERTIMER_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_meterTimer(): int
     {
@@ -266,7 +307,7 @@ class YPower extends YSensor
      *
      * @return YPower  a YPower object allowing you to drive the electrical power sensor.
      */
-    public static function FindPower(string $func): ?YPower
+    public static function FindPower(string $func): YPower
     {
         // $obj                    is a YPower;
         $obj = YFunction::_FindFromCache('Power', $func);
@@ -283,37 +324,64 @@ class YPower extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function reset(): int
     {
         return $this->set_meter(0);
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
+    public function powerFactor(): float
+{
+    return $this->get_powerFactor();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
     public function cosPhi(): float
 {
     return $this->get_cosPhi();
 }
 
-    public function setMeter(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setMeter(float $newval): int
 {
     return $this->set_meter($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function meter(): float
 {
     return $this->get_meter();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function deliveredEnergyMeter(): float
 {
     return $this->get_deliveredEnergyMeter();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function receivedEnergyMeter(): float
 {
     return $this->get_receivedEnergyMeter();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function meterTimer(): int
 {
     return $this->get_meterTimer();
@@ -325,7 +393,7 @@ class YPower extends YSensor
      * If you want to find a specific a electrical power sensor, use Power.findPower()
      * and a hardwareID or a logical name.
      *
-     * @return YPower  a pointer to a YPower object, corresponding to
+     * @return ?YPower  a pointer to a YPower object, corresponding to
      *         a electrical power sensor currently online, or a null pointer
      *         if there are no more electrical power sensors to enumerate.
      */
@@ -347,11 +415,11 @@ class YPower extends YSensor
      * Use the method YPower::nextPower() to iterate on
      * next electrical power sensors.
      *
-     * @return YPower  a pointer to a YPower object, corresponding to
+     * @return ?YPower  a pointer to a YPower object, corresponding to
      *         the first electrical power sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstPower()
+    public static function FirstPower(): ?YPower
     {
         $next_hwid = YAPI::getFirstHardwareId('Power');
         if ($next_hwid == null) {
@@ -405,7 +473,7 @@ function yFindPower(string $func): YPower
  * Use the method YPower::nextPower() to iterate on
  * next electrical power sensors.
  *
- * @return YPower  a pointer to a YPower object, corresponding to
+ * @return ?YPower  a pointer to a YPower object, corresponding to
  *         the first electrical power sensor currently online, or a null pointer
  *         if there are none.
  */

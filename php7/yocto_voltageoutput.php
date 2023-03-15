@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_voltageoutput.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *
@@ -77,7 +77,7 @@ class YVoltageOutput extends YFunction
 
     //--- (end of YVoltageOutput attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YVoltageOutput constructor)
         parent::__construct($str_func);
@@ -88,7 +88,7 @@ class YVoltageOutput extends YFunction
 
     //--- (YVoltageOutput implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'currentVoltage':
@@ -112,6 +112,7 @@ class YVoltageOutput extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_currentVoltage(float $newval): int
     {
@@ -125,6 +126,7 @@ class YVoltageOutput extends YFunction
      * @return float  a floating point number corresponding to the output voltage set point, in V
      *
      * On failure, throws an exception or returns YVoltageOutput::CURRENTVOLTAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_currentVoltage(): float
     {
@@ -138,6 +140,9 @@ class YVoltageOutput extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_voltageTransition(): string
     {
         // $res                    is a string;
@@ -150,6 +155,9 @@ class YVoltageOutput extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_voltageTransition(string $newval): int
     {
         $rest_val = $newval;
@@ -165,6 +173,7 @@ class YVoltageOutput extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_voltageAtStartUp(float $newval): int
     {
@@ -178,6 +187,7 @@ class YVoltageOutput extends YFunction
      * @return float  a floating point number corresponding to the selected voltage output at device startup, in V
      *
      * On failure, throws an exception or returns YVoltageOutput::VOLTAGEATSTARTUP_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_voltageAtStartUp(): float
     {
@@ -219,7 +229,7 @@ class YVoltageOutput extends YFunction
      *
      * @return YVoltageOutput  a YVoltageOutput object allowing you to drive the voltage output.
      */
-    public static function FindVoltageOutput(string $func): ?YVoltageOutput
+    public static function FindVoltageOutput(string $func): YVoltageOutput
     {
         // $obj                    is a YVoltageOutput;
         $obj = YFunction::_FindFromCache('VoltageOutput', $func);
@@ -254,31 +264,49 @@ class YVoltageOutput extends YFunction
         return $this->set_voltageTransition($newval);
     }
 
-    public function setCurrentVoltage(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCurrentVoltage(float $newval): int
 {
     return $this->set_currentVoltage($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function currentVoltage(): float
 {
     return $this->get_currentVoltage();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function voltageTransition(): string
 {
     return $this->get_voltageTransition();
 }
 
-    public function setVoltageTransition(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setVoltageTransition(string $newval): int
 {
     return $this->set_voltageTransition($newval);
 }
 
-    public function setVoltageAtStartUp(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setVoltageAtStartUp(float $newval): int
 {
     return $this->set_voltageAtStartUp($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function voltageAtStartUp(): float
 {
     return $this->get_voltageAtStartUp();
@@ -290,7 +318,7 @@ class YVoltageOutput extends YFunction
      * If you want to find a specific a voltage output, use VoltageOutput.findVoltageOutput()
      * and a hardwareID or a logical name.
      *
-     * @return YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
+     * @return ?YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
      *         a voltage output currently online, or a null pointer
      *         if there are no more voltage outputs to enumerate.
      */
@@ -312,11 +340,11 @@ class YVoltageOutput extends YFunction
      * Use the method YVoltageOutput::nextVoltageOutput() to iterate on
      * next voltage outputs.
      *
-     * @return YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
+     * @return ?YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
      *         the first voltage output currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstVoltageOutput()
+    public static function FirstVoltageOutput(): ?YVoltageOutput
     {
         $next_hwid = YAPI::getFirstHardwareId('VoltageOutput');
         if ($next_hwid == null) {
@@ -370,7 +398,7 @@ function yFindVoltageOutput(string $func): YVoltageOutput
  * Use the method YVoltageOutput::nextVoltageOutput() to iterate on
  * next voltage outputs.
  *
- * @return YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
+ * @return ?YVoltageOutput  a pointer to a YVoltageOutput object, corresponding to
  *         the first voltage output currently online, or a null pointer
  *         if there are none.
  */

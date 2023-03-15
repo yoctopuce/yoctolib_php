@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_digitalio.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_digitalio.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YDigitalIO, the high-level API for DigitalIO functions
  *
@@ -123,7 +123,7 @@ class YDigitalIO extends YFunction
 
     //--- (end of YDigitalIO attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YDigitalIO constructor)
         parent::__construct($str_func);
@@ -134,7 +134,7 @@ class YDigitalIO extends YFunction
 
     //--- (YDigitalIO implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'portState':
@@ -179,6 +179,7 @@ class YDigitalIO extends YFunction
      *         representing a channel
      *
      * On failure, throws an exception or returns YDigitalIO::PORTSTATE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portState(): int
     {
@@ -211,6 +212,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_portState(int $newval): int
     {
@@ -225,6 +227,7 @@ class YDigitalIO extends YFunction
      * makes a bit an input, 1 makes it an output
      *
      * On failure, throws an exception or returns YDigitalIO::PORTDIRECTION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portDirection(): int
     {
@@ -248,6 +251,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_portDirection(int $newval): int
     {
@@ -263,6 +267,7 @@ class YDigitalIO extends YFunction
      * @return int  an integer corresponding to the electrical interface for each bit of the port
      *
      * On failure, throws an exception or returns YDigitalIO::PORTOPENDRAIN_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portOpenDrain(): int
     {
@@ -286,6 +291,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_portOpenDrain(int $newval): int
     {
@@ -300,6 +306,7 @@ class YDigitalIO extends YFunction
      * @return int  an integer corresponding to the polarity of all the bits of the port
      *
      * On failure, throws an exception or returns YDigitalIO::PORTPOLARITY_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portPolarity(): int
     {
@@ -325,6 +332,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_portPolarity(int $newval): int
     {
@@ -340,6 +348,7 @@ class YDigitalIO extends YFunction
      * @return int  an integer corresponding to the port state diagnostics (Yocto-IO and Yocto-MaxiIO-V2 only)
      *
      * On failure, throws an exception or returns YDigitalIO::PORTDIAGS_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portDiags(): int
     {
@@ -359,6 +368,7 @@ class YDigitalIO extends YFunction
      * @return int  an integer corresponding to the number of bits (i.e
      *
      * On failure, throws an exception or returns YDigitalIO::PORTSIZE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_portSize(): int
     {
@@ -379,6 +389,7 @@ class YDigitalIO extends YFunction
      * YDigitalIO::OUTPUTVOLTAGE_EXT_V corresponding to the voltage source used to drive output bits
      *
      * On failure, throws an exception or returns YDigitalIO::OUTPUTVOLTAGE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_outputVoltage(): int
     {
@@ -402,6 +413,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_outputVoltage(int $newval): int
     {
@@ -409,6 +421,9 @@ class YDigitalIO extends YFunction
         return $this->_setAttr("outputVoltage", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -421,6 +436,9 @@ class YDigitalIO extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -455,7 +473,7 @@ class YDigitalIO extends YFunction
      *
      * @return YDigitalIO  a YDigitalIO object allowing you to drive the digital IO port.
      */
-    public static function FindDigitalIO(string $func): ?YDigitalIO
+    public static function FindDigitalIO(string $func): YDigitalIO
     {
         // $obj                    is a YDigitalIO;
         $obj = YFunction::_FindFromCache('DigitalIO', $func);
@@ -475,6 +493,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bitState(int $bitno, int $bitstate): int
     {
@@ -491,6 +510,7 @@ class YDigitalIO extends YFunction
      * @return int  the bit state (0 or 1)
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function get_bitState(int $bitno): int
     {
@@ -507,6 +527,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function toggle_bitState(int $bitno): int
     {
@@ -523,6 +544,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bitDirection(int $bitno, int $bitdirection): int
     {
@@ -540,6 +562,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function get_bitDirection(int $bitno): int
     {
@@ -559,6 +582,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bitPolarity(int $bitno, int $bitpolarity): int
     {
@@ -576,6 +600,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function get_bitPolarity(int $bitno): int
     {
@@ -595,6 +620,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bitOpenDrain(int $bitno, int $opendrain): int
     {
@@ -613,6 +639,7 @@ class YDigitalIO extends YFunction
      *         (open-collector) input/output.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function get_bitOpenDrain(int $bitno): int
     {
@@ -632,6 +659,7 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function pulse(int $bitno, int $ms_duration): int
     {
@@ -650,78 +678,121 @@ class YDigitalIO extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function delayedPulse(int $bitno, int $ms_delay, int $ms_duration): int
     {
         return $this->set_command(sprintf('Z%d,%d,%d',$bitno,$ms_delay,$ms_duration));
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portState(): int
 {
     return $this->get_portState();
 }
 
-    public function setPortState(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPortState(int $newval): int
 {
     return $this->set_portState($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portDirection(): int
 {
     return $this->get_portDirection();
 }
 
-    public function setPortDirection(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPortDirection(int $newval): int
 {
     return $this->set_portDirection($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portOpenDrain(): int
 {
     return $this->get_portOpenDrain();
 }
 
-    public function setPortOpenDrain(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPortOpenDrain(int $newval): int
 {
     return $this->set_portOpenDrain($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portPolarity(): int
 {
     return $this->get_portPolarity();
 }
 
-    public function setPortPolarity(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPortPolarity(int $newval): int
 {
     return $this->set_portPolarity($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portDiags(): int
 {
     return $this->get_portDiags();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function portSize(): int
 {
     return $this->get_portSize();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function outputVoltage(): int
 {
     return $this->get_outputVoltage();
 }
 
-    public function setOutputVoltage(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setOutputVoltage(int $newval): int
 {
     return $this->set_outputVoltage($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -732,7 +803,7 @@ class YDigitalIO extends YFunction
      * If you want to find a specific a digital IO port, use DigitalIO.findDigitalIO()
      * and a hardwareID or a logical name.
      *
-     * @return YDigitalIO  a pointer to a YDigitalIO object, corresponding to
+     * @return ?YDigitalIO  a pointer to a YDigitalIO object, corresponding to
      *         a digital IO port currently online, or a null pointer
      *         if there are no more digital IO ports to enumerate.
      */
@@ -754,11 +825,11 @@ class YDigitalIO extends YFunction
      * Use the method YDigitalIO::nextDigitalIO() to iterate on
      * next digital IO ports.
      *
-     * @return YDigitalIO  a pointer to a YDigitalIO object, corresponding to
+     * @return ?YDigitalIO  a pointer to a YDigitalIO object, corresponding to
      *         the first digital IO port currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstDigitalIO()
+    public static function FirstDigitalIO(): ?YDigitalIO
     {
         $next_hwid = YAPI::getFirstHardwareId('DigitalIO');
         if ($next_hwid == null) {
@@ -812,7 +883,7 @@ function yFindDigitalIO(string $func): YDigitalIO
  * Use the method YDigitalIO::nextDigitalIO() to iterate on
  * next digital IO ports.
  *
- * @return YDigitalIO  a pointer to a YDigitalIO object, corresponding to
+ * @return ?YDigitalIO  a pointer to a YDigitalIO object, corresponding to
  *         the first digital IO port currently online, or a null pointer
  *         if there are none.
  */

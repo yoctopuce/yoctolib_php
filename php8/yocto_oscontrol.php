@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_oscontrol.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -69,7 +69,7 @@ class YOsControl extends YFunction
 
     //--- (end of YOsControl attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YOsControl constructor)
         parent::__construct($str_func);
@@ -80,7 +80,7 @@ class YOsControl extends YFunction
 
     //--- (YOsControl implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'shutdownCountdown':
@@ -98,6 +98,7 @@ class YOsControl extends YFunction
      *         shutdown has been scheduled
      *
      * On failure, throws an exception or returns YOsControl::SHUTDOWNCOUNTDOWN_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_shutdownCountdown(): int
     {
@@ -111,6 +112,9 @@ class YOsControl extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_shutdownCountdown(int $newval): int
     {
         $rest_val = strval($newval);
@@ -145,7 +149,7 @@ class YOsControl extends YFunction
      *
      * @return YOsControl  a YOsControl object allowing you to drive the OS control.
      */
-    public static function FindOsControl(string $func): ?YOsControl
+    public static function FindOsControl(string $func): YOsControl
     {
         // $obj                    is a YOsControl;
         $obj = YFunction::_FindFromCache('OsControl', $func);
@@ -164,18 +168,25 @@ class YOsControl extends YFunction
      * @return int  YAPI::SUCCESS when the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function shutdown(int $secBeforeShutDown): int
     {
         return $this->set_shutdownCountdown($secBeforeShutDown);
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function shutdownCountdown(): int
 {
     return $this->get_shutdownCountdown();
 }
 
-    public function setShutdownCountdown(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setShutdownCountdown(int $newval): int
 {
     return $this->set_shutdownCountdown($newval);
 }
@@ -186,7 +197,7 @@ class YOsControl extends YFunction
      * If you want to find a specific OS control, use OsControl.findOsControl()
      * and a hardwareID or a logical name.
      *
-     * @return YOsControl  a pointer to a YOsControl object, corresponding to
+     * @return ?YOsControl  a pointer to a YOsControl object, corresponding to
      *         OS control currently online, or a null pointer
      *         if there are no more OS control to enumerate.
      */
@@ -208,11 +219,11 @@ class YOsControl extends YFunction
      * Use the method YOsControl::nextOsControl() to iterate on
      * next OS control.
      *
-     * @return YOsControl  a pointer to a YOsControl object, corresponding to
+     * @return ?YOsControl  a pointer to a YOsControl object, corresponding to
      *         the first OS control currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstOsControl()
+    public static function FirstOsControl(): ?YOsControl
     {
         $next_hwid = YAPI::getFirstHardwareId('OsControl');
         if ($next_hwid == null) {
@@ -266,7 +277,7 @@ function yFindOsControl(string $func): YOsControl
  * Use the method YOsControl::nextOsControl() to iterate on
  * next OS control.
  *
- * @return YOsControl  a pointer to a YOsControl object, corresponding to
+ * @return ?YOsControl  a pointer to a YOsControl object, corresponding to
  *         the first OS control currently online, or a null pointer
  *         if there are none.
  */

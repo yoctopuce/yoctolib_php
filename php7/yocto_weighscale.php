@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_weighscale.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_weighscale.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -119,7 +119,7 @@ class YWeighScale extends YSensor
 
     //--- (end of YWeighScale attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YWeighScale constructor)
         parent::__construct($str_func);
@@ -130,7 +130,7 @@ class YWeighScale extends YSensor
 
     //--- (YWeighScale implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'excitation':
@@ -171,6 +171,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_unit(string $newval): int
     {
@@ -185,6 +186,7 @@ class YWeighScale extends YSensor
      * YWeighScale::EXCITATION_AC corresponding to the current load cell bridge excitation method
      *
      * On failure, throws an exception or returns YWeighScale::EXCITATION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_excitation(): int
     {
@@ -209,6 +211,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_excitation(int $newval): int
     {
@@ -231,6 +234,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_tempAvgAdaptRatio(float $newval): int
     {
@@ -248,6 +252,7 @@ class YWeighScale extends YSensor
      * @return float  a floating point number corresponding to the averaged temperature update rate, in per mille
      *
      * On failure, throws an exception or returns YWeighScale::TEMPAVGADAPTRATIO_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_tempAvgAdaptRatio(): float
     {
@@ -274,6 +279,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_tempChgAdaptRatio(float $newval): int
     {
@@ -290,6 +296,7 @@ class YWeighScale extends YSensor
      * @return float  a floating point number corresponding to the temperature change update rate, in per mille
      *
      * On failure, throws an exception or returns YWeighScale::TEMPCHGADAPTRATIO_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_tempChgAdaptRatio(): float
     {
@@ -310,6 +317,7 @@ class YWeighScale extends YSensor
      * thermal compensation
      *
      * On failure, throws an exception or returns YWeighScale::COMPTEMPAVG_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_compTempAvg(): float
     {
@@ -330,6 +338,7 @@ class YWeighScale extends YSensor
      * thermal compensation
      *
      * On failure, throws an exception or returns YWeighScale::COMPTEMPCHG_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_compTempChg(): float
     {
@@ -349,6 +358,7 @@ class YWeighScale extends YSensor
      * @return float  a floating point number corresponding to the current current thermal compensation value
      *
      * On failure, throws an exception or returns YWeighScale::COMPENSATION_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_compensation(): float
     {
@@ -374,6 +384,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_zeroTracking(float $newval): int
     {
@@ -389,6 +400,7 @@ class YWeighScale extends YSensor
      * @return float  a floating point number corresponding to the zero tracking threshold value
      *
      * On failure, throws an exception or returns YWeighScale::ZEROTRACKING_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_zeroTracking(): float
     {
@@ -402,6 +414,9 @@ class YWeighScale extends YSensor
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_command(): string
     {
         // $res                    is a string;
@@ -414,6 +429,9 @@ class YWeighScale extends YSensor
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_command(string $newval): int
     {
         $rest_val = $newval;
@@ -448,7 +466,7 @@ class YWeighScale extends YSensor
      *
      * @return YWeighScale  a YWeighScale object allowing you to drive the weighing scale sensor.
      */
-    public static function FindWeighScale(string $func): ?YWeighScale
+    public static function FindWeighScale(string $func): YWeighScale
     {
         // $obj                    is a YWeighScale;
         $obj = YFunction::_FindFromCache('WeighScale', $func);
@@ -467,6 +485,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function tare(): int
     {
@@ -483,12 +502,16 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function setupSpan(float $currWeight, float $maxWeight): int
     {
         return $this->set_command(sprintf('S%d:%d', round(1000*$currWeight), round(1000*$maxWeight)));
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function setCompensationTable(int $tableIndex, array $tempValues, array $compValues): int
     {
         // $siz                    is a int;
@@ -531,6 +554,9 @@ class YWeighScale extends YSensor
         return YAPI::SUCCESS;
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function loadCompensationTable(int $tableIndex, array &$tempValues, array &$compValues): int
     {
         // $id                     is a str;
@@ -578,6 +604,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_offsetAvgCompensationTable(array $tempValues, array $compValues): int
     {
@@ -598,6 +625,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadOffsetAvgCompensationTable(array &$tempValues, array &$compValues): int
     {
@@ -618,6 +646,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_offsetChgCompensationTable(array $tempValues, array $compValues): int
     {
@@ -638,6 +667,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadOffsetChgCompensationTable(array &$tempValues, array &$compValues): int
     {
@@ -658,6 +688,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_spanAvgCompensationTable(array $tempValues, array $compValues): int
     {
@@ -678,6 +709,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadSpanAvgCompensationTable(array &$tempValues, array &$compValues): int
     {
@@ -698,6 +730,7 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_spanChgCompensationTable(array $tempValues, array $compValues): int
     {
@@ -718,78 +751,121 @@ class YWeighScale extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function loadSpanChgCompensationTable(array &$tempValues, array &$compValues): int
     {
         return $this->loadCompensationTable(3, $tempValues, $compValues);
     }
 
-    public function setUnit(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setUnit(string $newval): int
 {
     return $this->set_unit($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function excitation(): int
 {
     return $this->get_excitation();
 }
 
-    public function setExcitation(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setExcitation(int $newval): int
 {
     return $this->set_excitation($newval);
 }
 
-    public function setTempAvgAdaptRatio(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setTempAvgAdaptRatio(float $newval): int
 {
     return $this->set_tempAvgAdaptRatio($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function tempAvgAdaptRatio(): float
 {
     return $this->get_tempAvgAdaptRatio();
 }
 
-    public function setTempChgAdaptRatio(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setTempChgAdaptRatio(float $newval): int
 {
     return $this->set_tempChgAdaptRatio($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function tempChgAdaptRatio(): float
 {
     return $this->get_tempChgAdaptRatio();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function compTempAvg(): float
 {
     return $this->get_compTempAvg();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function compTempChg(): float
 {
     return $this->get_compTempChg();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function compensation(): float
 {
     return $this->get_compensation();
 }
 
-    public function setZeroTracking(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setZeroTracking(float $newval): int
 {
     return $this->set_zeroTracking($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function zeroTracking(): float
 {
     return $this->get_zeroTracking();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function command(): string
 {
     return $this->get_command();
 }
 
-    public function setCommand(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCommand(string $newval): int
 {
     return $this->set_command($newval);
 }
@@ -800,7 +876,7 @@ class YWeighScale extends YSensor
      * If you want to find a specific a weighing scale sensor, use WeighScale.findWeighScale()
      * and a hardwareID or a logical name.
      *
-     * @return YWeighScale  a pointer to a YWeighScale object, corresponding to
+     * @return ?YWeighScale  a pointer to a YWeighScale object, corresponding to
      *         a weighing scale sensor currently online, or a null pointer
      *         if there are no more weighing scale sensors to enumerate.
      */
@@ -822,11 +898,11 @@ class YWeighScale extends YSensor
      * Use the method YWeighScale::nextWeighScale() to iterate on
      * next weighing scale sensors.
      *
-     * @return YWeighScale  a pointer to a YWeighScale object, corresponding to
+     * @return ?YWeighScale  a pointer to a YWeighScale object, corresponding to
      *         the first weighing scale sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstWeighScale()
+    public static function FirstWeighScale(): ?YWeighScale
     {
         $next_hwid = YAPI::getFirstHardwareId('WeighScale');
         if ($next_hwid == null) {
@@ -880,7 +956,7 @@ function yFindWeighScale(string $func): YWeighScale
  * Use the method YWeighScale::nextWeighScale() to iterate on
  * next weighing scale sensors.
  *
- * @return YWeighScale  a pointer to a YWeighScale object, corresponding to
+ * @return ?YWeighScale  a pointer to a YWeighScale object, corresponding to
  *         the first weighing scale sensor currently online, or a null pointer
  *         if there are none.
  */

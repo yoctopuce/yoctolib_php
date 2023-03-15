@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tvoc.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_tvoc.php 52985 2023-01-30 15:01:00Z seb $
  *
  *  Implements YTvoc, the high-level API for Tvoc functions
  *
@@ -65,7 +65,7 @@ class YTvoc extends YSensor
 
     //--- (end of YTvoc attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YTvoc constructor)
         parent::__construct($str_func);
@@ -105,7 +105,7 @@ class YTvoc extends YSensor
      *
      * @return YTvoc  a YTvoc object allowing you to drive the Total  Volatile Organic Compound sensor.
      */
-    public static function FindTvoc(string $func): ?YTvoc
+    public static function FindTvoc(string $func): YTvoc
     {
         // $obj                    is a YTvoc;
         $obj = YFunction::_FindFromCache('Tvoc', $func);
@@ -122,7 +122,7 @@ class YTvoc extends YSensor
      * If you want to find a specific a Total  Volatile Organic Compound sensor, use Tvoc.findTvoc()
      * and a hardwareID or a logical name.
      *
-     * @return YTvoc  a pointer to a YTvoc object, corresponding to
+     * @return ?YTvoc  a pointer to a YTvoc object, corresponding to
      *         a Total  Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are no more Total Volatile Organic Compound sensors to enumerate.
      */
@@ -144,11 +144,11 @@ class YTvoc extends YSensor
      * Use the method YTvoc::nextTvoc() to iterate on
      * next Total Volatile Organic Compound sensors.
      *
-     * @return YTvoc  a pointer to a YTvoc object, corresponding to
+     * @return ?YTvoc  a pointer to a YTvoc object, corresponding to
      *         the first Total Volatile Organic Compound sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstTvoc()
+    public static function FirstTvoc(): ?YTvoc
     {
         $next_hwid = YAPI::getFirstHardwareId('Tvoc');
         if ($next_hwid == null) {
@@ -203,7 +203,7 @@ function yFindTvoc(string $func): YTvoc
  * Use the method YTvoc::nextTvoc() to iterate on
  * next Total Volatile Organic Compound sensors.
  *
- * @return YTvoc  a pointer to a YTvoc object, corresponding to
+ * @return ?YTvoc  a pointer to a YTvoc object, corresponding to
  *         the first Total Volatile Organic Compound sensor currently online, or a null pointer
  *         if there are none.
  */

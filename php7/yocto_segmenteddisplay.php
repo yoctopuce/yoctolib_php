@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_segmenteddisplay.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_segmenteddisplay.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *
@@ -88,7 +88,7 @@ class YSegmentedDisplay extends YFunction
 
     //--- (end of YSegmentedDisplay attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YSegmentedDisplay constructor)
         parent::__construct($str_func);
@@ -99,7 +99,7 @@ class YSegmentedDisplay extends YFunction
 
     //--- (YSegmentedDisplay implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'displayedText':
@@ -118,6 +118,7 @@ class YSegmentedDisplay extends YFunction
      * @return string  a string corresponding to the text currently displayed on the screen
      *
      * On failure, throws an exception or returns YSegmentedDisplay::DISPLAYEDTEXT_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_displayedText(): string
     {
@@ -139,6 +140,7 @@ class YSegmentedDisplay extends YFunction
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_displayedText(string $newval): int
     {
@@ -146,6 +148,9 @@ class YSegmentedDisplay extends YFunction
         return $this->_setAttr("displayedText", $rest_val);
     }
 
+    /**
+     * @throws YAPI_Exception on error
+     */
     public function get_displayMode(): int
     {
         // $res                    is a enumDISPLAYMODE;
@@ -158,6 +163,9 @@ class YSegmentedDisplay extends YFunction
         return $res;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_displayMode(int $newval): int
     {
         $rest_val = strval($newval);
@@ -192,7 +200,7 @@ class YSegmentedDisplay extends YFunction
      *
      * @return YSegmentedDisplay  a YSegmentedDisplay object allowing you to drive the segmented display.
      */
-    public static function FindSegmentedDisplay(string $func): ?YSegmentedDisplay
+    public static function FindSegmentedDisplay(string $func): YSegmentedDisplay
     {
         // $obj                    is a YSegmentedDisplay;
         $obj = YFunction::_FindFromCache('SegmentedDisplay', $func);
@@ -203,22 +211,34 @@ class YSegmentedDisplay extends YFunction
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function displayedText(): string
 {
     return $this->get_displayedText();
 }
 
-    public function setDisplayedText(string $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDisplayedText(string $newval): int
 {
     return $this->set_displayedText($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function displayMode(): int
 {
     return $this->get_displayMode();
 }
 
-    public function setDisplayMode(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDisplayMode(int $newval): int
 {
     return $this->set_displayMode($newval);
 }
@@ -229,7 +249,7 @@ class YSegmentedDisplay extends YFunction
      * If you want to find a specific a segmented display, use SegmentedDisplay.findSegmentedDisplay()
      * and a hardwareID or a logical name.
      *
-     * @return YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
+     * @return ?YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
      *         a segmented display currently online, or a null pointer
      *         if there are no more segmented displays to enumerate.
      */
@@ -251,11 +271,11 @@ class YSegmentedDisplay extends YFunction
      * Use the method YSegmentedDisplay::nextSegmentedDisplay() to iterate on
      * next segmented displays.
      *
-     * @return YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
+     * @return ?YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
      *         the first segmented display currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstSegmentedDisplay()
+    public static function FirstSegmentedDisplay(): ?YSegmentedDisplay
     {
         $next_hwid = YAPI::getFirstHardwareId('SegmentedDisplay');
         if ($next_hwid == null) {
@@ -309,7 +329,7 @@ function yFindSegmentedDisplay(string $func): YSegmentedDisplay
  * Use the method YSegmentedDisplay::nextSegmentedDisplay() to iterate on
  * next segmented displays.
  *
- * @return YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
+ * @return ?YSegmentedDisplay  a pointer to a YSegmentedDisplay object, corresponding to
  *         the first segmented display currently online, or a null pointer
  *         if there are none.
  */

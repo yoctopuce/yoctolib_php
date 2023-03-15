@@ -1,3 +1,10 @@
-PHP v1.10.52948
+PHP v1.10.53532
 
-- New updated PHP lib with type definition
+- Add support for callbackTemplate and powerFactor
+- Add support for VirtualHub 4 Web
+- Add support for HTTPS connection to VirtualHub 4 Web
+- Fix some cache issues
+- Fix missing notification if UpdateDeviceList is never called
+- Fix get_url() method of YModule object
+- Fix log callback for device
+- Fix get_subDevices() methods of YModule

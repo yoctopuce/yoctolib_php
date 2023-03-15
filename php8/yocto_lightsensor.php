@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_lightsensor.php 52931 2023-01-26 09:31:41Z seb $
+ *  $Id: yocto_lightsensor.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -98,7 +98,7 @@ class YLightSensor extends YSensor
 
     //--- (end of YLightSensor attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YLightSensor constructor)
         parent::__construct($str_func);
@@ -109,7 +109,7 @@ class YLightSensor extends YSensor
 
     //--- (YLightSensor implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
         case 'measureType':
@@ -119,6 +119,9 @@ class YLightSensor extends YSensor
         return parent::_parseAttr($name, $val);
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function set_currentValue(float $newval): int
     {
         $rest_val = strval(round($newval * 65536.0));
@@ -137,6 +140,7 @@ class YLightSensor extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function calibrate(float $calibratedVal): int
     {
@@ -153,6 +157,7 @@ class YLightSensor extends YSensor
      * YLightSensor::MEASURETYPE_HIGH_RESOLUTION corresponding to the type of light measure
      *
      * On failure, throws an exception or returns YLightSensor::MEASURETYPE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_measureType(): int
     {
@@ -181,6 +186,7 @@ class YLightSensor extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_measureType(int $newval): int
     {
@@ -216,7 +222,7 @@ class YLightSensor extends YSensor
      *
      * @return YLightSensor  a YLightSensor object allowing you to drive the light sensor.
      */
-    public static function FindLightSensor(string $func): ?YLightSensor
+    public static function FindLightSensor(string $func): YLightSensor
     {
         // $obj                    is a YLightSensor;
         $obj = YFunction::_FindFromCache('LightSensor', $func);
@@ -227,17 +233,26 @@ class YLightSensor extends YSensor
         return $obj;
     }
 
-    public function setCurrentValue(float $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCurrentValue(float $newval): int
 {
     return $this->set_currentValue($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function measureType(): int
 {
     return $this->get_measureType();
 }
 
-    public function setMeasureType(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setMeasureType(int $newval): int
 {
     return $this->set_measureType($newval);
 }
@@ -248,7 +263,7 @@ class YLightSensor extends YSensor
      * If you want to find a specific a light sensor, use LightSensor.findLightSensor()
      * and a hardwareID or a logical name.
      *
-     * @return YLightSensor  a pointer to a YLightSensor object, corresponding to
+     * @return ?YLightSensor  a pointer to a YLightSensor object, corresponding to
      *         a light sensor currently online, or a null pointer
      *         if there are no more light sensors to enumerate.
      */
@@ -270,11 +285,11 @@ class YLightSensor extends YSensor
      * Use the method YLightSensor::nextLightSensor() to iterate on
      * next light sensors.
      *
-     * @return YLightSensor  a pointer to a YLightSensor object, corresponding to
+     * @return ?YLightSensor  a pointer to a YLightSensor object, corresponding to
      *         the first light sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstLightSensor()
+    public static function FirstLightSensor(): ?YLightSensor
     {
         $next_hwid = YAPI::getFirstHardwareId('LightSensor');
         if ($next_hwid == null) {
@@ -328,7 +343,7 @@ function yFindLightSensor(string $func): YLightSensor
  * Use the method YLightSensor::nextLightSensor() to iterate on
  * next light sensors.
  *
- * @return YLightSensor  a pointer to a YLightSensor object, corresponding to
+ * @return ?YLightSensor  a pointer to a YLightSensor object, corresponding to
  *         the first light sensor currently online, or a null pointer
  *         if there are none.
  */

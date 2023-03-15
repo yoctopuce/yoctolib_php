@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_latitude.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_latitude.php 52985 2023-01-30 15:01:00Z seb $
  *
  *  Implements YLatitude, the high-level API for Latitude functions
  *
@@ -64,7 +64,7 @@ class YLatitude extends YSensor
 
     //--- (end of YLatitude attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YLatitude constructor)
         parent::__construct($str_func);
@@ -103,7 +103,7 @@ class YLatitude extends YSensor
      *
      * @return YLatitude  a YLatitude object allowing you to drive the latitude sensor.
      */
-    public static function FindLatitude(string $func): ?YLatitude
+    public static function FindLatitude(string $func): YLatitude
     {
         // $obj                    is a YLatitude;
         $obj = YFunction::_FindFromCache('Latitude', $func);
@@ -120,7 +120,7 @@ class YLatitude extends YSensor
      * If you want to find a specific a latitude sensor, use Latitude.findLatitude()
      * and a hardwareID or a logical name.
      *
-     * @return YLatitude  a pointer to a YLatitude object, corresponding to
+     * @return ?YLatitude  a pointer to a YLatitude object, corresponding to
      *         a latitude sensor currently online, or a null pointer
      *         if there are no more latitude sensors to enumerate.
      */
@@ -142,11 +142,11 @@ class YLatitude extends YSensor
      * Use the method YLatitude::nextLatitude() to iterate on
      * next latitude sensors.
      *
-     * @return YLatitude  a pointer to a YLatitude object, corresponding to
+     * @return ?YLatitude  a pointer to a YLatitude object, corresponding to
      *         the first latitude sensor currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstLatitude()
+    public static function FirstLatitude(): ?YLatitude
     {
         $next_hwid = YAPI::getFirstHardwareId('Latitude');
         if ($next_hwid == null) {
@@ -200,7 +200,7 @@ function yFindLatitude(string $func): YLatitude
  * Use the method YLatitude::nextLatitude() to iterate on
  * next latitude sensors.
  *
- * @return YLatitude  a pointer to a YLatitude object, corresponding to
+ * @return ?YLatitude  a pointer to a YLatitude object, corresponding to
  *         the first latitude sensor currently online, or a null pointer
  *         if there are none.
  */

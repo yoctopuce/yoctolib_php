@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 52899 2023-01-25 11:45:44Z seb $
+ *  $Id: yocto_magnetometer.php 52998 2023-01-31 10:49:23Z seb $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -90,7 +90,7 @@ class YMagnetometer extends YSensor
 
     //--- (end of YMagnetometer attributes)
 
-    function __construct($str_func)
+    function __construct(string $str_func)
     {
         //--- (YMagnetometer constructor)
         parent::__construct($str_func);
@@ -101,7 +101,7 @@ class YMagnetometer extends YSensor
 
     //--- (YMagnetometer implementation)
 
-    function _parseAttr($name, $val): int
+    function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
         case 'bandwidth':
@@ -126,6 +126,7 @@ class YMagnetometer extends YSensor
      * @return int  an integer corresponding to the measure update frequency, measured in Hz
      *
      * On failure, throws an exception or returns YMagnetometer::BANDWIDTH_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_bandwidth(): int
     {
@@ -150,6 +151,7 @@ class YMagnetometer extends YSensor
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
      */
     public function set_bandwidth(int $newval): int
     {
@@ -164,6 +166,7 @@ class YMagnetometer extends YSensor
      * floating point number
      *
      * On failure, throws an exception or returns YMagnetometer::XVALUE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_xValue(): float
     {
@@ -184,6 +187,7 @@ class YMagnetometer extends YSensor
      * floating point number
      *
      * On failure, throws an exception or returns YMagnetometer::YVALUE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_yValue(): float
     {
@@ -204,6 +208,7 @@ class YMagnetometer extends YSensor
      * floating point number
      *
      * On failure, throws an exception or returns YMagnetometer::ZVALUE_INVALID.
+     * @throws YAPI_Exception on error
      */
     public function get_zValue(): float
     {
@@ -245,7 +250,7 @@ class YMagnetometer extends YSensor
      *
      * @return YMagnetometer  a YMagnetometer object allowing you to drive the magnetometer.
      */
-    public static function FindMagnetometer(string $func): ?YMagnetometer
+    public static function FindMagnetometer(string $func): YMagnetometer
     {
         // $obj                    is a YMagnetometer;
         $obj = YFunction::_FindFromCache('Magnetometer', $func);
@@ -256,26 +261,41 @@ class YMagnetometer extends YSensor
         return $obj;
     }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function bandwidth(): int
 {
     return $this->get_bandwidth();
 }
 
-    public function setBandwidth(int $newval)
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setBandwidth(int $newval): int
 {
     return $this->set_bandwidth($newval);
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function xValue(): float
 {
     return $this->get_xValue();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function yValue(): float
 {
     return $this->get_yValue();
 }
 
+    /**
+     * @throws YAPI_Exception
+     */
     public function zValue(): float
 {
     return $this->get_zValue();
@@ -287,7 +307,7 @@ class YMagnetometer extends YSensor
      * If you want to find a specific a magnetometer, use Magnetometer.findMagnetometer()
      * and a hardwareID or a logical name.
      *
-     * @return YMagnetometer  a pointer to a YMagnetometer object, corresponding to
+     * @return ?YMagnetometer  a pointer to a YMagnetometer object, corresponding to
      *         a magnetometer currently online, or a null pointer
      *         if there are no more magnetometers to enumerate.
      */
@@ -309,11 +329,11 @@ class YMagnetometer extends YSensor
      * Use the method YMagnetometer::nextMagnetometer() to iterate on
      * next magnetometers.
      *
-     * @return YMagnetometer  a pointer to a YMagnetometer object, corresponding to
+     * @return ?YMagnetometer  a pointer to a YMagnetometer object, corresponding to
      *         the first magnetometer currently online, or a null pointer
      *         if there are none.
      */
-    public static function FirstMagnetometer()
+    public static function FirstMagnetometer(): ?YMagnetometer
     {
         $next_hwid = YAPI::getFirstHardwareId('Magnetometer');
         if ($next_hwid == null) {
@@ -367,7 +387,7 @@ function yFindMagnetometer(string $func): YMagnetometer
  * Use the method YMagnetometer::nextMagnetometer() to iterate on
  * next magnetometers.
  *
- * @return YMagnetometer  a pointer to a YMagnetometer object, corresponding to
+ * @return ?YMagnetometer  a pointer to a YMagnetometer object, corresponding to
  *         the first magnetometer currently online, or a null pointer
  *         if there are none.
  */
