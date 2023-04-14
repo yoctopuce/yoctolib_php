@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_realtimeclock.php 53870 2023-04-04 16:41:53Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -286,6 +286,9 @@ class YRealTimeClock extends YFunction
      * Changes the automatic clock synchronization with host working state.
      * To disable automatic synchronization, set the value to true.
      * To enable automatic synchronization (default), set the value to false.
+     *
+     * If you want the change to be kept after a device reboot,
+     * make sure  to call the matching module saveToFlash().
      *
      * @param int $newval : either YRealTimeClock::DISABLEHOSTSYNC_FALSE or
      * YRealTimeClock::DISABLEHOSTSYNC_TRUE, according to the automatic clock synchronization with host working state

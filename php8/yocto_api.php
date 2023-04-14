@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 53501 2023-03-09 10:20:06Z seb $
+ * $Id: yocto_api.php 53898 2023-04-05 11:33:29Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -3684,7 +3684,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.53532";
+        return "1.10.54037";
     }
 
     /**
@@ -3728,6 +3728,8 @@ class YAPI
      * can additionally cleanup the cache directory.
      *
      * @param boolean $removeFiles : True to clear the content of the cache.
+     *         On failure, throws an exception.
+     * @throws YAPI_Exception on error
      */
     public static function ClearHTTPCallbackCacheDir(bool $removeFiles): void
     {
@@ -6821,10 +6823,11 @@ class YFunction
     }
 
     /**
-     * Test if the function is readOnly. Return true if the function is write protected
-     * or that the function is not available.
+     * Indicates whether changes to the function are prohibited or allowed.
+     * Returns true if the function is blocked by an admin password
+     * or if the function is not available.
      *
-     * @return boolean  true if the function is readOnly or not online.
+     * @return boolean  true if the function is write-protected or not online.
      */
     public function isReadOnly(): bool
     {
@@ -10944,6 +10947,8 @@ function ySetHTTPCallbackCacheDir(string $directory): void
  * can additionally cleanup the cache directory.
  *
  * @param boolean $removeFiles : True to clear the content of the cache.
+ *         On failure, throws an exception.
+ * @throws YAPI_Exception on error
  */
 function yClearHTTPCallbackCacheDir(bool $removeFiles): void
 {
