@@ -1,3 +1,6 @@
-PHP v1.10.54037
+PHP v1.10.54821
 
-- Add YInputCapture class
+- Add support for YHub class
+- Add support for InputCapture class
+- Fix duplicate DeviceArrivalCallback and missing DeviceRemovalCallback
+- Fix documentation of YAPI class

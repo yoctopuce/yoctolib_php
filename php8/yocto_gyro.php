@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 52998 2023-01-31 10:49:23Z seb $
+ * $Id: yocto_gyro.php 54304 2023-05-01 13:29:46Z seb $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *
@@ -738,7 +738,7 @@ class YGyro extends YSensor
      */
     public function _invokeGyroCallbacks(int $qtIndex, float $qtValue): int
     {
-        switch($qtIndex - 1) {
+        switch ($qtIndex - 1) {
         case 0:
             $this->_w = $qtValue;
             break;
