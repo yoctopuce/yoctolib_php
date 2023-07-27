@@ -1,6 +1,4 @@
-PHP v1.10.54852
+PHP v1.10.55677
 
-- Add support for YHub class
-- Add support for InputCapture class
-- Fix duplicate DeviceArrivalCallback and missing DeviceRemovalCallback
-- Fix documentation of YAPI class
+- Update class definition for MessageBox and PowerSupply
+- Add SDI12Port support

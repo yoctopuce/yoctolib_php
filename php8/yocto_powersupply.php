@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 54768 2023-05-26 06:46:41Z seb $
+ *  $Id: yocto_powersupply.php 55576 2023-07-25 06:26:34Z mvuilleu $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -50,8 +50,17 @@ if (!defined('Y_POWEROUTPUT_ON')) {
 if (!defined('Y_POWEROUTPUT_INVALID')) {
     define('Y_POWEROUTPUT_INVALID', -1);
 }
-if (!defined('Y_VOLTAGESETPOINT_INVALID')) {
-    define('Y_VOLTAGESETPOINT_INVALID', YAPI_INVALID_DOUBLE);
+if (!defined('Y_POWEROUTPUTATSTARTUP_OFF')) {
+    define('Y_POWEROUTPUTATSTARTUP_OFF', 0);
+}
+if (!defined('Y_POWEROUTPUTATSTARTUP_ON')) {
+    define('Y_POWEROUTPUTATSTARTUP_ON', 1);
+}
+if (!defined('Y_POWEROUTPUTATSTARTUP_INVALID')) {
+    define('Y_POWEROUTPUTATSTARTUP_INVALID', -1);
+}
+if (!defined('Y_VOLTAGELIMIT_INVALID')) {
+    define('Y_VOLTAGELIMIT_INVALID', YAPI_INVALID_DOUBLE);
 }
 if (!defined('Y_CURRENTLIMIT_INVALID')) {
     define('Y_CURRENTLIMIT_INVALID', YAPI_INVALID_DOUBLE);
@@ -68,11 +77,11 @@ if (!defined('Y_INPUTVOLTAGE_INVALID')) {
 if (!defined('Y_VOLTAGETRANSITION_INVALID')) {
     define('Y_VOLTAGETRANSITION_INVALID', YAPI_INVALID_STRING);
 }
-if (!defined('Y_VOLTAGEATSTARTUP_INVALID')) {
-    define('Y_VOLTAGEATSTARTUP_INVALID', YAPI_INVALID_DOUBLE);
+if (!defined('Y_VOLTAGELIMITATSTARTUP_INVALID')) {
+    define('Y_VOLTAGELIMITATSTARTUP_INVALID', YAPI_INVALID_DOUBLE);
 }
-if (!defined('Y_CURRENTATSTARTUP_INVALID')) {
-    define('Y_CURRENTATSTARTUP_INVALID', YAPI_INVALID_DOUBLE);
+if (!defined('Y_CURRENTLIMITATSTARTUP_INVALID')) {
+    define('Y_CURRENTLIMITATSTARTUP_INVALID', YAPI_INVALID_DOUBLE);
 }
 if (!defined('Y_COMMAND_INVALID')) {
     define('Y_COMMAND_INVALID', YAPI_INVALID_STRING);
@@ -89,12 +98,12 @@ if (!defined('Y_COMMAND_INVALID')) {
  * YPowerSupply Class: regulated power supply control interface
  *
  * The YPowerSupply class allows you to drive a Yoctopuce power supply.
- * It can be use to change the voltage set point,
- * the current limit and the enable/disable the output.
+ * It can be use to change the voltage and current limits, and to enable/disable
+ * the output.
  */
 class YPowerSupply extends YFunction
 {
-    const VOLTAGESETPOINT_INVALID = YAPI::INVALID_DOUBLE;
+    const VOLTAGELIMIT_INVALID = YAPI::INVALID_DOUBLE;
     const CURRENTLIMIT_INVALID = YAPI::INVALID_DOUBLE;
     const POWEROUTPUT_OFF = 0;
     const POWEROUTPUT_ON = 1;
@@ -103,21 +112,25 @@ class YPowerSupply extends YFunction
     const MEASUREDCURRENT_INVALID = YAPI::INVALID_DOUBLE;
     const INPUTVOLTAGE_INVALID = YAPI::INVALID_DOUBLE;
     const VOLTAGETRANSITION_INVALID = YAPI::INVALID_STRING;
-    const VOLTAGEATSTARTUP_INVALID = YAPI::INVALID_DOUBLE;
-    const CURRENTATSTARTUP_INVALID = YAPI::INVALID_DOUBLE;
+    const VOLTAGELIMITATSTARTUP_INVALID = YAPI::INVALID_DOUBLE;
+    const CURRENTLIMITATSTARTUP_INVALID = YAPI::INVALID_DOUBLE;
+    const POWEROUTPUTATSTARTUP_OFF = 0;
+    const POWEROUTPUTATSTARTUP_ON = 1;
+    const POWEROUTPUTATSTARTUP_INVALID = -1;
     const COMMAND_INVALID = YAPI::INVALID_STRING;
     //--- (end of YPowerSupply declaration)
 
     //--- (YPowerSupply attributes)
-    protected float $_voltageSetPoint = self::VOLTAGESETPOINT_INVALID; // MeasureVal
+    protected float $_voltageLimit = self::VOLTAGELIMIT_INVALID;   // MeasureVal
     protected float $_currentLimit = self::CURRENTLIMIT_INVALID;   // MeasureVal
     protected int $_powerOutput = self::POWEROUTPUT_INVALID;    // OnOff
     protected float $_measuredVoltage = self::MEASUREDVOLTAGE_INVALID; // MeasureVal
     protected float $_measuredCurrent = self::MEASUREDCURRENT_INVALID; // MeasureVal
     protected float $_inputVoltage = self::INPUTVOLTAGE_INVALID;   // MeasureVal
     protected string $_voltageTransition = self::VOLTAGETRANSITION_INVALID; // AnyFloatTransition
-    protected float $_voltageAtStartUp = self::VOLTAGEATSTARTUP_INVALID; // MeasureVal
-    protected float $_currentAtStartUp = self::CURRENTATSTARTUP_INVALID; // MeasureVal
+    protected float $_voltageLimitAtStartUp = self::VOLTAGELIMITATSTARTUP_INVALID; // MeasureVal
+    protected float $_currentLimitAtStartUp = self::CURRENTLIMITATSTARTUP_INVALID; // MeasureVal
+    protected int $_powerOutputAtStartUp = self::POWEROUTPUTATSTARTUP_INVALID; // OnOff
     protected string $_command = self::COMMAND_INVALID;        // Text
 
     //--- (end of YPowerSupply attributes)
@@ -136,8 +149,8 @@ class YPowerSupply extends YFunction
     function _parseAttr(string $name, mixed $val): int
     {
         switch ($name) {
-        case 'voltageSetPoint':
-            $this->_voltageSetPoint = round($val / 65.536) / 1000.0;
+        case 'voltageLimit':
+            $this->_voltageLimit = round($val / 65.536) / 1000.0;
             return 1;
         case 'currentLimit':
             $this->_currentLimit = round($val / 65.536) / 1000.0;
@@ -157,11 +170,14 @@ class YPowerSupply extends YFunction
         case 'voltageTransition':
             $this->_voltageTransition = $val;
             return 1;
-        case 'voltageAtStartUp':
-            $this->_voltageAtStartUp = round($val / 65.536) / 1000.0;
+        case 'voltageLimitAtStartUp':
+            $this->_voltageLimitAtStartUp = round($val / 65.536) / 1000.0;
             return 1;
-        case 'currentAtStartUp':
-            $this->_currentAtStartUp = round($val / 65.536) / 1000.0;
+        case 'currentLimitAtStartUp':
+            $this->_currentLimitAtStartUp = round($val / 65.536) / 1000.0;
+            return 1;
+        case 'powerOutputAtStartUp':
+            $this->_powerOutputAtStartUp = intval($val);
             return 1;
         case 'command':
             $this->_command = $val;
@@ -171,38 +187,38 @@ class YPowerSupply extends YFunction
     }
 
     /**
-     * Changes the voltage set point, in V.
+     * Changes the voltage limit, in V.
      *
-     * @param float $newval : a floating point number corresponding to the voltage set point, in V
+     * @param float $newval : a floating point number corresponding to the voltage limit, in V
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
      * @throws YAPI_Exception on error
      */
-    public function set_voltageSetPoint(float $newval): int
+    public function set_voltageLimit(float $newval): int
     {
         $rest_val = strval(round($newval * 65536.0));
-        return $this->_setAttr("voltageSetPoint", $rest_val);
+        return $this->_setAttr("voltageLimit", $rest_val);
     }
 
     /**
-     * Returns the voltage set point, in V.
+     * Returns the voltage limit, in V.
      *
-     * @return float  a floating point number corresponding to the voltage set point, in V
+     * @return float  a floating point number corresponding to the voltage limit, in V
      *
-     * On failure, throws an exception or returns YPowerSupply::VOLTAGESETPOINT_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VOLTAGELIMIT_INVALID.
      * @throws YAPI_Exception on error
      */
-    public function get_voltageSetPoint(): float
+    public function get_voltageLimit(): float
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
-                return self::VOLTAGESETPOINT_INVALID;
+                return self::VOLTAGELIMIT_INVALID;
             }
         }
-        $res = $this->_voltageSetPoint;
+        $res = $this->_voltageLimit;
         return $res;
     }
 
@@ -375,29 +391,29 @@ class YPowerSupply extends YFunction
      * On failure, throws an exception or returns a negative error code.
      * @throws YAPI_Exception on error
      */
-    public function set_voltageAtStartUp(float $newval): int
+    public function set_voltageLimitAtStartUp(float $newval): int
     {
         $rest_val = strval(round($newval * 65536.0));
-        return $this->_setAttr("voltageAtStartUp", $rest_val);
+        return $this->_setAttr("voltageLimitAtStartUp", $rest_val);
     }
 
     /**
-     * Returns the selected voltage set point at device startup, in V.
+     * Returns the selected voltage limit at device startup, in V.
      *
-     * @return float  a floating point number corresponding to the selected voltage set point at device startup, in V
+     * @return float  a floating point number corresponding to the selected voltage limit at device startup, in V
      *
-     * On failure, throws an exception or returns YPowerSupply::VOLTAGEATSTARTUP_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::VOLTAGELIMITATSTARTUP_INVALID.
      * @throws YAPI_Exception on error
      */
-    public function get_voltageAtStartUp(): float
+    public function get_voltageLimitAtStartUp(): float
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
-                return self::VOLTAGEATSTARTUP_INVALID;
+                return self::VOLTAGELIMITATSTARTUP_INVALID;
             }
         }
-        $res = $this->_voltageAtStartUp;
+        $res = $this->_voltageLimitAtStartUp;
         return $res;
     }
 
@@ -412,10 +428,10 @@ class YPowerSupply extends YFunction
      * On failure, throws an exception or returns a negative error code.
      * @throws YAPI_Exception on error
      */
-    public function set_currentAtStartUp(float $newval): int
+    public function set_currentLimitAtStartUp(float $newval): int
     {
         $rest_val = strval(round($newval * 65536.0));
-        return $this->_setAttr("currentAtStartUp", $rest_val);
+        return $this->_setAttr("currentLimitAtStartUp", $rest_val);
     }
 
     /**
@@ -423,19 +439,58 @@ class YPowerSupply extends YFunction
      *
      * @return float  a floating point number corresponding to the selected current limit at device startup, in mA
      *
-     * On failure, throws an exception or returns YPowerSupply::CURRENTATSTARTUP_INVALID.
+     * On failure, throws an exception or returns YPowerSupply::CURRENTLIMITATSTARTUP_INVALID.
      * @throws YAPI_Exception on error
      */
-    public function get_currentAtStartUp(): float
+    public function get_currentLimitAtStartUp(): float
     {
         // $res                    is a double;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
-                return self::CURRENTATSTARTUP_INVALID;
+                return self::CURRENTLIMITATSTARTUP_INVALID;
             }
         }
-        $res = $this->_currentAtStartUp;
+        $res = $this->_currentLimitAtStartUp;
         return $res;
+    }
+
+    /**
+     * Returns the power supply output switch state.
+     *
+     * @return int  either YPowerSupply::POWEROUTPUTATSTARTUP_OFF or YPowerSupply::POWEROUTPUTATSTARTUP_ON,
+     * according to the power supply output switch state
+     *
+     * On failure, throws an exception or returns YPowerSupply::POWEROUTPUTATSTARTUP_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_powerOutputAtStartUp(): int
+    {
+        // $res                    is a enumONOFF;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::POWEROUTPUTATSTARTUP_INVALID;
+            }
+        }
+        $res = $this->_powerOutputAtStartUp;
+        return $res;
+    }
+
+    /**
+     * Changes the power supply output switch state at device start up. Remember to call the matching
+     * module saveToFlash() method, otherwise this call has no effect.
+     *
+     * @param int $newval : either YPowerSupply::POWEROUTPUTATSTARTUP_OFF or
+     * YPowerSupply::POWEROUTPUTATSTARTUP_ON, according to the power supply output switch state at device start up
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_powerOutputAtStartUp(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("powerOutputAtStartUp", $rest_val);
     }
 
     /**
@@ -525,17 +580,17 @@ class YPowerSupply extends YFunction
     /**
      * @throws YAPI_Exception
      */
-    public function setVoltageSetPoint(float $newval): int
+    public function setVoltageLimit(float $newval): int
 {
-    return $this->set_voltageSetPoint($newval);
+    return $this->set_voltageLimit($newval);
 }
 
     /**
      * @throws YAPI_Exception
      */
-    public function voltageSetPoint(): float
+    public function voltageLimit(): float
 {
-    return $this->get_voltageSetPoint();
+    return $this->get_voltageLimit();
 }
 
     /**
@@ -613,33 +668,49 @@ class YPowerSupply extends YFunction
     /**
      * @throws YAPI_Exception
      */
-    public function setVoltageAtStartUp(float $newval): int
+    public function setVoltageLimitAtStartUp(float $newval): int
 {
-    return $this->set_voltageAtStartUp($newval);
+    return $this->set_voltageLimitAtStartUp($newval);
 }
 
     /**
      * @throws YAPI_Exception
      */
-    public function voltageAtStartUp(): float
+    public function voltageLimitAtStartUp(): float
 {
-    return $this->get_voltageAtStartUp();
+    return $this->get_voltageLimitAtStartUp();
 }
 
     /**
      * @throws YAPI_Exception
      */
-    public function setCurrentAtStartUp(float $newval): int
+    public function setCurrentLimitAtStartUp(float $newval): int
 {
-    return $this->set_currentAtStartUp($newval);
+    return $this->set_currentLimitAtStartUp($newval);
 }
 
     /**
      * @throws YAPI_Exception
      */
-    public function currentAtStartUp(): float
+    public function currentLimitAtStartUp(): float
 {
-    return $this->get_currentAtStartUp();
+    return $this->get_currentLimitAtStartUp();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function powerOutputAtStartUp(): int
+{
+    return $this->get_powerOutputAtStartUp();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setPowerOutputAtStartUp(int $newval): int
+{
+    return $this->set_powerOutputAtStartUp($newval);
 }
 
     /**

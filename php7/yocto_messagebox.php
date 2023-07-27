@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 52998 2023-01-31 10:49:23Z seb $
+ * $Id: yocto_messagebox.php 55576 2023-07-25 06:26:34Z mvuilleu $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -1492,6 +1492,9 @@ if (!defined('Y_PDUSENT_INVALID')) {
 if (!defined('Y_PDURECEIVED_INVALID')) {
     define('Y_PDURECEIVED_INVALID', YAPI_INVALID_UINT);
 }
+if (!defined('Y_OBEY_INVALID')) {
+    define('Y_OBEY_INVALID', YAPI_INVALID_STRING);
+}
 if (!defined('Y_COMMAND_INVALID')) {
     define('Y_COMMAND_INVALID', YAPI_INVALID_STRING);
 }
@@ -1514,6 +1517,7 @@ class YMessageBox extends YFunction
     const SLOTSBITMAP_INVALID = YAPI::INVALID_STRING;
     const PDUSENT_INVALID = YAPI::INVALID_UINT;
     const PDURECEIVED_INVALID = YAPI::INVALID_UINT;
+    const OBEY_INVALID = YAPI::INVALID_STRING;
     const COMMAND_INVALID = YAPI::INVALID_STRING;
     //--- (end of generated code: YMessageBox declaration)
 
@@ -1523,6 +1527,7 @@ class YMessageBox extends YFunction
     protected $_slotsBitmap = self::SLOTSBITMAP_INVALID;    // BinaryBuffer
     protected $_pduSent = self::PDUSENT_INVALID;        // UInt31
     protected $_pduReceived = self::PDURECEIVED_INVALID;    // UInt31
+    protected $_obey = self::OBEY_INVALID;           // Text
     protected $_command = self::COMMAND_INVALID;        // Text
     protected $_nextMsgRef = 0;                            // int
     protected $_prevBitmapStr = '';                           // str
@@ -1562,6 +1567,9 @@ class YMessageBox extends YFunction
             return 1;
         case 'pduReceived':
             $this->_pduReceived = intval($val);
+            return 1;
+        case 'obey':
+            $this->_obey = $val;
             return 1;
         case 'command':
             $this->_command = $val;
@@ -1695,6 +1703,56 @@ class YMessageBox extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("pduReceived", $rest_val);
+    }
+
+    /**
+     * Returns the phone number authorized to send remote management commands.
+     * When a phone number is specified, the hub will take contre of all incoming
+     * SMS messages: it will execute commands coming from the authorized number,
+     * and delete all messages once received (whether authorized or not).
+     * If you need to receive SMS messages using your own software, leave this
+     * attribute empty.
+     *
+     * @return string  a string corresponding to the phone number authorized to send remote management commands
+     *
+     * On failure, throws an exception or returns YMessageBox::OBEY_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_obey(): string
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::OBEY_INVALID;
+            }
+        }
+        $res = $this->_obey;
+        return $res;
+    }
+
+    /**
+     * Changes the phone number authorized to send remote management commands.
+     * The phone number usually starts with a '+' and does not include spacers.
+     * When a phone number is specified, the hub will take contre of all incoming
+     * SMS messages: it will execute commands coming from the authorized number,
+     * and delete all messages once received (whether authorized or not).
+     * If you need to receive SMS messages using your own software, leave this
+     * attribute empty. Remember to call the saveToFlash() method of the
+     * module if the modification must be kept.
+     *
+     * This feature is only available since YoctoHub-GSM-4G.
+     *
+     * @param string $newval : a string corresponding to the phone number authorized to send remote management commands
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_obey(string $newval): int
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("obey", $rest_val);
     }
 
     /**
@@ -2554,6 +2612,22 @@ class YMessageBox extends YFunction
     public function setPduReceived(int $newval): int
 {
     return $this->set_pduReceived($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function obey(): string
+{
+    return $this->get_obey();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setObey(string $newval): int
+{
+    return $this->set_obey($newval);
 }
 
     /**

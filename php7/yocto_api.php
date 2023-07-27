@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 54649 2023-05-22 10:09:20Z seb $
+ * $Id: yocto_api.php 55620 2023-07-26 08:11:18Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -37,7 +37,7 @@
  *  WARRANTY, OR OTHERWISE.
  *
  *********************************************************************/
-
+declare(strict_types=1);
 //--- (generated code: YFunction definitions)
 // Yoctopuce error codes, also used by default as function return value
 const YAPI_SUCCESS                     = 0; // everything worked all right
@@ -765,7 +765,7 @@ class YTcpHub
         return $this->writeProtected;
     }
 
-    public function get_networkTimeout(): float
+    public function get_networkTimeout(): int
     {
         return $this->networkTimeout;
     }
@@ -2166,7 +2166,7 @@ class YAPIContext
         $this->_networkTimeoutMs = $networkMsTimeout;
     }
 
-    public function GetNetworkTimeout_internal(): float
+    public function GetNetworkTimeout_internal(): int
     {
         return $this->_networkTimeoutMs;
     }
@@ -2780,7 +2780,7 @@ class YAPI
                                 /** @noinspection PhpMissingBreakStatementInspection */
                                 case 0: // device name change, or arrival
                                     $parts = explode(',', substr($ev, 5));
-                                    YAPI::setBeaconChange($parts[0], $parts[2]);
+                                    YAPI::setBeaconChange($parts[0], intval($parts[2]));
                                 // no break on purpose
                                 case 2: // device plug/unplug
                                 case 4: // function name change
@@ -3749,6 +3749,9 @@ class YAPI
      */
     public static function SetDeviceListValidity(int $deviceListValidity)
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         self::$_yapiContext->SetDeviceListValidity($deviceListValidity);
     }
     /**
@@ -3759,6 +3762,9 @@ class YAPI
      */
     public static function GetDeviceListValidity(): int
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->GetDeviceListValidity();
     }
     /**
@@ -3774,6 +3780,9 @@ class YAPI
      */
     public static function AddUdevRule(bool $force): string
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->AddUdevRule($force);
     }
     /**
@@ -3788,6 +3797,9 @@ class YAPI
      */
     public static function SetNetworkTimeout(int $networkMsTimeout)
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         self::$_yapiContext->SetNetworkTimeout($networkMsTimeout);
     }
     /**
@@ -3801,6 +3813,9 @@ class YAPI
      */
     public static function GetNetworkTimeout(): int
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->GetNetworkTimeout();
     }
     /**
@@ -3818,6 +3833,9 @@ class YAPI
      */
     public static function SetCacheValidity(float $cacheValidityMs)
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         self::$_yapiContext->SetCacheValidity($cacheValidityMs);
     }
     /**
@@ -3831,6 +3849,9 @@ class YAPI
      */
     public static function GetCacheValidity(): float
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->GetCacheValidity();
     }
     /**
@@ -3838,6 +3859,9 @@ class YAPI
      */
     public static function nextHubInUseInternal(int $hubref): ?YHub
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->nextHubInUseInternal($hubref);
     }
     /**
@@ -3845,6 +3869,9 @@ class YAPI
      */
     public static function getYHubObj(int $hubref): ?YHub
     {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
         return self::$_yapiContext->getYHubObj($hubref);
     }
    #--- (end of generated code: YAPIContext yapiwrapper)
@@ -3868,7 +3895,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.54852";
+        return "1.10.55677";
     }
 
     /**
@@ -4070,6 +4097,13 @@ class YAPI
             $res['port'] = (int)substr($str_url, $p_ofs + 1);
         } else {
             $res['host'] = $str_url;
+            if ($res['subdomain'] != '') {
+                if ($res['proto'] == 'http') {
+                    $res['port'] = 80;
+                }else if ($res['proto'] == 'https') {
+                    $res['port'] = 443;
+                }
+            }
         }
         if (strcasecmp(substr($str_url, 0, 8), "callback") == 0) {
             $res['rooturl'] = "http://" . strtoupper($str_url);
@@ -4665,7 +4699,7 @@ class YAPI
             if ($remain > 999) {
                 $remain = 999;
             }
-            self::_handleEvents_internal($remain);
+            self::_handleEvents_internal((int)$remain);
             self::HandleEvents($errmsg);
             $remain = $end - YAPI::GetTickCount();
         }
