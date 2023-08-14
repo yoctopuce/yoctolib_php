@@ -1,4 +1,3 @@
-PHP v1.10.55677
+PHP v1.10.55993
 
-- Update class definition for MessageBox and PowerSupply
-- Add SDI12Port support
+- Fix YAPI::ForwardHTTPCallback that was not working with https urls
