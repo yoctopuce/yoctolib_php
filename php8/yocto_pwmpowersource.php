@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmpowersource.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_pwmpowersource.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YPwmPowerSource, the high-level API for PwmPowerSource functions
  *
@@ -302,3 +302,4 @@ function yFirstPwmPowerSource(): ?YPwmPowerSource
 }
 
 //--- (end of YPwmPowerSource functions)
+

@@ -1,3 +1,4 @@
-PHP v1.10.55993
+PHP v1.10.56419
 
-- Fix YAPI::ForwardHTTPCallback that was not working with https urls
+- Add RfidReader and Sdi12Port classes
+- Add YAPI::SetNetworkSecurityOptions, YAPI::SetTrustedCertificatesList and YAPI::DownloadHostCertificate methods

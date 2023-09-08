@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_longitude.php 52985 2023-01-30 15:01:00Z seb $
+ *  $Id: yocto_longitude.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YLongitude, the high-level API for Longitude functions
  *
@@ -210,3 +210,4 @@ function yFirstLongitude(): ?YLongitude
 }
 
 //--- (end of YLongitude functions)
+

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_power.php 53420 2023-03-06 10:38:51Z mvuilleu $
+ *  $Id: yocto_power.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YPower, the high-level API for Power functions
  *
@@ -483,3 +483,4 @@ function yFirstPower(): ?YPower
 }
 
 //--- (end of YPower functions)
+

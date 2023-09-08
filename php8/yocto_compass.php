@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_compass.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_compass.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YCompass, the high-level API for Compass functions
  *
@@ -360,3 +360,4 @@ function yFirstCompass(): ?YCompass
 }
 
 //--- (end of YCompass functions)
+

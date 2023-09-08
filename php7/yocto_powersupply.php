@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 55576 2023-07-25 06:26:34Z mvuilleu $
+ *  $Id: yocto_powersupply.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -825,3 +825,4 @@ function yFirstPowerSupply(): ?YPowerSupply
 }
 
 //--- (end of YPowerSupply functions)
+

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_weighscale.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_weighscale.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -966,3 +966,4 @@ function yFirstWeighScale(): ?YWeighScale
 }
 
 //--- (end of YWeighScale functions)
+

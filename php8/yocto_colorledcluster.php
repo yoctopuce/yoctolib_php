@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_colorledcluster.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -1533,3 +1533,4 @@ function yFirstColorLedCluster(): ?YColorLedCluster
 }
 
 //--- (end of YColorLedCluster functions)
+

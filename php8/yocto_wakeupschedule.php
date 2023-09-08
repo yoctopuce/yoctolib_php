@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupschedule.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_wakeupschedule.php 56230 2023-08-21 15:20:59Z mvuilleu $
  *
  *  Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -59,6 +59,9 @@ if (!defined('Y_MONTHDAYS_INVALID')) {
 if (!defined('Y_MONTHS_INVALID')) {
     define('Y_MONTHS_INVALID', YAPI_INVALID_UINT);
 }
+if (!defined('Y_SECONDSBEFORE_INVALID')) {
+    define('Y_SECONDSBEFORE_INVALID', YAPI_INVALID_UINT);
+}
 if (!defined('Y_NEXTOCCURENCE_INVALID')) {
     define('Y_NEXTOCCURENCE_INVALID', YAPI_INVALID_LONG);
 }
@@ -86,6 +89,7 @@ class YWakeUpSchedule extends YFunction
     const WEEKDAYS_INVALID = YAPI::INVALID_UINT;
     const MONTHDAYS_INVALID = YAPI::INVALID_UINT;
     const MONTHS_INVALID = YAPI::INVALID_UINT;
+    const SECONDSBEFORE_INVALID = YAPI::INVALID_UINT;
     const NEXTOCCURENCE_INVALID = YAPI::INVALID_LONG;
     //--- (end of YWakeUpSchedule declaration)
 
@@ -96,6 +100,7 @@ class YWakeUpSchedule extends YFunction
     protected int $_weekDays = self::WEEKDAYS_INVALID;       // DaysOfWeekBits
     protected int $_monthDays = self::MONTHDAYS_INVALID;      // DaysOfMonthBits
     protected int $_months = self::MONTHS_INVALID;         // MonthsOfYearBits
+    protected int $_secondsBefore = self::SECONDSBEFORE_INVALID;  // UInt31
     protected float $_nextOccurence = self::NEXTOCCURENCE_INVALID;  // UTCTime
 
     //--- (end of YWakeUpSchedule attributes)
@@ -131,6 +136,9 @@ class YWakeUpSchedule extends YFunction
             return 1;
         case 'months':
             $this->_months = intval($val);
+            return 1;
+        case 'secondsBefore':
+            $this->_secondsBefore = intval($val);
             return 1;
         case 'nextOccurence':
             $this->_nextOccurence = intval($val);
@@ -370,6 +378,48 @@ class YWakeUpSchedule extends YFunction
     }
 
     /**
+     * Returns the number of seconds to anticipate wake-up time to allow
+     * the system to power-up.
+     *
+     * @return int  an integer corresponding to the number of seconds to anticipate wake-up time to allow
+     *         the system to power-up
+     *
+     * On failure, throws an exception or returns YWakeUpSchedule::SECONDSBEFORE_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_secondsBefore(): int
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::SECONDSBEFORE_INVALID;
+            }
+        }
+        $res = $this->_secondsBefore;
+        return $res;
+    }
+
+    /**
+     * Changes the number of seconds to anticipate wake-up time to allow
+     * the system to power-up.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param int $newval : an integer corresponding to the number of seconds to anticipate wake-up time to allow
+     *         the system to power-up
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_secondsBefore(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("secondsBefore", $rest_val);
+    }
+
+    /**
      * Returns the date/time (seconds) of the next wake up occurrence.
      *
      * @return float  an integer corresponding to the date/time (seconds) of the next wake up occurrence
@@ -557,6 +607,22 @@ class YWakeUpSchedule extends YFunction
     /**
      * @throws YAPI_Exception
      */
+    public function secondsBefore(): int
+{
+    return $this->get_secondsBefore();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setSecondsBefore(int $newval): int
+{
+    return $this->set_secondsBefore($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
     public function nextOccurence(): float
 {
     return $this->get_nextOccurence();
@@ -658,3 +724,4 @@ function yFirstWakeUpSchedule(): ?YWakeUpSchedule
 }
 
 //--- (end of YWakeUpSchedule functions)
+

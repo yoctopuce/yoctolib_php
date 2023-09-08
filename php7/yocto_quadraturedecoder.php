@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_quadraturedecoder.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *
@@ -414,3 +414,4 @@ function yFirstQuadratureDecoder(): ?YQuadratureDecoder
 }
 
 //--- (end of YQuadratureDecoder functions)
+

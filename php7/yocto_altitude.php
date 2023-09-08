@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_altitude.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_altitude.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YAltitude, the high-level API for Altitude functions
  *
@@ -354,3 +354,4 @@ function yFirstAltitude(): ?YAltitude
 }
 
 //--- (end of YAltitude functions)
+

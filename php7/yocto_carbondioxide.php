@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_carbondioxide.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_carbondioxide.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -410,3 +410,4 @@ function yFirstCarbonDioxide(): ?YCarbonDioxide
 }
 
 //--- (end of YCarbonDioxide functions)
+
