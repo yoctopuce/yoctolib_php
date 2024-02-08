@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_arithmeticsensor.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_arithmeticsensor.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YArithmeticSensor, the high-level API for ArithmeticSensor functions
  *
@@ -466,3 +466,4 @@ function yFirstArithmeticSensor(): ?YArithmeticSensor
 }
 
 //--- (end of YArithmeticSensor functions)
+

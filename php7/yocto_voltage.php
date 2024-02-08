@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltage.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_voltage.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YVoltage, the high-level API for Voltage functions
  *
@@ -293,3 +293,4 @@ function yFirstVoltage(): ?YVoltage
 }
 
 //--- (end of YVoltage functions)
+

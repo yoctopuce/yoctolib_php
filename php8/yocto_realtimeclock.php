@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_realtimeclock.php 53870 2023-04-04 16:41:53Z mvuilleu $
+ *  $Id: yocto_realtimeclock.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YRealTimeClock, the high-level API for RealTimeClock functions
  *
@@ -503,3 +503,4 @@ function yFirstRealTimeClock(): ?YRealTimeClock
 }
 
 //--- (end of YRealTimeClock functions)
+

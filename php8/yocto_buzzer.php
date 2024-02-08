@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_buzzer.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -869,3 +869,4 @@ function yFirstBuzzer(): ?YBuzzer
 }
 
 //--- (end of YBuzzer functions)
+

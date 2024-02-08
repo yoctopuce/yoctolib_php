@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorled.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_colorled.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YColorLed, the high-level API for ColorLed functions
  *
@@ -211,9 +211,9 @@ class YColorLed extends YFunction
     }
 
     /**
-     * Changes the current color of the LED, using a color HSL. Encoding is done as follows: 0xHHSSLL.
+     * Changes the current color of the LED, using a specific HSL color. Encoding is done as follows: 0xHHSSLL.
      *
-     * @param int $newval : an integer corresponding to the current color of the LED, using a color HSL
+     * @param int $newval : an integer corresponding to the current color of the LED, using a specific HSL color
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -388,12 +388,12 @@ class YColorLed extends YFunction
     }
 
     /**
-     * Return the blinking sequence signature. Since blinking
+     * Returns the blinking sequence signature. Since blinking
      * sequences cannot be read from the device, this can be used
      * to detect if a specific blinking sequence is already
      * programmed.
      *
-     * @return int  an integer
+     * @return int  an integer corresponding to the blinking sequence signature
      *
      * On failure, throws an exception or returns YColorLed::BLINKSEQSIGNATURE_INVALID.
      * @throws YAPI_Exception on error
@@ -751,3 +751,4 @@ function yFirstColorLed(): ?YColorLed
 }
 
 //--- (end of YColorLed functions)
+

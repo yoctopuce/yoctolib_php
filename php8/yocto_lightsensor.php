@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_lightsensor.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_lightsensor.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YLightSensor, the high-level API for LightSensor functions
  *
@@ -353,3 +353,4 @@ function yFirstLightSensor(): ?YLightSensor
 }
 
 //--- (end of YLightSensor functions)
+

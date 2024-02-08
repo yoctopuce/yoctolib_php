@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_latitude.php 52985 2023-01-30 15:01:00Z seb $
+ *  $Id: yocto_latitude.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YLatitude, the high-level API for Latitude functions
  *
@@ -210,3 +210,4 @@ function yFirstLatitude(): ?YLatitude
 }
 
 //--- (end of YLatitude functions)
+

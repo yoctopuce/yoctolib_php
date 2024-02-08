@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 55948 2023-08-09 08:50:29Z seb $
+ * $Id: yocto_api.php 59221 2024-02-05 15:46:32Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -56,6 +56,9 @@ const YAPI_UNAUTHORIZED                = -12; // unauthorized access to password
 const YAPI_RTC_NOT_READY               = -13; // real-time clock has not been initialized (or time was lost)
 const YAPI_FILE_NOT_FOUND              = -14; // the file is not found
 const YAPI_SSL_ERROR                   = -15; // Error reported by mbedSSL
+const YAPI_RFID_SOFT_ERROR             = -16; // Recoverable error with RFID tag (eg. tag out of reach), check YRfidStatus for details
+const YAPI_RFID_HARD_ERROR             = -17; // Serious RFID error (eg. write-protected, out-of-boundary), check YRfidStatus for details
+const YAPI_BUFFER_TOO_SMALL            = -18; // The buffer provided is too small
 
 const YAPI_INVALID_INT = YAPI::INVALID_INT;
 const YAPI_INVALID_UINT = YAPI::INVALID_UINT;
@@ -576,13 +579,15 @@ class YTcpHub
         } else {
             $info_json_url = $this->rooturl . $this->url_info['subdomain'] . '/info.json';
             $info_json = @file_get_contents($info_json_url);
-            $jsonData = json_decode($info_json, true);
-            if ($jsonData != null) {
-                if (array_key_exists('protocol', $jsonData) && $jsonData['protocol'] == 'HTTP/1.1') {
-                    $this->use_pure_http = true;
-                }
-                if (array_key_exists('serialNumber', $jsonData)) {
-                    $this->updateSerial($jsonData['serialNumber']);
+            if ($info_json !== false) {
+                $jsonData = json_decode($info_json, true);
+                if ($jsonData != null) {
+                    if (array_key_exists('protocol', $jsonData) && $jsonData['protocol'] == 'HTTP/1.1') {
+                        $this->use_pure_http = true;
+                    }
+                    if (array_key_exists('serialNumber', $jsonData)) {
+                        $this->updateSerial($jsonData['serialNumber']);
+                    }
                 }
             }
             $this->callbackCache = null;
@@ -684,7 +689,10 @@ class YTcpHub
             strpos($str_query, '/logs.txt') !== false ||
             strpos($str_query, '/tRep.bin') !== false ||
             strpos($str_query, '/logger.json') !== false ||
+            strpos($str_query, '/rxmsg.json') !== false ||
             strpos($str_query, '/ping.txt') !== false ||
+            strpos($str_query, '/flash.json?a=list') !== false ||
+            strpos($str_query, '/flash.json?a=stat') !== false ||
             strpos($str_query, '/files.json?a=dir') !== false) {
             // read request, load from cache
             $parts = explode(' ', $str_query);
@@ -942,7 +950,24 @@ class YTcpReq
         if ($pos !== false) {
             $addr = substr($addr, 0, $pos);
         }
-        return @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000);
+        if (substr($addr,0,6) == 'tls://') {
+            $ssl_options = [];
+            if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_TRUSTED_CA_CHECK) {
+                $ssl_options['verify_peer'] = false;
+            }
+            if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_HOSTNAME_CHECK) {
+                $ssl_options['verify_peer_name'] = false;
+            }
+            if (YAPI::$_yapiContext->_sslCertPath  !='') {
+                $ssl_options['cafile'] = YAPI::$_yapiContext->_sslCertPath;
+            }
+            $sslContext = stream_context_create(['ssl' => $ssl_options]);
+            $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000,STREAM_CLIENT_CONNECT,$sslContext);
+        } else{
+            $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000);
+
+        }
+        return $resource;
     }
 
 
@@ -1962,6 +1987,8 @@ class YAPIContext
 
     public $_deviceListValidityMs = 10000;                        // ulong
     public $_networkTimeoutMs = YAPI_BLOCKING_REQUEST_TIMEOUT;
+    public $_sslCertOptions = 0;
+    public $_sslCertPath = '';
     //--- (generated code: YAPIContext attributes)
     protected $_defaultCacheValidity = 5;                            // ulong
 
@@ -2166,6 +2193,14 @@ class YAPIContext
     {
         $this->_networkTimeoutMs = $networkMsTimeout;
     }
+    public function SetTrustedCertificatesList(string $certificatePath)
+    {
+        $this->_sslCertPath = $certificatePath;
+    }
+    public function SetNetworkSecurityOptions(int $options)
+    {
+        $this->_sslCertOptions = $options;
+    }
 
     public function GetNetworkTimeout_internal(): int
     {
@@ -2267,7 +2302,15 @@ class YAPI
     const RTC_NOT_READY         = -13;     // real-time clock has not been initialized (or time was lost)
     const FILE_NOT_FOUND        = -14;     // the file is not found
     const SSL_ERROR             = -15;     // Error reported by mbedSSL
+    const RFID_SOFT_ERROR       = -16;     // Recoverable error with RFID tag (eg. tag out of reach), check YRfidStatus for details
+    const RFID_HARD_ERROR       = -17;     // Serious RFID error (eg. write-protected, out-of-boundary), check YRfidStatus for details
+    const BUFFER_TOO_SMALL      = -18;     // The buffer provided is too small
 //--- (end of generated code: YFunction return codes)
+
+    // TLS / SSL definitions
+    const NO_TRUSTED_CA_CHECK   = 1;       // Disables certificate checking
+    const NO_HOSTNAME_CHECK     = 4;       // Disable hostname checking
+
 
     // yInitAPI constants (not really useful in JavaScript)
     const DETECT_NONE = 0;
@@ -3734,7 +3777,80 @@ class YAPI
     }
 
 
-    //--- (generated code: YAPIContext yapiwrapper)
+    /**
+     * Download the TLS/SSL certificate from the hub. This function allows to download a TLS/SSL certificate to add it
+     * to the list of trusted certificates using the AddTrustedCertificates method.
+     *
+     * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
+     * @param int $mstimeout : the number of milliseconds available to download the certificate.
+     *
+     * @return  string containing the certificate. In case of error, returns a string starting with "error:".
+     */
+    public static function DownloadHostCertificate(string $url,int $mstimeout):string
+    {
+        $contextOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'allow_self_signed'=>true,
+                'verify_peer_name' =>false,
+                'capture_peer_cert_chain'=>true
+            )
+        );
+        $url = str_replace('http://', 'tls://', $url);
+        $url = str_replace('https://', 'tls://', $url);
+        if (strpos($url, 'tls://')!==0){
+            $url ='tls://'.$url;
+        }
+
+        $sslContext = @stream_context_create($contextOptions);
+        $resource = @stream_socket_client($url, $errno, $errstr, 10,STREAM_CLIENT_CONNECT,$sslContext);
+        if ($resource) {
+            $params = stream_context_get_params($resource);
+            $ca = "";
+            foreach ($params["options"]["ssl"]["peer_certificate_chain"] as $cert)
+            {
+                openssl_x509_export($cert, $output);
+                $ca .= $output;
+            }
+            return $ca;
+        }
+        return "";
+    }
+    /**
+     * Adds a TLS/SSL certificate to the list of trusted certificates. By default, the library
+     * library will reject TLS/SSL connections to servers whose certificate is not known. This function
+     * function allows to add a list of known certificates. It is also possible to disable the verification
+     * using the SetNetworkSecurityOptions method.
+     *
+     * @param string certificate : a string containing the path of the certificate
+     * @noreturn
+     */
+    public static function SetTrustedCertificatesList(string $certificatePath)
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        self::$_yapiContext->SetTrustedCertificatesList($certificatePath);
+    }
+
+    /**
+     * Enables or disables certain TLS/SSSL certificate checks.
+     *
+     * @param int $options: The options: YAPI::ALL_CHECK, YAPI::NO_TRUSTED_CA_CHECK,
+     *         YAPI::NO_HOSTNAME_CHECK.
+     * @noreturn
+     */
+    public static function SetNetworkSecurityOptions(int $options)
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        self::$_yapiContext->SetNetworkSecurityOptions($options);
+    }
+
+
+
+//--- (generated code: YAPIContext yapiwrapper)
 
     /**
      * Modifies the delay between each forced enumeration of the used YoctoHubs.
@@ -3896,7 +4012,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.55993";
+        return "1.10.59271";
     }
 
     /**
@@ -7771,12 +7887,23 @@ class YFunction
         return $this->_cache[$str_attr];
     }
 
-    protected function _escapeAttr(string $str_newval): string
+    /**
+     * urlencode according to RFC 3986 instead of php default RFC 1738
+     * BUT use iso-8859-1 encoding since this is for Yoctopuce modules
+     */
+    public function _escapeAttr(string $str_val): string
     {
-        // urlencode according to RFC 3986 instead of php default RFC 1738
-        $safecodes = array('%21', '%23', '%24', '%27', '%28', '%29', '%2A', '%2C', '%2F', '%3A', '%3B', '%40', '%3F', '%5B', '%5D');
-        $safechars = array('!', "#", "$", "'", "(", ")", '*', ",", "/", ":", ";", "@", "?", "[", "]");
-        return str_replace($safecodes, $safechars, urlencode($str_newval));
+        $safecodes = [ '%21', '%23', '%24', '%27', '%28', '%29', '%2A', '%2C', '%2F', '%3A', '%3B', '%40', '%3F', '%5B', '%5D' ];
+        $safechars = [ '!', "#", "$", "'", "(", ")", '*', ",", "/", ":", ";", "@", "?", "[", "]" ];
+        $isAscii = !preg_match('~[\x7f-\xff]~', $str_val);
+        if(!$isAscii) {
+            // check if string is made of utf-8 characters that can be converted to iso-8859-1
+            $isUtf8 = preg_match('~^([\x00-\x7f]|[\xC2-\xC3][\x80-\xBF])+$~', $str_val);
+            if($isUtf8) {
+                $str_val = iconv("UTF-8", "ISO-8859-1", $str_val);
+            }
+        }
+        return str_replace($safecodes, $safechars, urlencode($str_val));
     }
 
     /**
@@ -7789,11 +7916,9 @@ class YFunction
         if (!isset($str_newval)) {
             $this->_throw(YAPI::INVALID_ARGUMENT, "Undefined value to set for attribute $str_attr", null);
         }
-        // urlencode according to RFC 3986 instead of php default RFC 1738
-        $safecodes = array('%21', '%23', '%24', '%27', '%28', '%29', '%2A', '%2C', '%2F', '%3A', '%3B', '%40', '%3F', '%5B', '%5D');
-        $safechars = array('!', "#", "$", "'", "(", ")", '*', ",", "/", ":", ";", "@", "?", "[", "]");
-        $attrname = str_replace($safecodes, $safechars, urlencode($str_attr));
-        $extra = "/$attrname?$attrname=" . $this->_escapeAttr($str_newval) . "&.";
+        $attrname = $this->_escapeAttr($str_attr);
+        $str_newval = $this->_escapeAttr($str_newval);
+        $extra = "/{$attrname}?{$attrname}={$str_newval}&.";
         $yreq = YAPI::funcRequest($this->_className, $this->_func, $extra);
         if ($this->_cacheExpiration != 0) {
             $this->_cacheExpiration = YAPI::GetTickCount();
@@ -9078,7 +9203,7 @@ class YSensor extends YFunction
             array_pop($refValues);
         };
         // Load function parameters if not yet loaded
-        if ($this->_scale == 0) {
+        if (($this->_scale == 0) || ($this->_cacheExpiration <= YAPI::GetTickCount())) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
                 return YAPI::DEVICE_NOT_FOUND;
             }
@@ -9599,12 +9724,13 @@ class YModule extends YFunction
     }
 
     /**
-     * Retrieves the type of the <i>n</i>th function on the module.
+     * Retrieves the type of the <i>n</i>th function on the module. Yoctopuce functions type names match
+     * their class names without the <i>Y</i> prefix, for instance <i>Relay</i>, <i>Temperature</i> etc..
      *
      * @param int $functionIndex : the index of the function for which the information is desired,
      * starting at 0 for the first function.
      *
-     * @return string  a string corresponding to the type of the function
+     * @return string  a string corresponding to the type of the function.
      *
      * On failure, throws an exception or returns an empty string.
      * @throws YAPI_Exception on error

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_hubport.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_hubport.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YHubPort, the high-level API for HubPort functions
  *
@@ -385,3 +385,4 @@ function yFirstHubPort(): ?YHubPort
 }
 
 //--- (end of YHubPort functions)
+

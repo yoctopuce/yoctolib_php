@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_currentloopoutput.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_currentloopoutput.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -464,3 +464,4 @@ function yFirstCurrentLoopOutput(): ?YCurrentLoopOutput
 }
 
 //--- (end of YCurrentLoopOutput functions)
+

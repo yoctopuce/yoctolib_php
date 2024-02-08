@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_magnetometer.php 56082 2023-08-15 14:57:14Z mvuilleu $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -397,3 +397,4 @@ function yFirstMagnetometer(): ?YMagnetometer
 }
 
 //--- (end of YMagnetometer functions)
+
