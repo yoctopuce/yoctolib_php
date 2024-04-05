@@ -126,27 +126,28 @@ class YSdi12SnoopingRecord
 
     //--- (end of generated code: YSdi12SnoopingRecord implementation)
 
-//--- (generated code: YSdi12Sensor definitions)
-//--- (end of generated code: YSdi12Sensor definitions)
-    #--- (generated code: YSdi12Sensor yapiwrapper)
+//--- (generated code: YSdi12SensorInfo definitions)
+//--- (end of generated code: YSdi12SensorInfo definitions)
+    #--- (generated code: YSdi12SensorInfo yapiwrapper)
 
-   #--- (end of generated code: YSdi12Sensor yapiwrapper)
+   #--- (end of generated code: YSdi12SensorInfo yapiwrapper)
 
-//--- (generated code: YSdi12Sensor declaration)
-//vvvv YSdi12Sensor.php
+//--- (generated code: YSdi12SensorInfo declaration)
+//vvvv YSdi12SensorInfo.php
 
 /**
- * YSdi12Sensor Class: Description of a discovered SDI12 sensor, returned by
+ * YSdi12SensorInfo Class: Description of a discovered SDI12 sensor, returned by
  * sdi12Port.discoverSingleSensor and sdi12Port.discoverAllSensors methods
  *
  *
  */
-class YSdi12Sensor
+class YSdi12SensorInfo
 {
-    //--- (end of generated code: YSdi12Sensor declaration)
+    //--- (end of generated code: YSdi12SensorInfo declaration)
 
-    //--- (generated code: YSdi12Sensor attributes)
+    //--- (generated code: YSdi12SensorInfo attributes)
     protected ?YSdi12Port $_sdi12Port = null;                         // YSdi12Port
+    protected bool $_isValid = false;                        // bool
     protected string $_addr = "";                           // str
     protected string $_proto = "";                           // str
     protected string $_mfg = "";                           // str
@@ -155,15 +156,33 @@ class YSdi12Sensor
     protected string $_sn = "";                           // str
     protected array $_valuesDesc = [];                           // strArrArr
 
-    //--- (end of generated code: YSdi12Sensor attributes)
+    //--- (end of generated code: YSdi12SensorInfo attributes)
 
     function __construct(string $str_func)
     {
-        //--- (generated code: YSdi12Sensor constructor)
-        //--- (end of generated code: YSdi12Sensor constructor)
+        //--- (generated code: YSdi12SensorInfo constructor)
+        //--- (end of generated code: YSdi12SensorInfo constructor)
     }
 
-    //--- (generated code: YSdi12Sensor implementation)
+    /**
+     * @throws YAPI_Exception on error
+     */
+    public function _throw(YRETCODE $errcode, string $msg, mixed $retVal): mixed
+    {
+        return $this->_sdi12Port->_throw($errcode,$msg,$retVal);
+    }
+
+    //--- (generated code: YSdi12SensorInfo implementation)
+
+    /**
+     * Returns the sensor state.
+     *
+     * @return boolean  the sensor state.
+     */
+    public function isValid(): bool
+    {
+        return $this->_isValid;
+    }
 
     /**
      * Returns the sensor address.
@@ -227,6 +246,8 @@ class YSdi12Sensor
 
     /**
      * Returns the number of sensor measurements.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @return int  the number of sensor measurements.
      */
@@ -237,61 +258,86 @@ class YSdi12Sensor
 
     /**
      * Returns the sensor measurement command.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @param int $measureIndex : measurement index
      *
      * @return string  the sensor measurement command.
+     *         On failure, throws an exception or returns an empty string.
+     * @throws YAPI_Exception on error
      */
     public function get_measureCommand(int $measureIndex): string
     {
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][0];
     }
 
     /**
      * Returns sensor measurement position.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @param int $measureIndex : measurement index
      *
      * @return int  the sensor measurement command.
+     *         On failure, throws an exception or returns 0.
+     * @throws YAPI_Exception on error
      */
     public function get_measurePosition(int $measureIndex): int
     {
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index',0);
         return intVal($this->_valuesDesc[$measureIndex][2]);
     }
 
     /**
      * Returns the measured value symbol.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @param int $measureIndex : measurement index
      *
      * @return string  the sensor measurement command.
+     *         On failure, throws an exception or returns an empty string.
+     * @throws YAPI_Exception on error
      */
     public function get_measureSymbol(int $measureIndex): string
     {
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][3];
     }
 
     /**
      * Returns the unit of the measured value.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @param int $measureIndex : measurement index
      *
      * @return string  the sensor measurement command.
+     *         On failure, throws an exception or returns an empty string.
+     * @throws YAPI_Exception on error
      */
     public function get_measureUnit(int $measureIndex): string
     {
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][4];
     }
 
     /**
      * Returns the description of the measured value.
+     * This function only works if the sensor is in version 1.4 SDI-12
+     * and supports metadata commands.
      *
      * @param int $measureIndex : measurement index
      *
      * @return string  the sensor measurement command.
+     *         On failure, throws an exception or returns an empty string.
+     * @throws YAPI_Exception on error
      */
     public function get_measureDescription(int $measureIndex): string
     {
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][5];
     }
 
@@ -319,6 +365,7 @@ class YSdi12Sensor
                 $this->_model = $errmsg;
                 $this->_ver = $errmsg;
                 $this->_sn = $errmsg;
+                $this->_isValid = false;
             } else {
                 $this->_addr = substr($infoStr,  0, 1);
                 $this->_proto = substr($infoStr,  1, 2);
@@ -326,6 +373,7 @@ class YSdi12Sensor
                 $this->_model = substr($infoStr,  11, 6);
                 $this->_ver = substr($infoStr,  17, 3);
                 $this->_sn = substr($infoStr,  20, strlen($infoStr)-20);
+                $this->_isValid = true;
             }
         }
     }
@@ -388,7 +436,7 @@ class YSdi12Sensor
         $this->_valuesDesc = $val;
     }
 
-    //--- (end of generated code: YSdi12Sensor implementation)
+    //--- (end of generated code: YSdi12SensorInfo implementation)
 
 //--- (generated code: YSdi12Port return codes)
 //--- (end of generated code: YSdi12Port return codes)
@@ -993,21 +1041,21 @@ class YSdi12Port extends YFunction
     }
 
     /**
-     * Retrieves a SDI12 port for a given identifier.
+     * Retrieves an SDI12 port for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the SDI12 port is online at the time
      * it is invoked. The returned object is nevertheless valid.
      * Use the method isOnline() to test if the SDI12 port is
      * indeed online at a given time. In case of ambiguity when looking for
-     * a SDI12 port by logical name, no error is notified: the first instance
+     * an SDI12 port by logical name, no error is notified: the first instance
      * found is returned. The search is performed first by hardware name,
      * then by logical name.
      *
@@ -1817,18 +1865,18 @@ class YSdi12Port extends YFunction
      * This function is intended to be used when the serial port is configured for 'SDI-12' protocol.
      * This function work when only one sensor is connected.
      *
-     * @return ?YSdi12Sensor  the reply returned by the sensor, as a YSdi12Sensor object.
+     * @return ?YSdi12SensorInfo  the reply returned by the sensor, as a YSdi12SensorInfo object.
      *
      * On failure, throws an exception or returns an empty string.
      * @throws YAPI_Exception on error
      */
-    public function discoverSingleSensor(): ?YSdi12Sensor
+    public function discoverSingleSensor(): ?YSdi12SensorInfo
     {
         // $resStr                 is a str;
 
         $resStr = $this->querySdi12('?','',5000);
         if ($resStr == '') {
-            return new YSdi12Sensor($this, 'ERSensor Not Found');
+            return new YSdi12SensorInfo($this, 'ERSensor Not Found');
         }
 
         return $this->getSensorInformation($resStr);
@@ -1838,14 +1886,15 @@ class YSdi12Port extends YFunction
      * Sends a discovery command to the bus, and reads all sensors information reply.
      * This function is intended to be used when the serial port is configured for 'SDI-12' protocol.
      *
-     * @return YSdi12Sensor[]  all the information from every connected sensor, as an array of YSdi12Sensor object.
+     * @return YSdi12SensorInfo[]  all the information from every connected sensor, as an array of
+     * YSdi12SensorInfo object.
      *
      * On failure, throws an exception or returns an empty string.
      * @throws YAPI_Exception on error
      */
     public function discoverAllSensors(): array
     {
-        $sensors = [];          // YSdi12SensorArr;
+        $sensors = [];          // YSdi12SensorInfoArr;
         $idSens = [];           // strArr;
         // $res                    is a str;
         // $i                      is a int;
@@ -1943,14 +1992,14 @@ class YSdi12Port extends YFunction
      * @param string $oldAddress : Actual sensor address, as a string
      * @param string $newAddress : New sensor address, as a string
      *
-     * @return ?YSdi12Sensor  the sensor address and information , as a YSdi12Sensor object.
+     * @return ?YSdi12SensorInfo  the sensor address and information , as a YSdi12SensorInfo object.
      *
      * On failure, throws an exception or returns an empty string.
      * @throws YAPI_Exception on error
      */
-    public function changeAddress(string $oldAddress, string $newAddress): ?YSdi12Sensor
+    public function changeAddress(string $oldAddress, string $newAddress): ?YSdi12SensorInfo
     {
-        // $addr                   is a YSdi12Sensor;
+        // $addr                   is a YSdi12SensorInfo;
 
         $this->querySdi12($oldAddress, 'A' . $newAddress,1000);
         $addr = $this->getSensorInformation($newAddress);
@@ -1963,21 +2012,21 @@ class YSdi12Port extends YFunction
      *
      * @param string $sensorAddr : Sensor address, as a string
      *
-     * @return ?YSdi12Sensor  the reply returned by the sensor, as a YSdi12Port object.
+     * @return ?YSdi12SensorInfo  the reply returned by the sensor, as a YSdi12Port object.
      *
      * On failure, throws an exception or returns an empty string.
      * @throws YAPI_Exception on error
      */
-    public function getSensorInformation(string $sensorAddr): ?YSdi12Sensor
+    public function getSensorInformation(string $sensorAddr): ?YSdi12SensorInfo
     {
         // $res                    is a str;
-        // $sensor                 is a YSdi12Sensor;
+        // $sensor                 is a YSdi12SensorInfo;
 
         $res = $this->querySdi12($sensorAddr,'I',1000);
         if ($res == '') {
-            return new YSdi12Sensor($this, 'ERSensor Not Found');
+            return new YSdi12SensorInfo($this, 'ERSensor Not Found');
         }
-        $sensor = new YSdi12Sensor($this, $res);
+        $sensor = new YSdi12SensorInfo($this, $res);
         $sensor->_queryValueInfo();
         return $sensor;
     }
@@ -2031,13 +2080,14 @@ class YSdi12Port extends YFunction
      *
      * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
      *         in the receive buffer.
+     * @param int $maxMsg : the maximum number of messages to be returned by the function; up to 254.
      *
      * @return YSdi12SnoopingRecord[]  an array of YSdi12SnoopingRecord objects containing the messages found, if any.
      *
      * On failure, throws an exception or returns an empty array.
      * @throws YAPI_Exception on error
      */
-    public function snoopMessages(int $maxWait): array
+    public function snoopMessagesEx(int $maxWait, int $maxMsg): array
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
@@ -2046,7 +2096,7 @@ class YSdi12Port extends YFunction
         $res = [];              // YSdi12SnoopingRecordArr;
         // $idx                    is a int;
 
-        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&t=0', $this->_rxptr, $maxWait);
+        $url = sprintf('rxmsg.json?pos=%d&maxw=%d&t=0&len=%d', $this->_rxptr, $maxWait, $maxMsg);
         $msgbin = $this->_download($url);
         $msgarr = $this->_json_get_array($msgbin);
         $msglen = sizeof($msgarr);
@@ -2062,6 +2112,25 @@ class YSdi12Port extends YFunction
             $idx = $idx + 1;
         }
         return $res;
+    }
+
+    /**
+     * Retrieves messages (both direction) in the SDI12 port buffer, starting at current position.
+     *
+     * If no message is found, the search waits for one up to the specified maximum timeout
+     * (in milliseconds).
+     *
+     * @param int $maxWait : the maximum number of milliseconds to wait for a message if none is found
+     *         in the receive buffer.
+     *
+     * @return YSdi12SnoopingRecord[]  an array of YSdi12SnoopingRecord objects containing the messages found, if any.
+     *
+     * On failure, throws an exception or returns an empty array.
+     * @throws YAPI_Exception on error
+     */
+    public function snoopMessages(int $maxWait): array
+    {
+        return $this->snoopMessagesEx($maxWait, 255);
     }
 
     /**
@@ -2227,11 +2296,11 @@ class YSdi12Port extends YFunction
     /**
      * Continues the enumeration of SDI12 ports started using yFirstSdi12Port().
      * Caution: You can't make any assumption about the returned SDI12 ports order.
-     * If you want to find a specific a SDI12 port, use Sdi12Port.findSdi12Port()
+     * If you want to find a specific an SDI12 port, use Sdi12Port.findSdi12Port()
      * and a hardwareID or a logical name.
      *
      * @return ?YSdi12Port  a pointer to a YSdi12Port object, corresponding to
-     *         a SDI12 port currently online, or a null pointer
+     *         an SDI12 port currently online, or a null pointer
      *         if there are no more SDI12 ports to enumerate.
      */
     public function nextSdi12Port(): ?YSdi12Port
@@ -2273,21 +2342,21 @@ class YSdi12Port extends YFunction
 //--- (generated code: YSdi12Port functions)
 
 /**
- * Retrieves a SDI12 port for a given identifier.
+ * Retrieves an SDI12 port for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the SDI12 port is online at the time
  * it is invoked. The returned object is nevertheless valid.
  * Use the method isOnline() to test if the SDI12 port is
  * indeed online at a given time. In case of ambiguity when looking for
- * a SDI12 port by logical name, no error is notified: the first instance
+ * an SDI12 port by logical name, no error is notified: the first instance
  * found is returned. The search is performed first by hardware name,
  * then by logical name.
  *

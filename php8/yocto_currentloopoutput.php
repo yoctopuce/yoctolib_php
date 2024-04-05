@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_currentloopoutput.php 56082 2023-08-15 14:57:14Z mvuilleu $
+ *  $Id: yocto_currentloopoutput.php 59977 2024-03-18 15:02:32Z mvuilleu $
  *
  *  Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *
@@ -252,13 +252,13 @@ class YCurrentLoopOutput extends YFunction
     /**
      * Retrieves a 4-20mA output for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the 4-20mA output is online at the time
      * it is invoked. The returned object is nevertheless valid.
@@ -419,13 +419,13 @@ class YCurrentLoopOutput extends YFunction
 /**
  * Retrieves a 4-20mA output for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the 4-20mA output is online at the time
  * it is invoked. The returned object is nevertheless valid.

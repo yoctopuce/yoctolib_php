@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 59221 2024-02-05 15:46:32Z seb $
+ * $Id: yocto_api.php 60390 2024-04-05 07:54:03Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -890,11 +890,11 @@ class YTcpReq
         if ($this->meta != '' && $this->errorType == YAPI::SUCCESS) {
             // connection was done and ended successfully
             // check we need to unchunk the response
-            $t_ofs = strpos($this->meta, "Transfer-Encoding");
+            $t_ofs = stripos($this->meta, "transfer-encoding");
             if ($t_ofs > 0) {
                 $t_ofs += 17;
                 $t_endl = strpos($this->meta, "\r\n", $t_ofs);
-                $t_chunk = strpos($this->meta, "chunked", $t_ofs);
+                $t_chunk = stripos($this->meta, "chunked", $t_ofs);
                 if ($t_chunk !== false && $t_endl !== false && $t_chunk < $t_endl) {
                     // chuck encoded
                     $new = $this->http_chunked_decode($this->reply);
@@ -1511,6 +1511,7 @@ class YDevice
     protected $_beacon;
     protected $_devYdx;
     protected $_cache;
+    protected $_cacheExpiration;
     protected $_functions;
     protected $_ongoingReq;
     public $_lastErrorType;
@@ -3782,9 +3783,9 @@ class YAPI
      * to the list of trusted certificates using the AddTrustedCertificates method.
      *
      * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
-     * @param int $mstimeout : the number of milliseconds available to download the certificate.
+     * @param float $mstimeout : the number of milliseconds available to download the certificate.
      *
-     * @return  string containing the certificate. In case of error, returns a string starting with "error:".
+     * @return string  a string containing the certificate. In case of error, returns a string starting with "error:".
      */
     public static function DownloadHostCertificate(string $url,int $mstimeout):string
     {
@@ -3834,11 +3835,13 @@ class YAPI
     }
 
     /**
-     * Enables or disables certain TLS/SSSL certificate checks.
+     * Enables or disables certain TLS/SSL certificate checks.
      *
-     * @param int $options: The options: YAPI::ALL_CHECK, YAPI::NO_TRUSTED_CA_CHECK,
-     *         YAPI::NO_HOSTNAME_CHECK.
-     * @noreturn
+     * @param options: The options: YAPI::NO_TRUSTED_CA_CHECK,
+     *         YAPI::NO_EXPIRATION_CHECK, YAPI::NO_HOSTNAME_CHECK.
+     *
+     * @return string  an empty string if the options are taken into account.
+     *         On error, returns a string beginning with "error:".
      */
     public static function SetNetworkSecurityOptions(int $options)
     {
@@ -4012,7 +4015,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.59271";
+        return "1.10.60394";
     }
 
     /**
@@ -4615,7 +4618,7 @@ class YAPI
                             $match[1] = preg_replace_callback('/(?<=^|[\x09\x20\x2D])./', function ($matches) {
                                 return strtoupper($matches[0]);
                             }, strtolower(trim($match[1])));
-                            $meta[$match[1]] = trim($match[2]);
+                            $meta[strtolower($match[1])] = trim($match[2]);
                         }
                     }
                     $firstline = $lines[0];
@@ -4629,15 +4632,15 @@ class YAPI
                         fclose($skt);
                         $errmsg = "Websocket not supported";
                         return YAPI::NOT_SUPPORTED;
-                    } elseif ($code >= '300' && $code <= '302' && isset($meta['Location'])) {
+                    } elseif ($code >= '300' && $code <= '302' && isset($meta['location'])) {
                         fclose($skt);
-                        return self::_forwardHTTPreq($proto, $host, $meta['Location'], $cbdata, $errmsg);
+                        return self::_forwardHTTPreq($proto, $host, $meta['location'], $cbdata, $errmsg);
                     } elseif (substr($code, 0, 2) != '20' || $code[2] == '3') {
                         fclose($skt);
                         $errmsg = "HTTP error" . substr($firstline, strlen($words[0]));
                         return YAPI::NOT_SUPPORTED;
                     }
-                    $chunked = isset($meta['Transfer-Encoding']) && strtolower($meta['Transfer-Encoding']) == 'chunked';
+                    $chunked = isset($meta['transfer-encoding']) && strtolower($meta['transfer-encoding']) == 'chunked';
                 }
             }
             // process body according to encoding
@@ -7445,13 +7448,13 @@ class YFunction
     /**
      * Retrieves a function for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the function is online at the time
      * it is invoked. The returned object is nevertheless valid.
@@ -8801,11 +8804,11 @@ class YSensor extends YFunction
     }
 
     /**
-     * Returns the sensor health state code, which is zero when there is an up-to-date measure
+     * Returns the sensor state code, which is zero when there is an up-to-date measure
      * available or a positive code if the sensor is not able to provide a measure right now.
      *
-     * @return int  an integer corresponding to the sensor health state code, which is zero when there is
-     * an up-to-date measure
+     * @return int  an integer corresponding to the sensor state code, which is zero when there is an
+     * up-to-date measure
      *         available or a positive code if the sensor is not able to provide a measure right now
      *
      * On failure, throws an exception or returns YSensor.SENSORSTATE_INVALID.
@@ -8826,13 +8829,13 @@ class YSensor extends YFunction
     /**
      * Retrieves a sensor for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the sensor is online at the time
      * it is invoked. The returned object is nevertheless valid.
@@ -10369,9 +10372,10 @@ class YModule extends YFunction
      * Registers a device log callback function. This callback will be called each time
      * that a module sends a new log message. Mostly useful to debug a Yoctopuce module.
      *
-     * @param callable $callback : the callback function to call, or a null pointer. The callback function
-     * should take two
-     *         arguments: the module object that emitted the log message, and the character string containing the log.
+     * @param callable $callback : the callback function to call, or a null pointer.
+     *         The callback function should take two
+     *         arguments: the module object that emitted the log message,
+     *         and the character string containing the log.
      *         On failure, throws an exception or returns a negative error code.
      * @throws YAPI_Exception on error
      */
@@ -12098,13 +12102,13 @@ function yLinearCalibrationHandler(
 /**
  * Retrieves a function for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the function is online at the time
  * it is invoked. The returned object is nevertheless valid.
@@ -12144,13 +12148,13 @@ function yFirstFunction(): ?YFunction
 /**
  * Retrieves a sensor for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the sensor is online at the time
  * it is invoked. The returned object is nevertheless valid.
@@ -12298,7 +12302,7 @@ if (!defined('Y_USAGE_INVALID')) {
  * sensors. Recording can happen automatically, without requiring a permanent
  * connection to a computer.
  * The YDataLogger class controls the global parameters of the internal data
- * logger. Recording control (start/stop) as well as data retreival is done at
+ * logger. Recording control (start/stop) as well as data retrieval is done at
  * sensor objects level.
  */
 class YDataLogger extends YFunction
@@ -12629,13 +12633,13 @@ class YDataLogger extends YFunction
     /**
      * Retrieves a data logger for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the data logger is online at the time
      * it is invoked. The returned object is nevertheless valid.
@@ -12865,13 +12869,13 @@ class YDataLogger extends YFunction
 /**
  * Retrieves a data logger for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the data logger is online at the time
  * it is invoked. The returned object is nevertheless valid.

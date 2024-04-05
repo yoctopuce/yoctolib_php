@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 56082 2023-08-15 14:57:14Z mvuilleu $
+ *  $Id: yocto_colorledcluster.php 59977 2024-03-18 15:02:32Z mvuilleu $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *
@@ -342,13 +342,13 @@ class YColorLedCluster extends YFunction
     /**
      * Retrieves a RGB LED cluster for a given identifier.
      * The identifier can be specified using several formats:
-     * <ul>
-     * <li>FunctionLogicalName</li>
-     * <li>ModuleSerialNumber.FunctionIdentifier</li>
-     * <li>ModuleSerialNumber.FunctionLogicalName</li>
-     * <li>ModuleLogicalName.FunctionIdentifier</li>
-     * <li>ModuleLogicalName.FunctionLogicalName</li>
-     * </ul>
+     *
+     * - FunctionLogicalName
+     * - ModuleSerialNumber.FunctionIdentifier
+     * - ModuleSerialNumber.FunctionLogicalName
+     * - ModuleLogicalName.FunctionIdentifier
+     * - ModuleLogicalName.FunctionLogicalName
+     *
      *
      * This function does not require that the RGB LED cluster is online at the time
      * it is invoked. The returned object is nevertheless valid.
@@ -1488,13 +1488,13 @@ class YColorLedCluster extends YFunction
 /**
  * Retrieves a RGB LED cluster for a given identifier.
  * The identifier can be specified using several formats:
- * <ul>
- * <li>FunctionLogicalName</li>
- * <li>ModuleSerialNumber.FunctionIdentifier</li>
- * <li>ModuleSerialNumber.FunctionLogicalName</li>
- * <li>ModuleLogicalName.FunctionIdentifier</li>
- * <li>ModuleLogicalName.FunctionLogicalName</li>
- * </ul>
+ *
+ * - FunctionLogicalName
+ * - ModuleSerialNumber.FunctionIdentifier
+ * - ModuleSerialNumber.FunctionLogicalName
+ * - ModuleLogicalName.FunctionIdentifier
+ * - ModuleLogicalName.FunctionLogicalName
+ *
  *
  * This function does not require that the RGB LED cluster is online at the time
  * it is invoked. The returned object is nevertheless valid.
