@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_weighscale.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_weighscale.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YWeighScale, the high-level API for WeighScale functions
  *
@@ -506,7 +506,7 @@ class YWeighScale extends YSensor
      */
     public function setupSpan(float $currWeight, float $maxWeight): int
     {
-        return $this->set_command(sprintf('S%d:%d', round(1000*$currWeight), round(1000*$maxWeight)));
+        return $this->set_command(sprintf('S%d:%d', intval(round(1000*$currWeight)), intval(round(1000*$maxWeight))));
     }
 
     /**
@@ -546,7 +546,7 @@ class YWeighScale extends YSensor
                 $idx = $idx + 1;
             }
             if ($found > 0) {
-                $res = $this->set_command(sprintf('%dm%d:%d', $tableIndex, round(1000*$curr), round(1000*$currComp)));
+                $res = $this->set_command(sprintf('%dm%d:%d', $tableIndex, intval(round(1000*$curr)), intval(round(1000*$currComp))));
                 if (!($res==YAPI::SUCCESS)) return $this->_throw( YAPI::IO_ERROR, 'unable to set thermal compensation table',YAPI::IO_ERROR);
                 $prev = $curr;
             }

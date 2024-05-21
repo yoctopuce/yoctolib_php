@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_network.php 60428 2024-04-08 12:57:43Z seb $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *
@@ -58,6 +58,21 @@ if (!defined('Y_READINESS_WWW_OK')) {
 }
 if (!defined('Y_READINESS_INVALID')) {
     define('Y_READINESS_INVALID', -1);
+}
+if (!defined('Y_SECURITYMODE_UNDEFINED')) {
+    define('Y_SECURITYMODE_UNDEFINED', 0);
+}
+if (!defined('Y_SECURITYMODE_LEGACY')) {
+    define('Y_SECURITYMODE_LEGACY', 1);
+}
+if (!defined('Y_SECURITYMODE_MIXED')) {
+    define('Y_SECURITYMODE_MIXED', 2);
+}
+if (!defined('Y_SECURITYMODE_SECURE')) {
+    define('Y_SECURITYMODE_SECURE', 3);
+}
+if (!defined('Y_SECURITYMODE_INVALID')) {
+    define('Y_SECURITYMODE_INVALID', -1);
 }
 if (!defined('Y_DISCOVERABLE_FALSE')) {
     define('Y_DISCOVERABLE_FALSE', 0);
@@ -167,6 +182,9 @@ if (!defined('Y_ADMINPASSWORD_INVALID')) {
 if (!defined('Y_HTTPPORT_INVALID')) {
     define('Y_HTTPPORT_INVALID', YAPI_INVALID_UINT);
 }
+if (!defined('Y_HTTPSPORT_INVALID')) {
+    define('Y_HTTPSPORT_INVALID', YAPI_INVALID_UINT);
+}
 if (!defined('Y_DEFAULTPAGE_INVALID')) {
     define('Y_DEFAULTPAGE_INVALID', YAPI_INVALID_STRING);
 }
@@ -229,6 +247,12 @@ class YNetwork extends YFunction
     const USERPASSWORD_INVALID = YAPI::INVALID_STRING;
     const ADMINPASSWORD_INVALID = YAPI::INVALID_STRING;
     const HTTPPORT_INVALID = YAPI::INVALID_UINT;
+    const HTTPSPORT_INVALID = YAPI::INVALID_UINT;
+    const SECURITYMODE_UNDEFINED = 0;
+    const SECURITYMODE_LEGACY = 1;
+    const SECURITYMODE_MIXED = 2;
+    const SECURITYMODE_SECURE = 3;
+    const SECURITYMODE_INVALID = -1;
     const DEFAULTPAGE_INVALID = YAPI::INVALID_STRING;
     const DISCOVERABLE_FALSE = 0;
     const DISCOVERABLE_TRUE = 1;
@@ -278,6 +302,8 @@ class YNetwork extends YFunction
     protected string $_userPassword = self::USERPASSWORD_INVALID;   // UserPassword
     protected string $_adminPassword = self::ADMINPASSWORD_INVALID;  // AdminPassword
     protected int $_httpPort = self::HTTPPORT_INVALID;       // UInt31
+    protected int $_httpsPort = self::HTTPSPORT_INVALID;      // UInt31
+    protected int $_securityMode = self::SECURITYMODE_INVALID;   // SecurityMode
     protected string $_defaultPage = self::DEFAULTPAGE_INVALID;    // Text
     protected int $_discoverable = self::DISCOVERABLE_INVALID;   // Bool
     protected int $_wwwWatchdogDelay = self::WWWWATCHDOGDELAY_INVALID; // UInt31
@@ -346,6 +372,12 @@ class YNetwork extends YFunction
             return 1;
         case 'httpPort':
             $this->_httpPort = intval($val);
+            return 1;
+        case 'httpsPort':
+            $this->_httpsPort = intval($val);
+            return 1;
+        case 'securityMode':
+            $this->_securityMode = intval($val);
             return 1;
         case 'defaultPage':
             $this->_defaultPage = $val;
@@ -812,6 +844,98 @@ class YNetwork extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("httpPort", $rest_val);
+    }
+
+    /**
+     * Returns the secure TCP port used to serve the hub web UI.
+     *
+     * @return int  an integer corresponding to the secure TCP port used to serve the hub web UI
+     *
+     * On failure, throws an exception or returns YNetwork::HTTPSPORT_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_httpsPort(): int
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::HTTPSPORT_INVALID;
+            }
+        }
+        $res = $this->_httpsPort;
+        return $res;
+    }
+
+    /**
+     * Changes the secure TCP port used to serve the hub web UI. The default value is port 4443,
+     * which is the default for all Web servers. When you change this parameter, remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
+     *
+     * @param int $newval : an integer corresponding to the secure TCP port used to serve the hub web UI
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_httpsPort(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("httpsPort", $rest_val);
+    }
+
+    /**
+     * Returns the security level chosen to prevent unauthorized access to the server.
+     *
+     * @return int  a value among YNetwork::SECURITYMODE_UNDEFINED, YNetwork::SECURITYMODE_LEGACY,
+     * YNetwork::SECURITYMODE_MIXED and YNetwork::SECURITYMODE_SECURE corresponding to the security level
+     * chosen to prevent unauthorized access to the server
+     *
+     * On failure, throws an exception or returns YNetwork::SECURITYMODE_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_securityMode(): int
+    {
+        // $res                    is a enumSECURITYMODE;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::SECURITYMODE_INVALID;
+            }
+        }
+        $res = $this->_securityMode;
+        return $res;
+    }
+
+    /**
+     * Changes the security level used to prevent unauthorized access to the server.
+     * The value UNDEFINED causes the security configuration wizard to be
+     * displayed the next time you log on to the Web console.
+     * The value LEGACY offers unencrypted HTTP access by default, and
+     * is designed to provide compatibility with legacy applications that do not
+     * handle password or do not support HTTPS. But it should
+     * only be used when system security is guaranteed by other means, such as the
+     * use of a firewall.
+     * The value MIXED requires the configuration of passwords, and allows
+     * access via both HTTP (unencrypted) and HTTPS (encrypted), while requiring
+     * the Yoctopuce API to be tolerant of certificate characteristics.
+     * The value SECURE requires the configuration of passwords and the
+     * use of secure communications in all cases.
+     * When you change this parameter, remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
+     *
+     * @param int $newval : a value among YNetwork::SECURITYMODE_UNDEFINED, YNetwork::SECURITYMODE_LEGACY,
+     * YNetwork::SECURITYMODE_MIXED and YNetwork::SECURITYMODE_SECURE corresponding to the security level
+     * used to prevent unauthorized access to the server
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_securityMode(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("securityMode", $rest_val);
     }
 
     /**
@@ -1666,6 +1790,38 @@ class YNetwork extends YFunction
     public function setHttpPort(int $newval): int
 {
     return $this->set_httpPort($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function httpsPort(): int
+{
+    return $this->get_httpsPort();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setHttpsPort(int $newval): int
+{
+    return $this->set_httpsPort($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function securityMode(): int
+{
+    return $this->get_securityMode();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setSecurityMode(int $newval): int
+{
+    return $this->set_securityMode($newval);
 }
 
     /**

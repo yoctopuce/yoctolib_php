@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_pwmoutput.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -570,7 +570,7 @@ class YPwmOutput extends YFunction
         if ($ms_target < 0.0) {
             $ms_target = 0.0;
         }
-        $newval = sprintf('%dms:%d', round($ms_target*65536), $ms_duration);
+        $newval = sprintf('%dms:%d', intval(round($ms_target*65536)), $ms_duration);
         return $this->set_pwmTransition($newval);
     }
 
@@ -596,7 +596,7 @@ class YPwmOutput extends YFunction
         if ($target > 100.0) {
             $target = 100.0;
         }
-        $newval = sprintf('%d:%d', round($target*65536), $ms_duration);
+        $newval = sprintf('%d:%d', intval(round($target*65536)), $ms_duration);
         return $this->set_pwmTransition($newval);
     }
 
@@ -663,7 +663,7 @@ class YPwmOutput extends YFunction
         if ($ms_target < 0.0) {
             $ms_target = 0.0;
         }
-        $newval = sprintf('%dms*%d', round($ms_target*65536), $n_pulses);
+        $newval = sprintf('%dms*%d', intval(round($ms_target*65536)), $n_pulses);
         return $this->set_pwmTransition($newval);
     }
 
@@ -689,7 +689,7 @@ class YPwmOutput extends YFunction
         if ($target > 100.0) {
             $target = 100.0;
         }
-        $newval = sprintf('%d*%d', round($target*65536), $n_pulses);
+        $newval = sprintf('%d*%d', intval(round($target*65536)), $n_pulses);
         return $this->set_pwmTransition($newval);
     }
 

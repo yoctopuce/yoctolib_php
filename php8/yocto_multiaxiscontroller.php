@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multiaxiscontroller.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_multiaxiscontroller.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
@@ -298,10 +298,10 @@ class YMultiAxisController extends YFunction
         // $i                      is a int;
         // $ndim                   is a int;
         $ndim = sizeof($speed);
-        $cmd = sprintf('H%d', round(1000*$speed[0]));
+        $cmd = sprintf('H%d', intval(round(1000*$speed[0])));
         $i = 1;
         while ($i < $ndim) {
-            $cmd = sprintf('%s,%d', $cmd, round(1000*$speed[$i]));
+            $cmd = sprintf('%s,%d', $cmd, intval(round(1000*$speed[$i])));
             $i = $i + 1;
         }
         return $this->sendCommand($cmd);
@@ -325,10 +325,10 @@ class YMultiAxisController extends YFunction
         // $i                      is a int;
         // $ndim                   is a int;
         $ndim = sizeof($absPos);
-        $cmd = sprintf('M%d', round(16*$absPos[0]));
+        $cmd = sprintf('M%d', intval(round(16*$absPos[0])));
         $i = 1;
         while ($i < $ndim) {
-            $cmd = sprintf('%s,%d', $cmd, round(16*$absPos[$i]));
+            $cmd = sprintf('%s,%d', $cmd, intval(round(16*$absPos[$i])));
             $i = $i + 1;
         }
         return $this->sendCommand($cmd);
@@ -352,10 +352,10 @@ class YMultiAxisController extends YFunction
         // $i                      is a int;
         // $ndim                   is a int;
         $ndim = sizeof($relPos);
-        $cmd = sprintf('m%d', round(16*$relPos[0]));
+        $cmd = sprintf('m%d', intval(round(16*$relPos[0])));
         $i = 1;
         while ($i < $ndim) {
-            $cmd = sprintf('%s,%d', $cmd, round(16*$relPos[$i]));
+            $cmd = sprintf('%s,%d', $cmd, intval(round(16*$relPos[$i])));
             $i = $i + 1;
         }
         return $this->sendCommand($cmd);

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_buzzer.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -512,7 +512,7 @@ class YBuzzer extends YFunction
                 } else {
                     $prevDuration = $num;
                 }
-                $ms = round(320000.0 / ($tempo * $num));
+                $ms = intval(round(320000.0 / ($tempo * $num)));
                 if ($typ == 0) {
                     $this->addPulseToPlaySeq(0, $ms);
                 } else {
@@ -524,7 +524,7 @@ class YBuzzer extends YFunction
                         $dNote = $dNote + 12;
                     }
                     $pitch = $prevPitch + $dNote;
-                    $freq = round(440 * exp($pitch * 0.05776226504666));
+                    $freq = intval(round(440 * exp($pitch * 0.05776226504666)));
                     $ms16 = (($ms) >> (4));
                     $rest = 0;
                     if ($typ == 3) {

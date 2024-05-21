@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_carbondioxide.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_carbondioxide.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *
@@ -219,7 +219,7 @@ class YCarbonDioxide extends YSensor
      */
     public function triggerForcedCalibration(float $refVal): int
     {
-        return $this->set_command(sprintf('F%dC', round(1000*$refVal)));
+        return $this->set_command(sprintf('F%dC', intval(round(1000*$refVal))));
     }
 
     /**

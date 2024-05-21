@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 60390 2024-04-05 07:54:03Z seb $
+ * $Id: yocto_api.php 61003 2024-05-17 09:34:15Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -59,7 +59,14 @@ const YAPI_SSL_ERROR                   = -15; // Error reported by mbedSSL
 const YAPI_RFID_SOFT_ERROR             = -16; // Recoverable error with RFID tag (eg. tag out of reach), check YRfidStatus for details
 const YAPI_RFID_HARD_ERROR             = -17; // Serious RFID error (eg. write-protected, out-of-boundary), check YRfidStatus for details
 const YAPI_BUFFER_TOO_SMALL            = -18; // The buffer provided is too small
+const YAPI_DNS_ERROR                   = -19; // Error during name resolutions (invalid hostname or dns communication error)
+const YAPI_SSL_UNK_CERT                = -20; // The certificate is not correctly signed by the trusted CA
 
+// TLS / SSL definitions
+const YAPI_NO_TRUSTED_CA_CHECK         = 1; // Disables certificate checking
+const YAPI_NO_EXPIRATION_CHECK         = 2; // Disables certificate expiration date checking
+const YAPI_NO_HOSTNAME_CHECK           = 4; // Disable hostname checking
+const YAPI_LEGACY                      = 8; // Allow non secure connection (similar to v1.10)
 const YAPI_INVALID_INT = YAPI::INVALID_INT;
 const YAPI_INVALID_UINT = YAPI::INVALID_UINT;
 const YAPI_INVALID_LONG = YAPI::INVALID_LONG;
@@ -281,11 +288,12 @@ if (!function_exists('array_key_first')) {
 class YTcpHub
 {
     // attributes
-    public $rooturl;                    // root url of the hub (without auth parameters)
+    private $rooturl;                    // root url of the hub (without auth parameters)
     public $streamaddr;                 // stream address of the hub ("tcp://addr:port")
     public $url_info;                   // $url parsed
     public $notifurl;                   // notification file used by this hub
     public $use_pure_http;              // boolean that is true if the hub is VirtualHub-4web
+    public $has_unsecure_open_port;     // boolean that is true if the hub has non https port open ( mode)
     public $notifReq;                   // notification request, or null if not open
     public $notifPos;                   // absolute position in notification stream
     public $isNotifWorking;            // boolean that is true when we receive ping notification
@@ -305,7 +313,7 @@ class YTcpHub
     protected $nonce;                   // lasPrint(t received nonce
     protected $opaque;                  // last received opaque
     protected $ha1;                     // our authentication ha1 string
-    protected $nc;                      // nounce usage count
+    protected $nc;                         // nounce usage count
     protected $serial;                  // the serial number of the hub
     private $networkTimeout;
     private $knownUrls = [];
@@ -339,6 +347,7 @@ class YTcpHub
         $this->retryExpires = 0;
         $this->writeProtected = false;
         $this->use_pure_http = false;
+        $this->has_unsecure_open_port = false;
         $this->reuseskt = null;
         $this->notifReq = null;
         $this->realm = '';
@@ -389,8 +398,6 @@ class YTcpHub
         }
         return ['whitePages' => $wp, 'yellowPages' => $yp];
     }
-
-
     static function decodeJZON(array $jzon, array $ref)
     {
         $decoded = self::decodeJZONReq($jzon, $ref);
@@ -421,6 +428,23 @@ class YTcpHub
         return $res;
     }
 
+
+    function get_stream_context()
+    {
+        $ssl_options = [];
+        if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_TRUSTED_CA_CHECK || $this->has_unsecure_open_port) {
+            $ssl_options['verify_peer'] = false;
+        }
+        if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_HOSTNAME_CHECK || $this->has_unsecure_open_port) {
+            $ssl_options['verify_peer_name'] = false;
+        }
+        if (YAPI::$_yapiContext->_sslCertPath != '') {
+            $ssl_options['cafile'] = YAPI::$_yapiContext->_sslCertPath;
+        }
+        return stream_context_create([
+            'ssl' => $ssl_options
+        ]);
+    }
 
     function verfiyStreamAddr(bool $fullTest = true, string &$errmsg = ''): int
     {
@@ -578,12 +602,45 @@ class YTcpHub
             }
         } else {
             $info_json_url = $this->rooturl . $this->url_info['subdomain'] . '/info.json';
-            $info_json = @file_get_contents($info_json_url);
+            $ssl_options = $this->get_stream_context();
+            $info_json = file_get_contents($info_json_url, false, $ssl_options);
             if ($info_json !== false) {
                 $jsonData = json_decode($info_json, true);
                 if ($jsonData != null) {
                     if (array_key_exists('protocol', $jsonData) && $jsonData['protocol'] == 'HTTP/1.1') {
                         $this->use_pure_http = true;
+                    }
+                    if (array_key_exists('port', $jsonData)) {
+                        $best_proto = "";
+                        $best_port = 0;
+                        foreach ($jsonData['port'] as $portinfo) {
+                            $parts = explode(':', $portinfo);
+                            if ($parts[0] != 'http' && $parts[0] != 'https') {
+                                continue;
+                            }
+                            if ($parts[0] == 'http') {
+                                $this->has_unsecure_open_port = true;
+                            }
+                            if ($this->url_info['proto'] == 'secure' && $parts[0] == 'https') {
+                                if ($best_port == 0) {
+                                    $best_proto = $parts[0];
+                                    $best_port = $parts[1];
+                                }
+                            }
+                            if ($this->url_info['proto'] == 'auto') {
+                                if ($best_port == 0) {
+                                    $best_proto = $parts[0];
+                                    $best_port = $parts[1];
+                                }
+                            }
+                        }
+                        if ($best_port > 0) {
+                            $this->url_info['proto'] = $best_proto;
+                            $this->url_info['rooturl'] = "{$best_proto}://{$this->url_info['host']}:{$best_port}";
+                            $this->rooturl = $this->url_info['rooturl'];
+                            $this->streamaddr = str_replace('http://', 'tcp://', $this->rooturl);
+                            $this->streamaddr = str_replace('https://', 'tls://', $this->streamaddr);
+                        }
                     }
                     if (array_key_exists('serialNumber', $jsonData)) {
                         $this->updateSerial($jsonData['serialNumber']);
@@ -822,6 +879,11 @@ class YTcpHub
         }
     }
 
+    public function getRooturl(): string
+    {
+        return $this->rooturl;
+    }
+
 }
 
 //^^^^ YTcpHub.php
@@ -941,6 +1003,7 @@ class YTcpReq
         return $dechunk;
     }
 
+
     function newsocket(int &$errno, string &$errstr, int $mstimeout)
     {
         // for now, use client socket only since server sockets
@@ -950,20 +1013,12 @@ class YTcpReq
         if ($pos !== false) {
             $addr = substr($addr, 0, $pos);
         }
-        if (substr($addr,0,6) == 'tls://') {
-            $ssl_options = [];
-            if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_TRUSTED_CA_CHECK) {
-                $ssl_options['verify_peer'] = false;
-            }
-            if (YAPI::$_yapiContext->_sslCertOptions & YAPI::NO_HOSTNAME_CHECK) {
-                $ssl_options['verify_peer_name'] = false;
-            }
-            if (YAPI::$_yapiContext->_sslCertPath  !='') {
-                $ssl_options['cafile'] = YAPI::$_yapiContext->_sslCertPath;
-            }
-            $sslContext = stream_context_create(['ssl' => $ssl_options]);
-            $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000,STREAM_CLIENT_CONNECT,$sslContext);
-        } else{
+        if (substr($addr, 0, 6) == 'tls://') {
+            $sslContext = $this->hub->get_stream_context();
+            stream_context_set_params($sslContext, array("notification" => "stream_notification_callback"));
+
+            $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000, STREAM_CLIENT_CONNECT, $sslContext);
+        } else {
             $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000);
 
         }
@@ -1057,21 +1112,29 @@ class YTcpReq
                         $this->reply = substr($this->meta, $eoh + 4);
                         $this->meta = substr($this->meta, 0, $eoh + 4);
                         $firstline = substr($this->meta, 0, strpos($this->meta, "\r"));
-                        if (substr($firstline, 0, 12) == 'HTTP/1.1 401') {
-                            // authentication required
-                            $this->errorType = YAPI::UNAUTHORIZED;
-                            $this->errorMsg = "Authentication required";
-                            fclose($this->skt);
-                            $this->skt = null;
-                            $this->hub->parseWWWAuthenticate($this->meta);
-                            if ($this->hub->user != '') {
-                                $this->meta = '';
-                                $this->reply = '';
-                                $this->retryCount++;
-                            } else {
+                        $parts = explode(" ", $firstline);
+                        if (count($parts) >= 2 && $parts[0] == 'HTTP/1.1') {
+                            if ($parts[1] == '401') {
+                                // authentication required
+                                $this->errorType = YAPI::UNAUTHORIZED;
+                                $this->errorMsg = "Authentication required";
+                                fclose($this->skt);
+                                $this->skt = null;
+                                $this->hub->parseWWWAuthenticate($this->meta);
+                                if ($this->hub->user != '') {
+                                    $this->meta = '';
+                                    $this->reply = '';
+                                    $this->retryCount++;
+                                } else {
+                                    $this->retryCount = 99;
+                                }
+                                return YAPI::SUCCESS; // will propagate error later if needed
+                            } elseif ($parts[1] != '200' && $parts[1] != '304') {
+                                $this->errorType = YAPI::IO_ERROR;
+                                $this->errorMsg = "Unexpected HTTP return code ({$parts[1]})";
                                 $this->retryCount = 99;
+                                return YAPI::SUCCESS; // will retry later
                             }
-                            return YAPI::SUCCESS; // will propagate error later if needed
                         }
                     }
                 } else {
@@ -2006,6 +2069,53 @@ class YAPIContext
     {
         return "error: Not supported in PHP";
     }
+
+
+    /**
+     * Download the TLS/SSL certificate from the hub. This function allows to download a TLS/SSL certificate to add it
+     * to the list of trusted certificates using the AddTrustedCertificates method.
+     *
+     * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
+     * @param float $mstimeout : the number of milliseconds available to download the certificate.
+     *
+     * @return string  a string containing the certificate. In case of error, returns a string starting with "error:".
+     */
+    private function DownloadHostCertificate_internal(string $url, float $mstimeout): string
+    {
+        $contextOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'allow_self_signed' => true,
+                'verify_peer_name' => false,
+                'capture_peer_cert_chain' => true
+            )
+        );
+        $url = str_replace('http://', 'tls://', $url);
+        $url = str_replace('https://', 'tls://', $url);
+        if (strpos($url, 'tls://') !== 0) {
+            $url = 'tls://' . $url;
+        }
+
+        $sslContext = @stream_context_create($contextOptions);
+        $resource = @stream_socket_client($url, $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $sslContext);
+        if ($resource) {
+            $params = stream_context_get_params($resource);
+            $ca = "";
+            foreach ($params["options"]["ssl"]["peer_certificate_chain"] as $cert) {
+                openssl_x509_export($cert, $output);
+                $ca .= $output;
+            }
+            return $ca;
+        }
+        return "";
+    }
+
+    private function AddTrustedCertificates_internal(string $certificate): string
+    {
+        return "error:AddTrustedCertificates is not supported in PHP";
+    }
+
+
     //--- (generated code: YAPIContext implementation)
 
     /**
@@ -2060,6 +2170,80 @@ class YAPIContext
 
     //cannot be generated for PHP:
     //private function AddUdevRule_internal(bool $force)
+
+    /**
+     * Download the TLS/SSL certificate from the hub. This function allows to download a TLS/SSL certificate to add it
+     * to the list of trusted certificates using the AddTrustedCertificates method.
+     *
+     * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
+     * @param float $mstimeout : the number of milliseconds available to download the certificate.
+     *
+     * @return string  a string containing the certificate. In case of error, returns a string starting with "error:".
+     */
+    public function DownloadHostCertificate(string $url, float $mstimeout): string
+    {
+        return $this->DownloadHostCertificate_internal($url, $mstimeout);
+    }
+
+    //cannot be generated for PHP:
+    //private function DownloadHostCertificate_internal(string $url, float $mstimeout)
+
+    /**
+     * Adds a TLS/SSL certificate to the list of trusted certificates. By default, the library
+     * library will reject TLS/SSL connections to servers whose certificate is not known. This function
+     * function allows to add a list of known certificates. It is also possible to disable the verification
+     * using the SetNetworkSecurityOptions method.
+     *
+     * @param string $certificate : a string containing one or more certificates.
+     *
+     * @return string  an empty string if the certificate has been added correctly.
+     *         In case of error, returns a string starting with "error:".
+     */
+    public function AddTrustedCertificates(string $certificate): string
+    {
+        return $this->AddTrustedCertificates_internal($certificate);
+    }
+
+    //cannot be generated for PHP:
+    //private function AddTrustedCertificates_internal(string $certificate)
+
+    /**
+     * Set the path of Certificate Authority file on local filesystem. This method takes as a parameter
+     * the path of a file containing all certificates in PEM format.
+     * For technical reasons, only one file can be specified. So if you need to connect to several Hubs
+     * instances with self-signed certificates, you'll need to use
+     * a single file containing all the certificates end-to-end. Passing a empty string will restore the
+     * default settings. This option is only supported by PHP library.
+     *
+     * @param string $certificatePath : the path of the file containing all certificates in PEM format.
+     *
+     * @return string  an empty string if the certificate has been added correctly.
+     *         In case of error, returns a string starting with "error:".
+     */
+    public function SetTrustedCertificatesList(string $certificatePath): string
+    {
+        return $this->SetTrustedCertificatesList_internal($certificatePath);
+    }
+
+    //cannot be generated for PHP:
+    //private function SetTrustedCertificatesList_internal(string $certificatePath)
+
+    /**
+     * Enables or disables certain TLS/SSL certificate checks.
+     *
+     * @param int $opts : The options are YAPI::NO_TRUSTED_CA_CHECK,
+     *         YAPI::NO_EXPIRATION_CHECK, YAPI::NO_HOSTNAME_CHECK.
+     *
+     * @return string  an empty string if the options are taken into account.
+     *         On error, returns a string beginning with "error:".
+     */
+    public function SetNetworkSecurityOptions(int $opts): string
+    {
+        return $this->SetNetworkSecurityOptions_internal($opts);
+    }
+
+    //cannot be generated for PHP:
+    //private function SetNetworkSecurityOptions_internal(int $opts)
 
     /**
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
@@ -2184,7 +2368,7 @@ class YAPIContext
         $this->_deviceListValidityMs = $deviceListValidity * 1000;
     }
 
-    public function GetDeviceListValidity_internal(): float
+    public function GetDeviceListValidity_internal(): int
     {
         return intval($this->_deviceListValidityMs / 1000);
     }
@@ -2192,15 +2376,23 @@ class YAPIContext
 
     public function SetNetworkTimeout_internal(float $networkMsTimeout)
     {
-        $this->_networkTimeoutMs = $networkMsTimeout;
+        $this->_networkTimeoutMs = (int)$networkMsTimeout;
     }
-    public function SetTrustedCertificatesList(string $certificatePath)
+
+    public function SetTrustedCertificatesList_internal(string $certificatePath): string
     {
-        $this->_sslCertPath = $certificatePath;
+        if ($certificatePath == '' || file_exists($certificatePath)) {
+            $this->_sslCertPath = $certificatePath;
+            return "";
+        } else {
+            return "error: Invalid path";
+        }
     }
-    public function SetNetworkSecurityOptions(int $options)
+
+    private function SetNetworkSecurityOptions_internal(int $options): string
     {
         $this->_sslCertOptions = $options;
+        return "";
     }
 
     public function GetNetworkTimeout_internal(): int
@@ -2306,12 +2498,14 @@ class YAPI
     const RFID_SOFT_ERROR       = -16;     // Recoverable error with RFID tag (eg. tag out of reach), check YRfidStatus for details
     const RFID_HARD_ERROR       = -17;     // Serious RFID error (eg. write-protected, out-of-boundary), check YRfidStatus for details
     const BUFFER_TOO_SMALL      = -18;     // The buffer provided is too small
-//--- (end of generated code: YFunction return codes)
-
+    const DNS_ERROR             = -19;     // Error during name resolutions (invalid hostname or dns communication error)
+    const SSL_UNK_CERT          = -20;     // The certificate is not correctly signed by the trusted CA
     // TLS / SSL definitions
     const NO_TRUSTED_CA_CHECK   = 1;       // Disables certificate checking
+    const NO_EXPIRATION_CHECK   = 2;       // Disables certificate expiration date checking
     const NO_HOSTNAME_CHECK     = 4;       // Disable hostname checking
-
+    const LEGACY                = 8;       // Allow non secure connection (similar to v1.10)
+//--- (end of generated code: YFunction return codes)
 
     // yInitAPI constants (not really useful in JavaScript)
     const DETECT_NONE = 0;
@@ -2484,7 +2678,7 @@ class YAPI
                 if (!$hub->isEnable()) {
                     continue;
                 }
-                $huburl = $hub->rooturl;
+                $huburl = $hub->getRooturl();
                 if (substr($rooturl, 0, strlen($huburl)) == $huburl) {
                     $hub->missing[$serial] = true;
                 }
@@ -2546,7 +2740,7 @@ class YAPI
                     $serial = $devinfo['serialNumber'];
                     $rooturl = substr($devinfo['networkUrl'], 0, -3);
                     if ($rooturl[0] == '/') {
-                        $rooturl = $hub->rooturl . $rooturl;
+                        $rooturl = $hub->getRooturl() . $rooturl;
                     }
                     $currdev = null;
                     if (isset(self::$_devs[$serial])) {
@@ -2648,7 +2842,7 @@ class YAPI
             $req = $hub->devListReq;
             if ($req->errorType != YAPI::SUCCESS) {
                 return new YAPI_YReq("", $req->errorType,
-                    'Error while scanning ' . $hub->rooturl . ': ' . $req->errorMsg,
+                    'Error while scanning ' . $hub->getRooturl() . ': ' . $req->errorMsg,
                     $req->errorType);
             }
         }
@@ -3778,80 +3972,6 @@ class YAPI
     }
 
 
-    /**
-     * Download the TLS/SSL certificate from the hub. This function allows to download a TLS/SSL certificate to add it
-     * to the list of trusted certificates using the AddTrustedCertificates method.
-     *
-     * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
-     * @param float $mstimeout : the number of milliseconds available to download the certificate.
-     *
-     * @return string  a string containing the certificate. In case of error, returns a string starting with "error:".
-     */
-    public static function DownloadHostCertificate(string $url,int $mstimeout):string
-    {
-        $contextOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'allow_self_signed'=>true,
-                'verify_peer_name' =>false,
-                'capture_peer_cert_chain'=>true
-            )
-        );
-        $url = str_replace('http://', 'tls://', $url);
-        $url = str_replace('https://', 'tls://', $url);
-        if (strpos($url, 'tls://')!==0){
-            $url ='tls://'.$url;
-        }
-
-        $sslContext = @stream_context_create($contextOptions);
-        $resource = @stream_socket_client($url, $errno, $errstr, 10,STREAM_CLIENT_CONNECT,$sslContext);
-        if ($resource) {
-            $params = stream_context_get_params($resource);
-            $ca = "";
-            foreach ($params["options"]["ssl"]["peer_certificate_chain"] as $cert)
-            {
-                openssl_x509_export($cert, $output);
-                $ca .= $output;
-            }
-            return $ca;
-        }
-        return "";
-    }
-    /**
-     * Adds a TLS/SSL certificate to the list of trusted certificates. By default, the library
-     * library will reject TLS/SSL connections to servers whose certificate is not known. This function
-     * function allows to add a list of known certificates. It is also possible to disable the verification
-     * using the SetNetworkSecurityOptions method.
-     *
-     * @param string certificate : a string containing the path of the certificate
-     * @noreturn
-     */
-    public static function SetTrustedCertificatesList(string $certificatePath)
-    {
-        if (is_null(self::$_hubs)) {
-            self::_init();
-        }
-        self::$_yapiContext->SetTrustedCertificatesList($certificatePath);
-    }
-
-    /**
-     * Enables or disables certain TLS/SSL certificate checks.
-     *
-     * @param options: The options: YAPI::NO_TRUSTED_CA_CHECK,
-     *         YAPI::NO_EXPIRATION_CHECK, YAPI::NO_HOSTNAME_CHECK.
-     *
-     * @return string  an empty string if the options are taken into account.
-     *         On error, returns a string beginning with "error:".
-     */
-    public static function SetNetworkSecurityOptions(int $options)
-    {
-        if (is_null(self::$_hubs)) {
-            self::_init();
-        }
-        self::$_yapiContext->SetNetworkSecurityOptions($options);
-    }
-
-
 
 //--- (generated code: YAPIContext yapiwrapper)
 
@@ -3904,6 +4024,76 @@ class YAPI
             self::_init();
         }
         return self::$_yapiContext->AddUdevRule($force);
+    }
+    /**
+     * Download the TLS/SSL certificate from the hub. This function allows to download a TLS/SSL certificate to add it
+     * to the list of trusted certificates using the AddTrustedCertificates method.
+     *
+     * @param string $url : the root URL of the VirtualHub V2 or HTTP server.
+     * @param float $mstimeout : the number of milliseconds available to download the certificate.
+     *
+     * @return string  a string containing the certificate. In case of error, returns a string starting with "error:".
+     */
+    public static function DownloadHostCertificate(string $url, float $mstimeout): string
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        return self::$_yapiContext->DownloadHostCertificate($url, $mstimeout);
+    }
+    /**
+     * Adds a TLS/SSL certificate to the list of trusted certificates. By default, the library
+     * library will reject TLS/SSL connections to servers whose certificate is not known. This function
+     * function allows to add a list of known certificates. It is also possible to disable the verification
+     * using the SetNetworkSecurityOptions method.
+     *
+     * @param string $certificate : a string containing one or more certificates.
+     *
+     * @return string  an empty string if the certificate has been added correctly.
+     *         In case of error, returns a string starting with "error:".
+     */
+    public static function AddTrustedCertificates(string $certificate): string
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        return self::$_yapiContext->AddTrustedCertificates($certificate);
+    }
+    /**
+     * Set the path of Certificate Authority file on local filesystem. This method takes as a parameter
+     * the path of a file containing all certificates in PEM format.
+     * For technical reasons, only one file can be specified. So if you need to connect to several Hubs
+     * instances with self-signed certificates, you'll need to use
+     * a single file containing all the certificates end-to-end. Passing a empty string will restore the
+     * default settings. This option is only supported by PHP library.
+     *
+     * @param string $certificatePath : the path of the file containing all certificates in PEM format.
+     *
+     * @return string  an empty string if the certificate has been added correctly.
+     *         In case of error, returns a string starting with "error:".
+     */
+    public static function SetTrustedCertificatesList(string $certificatePath): string
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        return self::$_yapiContext->SetTrustedCertificatesList($certificatePath);
+    }
+    /**
+     * Enables or disables certain TLS/SSL certificate checks.
+     *
+     * @param int $opts : The options are YAPI::NO_TRUSTED_CA_CHECK,
+     *         YAPI::NO_EXPIRATION_CHECK, YAPI::NO_HOSTNAME_CHECK.
+     *
+     * @return string  an empty string if the options are taken into account.
+     *         On error, returns a string beginning with "error:".
+     */
+    public static function SetNetworkSecurityOptions(int $opts): string
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        return self::$_yapiContext->SetNetworkSecurityOptions($opts);
     }
     /**
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
@@ -4015,7 +4205,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "1.10.60394";
+        return "2.0.61039";
     }
 
     /**
@@ -4183,15 +4373,35 @@ class YAPI
     {
         $res = [];
         $res['org_url'] = $str_url;
-        $res['proto'] = 'http';
-        if (substr($str_url, 0, 7) == 'http://') {
+        $res['proto'] = 'auto';
+        $res['port'] = 4444;
+        $rh_proto = 'http';
+
+
+        if (substr($str_url, 0, 7) == 'auto://') {
             $str_url = substr($str_url, 7);
+        } elseif (substr($str_url, 0, 7) == 'http://') {
+            $str_url = substr($str_url, 7);
+            $res['proto'] = "http";
         } elseif (substr($str_url, 0, 8) == 'https://') {
             $str_url = substr($str_url, 8);
+            $res['port'] = 4443;
             $res['proto'] = "https";
+            $rh_proto = 'https';
         } elseif (substr($str_url, 0, 5) == 'ws://') {
             $str_url = substr($str_url, 5);
             $res['proto'] = "ws";
+            $rh_proto = 'ws';
+        } elseif (substr($str_url, 0, 6) == 'wss://') {
+            $str_url = substr($str_url, 6);
+            $res['proto'] = "wss";
+            $rh_proto = 'wss';
+        } elseif (substr($str_url, 0, 9) == 'secure://') {
+            $str_url = substr($str_url, 9);
+            $res['proto'] = "secure";
+            $rh_proto = 'https';
+            $res['port'] = 4443;
+
         }
         $subdompos = strpos($str_url, '/');
         if ($subdompos === false) {
@@ -4210,7 +4420,6 @@ class YAPI
             $res['auth'] = substr($str_url, 0, $authpos);
             $str_url = substr($str_url, $authpos + 1);
         }
-        $res['port'] = 4444;
         $p_ofs = strpos($str_url, ':');
         if ($p_ofs !== false) {
             $res['host'] = substr($str_url, 0, $p_ofs);
@@ -4218,9 +4427,9 @@ class YAPI
         } else {
             $res['host'] = $str_url;
             if ($res['subdomain'] != '') {
-                if ($res['proto'] == 'http') {
+                if ($rh_proto == 'http') {
                     $res['port'] = 80;
-                }else if ($res['proto'] == 'https') {
+                } elseif ($rh_proto == 'https') {
                     $res['port'] = 443;
                 }
             }
@@ -4228,7 +4437,7 @@ class YAPI
         if (strcasecmp(substr($str_url, 0, 8), "callback") == 0) {
             $res['rooturl'] = "http://" . strtoupper($str_url);
         } else {
-            $res['rooturl'] = "{$res['proto']}://{$res['host']}:{$res['port']}";
+            $res['rooturl'] = "{$rh_proto}://{$res['host']}:{$res['port']}";
         }
         return $res;
     }
@@ -4240,11 +4449,13 @@ class YAPI
         }
         $res = [];
         $url_detail = self::_parseRegisteredURL($url);
+        /** @var YTcpHub $hub */
         foreach (self::$_hubs as $hub_url => $hub) {
-            if ($hub_url == $url_detail['rooturl']) {
+            if ($url == $url_detail['org_url']) {
+                $res[] = $hub;
+            }else if ($hub_url == $url_detail['rooturl']) {
                 $res[] = $hub;
             } else {
-                /** @var YTcpHub $hub */
                 if ($hub->isURLKnown($url)) {
                     $res[] = $hub;
                 }
@@ -4325,17 +4536,21 @@ class YAPI
             return YAPI::SUCCESS;
         }
         $url_detail = self::_parseRegisteredURL($url);
+        if ($url_detail['proto'] == "wss" || $url_detail['proto'] == "ws") {
+            $errmsg = "Websocket is not available in PHP";
+            return YAPI::NOT_SUPPORTED;
+        }
         // Test hub
         $tcphub = new YTcpHub($url_detail, true);
         $res = $tcphub->verfiyStreamAddr(true, $errmsg);
         if ($res < 0) {
-            return self::_throw(YAPI::IO_ERROR, $errmsg, YAPI::IO_ERROR);
+            return YAPI::IO_ERROR;
         }
 
         $timeout = YAPI::GetTickCount() + $tcphub->get_networkTimeout();
         $tcpreq = new YTcpReq($tcphub, "GET /api/module.json", false, '', $tcphub->get_networkTimeout());
         if ($tcpreq->process($errmsg) != YAPI::SUCCESS) {
-            return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+            return $tcpreq->errorType;
         }
         self::$_pendingRequests[] = $tcpreq;
         do {
@@ -4344,14 +4559,14 @@ class YAPI
         if (!$tcpreq->eof()) {
             $tcpreq->close();
             $errmsg = 'Timeout waiting for device reply';
-            return self::_throw(YAPI::TIMEOUT, $errmsg, YAPI::TIMEOUT);
+            return YAPI::TIMEOUT;
         }
         if ($tcpreq->errorType == YAPI::UNAUTHORIZED) {
             $errmsg = 'Access denied, authorization required';
-            return self::_throw(YAPI::UNAUTHORIZED, $errmsg, YAPI::UNAUTHORIZED);
+            return YAPI::UNAUTHORIZED;
         } elseif ($tcpreq->errorType != YAPI::SUCCESS) {
             $errmsg = 'Network error while testing hub :' . $tcpreq->errorMsg;
-            return self::_throw($tcpreq->errorType, $errmsg, $tcpreq->errorType);
+            return $tcpreq->errorType;
         }
         /** @var YTcpHub $hub */
         foreach (self::$_hubs as $hub) {
@@ -4361,10 +4576,6 @@ class YAPI
                 return YAPI::SUCCESS;
             }
         }
-        if (!isset(self::$_hubs[$url_detail['rooturl']])) {
-            self::$_hubs[$url_detail['rooturl']] = $tcphub;
-        }
-
         // Add hub to known list
         if (!isset(self::$_hubs[$url_detail['rooturl']])) {
             self::$_hubs[$url_detail['rooturl']] = $tcphub;
@@ -4374,7 +4585,7 @@ class YAPI
         $yreq = self::_updateDeviceList_internal(true, false);
         if ($yreq->errorType != YAPI::SUCCESS) {
             $errmsg = $yreq->errorMsg;
-            return self::_throw($yreq->errorType, $yreq->errorMsg, $yreq->errorType);
+            return $yreq->errorType;
         }
 
         return YAPI::SUCCESS;
@@ -4413,11 +4624,15 @@ class YAPI
             return YAPI::SUCCESS;
         }
         $url_detail = self::_parseRegisteredURL($url);
+        if ($url_detail['proto'] == "wss" || $url_detail['proto'] == "ws") {
+            $errmsg = "Websocket is not available in PHP";
+            return YAPI::NOT_SUPPORTED;
+        }
         // Add hub to known list
         if (!isset(self::$_hubs[$url_detail['rooturl']])) {
             self::$_hubs[$url_detail['rooturl']] = new YTcpHub($url_detail, false);
             if (self::$_hubs[$url_detail['rooturl']]->verfiyStreamAddr(true, $errmsg) < 0) {
-                return self::_throw(YAPI::IO_ERROR, $errmsg, YAPI::IO_ERROR);
+                return YAPI::IO_ERROR;
             }
         }
 
@@ -4438,12 +4653,13 @@ class YAPI
             return;
         }
 
+        /** @var YTcpHub[] $hubs */
         $hubs = self::getHubFromUrl($url);
         foreach ($hubs as $hub) {
             // leave max 10 second to finish pending requests
             $timeout = YAPI::GetTickCount() + 10000;
             foreach (self::$_pendingRequests as $tcpreq) {
-                if ($tcpreq->hub->rooturl === $hub->rooturl) {
+                if ($tcpreq->hub->getRooturl() === $hub->getRooturl()) {
                     $request = trim($tcpreq->request);
                     if (substr($request, 0, 12) == 'GET /not.byn') {
                         continue;
@@ -4472,8 +4688,8 @@ class YAPI
                 }
             }
 
-            $key = $hub->url_info['rooturl'];
-            if (key_exists($key, self::$_hubs)) {
+            $key = array_search($hub, self::$_hubs, true);
+            if ($key !== false) {
                 unset(self::$_hubs[$key]);
             }
         }
@@ -4502,6 +4718,10 @@ class YAPI
         }
 
         $url_detail = self::_parseRegisteredURL($url);
+        if ($url_detail['proto'] == "wss" || $url_detail['proto'] == "ws") {
+            $errmsg = "Websocket is not available in PHP";
+            return YAPI::NOT_SUPPORTED;
+        }
         // Test hub
         $tcphub = new YTcpHub($url_detail, false);
         $res = $tcphub->verfiyStreamAddr(false, $errmsg);
@@ -4546,13 +4766,13 @@ class YAPI
         $errstr = '';
         $implicitPort = '';
         if (strpos($host, ':') === false) {
-            if ($proto=='tls://') {
+            if ($proto == 'tls://') {
                 $implicitPort = ':443';
             } else {
                 $implicitPort = ':80';
             }
         }
-        $skt = stream_socket_client($proto.$host.$implicitPort, $errno, $errstr, 10);
+        $skt = stream_socket_client($proto . $host . $implicitPort, $errno, $errstr, 10);
         if ($skt === false) {
             $errmsg = "failed to open socket ($errno): $errstr";
             return YAPI::IO_ERROR;
@@ -4698,12 +4918,12 @@ class YAPI
         if (isset(self::$_hubs[$url_detail['rooturl']])) {
             $cb_hub = self::$_hubs[$url_detail['rooturl']];
             // data to post is found in $cb_hub->callbackData
-            $fwd_proto ='tcp://';
-            if (strpos($url,'http://')===0) {
-                $url = substr($url,7);
-            } else if (strpos($url,'https://')===0) {
+            $fwd_proto = 'tcp://';
+            if (strpos($url, 'http://') === 0) {
+                $url = substr($url, 7);
+            } elseif (strpos($url, 'https://') === 0) {
                 $fwd_proto = 'tls://';
-                $url = substr($url,8);
+                $url = substr($url, 8);
             }
             $url = str_replace(['http://', 'https://'], ['', ''], $url);
             $pos = strpos($url, '/');
@@ -4873,7 +5093,7 @@ class YAPI
         if (strlen($name) > 19) {
             return false;
         }
-        return preg_match('/^[A-Za-z0-9_\-]*$/', $name);
+        return preg_match('/^[A-Za-z0-9_\-]*$/', $name) > 0;
     }
 
     /**
@@ -5280,7 +5500,7 @@ class YFirmwareUpdate
         return $this->_progress;
     }
 
-    private static function CheckFirmware_internal(string $serial, string $path, string $minrelease): string
+    private static function CheckFirmware_internal(string $serial, string $path, int $minrelease): string
     {
         if ($path == "http://www.yoctopuce.com" || $path == "http://www.yoctopuce.com" || $path == "www.yoctopuce.com") {
             $yoctopuce_infos = file_get_contents('https://www.yoctopuce.com/FR/common/getLastFirmwareLink.php?serial=' . $serial);
@@ -5292,8 +5512,8 @@ class YFirmwareUpdate
                 return 'error: Invalid JSON response from www.yoctopuce.com';
             }
             $link = $jsonData['link'];
-            $version = $jsonData['version'];
-            if ($minrelease != "") {
+            $version = intVal($jsonData['version']);
+            if ($minrelease > 0) {
                 if ($version > $minrelease) {
                     return $link;
                 }
@@ -5781,7 +6001,7 @@ class YDataStream
      */
     public function get_startTimeUTC(): float
     {
-        return round($this->_startTime);
+        return intval(round($this->_startTime));
     }
 
     /**
@@ -5808,7 +6028,7 @@ class YDataStream
      */
     public function get_dataSamplesIntervalMs(): int
     {
-        return round($this->_dataSamplesInterval*1000);
+        return intval(round($this->_dataSamplesInterval*1000));
     }
 
     /**
@@ -7896,13 +8116,13 @@ class YFunction
      */
     public function _escapeAttr(string $str_val): string
     {
-        $safecodes = [ '%21', '%23', '%24', '%27', '%28', '%29', '%2A', '%2C', '%2F', '%3A', '%3B', '%40', '%3F', '%5B', '%5D' ];
-        $safechars = [ '!', "#", "$", "'", "(", ")", '*', ",", "/", ":", ";", "@", "?", "[", "]" ];
+        $safecodes = ['%21', '%23', '%24', '%27', '%28', '%29', '%2A', '%2C', '%2F', '%3A', '%3B', '%40', '%3F', '%5B', '%5D'];
+        $safechars = ['!', "#", "$", "'", "(", ")", '*', ",", "/", ":", ";", "@", "?", "[", "]"];
         $isAscii = !preg_match('~[\x7f-\xff]~', $str_val);
-        if(!$isAscii) {
+        if (!$isAscii) {
             // check if string is made of utf-8 characters that can be converted to iso-8859-1
             $isUtf8 = preg_match('~^([\x00-\x7f]|[\xC2-\xC3][\x80-\xBF])+$~', $str_val);
-            if($isUtf8) {
+            if ($isUtf8) {
                 $str_val = iconv("UTF-8", "ISO-8859-1", $str_val);
             }
         }
@@ -10967,14 +11187,14 @@ class YModule extends YFunction
                     $calibData[$i] = ($calibData[$i] - $paramOffset) / $paramScale;
                 } else {
                     // floating-point decoding
-                    $calibData[$i] = YAPI::_decimalToDouble(round($calibData[$i]));
+                    $calibData[$i] = YAPI::_decimalToDouble(intval(round($calibData[$i])));
                 }
                 $i = $i + 1;
             }
         } else {
             // Handle latest 32bit parameter format
             $iCalib = YAPI::_decodeFloats($param);
-            $calibType = round($iCalib[0] / 1000.0);
+            $calibType = intval(round($iCalib[0] / 1000.0));
             if ($calibType >= 30) {
                 $calibType = $calibType - 30;
             }
@@ -10997,7 +11217,7 @@ class YModule extends YFunction
                     } else {
                         $param = $param . ' ';
                     }
-                    $param = $param . round($calibData[$i] * 1000.0 / 1000.0);
+                    $param = $param . intval(round($calibData[$i] * 1000.0 / 1000.0));
                     $i = $i + 1;
                 }
                 $param = $param . ',';
@@ -11010,7 +11230,7 @@ class YModule extends YFunction
                 $i = 0;
                 while ($i < 2 * $nPoints) {
                     if ($funScale == 0) {
-                        $wordVal = YAPI::_doubleToDecimal(round($calibData[$i]));
+                        $wordVal = YAPI::_doubleToDecimal(intval(round($calibData[$i])));
                     } else {
                         $wordVal = $calibData[$i] * $funScale + $funOffset;
                     }
@@ -11933,9 +12153,9 @@ function yTestHub(string $url, int $mstimeout, string &$errmsg = ""): int
  * previously received from a YoctoHub. This function only works after a successful
  * call to yRegisterHub("callback")
  *
- * @param url : a string containing the URL of the server to which the HTTP callback
+ * @param string url : a string containing the URL of the server to which the HTTP callback
  *              should be forwarded
- * @param errmsg : a string passed by reference to receive any error message.
+ * @param string errmsg : a string passed by reference to receive any error message.
  *
  * @return integer : YAPI::SUCCESS when the call succeeds.
  *
@@ -12086,13 +12306,13 @@ function yRegisterCalibrationHandler(int $int_calibrationType, ?callable $calibr
 // Standard value calibration handler (n-point linear error correction)
 //
 function yLinearCalibrationHandler(
-    int $int_calibType,
     float $float_rawValue,
+    int $int_calibType,
     array $arr_calibParams,
     array $arr_calibRawValues,
     array $arr_calibRefValues
 ): float {
-    return YAPI::LinearCalibrationHandler($int_calibType, $float_rawValue, $arr_calibParams,
+    return YAPI::LinearCalibrationHandler($float_rawValue, $int_calibType, $arr_calibParams,
         $arr_calibRawValues, $arr_calibRefValues);
 }
 

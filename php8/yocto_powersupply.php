@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_powersupply.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *
@@ -572,7 +572,7 @@ class YPowerSupply extends YFunction
         if ($V_target < 0.0) {
             $V_target  = 0.0;
         }
-        $newval = sprintf('%d:%d', round($V_target*65536), $ms_duration);
+        $newval = sprintf('%d:%d', intval(round($V_target*65536)), $ms_duration);
 
         return $this->set_voltageTransition($newval);
     }

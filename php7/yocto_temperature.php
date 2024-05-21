@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_temperature.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_temperature.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YTemperature, the high-level API for Temperature functions
  *
@@ -461,7 +461,7 @@ class YTemperature extends YSensor
                 $idx = $idx + 1;
             }
             if ($found > 0) {
-                $res = $this->set_command(sprintf('m%d:%d', round(1000*$curr), round(1000*$currTemp)));
+                $res = $this->set_command(sprintf('m%d:%d', intval(round(1000*$curr)), intval(round(1000*$currTemp))));
                 if (!($res==YAPI::SUCCESS)) return $this->_throw( YAPI::IO_ERROR, 'unable to reset thermistor parameters',YAPI::IO_ERROR);
                 $prev = $curr;
             }

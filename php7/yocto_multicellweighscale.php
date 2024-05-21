@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multicellweighscale.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_multicellweighscale.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YMultiCellWeighScale, the high-level API for MultiCellWeighScale functions
  *
@@ -612,7 +612,7 @@ class YMultiCellWeighScale extends YSensor
      */
     public function setupSpan(float $currWeight, float $maxWeight): int
     {
-        return $this->set_command(sprintf('S%d:%d', round(1000*$currWeight), round(1000*$maxWeight)));
+        return $this->set_command(sprintf('S%d:%d', intval(round(1000*$currWeight)), intval(round(1000*$maxWeight))));
     }
 
     /**

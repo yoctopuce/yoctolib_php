@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_refframe.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -599,7 +599,7 @@ class YRefFrame extends YFunction
         $this->_calibStageProgress = 0;
         $this->_calibProgress = 1;
         $this->_calibInternalPos = 0;
-        $this->_calibPrevTick = ((YAPI::GetTickCount()) & (0x7FFFFFFF));
+        $this->_calibPrevTick = intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
         while (sizeof($this->_calibOrient) > 0) {
             array_pop($this->_calibOrient);
         };
@@ -663,7 +663,7 @@ class YRefFrame extends YFunction
             return YAPI::SUCCESS;
         }
         // make sure we leave at least 160 ms between samples
-        $currTick =  ((YAPI::GetTickCount()) & (0x7FFFFFFF));
+        $currTick =  intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
         if ((($currTick - $this->_calibPrevTick) & (0x7FFFFFFF)) < 160) {
             return YAPI::SUCCESS;
         }
@@ -764,9 +764,9 @@ class YRefFrame extends YFunction
         $this->_calibSort($intpos, $intpos + $this->_calibCount);
         $intpos = $intpos + intVal(($this->_calibCount) / (2));
         $this->_calibLogMsg = sprintf('Stage %d: median is %d,%d,%d', $this->_calibStage,
-                                      round(1000*$this->_calibDataAccX[$intpos]),
-                                      round(1000*$this->_calibDataAccY[$intpos]),
-                                      round(1000*$this->_calibDataAccZ[$intpos]));
+                                      intval(round(1000*$this->_calibDataAccX[$intpos])),
+                                      intval(round(1000*$this->_calibDataAccY[$intpos])),
+                                      intval(round(1000*$this->_calibDataAccZ[$intpos])));
         // move to next stage
         $this->_calibStage = $this->_calibStage + 1;
         if ($this->_calibStage < 7) {
@@ -863,7 +863,7 @@ class YRefFrame extends YFunction
         }
         // make sure we don't start before previous calibration is cleared
         if ($this->_calibStage == 1) {
-            $currTick = ((YAPI::GetTickCount()) & (0x7FFFFFFF));
+            $currTick = intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
             $currTick = (($currTick - $this->_calibPrevTick) & (0x7FFFFFFF));
             if ($currTick < 1600) {
                 $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
@@ -997,21 +997,21 @@ class YRefFrame extends YFunction
             return YAPI::INVALID_ARGUMENT;
         }
         // Compute integer values (correction unit is 732ug/count)
-        $shiftX = -round($this->_calibAccXOfs / 0.000732);
+        $shiftX = -intval(round($this->_calibAccXOfs / 0.000732));
         if ($shiftX < 0) {
             $shiftX = $shiftX + 65536;
         }
-        $shiftY = -round($this->_calibAccYOfs / 0.000732);
+        $shiftY = -intval(round($this->_calibAccYOfs / 0.000732));
         if ($shiftY < 0) {
             $shiftY = $shiftY + 65536;
         }
-        $shiftZ = -round($this->_calibAccZOfs / 0.000732);
+        $shiftZ = -intval(round($this->_calibAccZOfs / 0.000732));
         if ($shiftZ < 0) {
             $shiftZ = $shiftZ + 65536;
         }
-        $scaleX = round(2048.0 / $this->_calibAccXScale) - 2048;
-        $scaleY = round(2048.0 / $this->_calibAccYScale) - 2048;
-        $scaleZ = round(2048.0 / $this->_calibAccZScale) - 2048;
+        $scaleX = intval(round(2048.0 / $this->_calibAccXScale)) - 2048;
+        $scaleY = intval(round(2048.0 / $this->_calibAccYScale)) - 2048;
+        $scaleZ = intval(round(2048.0 / $this->_calibAccZScale)) - 2048;
         if ($scaleX < -2048 || $scaleX >= 2048 || $scaleY < -2048 || $scaleY >= 2048 || $scaleZ < -2048 || $scaleZ >= 2048) {
             $scaleExp = 3;
         } else {

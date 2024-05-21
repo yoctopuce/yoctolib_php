@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_motor.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_motor.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YMotor, the high-level API for Motor functions
  *
@@ -630,7 +630,7 @@ class YMotor extends YFunction
      */
     public function drivingForceMove(float $targetPower, int $delay): int
     {
-        return $this->set_command(sprintf('P%d,%d',round($targetPower*10),$delay));
+        return $this->set_command(sprintf('P%d,%d',intval(round($targetPower*10)),$delay));
     }
 
     /**
@@ -646,7 +646,7 @@ class YMotor extends YFunction
      */
     public function brakingForceMove(float $targetPower, int $delay): int
     {
-        return $this->set_command(sprintf('B%d,%d',round($targetPower*10),$delay));
+        return $this->set_command(sprintf('B%d,%d',intval(round($targetPower*10)),$delay));
     }
 
     /**

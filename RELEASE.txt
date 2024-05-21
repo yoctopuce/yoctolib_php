@@ -1,13 +1,7 @@
-PHP v1.10.60394
+PHP v2.0.61039
 
-- Add support for Yocto-RFID
-- Add YThreshold class
-- Add position indicator in SnoopingRecords
-- Add snoopMessagesEx function to serial communication classes
-- Fix warning about malformed XML comment
-- Fix connection to HTTP server that use Transfer-Encoding header with lower case
-- Fix cache latency on method YSensor.loadCalibrationPoints()
-- Fix handling of long strings in many parse situations (including json_get_key)
-- Fix for setting attribute values with UTF-8 characters instead of iso-8859-1
-- Fix PHP 8.3 support (missing declaration)
-- Fix connection to HTTP server that use Transfer-Encoding header with lower case
+- New API 2.0 (backward compatible)
+- Fix authentication when request send a redirect
+- Fix some typing issue
+- Fix unwanted thrown YAPI_Exception
+- Fix missing cast

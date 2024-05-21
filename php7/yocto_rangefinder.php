@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_rangefinder.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_rangefinder.php 60995 2024-05-17 07:37:00Z seb $
  *
  *  Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -451,9 +451,9 @@ class YRangeFinder extends YSensor
     {
         // $distmm                 is a int;
         if ($this->get_unit() == '"') {
-            $distmm = round($targetDist * 25.4);
+            $distmm = intval(round($targetDist * 25.4));
         } else {
-            $distmm = round($targetDist);
+            $distmm = intval(round($targetDist));
         }
         return $this->set_command(sprintf('O%d',$distmm));
     }
@@ -475,9 +475,9 @@ class YRangeFinder extends YSensor
     {
         // $distmm                 is a int;
         if ($this->get_unit() == '"') {
-            $distmm = round($targetDist * 25.4);
+            $distmm = intval(round($targetDist * 25.4));
         } else {
-            $distmm = round($targetDist);
+            $distmm = intval(round($targetDist));
         }
         return $this->set_command(sprintf('X%d',$distmm));
     }
