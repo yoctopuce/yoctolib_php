@@ -1,7 +1,4 @@
-PHP v2.0.61039
+PHPV2 v2.0.61148
 
-- New API 2.0 (backward compatible)
-- Fix authentication when request send a redirect
-- Fix some typing issue
-- Fix unwanted thrown YAPI_Exception
-- Fix missing cast
+- Fix YAPI::RegisterHub that was reusing old connection
+- Remove debug logs

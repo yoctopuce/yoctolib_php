@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 61003 2024-05-17 09:34:15Z seb $
+ * $Id: yocto_api.php 61095 2024-05-23 07:18:07Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -603,7 +603,7 @@ class YTcpHub
         } else {
             $info_json_url = $this->rooturl . $this->url_info['subdomain'] . '/info.json';
             $ssl_options = $this->get_stream_context();
-            $info_json = file_get_contents($info_json_url, false, $ssl_options);
+            $info_json = @file_get_contents($info_json_url, false, $ssl_options);
             if ($info_json !== false) {
                 $jsonData = json_decode($info_json, true);
                 if ($jsonData != null) {
@@ -4205,7 +4205,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.0.61039";
+        return "2.0.61148";
     }
 
     /**
@@ -4451,7 +4451,7 @@ class YAPI
         $url_detail = self::_parseRegisteredURL($url);
         /** @var YTcpHub $hub */
         foreach (self::$_hubs as $hub_url => $hub) {
-            if ($url == $url_detail['org_url']) {
+            if ($url == $hub->url_info['org_url']) {
                 $res[] = $hub;
             }else if ($hub_url == $url_detail['rooturl']) {
                 $res[] = $hub;
