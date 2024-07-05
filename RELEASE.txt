@@ -1,4 +1,4 @@
-PHPV2 v2.0.61148
+PHPV2 v2.0.61813
 
-- Fix YAPI::RegisterHub that was reusing old connection
-- Remove debug logs
+- Fix RegisterHub that was reusing old connection
+- Fix parsing of Ipv6 URL

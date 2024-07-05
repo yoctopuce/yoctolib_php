@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_oscontrol.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_oscontrol.php 61342 2024-06-11 08:30:46Z seb $
  *
  *  Implements YOsControl, the high-level API for OsControl functions
  *
@@ -42,7 +42,7 @@
 //--- (end of YOsControl return codes)
 //--- (YOsControl definitions)
 if (!defined('Y_SHUTDOWNCOUNTDOWN_INVALID')) {
-    define('Y_SHUTDOWNCOUNTDOWN_INVALID', YAPI_INVALID_UINT);
+    define('Y_SHUTDOWNCOUNTDOWN_INVALID', YAPI_INVALID_INT);
 }
 //--- (end of YOsControl definitions)
     #--- (YOsControl yapiwrapper)
@@ -61,11 +61,11 @@ if (!defined('Y_SHUTDOWNCOUNTDOWN_INVALID')) {
  */
 class YOsControl extends YFunction
 {
-    const SHUTDOWNCOUNTDOWN_INVALID = YAPI::INVALID_UINT;
+    const SHUTDOWNCOUNTDOWN_INVALID = YAPI::INVALID_INT;
     //--- (end of YOsControl declaration)
 
     //--- (YOsControl attributes)
-    protected int $_shutdownCountdown = self::SHUTDOWNCOUNTDOWN_INVALID; // UInt31
+    protected int $_shutdownCountdown = self::SHUTDOWNCOUNTDOWN_INVALID; // Int
 
     //--- (end of YOsControl attributes)
 
@@ -173,6 +173,21 @@ class YOsControl extends YFunction
     public function shutdown(int $secBeforeShutDown): int
     {
         return $this->set_shutdownCountdown($secBeforeShutDown);
+    }
+
+    /**
+     * Schedules an OS reboot after a given number of seconds.
+     *
+     * @param int $secBeforeReboot : number of seconds before reboot
+     *
+     * @return int  YAPI::SUCCESS when the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function reboot(int $secBeforeReboot): int
+    {
+        return $this->set_shutdownCountdown(0 - $secBeforeReboot);
     }
 
     /**
