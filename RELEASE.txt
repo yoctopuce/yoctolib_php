@@ -1,4 +1,4 @@
-PHPV2 v2.0.61813
+PHPV2 v2.0.61858
 
 - Fix RegisterHub that was reusing old connection
 - Fix parsing of Ipv6 URL
