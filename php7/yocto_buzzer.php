@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_buzzer.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: yocto_buzzer.php 63695 2024-12-13 11:06:34Z seb $
  *
  *  Implements YBuzzer, the high-level API for Buzzer functions
  *
@@ -424,7 +424,7 @@ class YBuzzer extends YFunction
         $note = -99;
         $num = 0;
         $typ = 3;
-        $ascNotes = $notes;
+        $ascNotes = YAPI::Ystr2bin($notes);
         $notesLen = strlen($ascNotes);
         $i = 0;
         while ($i < $notesLen) {
@@ -525,7 +525,7 @@ class YBuzzer extends YFunction
                     }
                     $pitch = $prevPitch + $dNote;
                     $freq = intval(round(440 * exp($pitch * 0.05776226504666)));
-                    $ms16 = (($ms) >> (4));
+                    $ms16 = (($ms) >> 4);
                     $rest = 0;
                     if ($typ == 3) {
                         $rest = 2 * $ms16;

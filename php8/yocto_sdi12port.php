@@ -269,7 +269,7 @@ class YSdi12SensorInfo
      */
     public function get_measureCommand(int $measureIndex): string
     {
-        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw(YAPI::INVALID_ARGUMENT,'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][0];
     }
 
@@ -286,7 +286,7 @@ class YSdi12SensorInfo
      */
     public function get_measurePosition(int $measureIndex): int
     {
-        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index',0);
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw(YAPI::INVALID_ARGUMENT,'Invalid measure index',0);
         return intVal($this->_valuesDesc[$measureIndex][2]);
     }
 
@@ -303,7 +303,7 @@ class YSdi12SensorInfo
      */
     public function get_measureSymbol(int $measureIndex): string
     {
-        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw(YAPI::INVALID_ARGUMENT,'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][3];
     }
 
@@ -320,7 +320,7 @@ class YSdi12SensorInfo
      */
     public function get_measureUnit(int $measureIndex): string
     {
-        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw(YAPI::INVALID_ARGUMENT,'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][4];
     }
 
@@ -337,7 +337,7 @@ class YSdi12SensorInfo
      */
     public function get_measureDescription(int $measureIndex): string
     {
-        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Invalid measure index','');
+        if (!($measureIndex < sizeof($this->_valuesDesc))) return $this->_throw(YAPI::INVALID_ARGUMENT,'Invalid measure index','');
         return $this->_valuesDesc[$measureIndex][5];
     }
 
@@ -356,9 +356,9 @@ class YSdi12SensorInfo
     {
         // $errmsg                 is a str;
 
-        if (strlen($infoStr) > 1) {
-            if (substr($infoStr,  0, 2) == 'ER') {
-                $errmsg = substr($infoStr,  2, strlen($infoStr)-2);
+        if (mb_strlen($infoStr) > 1) {
+            if (substr($infoStr, 0, 2) == 'ER') {
+                $errmsg = substr($infoStr, 2, mb_strlen($infoStr)-2);
                 $this->_addr = $errmsg;
                 $this->_proto = $errmsg;
                 $this->_mfg = $errmsg;
@@ -367,12 +367,12 @@ class YSdi12SensorInfo
                 $this->_sn = $errmsg;
                 $this->_isValid = false;
             } else {
-                $this->_addr = substr($infoStr,  0, 1);
-                $this->_proto = substr($infoStr,  1, 2);
-                $this->_mfg = substr($infoStr,  3, 8);
-                $this->_model = substr($infoStr,  11, 6);
-                $this->_ver = substr($infoStr,  17, 3);
-                $this->_sn = substr($infoStr,  20, strlen($infoStr)-20);
+                $this->_addr = substr($infoStr, 0, 1);
+                $this->_proto = substr($infoStr, 1, 2);
+                $this->_mfg = substr($infoStr, 3, 8);
+                $this->_model = substr($infoStr, 11, 6);
+                $this->_ver = substr($infoStr, 17, 3);
+                $this->_sn = substr($infoStr, 20, mb_strlen($infoStr)-20);
                 $this->_isValid = true;
             }
         }
@@ -400,8 +400,8 @@ class YSdi12SensorInfo
         $size = 4;
         while ($k < 10) {
             $infoNbVal = $this->_sdi12Port->querySdi12($this->_addr, sprintf('IM%d', $k), 5000);
-            if (strlen($infoNbVal) > 1) {
-                $value = substr($infoNbVal,  4, strlen($infoNbVal)-4);
+            if (mb_strlen($infoNbVal) > 1) {
+                $value = substr($infoNbVal, 4, mb_strlen($infoNbVal)-4);
                 $nbVal = intVal($value);
                 if ($nbVal != 0) {
                     while (sizeof($val) > 0) {
@@ -1105,7 +1105,7 @@ class YSdi12Port extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
 
@@ -1118,7 +1118,7 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1152,7 +1152,7 @@ class YSdi12Port extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         $res = [];              // strArr;
         // $idx                    is a int;
@@ -1166,7 +1166,7 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         $idx = 0;
         while ($idx < $msglen) {
             $res[] = $this->_json_get_string($msgarr[$idx]);
@@ -1214,9 +1214,9 @@ class YSdi12Port extends YFunction
         // $databin                is a bin;
 
         $databin = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
-        $availPosStr = $databin;
+        $availPosStr = YAPI::Ybin2str($databin);
         $atPos = YAPI::Ystrpos($availPosStr,'@');
-        $res = intVal(substr($availPosStr,  0, $atPos));
+        $res = intVal(substr($availPosStr, 0, $atPos));
         return $res;
     }
 
@@ -1231,9 +1231,9 @@ class YSdi12Port extends YFunction
         // $databin                is a bin;
 
         $databin = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
-        $availPosStr = $databin;
+        $availPosStr = YAPI::Ybin2str($databin);
         $atPos = YAPI::Ystrpos($availPosStr,'@');
-        $res = intVal(substr($availPosStr,  $atPos+1, strlen($availPosStr)-$atPos-1));
+        $res = intVal(substr($availPosStr, $atPos+1, mb_strlen($availPosStr)-$atPos-1));
         return $res;
     }
 
@@ -1255,16 +1255,16 @@ class YSdi12Port extends YFunction
         // $prevpos                is a int;
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        if (strlen($query) <= 80) {
+        if (mb_strlen($query) <= 80) {
             // fast query
             $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
         } else {
             // long query
             $prevpos = $this->end_tell();
-            $this->_upload('txdata', $query . ''."\r".''."\n".'');
+            $this->_upload('txdata', YAPI::Ystr2bin($query . ''."\r".''."\n".''));
             $url = sprintf('rxmsg.json?len=1&maxw=%d&pos=%d', $maxWait, $prevpos);
         }
 
@@ -1276,7 +1276,7 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1303,10 +1303,10 @@ class YSdi12Port extends YFunction
         // $prevpos                is a int;
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        if (strlen($hexString) <= 80) {
+        if (mb_strlen($hexString) <= 80) {
             // fast query
             $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=$%s', $maxWait, $hexString);
         } else {
@@ -1324,7 +1324,7 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1346,7 +1346,7 @@ class YSdi12Port extends YFunction
      */
     public function uploadJob(string $jobfile, string $jsonDef): int
     {
-        $this->_upload($jobfile, $jsonDef);
+        $this->_upload($jobfile, YAPI::Ystr2bin($jsonDef));
         return YAPI::SUCCESS;
     }
 
@@ -1416,7 +1416,7 @@ class YSdi12Port extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        $buff = $text;
+        $buff = YAPI::Ystr2bin($text);
         $bufflen = strlen($buff);
         if ($bufflen < 100) {
             // if string is pure text, we can send it as a simple command (faster)
@@ -1500,15 +1500,15 @@ class YSdi12Port extends YFunction
         // $idx                    is a int;
         // $hexb                   is a int;
         // $res                    is a int;
-        $bufflen = strlen($hexString);
+        $bufflen = mb_strlen($hexString);
         if ($bufflen < 100) {
             return $this->sendCommand(sprintf('$%s',$hexString));
         }
-        $bufflen = (($bufflen) >> (1));
+        $bufflen = (($bufflen) >> 1);
         $buff = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {
-            $hexb = hexdec(substr($hexString,  2 * $idx, 2));
+            $hexb = hexdec(substr($hexString, 2 * $idx, 2));
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
@@ -1533,7 +1533,7 @@ class YSdi12Port extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        $buff = sprintf('%s'."\r".''."\n".'', $text);
+        $buff = YAPI::Ystr2bin(sprintf('%s'."\r".''."\n".'', $text));
         $bufflen = strlen($buff)-2;
         if ($bufflen < 100) {
             // if string is pure text, we can send it as a simple command (faster)
@@ -1658,7 +1658,7 @@ class YSdi12Port extends YFunction
             $bufflen = $bufflen - 1;
         }
         $this->_rxptr = $endpos;
-        $res = substr($buff,  0, $bufflen);
+        $res = substr(YAPI::Ybin2str($buff), 0, $bufflen);
         return $res;
     }
 
@@ -1819,14 +1819,14 @@ class YSdi12Port extends YFunction
         // $pattern                is a str;
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
         $cmdChar  = '';
 
         $pattern = $sensorAddr;
-        if (strlen($cmd) > 0) {
-            $cmdChar = substr($cmd,  0, 1);
+        if (mb_strlen($cmd) > 0) {
+            $cmdChar = substr($cmd, 0, 1);
         }
         if ($sensorAddr == '?') {
             $pattern = '->*';
@@ -1852,7 +1852,7 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1908,7 +1908,7 @@ class YSdi12Port extends YFunction
         $i = 0 ;
         while ($i < 10) {
             $res = $this->querySdi12($i,'!',500);
-            if (strlen($res) >= 1) {
+            if (mb_strlen($res) >= 1) {
                 $idSens[] = $res;
             }
             $i = $i+1;
@@ -1918,14 +1918,14 @@ class YSdi12Port extends YFunction
         $i = 0;
         while ($i<26) {
             $res = $this->querySdi12(substr($lettreMin, $i, 1),'!',500);
-            if (strlen($res) >= 1) {
+            if (mb_strlen($res) >= 1) {
                 $idSens[] = $res;
             }
             $i = $i +1;
         }
         while ($i<26) {
             $res = $this->querySdi12(substr($lettreMaj, $i, 1),'!',500);
-            if (strlen($res) >= 1) {
+            if (mb_strlen($res) >= 1) {
                 $idSens[] = $res;
             }
             $i = $i +1;
@@ -2067,7 +2067,7 @@ class YSdi12Port extends YFunction
         // $wait                   is a str;
 
         $wait = $this->querySdi12($sensorAddr,'C',1000);
-        $wait = substr($wait,  1, 3);
+        $wait = substr($wait, 1, 3);
         $timewait = intVal($wait) * 1000;
         return $timewait;
     }
@@ -2091,7 +2091,7 @@ class YSdi12Port extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         $res = [];              // YSdi12SnoopingRecordArr;
         // $idx                    is a int;
@@ -2105,10 +2105,10 @@ class YSdi12Port extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         $idx = 0;
         while ($idx < $msglen) {
-            $res[] = new YSdi12SnoopingRecord($msgarr[$idx]);
+            $res[] = new YSdi12SnoopingRecord(YAPI::Ybin2str($msgarr[$idx]));
             $idx = $idx + 1;
         }
         return $res;

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 61656 2024-06-25 09:23:57Z seb $
+ * $Id: yocto_api.php 63695 2024-12-13 11:06:34Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -398,6 +398,7 @@ class YTcpHub
         }
         return ['whitePages' => $wp, 'yellowPages' => $yp];
     }
+
     static function decodeJZON(array $jzon, array $ref): mixed
     {
         $decoded = self::decodeJZONReq($jzon, $ref);
@@ -490,7 +491,7 @@ class YTcpHub
                     if (isset($_SERVER['HTTP_JSON_POST_DATA'])) {
                         $this->callbackCache = $_SERVER['HTTP_JSON_POST_DATA'];
                     } else {
-                        $utf8_encode = utf8_encode($data);
+                        $utf8_encode = YAPI::Ystr2bin($data);
                         $this->callbackCache = json_decode($utf8_encode, true);
                     }
                     if (is_null($this->callbackCache)) {
@@ -1015,8 +1016,7 @@ class YTcpReq
         }
         if (substr($addr, 0, 6) == 'tls://') {
             $sslContext = $this->hub->get_stream_context();
-            stream_context_set_params($sslContext, array("notification" => "stream_notification_callback"));
-
+            stream_context_set_params($sslContext, array());
             $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000, STREAM_CLIENT_CONNECT, $sslContext);
         } else {
             $resource = @stream_socket_client($addr, $errno, $errstr, $mstimeout / 1000);
@@ -1731,7 +1731,7 @@ class YDevice
             $this->_logIsPulling = false;
             return;
         }
-        $resultStr = iconv("ISO-8859-1", "UTF-8", $yreq->result);
+        $resultStr = YAPI::Ybin2str($yreq->result);
         $pos = strrpos($resultStr, "\n@");
         if ($pos < 0) {
             $this->_logIsPulling = false;
@@ -1817,7 +1817,7 @@ class YDevice
         if ($yreq->errorType != YAPI::SUCCESS) {
             return $yreq;
         }
-        $json_req = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+        $json_req = json_decode(YAPI::Ybin2str($yreq->result), true);
         if (json_last_error() != JSON_ERROR_NONE) {
             return $this->_throw(YAPI::IO_ERROR, 'Request failed, could not parse API result for ' . $this->_rootUrl,
                 YAPI::IO_ERROR);
@@ -2249,7 +2249,7 @@ class YAPIContext
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
      * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
-     * but depending or you network you may want to change this delay,
+     * but depending on your network you may want to change this delay,
      * gor example if your network infrastructure is based on a GSM connection.
      *
      * @param int $networkMsTimeout : the network connection delay in milliseconds.
@@ -2267,7 +2267,7 @@ class YAPIContext
      * Returns the network connection delay for yRegisterHub() and yUpdateDeviceList().
      * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
-     * but depending or you network you may want to change this delay,
+     * but depending on your network you may want to change this delay,
      * for example if your network infrastructure is based on a GSM connection.
      *
      * @return int  the network connection delay in milliseconds.
@@ -2513,6 +2513,8 @@ class YAPI
     const DETECT_NET = 2;
     const DETECT_ALL = 3;
 
+    const DefaultEncoding = "ISO-8859-1";
+
     // Abstract function BaseTypes
     public static array $BASETYPES = array(
         'Function' => 0,
@@ -2619,6 +2621,17 @@ class YAPI
         return $res;
     }
 
+
+    public static function Ybin2str(string $bin): string
+    {
+        return iconv(YAPI::DefaultEncoding, 'utf-8', $bin);
+    }
+
+    public static function Ystr2bin(string $str): string
+    {
+        return iconv('utf-8', YAPI::DefaultEncoding, $str);
+    }
+
     /**
      * Throw an exception, keeping track of it in the object itself
      * @param int $int_errType
@@ -2704,7 +2717,7 @@ class YAPI
                     // report problems later
                     continue;
                 }
-                $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $req->reply), true);
+                $loadval = json_decode(YAPI::Ybin2str($req->reply), true);
                 if (!$loadval) {
                     $req->errorType = YAPI::IO_ERROR;
                     continue;
@@ -3920,7 +3933,7 @@ class YAPI
                 if ($yreq->errorType != YAPI::SUCCESS) {
                     return $yreq;
                 }
-                $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+                $loadval = json_decode(YAPI::Ybin2str($yreq->result), true);
                 $loadval = $loadval[$funcid];
             }
         } else {
@@ -3938,7 +3951,7 @@ class YAPI
                 if ($yreq->errorType != YAPI::SUCCESS) {
                     return $yreq;
                 }
-                $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $yreq->result), true);
+                $loadval = json_decode(YAPI::Ybin2str($yreq->result), true);
             } else {
                 $httpreq = "GET /api/{$funcid}{$str_extra}";
                 $yreq = self::devRequest($devid, $httpreq, true);
@@ -4099,7 +4112,7 @@ class YAPI
      * Modifies the network connection delay for yRegisterHub() and yUpdateDeviceList().
      * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
-     * but depending or you network you may want to change this delay,
+     * but depending on your network you may want to change this delay,
      * gor example if your network infrastructure is based on a GSM connection.
      *
      * @param int $networkMsTimeout : the network connection delay in milliseconds.
@@ -4116,7 +4129,7 @@ class YAPI
      * Returns the network connection delay for yRegisterHub() and yUpdateDeviceList().
      * This delay impacts only the YoctoHubs and VirtualHub
      * which are accessible through the network. By default, this delay is of 20000 milliseconds,
-     * but depending or you network you may want to change this delay,
+     * but depending on your network you may want to change this delay,
      * for example if your network infrastructure is based on a GSM connection.
      *
      * @return int  the network connection delay in milliseconds.
@@ -4205,7 +4218,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.0.61858";
+        return "2.0.63797";
     }
 
     /**
@@ -4306,7 +4319,7 @@ class YAPI
      *
      * From an operating system standpoint, it is generally not required to call
      * this function since the OS will automatically free allocated resources
-     * once your program is completed. However there are two situations when
+     * once your program is completed. However, there are two situations when
      * you may really want to use that function:
      *
      * - Free all dynamically allocated memory blocks in order to
@@ -4420,11 +4433,11 @@ class YAPI
             $res['auth'] = substr($str_url, 0, $authpos);
             $str_url = substr($str_url, $authpos + 1);
         }
-        $endv6 =  strpos($str_url, ']');
+        $endv6 = strpos($str_url, ']');
         $p_ofs = strpos($str_url, ':');
         if ($p_ofs > 0 && $endv6 > 0 && $p_ofs < $endv6) {
             // ipv6 URL
-            $p_ofs = strpos($str_url, ':',$endv6);
+            $p_ofs = strpos($str_url, ':', $endv6);
         }
         if ($p_ofs !== false) {
             $res['host'] = substr($str_url, 0, $p_ofs);
@@ -4458,7 +4471,7 @@ class YAPI
         foreach (self::$_hubs as $hub_url => $hub) {
             if ($url == $hub->url_info['org_url']) {
                 $res[] = $hub;
-            }else if ($hub_url == $url_detail['rooturl']) {
+            } elseif ($hub_url == $url_detail['rooturl']) {
                 $res[] = $hub;
             } else {
                 if ($hub->isURLKnown($url)) {
@@ -4471,7 +4484,7 @@ class YAPI
 
 
     /**
-     * Setup the Yoctopuce library to use modules connected on a given machine. Idealy this
+     * Set up the Yoctopuce library to use modules connected on a given machine. Idealy this
      * call will be made once at the begining of your application.  The
      * parameter will determine how the API will work. Use the following values:
      *
@@ -4488,7 +4501,7 @@ class YAPI
      * computer, use the IP address 127.0.0.1. If the given IP is unresponsive, yRegisterHub
      * will not return until a time-out defined by ySetNetworkTimeout has elapsed.
      * However, it is possible to preventively test a connection  with yTestHub.
-     * If you cannot afford a network time-out, you can use the non blocking yPregisterHub
+     * If you cannot afford a network time-out, you can use the non-blocking yPregisterHub
      * function that will establish the connection as soon as it is available.
      *
      *
@@ -4503,7 +4516,7 @@ class YAPI
      * while trying to access the USB modules. In particular, this means
      * that you must stop the VirtualHub software before starting
      * an application that uses direct USB access. The workaround
-     * for this limitation is to setup the library to use the VirtualHub
+     * for this limitation is to set up the library to use the VirtualHub
      * rather than direct USB access.
      *
      * If access control has been activated on the hub, virtual or not, you want to
@@ -4646,7 +4659,7 @@ class YAPI
 
 
     /**
-     * Setup the Yoctopuce library to no more use modules connected on a previously
+     * Set up the Yoctopuce library to no more use modules connected on a previously
      * registered machine with RegisterHub.
      *
      * @param string $url : a string containing either "usb" or the
@@ -4718,10 +4731,16 @@ class YAPI
      */
     public static function TestHub(string $url, int $mstimeout, string &$errmsg = ''): int
     {
+        if ($url == 'net') {
+            $errmsg = "Invalid URL";
+            return YAPI::INVALID_ARGUMENT;
+        } elseif ($url == 'usb') {
+            $errmsg = "USB is not available in PHP";
+            return YAPI::NOT_SUPPORTED;
+        }
         if (is_null(self::$_hubs)) {
             self::_init();
         }
-
         $url_detail = self::_parseRegisteredURL($url);
         if ($url_detail['proto'] == "wss" || $url_detail['proto'] == "ws") {
             $errmsg = "Websocket is not available in PHP";
@@ -5079,7 +5098,7 @@ class YAPI
     /**
      * Checks if a given string is valid as logical name for a module or a function.
      * A valid logical name has a maximum of 19 characters, all among
-     * A..Z, a..z, 0..9, _, and -.
+     * A...Z, a...z, 0...9, _, and -.
      * If you try to configure a logical name with an incorrect string,
      * the invalid characters are ignored.
      *
@@ -5627,11 +5646,11 @@ class YFirmwareUpdate
     {
         // $err                    is a str;
         // $leng                   is a int;
-        $err = $this->_settings;
-        $leng = strlen($err);
+        $err = YAPI::Ybin2str($this->_settings);
+        $leng = mb_strlen($err);
         if (($leng >= 6) && ('error:' == substr($err, 0, 6))) {
             $this->_progress = -1;
-            $this->_progress_msg = substr($err,  6, $leng - 6);
+            $this->_progress_msg = substr($err, 6, $leng - 6);
         } else {
             $this->_progress = 0;
             $this->_progress_c = 0;
@@ -5719,15 +5738,15 @@ class YDataStream
         // $fRef                   is a float;
         $iCalib = [];           // intArr;
         // decode sequence header to extract data
-        $this->_runNo = $encoded[0] + ((($encoded[1]) << (16)));
-        $this->_utcStamp = $encoded[2] + ((($encoded[3]) << (16)));
+        $this->_runNo = $encoded[0] + ((($encoded[1]) << 16));
+        $this->_utcStamp = $encoded[2] + ((($encoded[3]) << 16));
         $val = $encoded[4];
-        $this->_isAvg = ((($val) & (0x100)) == 0);
-        $samplesPerHour = (($val) & (0xff));
-        if ((($val) & (0x100)) != 0) {
+        $this->_isAvg = ((($val) & 0x100) == 0);
+        $samplesPerHour = (($val) & 0xff);
+        if ((($val) & 0x100) != 0) {
             $samplesPerHour = $samplesPerHour * 3600;
         } else {
-            if ((($val) & (0x200)) != 0) {
+            if ((($val) & 0x200) != 0) {
                 $samplesPerHour = $samplesPerHour * 60;
             }
         }
@@ -5809,9 +5828,9 @@ class YDataStream
         }
         // decode min/avg/max values for the sequence
         if ($this->_nRows > 0) {
-            $this->_avgVal = $this->_decodeAvg($encoded[8] + ((((($encoded[9]) ^ (0x8000))) << (16))), 1);
-            $this->_minVal = $this->_decodeVal($encoded[10] + ((($encoded[11]) << (16))));
-            $this->_maxVal = $this->_decodeVal($encoded[12] + ((($encoded[13]) << (16))));
+            $this->_avgVal = $this->_decodeAvg($encoded[8] + (((($encoded[9]) ^ 0x8000) << 16)), 1);
+            $this->_minVal = $this->_decodeVal($encoded[10] + ((($encoded[11]) << 16)));
+            $this->_maxVal = $this->_decodeVal($encoded[12] + ((($encoded[13]) << 16)));
         }
         return 0;
     }
@@ -5847,9 +5866,9 @@ class YDataStream
                     $dat[] = NAN;
                     $dat[] = NAN;
                 } else {
-                    $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << (16))));
-                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
-                    $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << (16))));
+                    $dat[] = $this->_decodeVal($udat[$idx + 2] + ((($udat[$idx + 3]) << 16)));
+                    $dat[] = $this->_decodeAvg($udat[$idx] + (((($udat[$idx + 1]) ^ 0x8000) << 16)), 1);
+                    $dat[] = $this->_decodeVal($udat[$idx + 4] + ((($udat[$idx + 5]) << 16)));
                 }
                 $idx = $idx + 6;
                 $this->_values[] = $dat;
@@ -5862,7 +5881,7 @@ class YDataStream
                 if (($udat[$idx] == 65535) && ($udat[$idx + 1] == 65535)) {
                     $dat[] = NAN;
                 } else {
-                    $dat[] = $this->_decodeAvg($udat[$idx] + ((((($udat[$idx + 1]) ^ (0x8000))) << (16))), 1);
+                    $dat[] = $this->_decodeAvg($udat[$idx] + (((($udat[$idx + 1]) ^ 0x8000) << 16)), 1);
                 }
                 $this->_values[] = $dat;
                 $idx = $idx + 2;
@@ -6363,7 +6382,7 @@ class YDataSet
         $measure_data = [];     // floatArr;
 
         if ($this->_progress < 0) {
-            $strdata = $data;
+            $strdata = YAPI::Ybin2str($data);
             if ($strdata == '{}') {
                 $this->_parent->_throw(YAPI::VERSION_MISMATCH, 'device firmware is too old');
                 return YAPI::VERSION_MISMATCH;
@@ -6381,7 +6400,7 @@ class YDataSet
         $summaryStopMs = YAPI::MIN_DOUBLE;
 
         // Parse complete streams
-        foreach ( $this->_streams as $each) {
+        foreach ($this->_streams as $each) {
             $streamStartTimeMs = round($each->get_realStartTimeUTC() * 1000);
             $streamDuration = $each->get_realDuration();
             $streamEndTimeMs = $streamStartTimeMs + round($streamDuration * 1000);
@@ -6520,9 +6539,8 @@ class YDataSet
         $suffixes = [];         // strArr;
         // $idx                    is a int;
         // $bulkFile               is a bin;
-        $streamStr = [];        // strArr;
         // $urlIdx                 is a int;
-        // $streamBin              is a bin;
+        $streamBin = [];        // binArr;
 
         if ($progress != $this->_progress) {
             return $this->_progress;
@@ -6596,14 +6614,13 @@ class YDataSet
                 $idx = $idx + 1;
             }
             $bulkFile = $this->_parent->_download($url);
-            $streamStr = $this->_parent->_json_get_array($bulkFile);
+            $streamBin = $this->_parent->_json_get_array($bulkFile);
             $urlIdx = 0;
             $idx = $this->_progress;
-            while (($idx < sizeof($this->_streams)) && ($urlIdx < sizeof($suffixes)) && ($urlIdx < sizeof($streamStr))) {
+            while (($idx < sizeof($this->_streams)) && ($urlIdx < sizeof($suffixes)) && ($urlIdx < sizeof($streamBin))) {
                 $stream = $this->_streams[$idx];
                 if (($stream->_get_baseurl() == $baseurl) && ($stream->_get_urlsuffix() == $suffixes[$urlIdx])) {
-                    $streamBin = $streamStr[$urlIdx];
-                    $stream->_parseStream($streamBin);
+                    $stream->_parseStream($streamBin[$urlIdx]);
                     $urlIdx = $urlIdx + 1;
                 }
                 $idx = $idx + 1;
@@ -6739,7 +6756,7 @@ class YDataSet
         if ($this->_progress >= sizeof($this->_streams)) {
             return 100;
         }
-        return intVal((1 + (1 + $this->_progress) * 98 ) / ((1 + sizeof($this->_streams))));
+        return intVal((1 + (1 + $this->_progress) * 98) / ((1 + sizeof($this->_streams))));
     }
 
     /**
@@ -6771,7 +6788,7 @@ class YDataSet
                 $stream = $this->_streams[$this->_progress];
                 if ($stream->_wasLoaded()) {
                     // Do not reload stream if it was already loaded
-                    return $this->processMore($this->_progress, '');
+                    return $this->processMore($this->_progress, YAPI::Ystr2bin(''));
                 }
                 $url = $stream->_get_url();
             }
@@ -6932,7 +6949,7 @@ class YDataSet
     // YDataSet parser for stream list
     public function _parse(string $str_json)
     {
-        $loadval = json_decode(iconv("ISO-8859-1", "UTF-8", $str_json), true);
+        $loadval = json_decode(YAPI::Ybin2str($str_json), true);
 
         $this->_functionId = $loadval['id'];
         $this->_unit = $loadval['unit'];
@@ -7394,7 +7411,7 @@ class YHub
      * Modifies tthe network connection delay for this hub.
      * The default value is inherited from ySetNetworkTimeout
      * at the time when the hub is registered, but it can be updated
-     * afterwards for each specific hub if necessary.
+     * afterward for each specific hub if necessary.
      *
      * @param int $networkMsTimeout : the network connection delay in milliseconds.
      * @noreturn
@@ -7408,7 +7425,7 @@ class YHub
      * Returns the network connection delay for this hub.
      * The default value is inherited from ySetNetworkTimeout
      * at the time when the hub is registered, but it can be updated
-     * afterwards for each specific hub if necessary.
+     * afterward for each specific hub if necessary.
      *
      * @return int  the network connection delay in milliseconds.
      */
@@ -7801,7 +7818,7 @@ class YFunction
         // $attrVal                is a bin;
         $url = sprintf('api/%s/%s', $this->get_functionId(), $attrName);
         $attrVal = $this->_download($url);
-        return $attrVal;
+        return YAPI::Ybin2str($attrVal);
     }
 
     /**
@@ -8233,7 +8250,7 @@ class YFunction
     //
     public function _json_get_key(string $bin_jsonbuff, string $str_key): mixed
     {
-        $loadval = json_decode($bin_jsonbuff, true);
+        $loadval = json_decode(YAPI::Ybin2str($bin_jsonbuff), true);
         if (isset($loadval[$str_key])) {
             return $loadval[$str_key];
         }
@@ -8244,24 +8261,24 @@ class YFunction
     //
     public function _json_get_string(string $bin_jsonbuff): string
     {
-        return json_decode($bin_jsonbuff, true);
+        return json_decode(YAPI::Ybin2str($bin_jsonbuff), true);
     }
 
     // Get an array of strings from a JSON buffer
     //
     public function _json_get_array(string $bin_jsonbuff): array
     {
-        $loadval = json_decode($bin_jsonbuff, true);
+        $loadval = json_decode(YAPI::Ybin2str($bin_jsonbuff), true);
         $res = array();
         foreach ($loadval as $record) {
-            $res[] = json_encode($record);
+            $res[] = YAPI::Ystr2bin(json_encode($record, JSON_UNESCAPED_UNICODE));
         }
         return $res;
     }
 
-    public function _get_json_path(string $str_json, string $path): string
+    public function _get_json_path(string $bin_jsonbuff, string $path): string
     {
-        $json = json_decode($str_json, true);
+        $json = json_decode(YAPI::Ybin2str($bin_jsonbuff), true);
         $paths = explode('|', $path);
         foreach ($paths as $key) {
             if (array_key_exists($key, $json)) {
@@ -8270,14 +8287,23 @@ class YFunction
                 return '';
             }
         }
-        return json_encode($json);
+        return YAPI::Ystr2bin(json_encode($json, JSON_UNESCAPED_UNICODE));
     }
 
-    public function _decode_json_string(string $json): string
+    public function _decode_json_string(string $bin_json): string
     {
-        $decoded = json_decode($json);
+        $decoded = json_decode(YAPI::Ybin2str($bin_json));
         if (is_null($decoded)) {
             return '';
+        }
+        return $decoded;
+    }
+
+    public function _decode_json_int(string $bin_json): int
+    {
+        $decoded = json_decode(YAPI::Ybin2str($bin_json));
+        if (is_null($decoded)) {
+            return 0;
         }
         return $decoded;
     }
@@ -8568,7 +8594,7 @@ class YFunction
  * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max
  * value, configure autonomous recording frequency and access recorded data.
- * It also provide a function to register a callback invoked each time the
+ * It also provides a function to register a callback invoked each time the
  * observed value changes, or at a predefined interval. Using this class rather
  * than a specific subclass makes it possible to create generic applications
  * that work with any Yoctopuce sensor, even those that do not yet exist.
@@ -9286,7 +9312,7 @@ class YSensor extends YFunction
         // $res                    is a bin;
 
         $res = $this->_download('api/dataLogger/recording?recording=1');
-        if (!(strlen($res) > 0)) return $this->_throw( YAPI::IO_ERROR, 'unable to start datalogger',YAPI::IO_ERROR);
+        if (!(strlen($res) > 0)) return $this->_throw(YAPI::IO_ERROR,'unable to start datalogger',YAPI::IO_ERROR);
         return YAPI::SUCCESS;
     }
 
@@ -9300,7 +9326,7 @@ class YSensor extends YFunction
         // $res                    is a bin;
 
         $res = $this->_download('api/dataLogger/recording?recording=0');
-        if (!(strlen($res) > 0)) return $this->_throw( YAPI::IO_ERROR, 'unable to stop datalogger',YAPI::IO_ERROR);
+        if (!(strlen($res) > 0)) return $this->_throw(YAPI::IO_ERROR,'unable to stop datalogger',YAPI::IO_ERROR);
         return YAPI::SUCCESS;
     }
 
@@ -9554,7 +9580,7 @@ class YSensor extends YFunction
                 $poww = $poww * 0x100;
                 $i = $i + 1;
             }
-            if ((($byteVal) & (0x80)) != 0) {
+            if ((($byteVal) & 0x80) != 0) {
                 $avgRaw = $avgRaw - $poww;
             }
             $avgVal = $avgRaw / 1000.0;
@@ -9567,7 +9593,7 @@ class YSensor extends YFunction
             $maxVal = $avgVal;
         } else {
             // averaged report: avg,avg-min,max-avg
-            $sublen = 1 + (($report[1]) & (3));
+            $sublen = 1 + (($report[1]) & 3);
             $poww = 1;
             $avgRaw = 0;
             $byteVal = 0;
@@ -9579,10 +9605,10 @@ class YSensor extends YFunction
                 $i = $i + 1;
                 $sublen = $sublen - 1;
             }
-            if ((($byteVal) & (0x80)) != 0) {
+            if ((($byteVal) & 0x80) != 0) {
                 $avgRaw = $avgRaw - $poww;
             }
-            $sublen = 1 + (((($report[1]) >> (2))) & (3));
+            $sublen = 1 + ((($report[1]) >> 2) & 3);
             $poww = 1;
             $difRaw = 0;
             while (($sublen > 0) && ($i < sizeof($report))) {
@@ -9593,7 +9619,7 @@ class YSensor extends YFunction
                 $sublen = $sublen - 1;
             }
             $minRaw = $avgRaw - $difRaw;
-            $sublen = 1 + (((($report[1]) >> (4))) & (3));
+            $sublen = 1 + ((($report[1]) >> 4) & 3);
             $poww = 1;
             $difRaw = 0;
             while (($sublen > 0) && ($i < sizeof($report))) {
@@ -10499,7 +10525,7 @@ class YModule extends YFunction
         // $modpos                 is a int;
         $cleanHwId = $func;
         $modpos = YAPI::Ystrpos($func,'.module');
-        if ($modpos != (strlen($func) - 7)) {
+        if ($modpos != (mb_strlen($func) - 7)) {
             $cleanHwId = $func . '.module';
         }
         $obj = YFunction::_FindFromCache('Module', $cleanHwId);
@@ -10752,7 +10778,7 @@ class YModule extends YFunction
         $settings = $this->get_allSettings();
         if (strlen($settings) == 0) {
             $this->_throw(YAPI::IO_ERROR, 'Unable to get device settings');
-            $settings = 'error:Unable to get device settings';
+            $settings = YAPI::Ystr2bin('error:Unable to get device settings');
         }
         return new YFirmwareUpdate($serial, $path, $settings, $force);
     }
@@ -10788,13 +10814,13 @@ class YModule extends YFunction
         // $name                   is a str;
         // $item                   is a str;
         // $t_type                 is a str;
-        // $id                     is a str;
+        // $pageid                 is a str;
         // $url                    is a str;
         // $file_data              is a str;
         // $file_data_bin          is a bin;
         // $temp_data_bin          is a bin;
         // $ext_settings           is a str;
-        $filelist = [];         // strArr;
+        $filelist = [];         // binArr;
         $templist = [];         // strArr;
 
         $settings = $this->_download('api.json');
@@ -10804,18 +10830,18 @@ class YModule extends YFunction
         $ext_settings = ', "extras":[';
         $templist = $this->get_functionIds('Temperature');
         $sep = '';
-        foreach ( $templist as $each) {
+        foreach ($templist as $each) {
             if (intVal($this->get_firmwareRelease()) > 9000) {
                 $url = sprintf('api/%s/sensorType',$each);
-                $t_type = $this->_download($url);
+                $t_type = YAPI::Ybin2str($this->_download($url));
                 if ($t_type == 'RES_NTC' || $t_type == 'RES_LINEAR') {
-                    $id = substr($each,  11, strlen($each) - 11);
-                    if ($id == '') {
-                        $id = '1';
+                    $pageid = substr($each, 11, mb_strlen($each) - 11);
+                    if ($pageid == '') {
+                        $pageid = '1';
                     }
-                    $temp_data_bin = $this->_download(sprintf('extra.json?page=%s', $id));
+                    $temp_data_bin = $this->_download(sprintf('extra.json?page=%s', $pageid));
                     if (strlen($temp_data_bin) > 0) {
-                        $item = sprintf('%s{"fid":"%s", "json":%s}'."\n".'', $sep, $each, $temp_data_bin);
+                        $item = sprintf('%s{"fid":"%s", "json":%s}'."\n".'', $sep, $each, YAPI::Ybin2str($temp_data_bin));
                         $ext_settings = $ext_settings . $item;
                         $sep = ',';
                     }
@@ -10830,9 +10856,9 @@ class YModule extends YFunction
             }
             $filelist = $this->_json_get_array($json);
             $sep = '';
-            foreach ( $filelist as $each) {
+            foreach ($filelist as $each) {
                 $name = $this->_json_get_key($each, 'name');
-                if ((strlen($name) > 0) && !($name == 'startupConf.json')) {
+                if ((mb_strlen($name) > 0) && !($name == 'startupConf.json')) {
                     $file_data_bin = $this->_download($this->_escapeAttr($name));
                     $file_data = YAPI::_bytesToHexStr($file_data_bin);
                     $item = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
@@ -10841,7 +10867,7 @@ class YModule extends YFunction
                 }
             }
         }
-        $res = '{ "api":' . $settings . $ext_settings . ']}';
+        $res = YAPI::Ystr2bin('{ "api":' . YAPI::Ybin2str($settings) . $ext_settings . ']}');
         return $res;
     }
 
@@ -10850,22 +10876,26 @@ class YModule extends YFunction
      */
     public function loadThermistorExtra(string $funcId, string $jsonExtra): int
     {
-        $values = [];           // strArr;
+        $values = [];           // binArr;
         // $url                    is a str;
         // $curr                   is a str;
+        // $binCurr                is a bin;
         // $currTemp               is a str;
+        // $binCurrTemp            is a bin;
         // $ofs                    is a int;
         // $size                   is a int;
         $url = 'api/' . $funcId . '.json?command=Z';
 
         $this->_download($url);
         // add records in growing resistance value
-        $values = $this->_json_get_array($jsonExtra);
+        $values = $this->_json_get_array(YAPI::Ystr2bin($jsonExtra));
         $ofs = 0;
         $size = sizeof($values);
         while ($ofs + 1 < $size) {
-            $curr = $values[$ofs];
-            $currTemp = $values[$ofs + 1];
+            $binCurr = $values[$ofs];
+            $binCurrTemp = $values[$ofs + 1];
+            $curr = $this->_json_get_string($binCurr);
+            $currTemp = $this->_json_get_string($binCurrTemp);
             $url = sprintf('api/%s.json?command=m%s:%s', $funcId, $curr, $currTemp);
             $this->_download($url);
             $ofs = $ofs + 2;
@@ -10878,16 +10908,17 @@ class YModule extends YFunction
      */
     public function set_extraSettings(string $jsonExtra): int
     {
-        $extras = [];           // strArr;
+        $extras = [];           // binArr;
+        // $tmp                    is a bin;
         // $functionId             is a str;
-        // $data                   is a str;
-        $extras = $this->_json_get_array($jsonExtra);
-        foreach ( $extras as $each) {
-            $functionId = $this->_get_json_path($each, 'fid');
-            $functionId = $this->_decode_json_string($functionId);
+        // $data                   is a bin;
+        $extras = $this->_json_get_array(YAPI::Ystr2bin($jsonExtra));
+        foreach ($extras as $each) {
+            $tmp = $this->_get_json_path($each, 'fid');
+            $functionId = $this->_json_get_string($tmp);
             $data = $this->_get_json_path($each, 'json');
             if ($this->hasFunction($functionId)) {
-                $this->loadThermistorExtra($functionId, $data);
+                $this->loadThermistorExtra($functionId, YAPI::Ybin2str($data));
             }
         }
         return YAPI::SUCCESS;
@@ -10910,39 +10941,39 @@ class YModule extends YFunction
     public function set_allSettingsAndFiles(string $settings): int
     {
         // $down                   is a bin;
-        // $json                   is a str;
-        // $json_api               is a str;
-        // $json_files             is a str;
-        // $json_extra             is a str;
+        // $json_bin               is a bin;
+        // $json_api               is a bin;
+        // $json_files             is a bin;
+        // $json_extra             is a bin;
         // $fuperror               is a int;
         // $globalres              is a int;
         $fuperror = 0;
-        $json = $settings;
-        $json_api = $this->_get_json_path($json, 'api');
-        if ($json_api == '') {
+        $json_api = $this->_get_json_path($settings, 'api');
+        if (strlen($json_api) == 0) {
             return $this->set_allSettings($settings);
         }
-        $json_extra = $this->_get_json_path($json, 'extras');
-        if (!($json_extra == '')) {
-            $this->set_extraSettings($json_extra);
+        $json_extra = $this->_get_json_path($settings, 'extras');
+        if (strlen($json_extra) > 0) {
+            $this->set_extraSettings(YAPI::Ybin2str($json_extra));
         }
         $this->set_allSettings($json_api);
         if ($this->hasFunction('files')) {
-            $files = [];            // strArr;
+            $files = [];            // binArr;
             // $res                    is a str;
+            // $tmp                    is a bin;
             // $name                   is a str;
             // $data                   is a str;
             $down = $this->_download('files.json?a=format');
-            $res = $this->_get_json_path($down, 'res');
-            $res = $this->_decode_json_string($res);
-            if (!($res == 'ok')) return $this->_throw( YAPI::IO_ERROR, 'format failed',YAPI::IO_ERROR);
-            $json_files = $this->_get_json_path($json, 'files');
+            $down = $this->_get_json_path($down, 'res');
+            $res = $this->_json_get_string($down);
+            if (!($res == 'ok')) return $this->_throw(YAPI::IO_ERROR,'format failed',YAPI::IO_ERROR);
+            $json_files = $this->_get_json_path($settings, 'files');
             $files = $this->_json_get_array($json_files);
-            foreach ( $files as $each) {
-                $name = $this->_get_json_path($each, 'name');
-                $name = $this->_decode_json_string($name);
-                $data = $this->_get_json_path($each, 'data');
-                $data = $this->_decode_json_string($data);
+            foreach ($files as $each) {
+                $tmp = $this->_get_json_path($each, 'name');
+                $name = $this->_json_get_string($tmp);
+                $tmp = $this->_get_json_path($each, 'data');
+                $data = $this->_json_get_string($tmp);
                 if ($name == '') {
                     $fuperror = $fuperror + 1;
                 } else {
@@ -10952,7 +10983,7 @@ class YModule extends YFunction
         }
         // Apply settings a second time for file-dependent settings and dynamic sensor nodes
         $globalres = $this->set_allSettings($json_api);
-        if (!($fuperror == 0)) return $this->_throw( YAPI::IO_ERROR, 'Error during file upload',YAPI::IO_ERROR);
+        if (!($fuperror == 0)) return $this->_throw(YAPI::IO_ERROR,'Error during file upload',YAPI::IO_ERROR);
         return $globalres;
     }
 
@@ -11042,7 +11073,7 @@ class YModule extends YFunction
         if ($cparams == '' || $cparams == '0') {
             return 1;
         }
-        if ((strlen($cparams) < 2) || (YAPI::Ystrpos($cparams,'.') >= 0)) {
+        if ((mb_strlen($cparams) < 2) || (YAPI::Ystrpos($cparams,'.') >= 0)) {
             return 0;
         } else {
             return 2;
@@ -11223,7 +11254,7 @@ class YModule extends YFunction
                 $param = 30 + $calibType;
                 $i = 0;
                 while ($i < sizeof($calibData)) {
-                    if ((($i) & (1)) > 0) {
+                    if ((($i) & 1) > 0) {
                         $param = $param . ':';
                     } else {
                         $param = $param . ' ';
@@ -11301,12 +11332,12 @@ class YModule extends YFunction
     {
         $restoreLast = [];      // strArr;
         // $old_json_flat          is a bin;
-        $old_dslist = [];       // strArr;
+        $old_dslist = [];       // binArr;
         $old_jpath = [];        // strArr;
         $old_jpath_len = [];    // intArr;
         $old_val_arr = [];      // strArr;
         // $actualSettings         is a bin;
-        $new_dslist = [];       // strArr;
+        $new_dslist = [];       // binArr;
         $new_jpath = [];        // strArr;
         $new_jpath_len = [];    // intArr;
         $new_val_arr = [];      // strArr;
@@ -11322,9 +11353,11 @@ class YModule extends YFunction
         // $fun                    is a str;
         // $attr                   is a str;
         // $value                  is a str;
+        // $old_serial             is a str;
+        // $new_serial             is a str;
         // $url                    is a str;
         // $tmp                    is a str;
-        // $new_calib              is a str;
+        // $binTmp                 is a bin;
         // $sensorType             is a str;
         // $unit_name              is a str;
         // $newval                 is a str;
@@ -11334,11 +11367,11 @@ class YModule extends YFunction
         // $do_update              is a bool;
         // $found                  is a bool;
         $res = YAPI::SUCCESS;
-        $tmp = $settings;
-        $tmp = $this->_get_json_path($tmp, 'api');
-        if (!($tmp == '')) {
-            $settings = $tmp;
+        $binTmp = $this->_get_json_path($settings, 'api');
+        if (strlen($binTmp) > 0) {
+            $settings = $binTmp;
         }
+        $old_serial = '';
         $oldval = '';
         $newval = '';
         $old_json_flat = $this->_flattenJsonStruct($settings);
@@ -11346,18 +11379,21 @@ class YModule extends YFunction
         foreach ($old_dslist as $each) {
             $each_str = $this->_json_get_string($each);
             // split json path and attr
-            $leng = strlen($each_str);
+            $leng = mb_strlen($each_str);
             $eqpos = YAPI::Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
                 $this->_throw(YAPI::INVALID_ARGUMENT, 'Invalid settings');
                 return YAPI::INVALID_ARGUMENT;
             }
-            $jpath = substr($each_str,  0, $eqpos);
+            $jpath = substr($each_str, 0, $eqpos);
             $eqpos = $eqpos + 1;
-            $value = substr($each_str,  $eqpos, $leng - $eqpos);
+            $value = substr($each_str, $eqpos, $leng - $eqpos);
             $old_jpath[] = $jpath;
-            $old_jpath_len[] = strlen($jpath);
+            $old_jpath_len[] = mb_strlen($jpath);
             $old_val_arr[] = $value;
+            if ($jpath == 'module/serialNumber') {
+                $old_serial = $value;
+            }
         }
 
         try {
@@ -11367,167 +11403,171 @@ class YModule extends YFunction
             YAPI::Sleep(500);
             $actualSettings = $this->_download('api.json');
         }
+        $new_serial = $this->get_serialNumber();
+        if ($old_serial == $new_serial || $old_serial == '') {
+            $old_serial = '_NO_SERIAL_FILTER_';
+        }
         $actualSettings = $this->_flattenJsonStruct($actualSettings);
         $new_dslist = $this->_json_get_array($actualSettings);
         foreach ($new_dslist as $each) {
             // remove quotes
             $each_str = $this->_json_get_string($each);
             // split json path and attr
-            $leng = strlen($each_str);
+            $leng = mb_strlen($each_str);
             $eqpos = YAPI::Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
                 $this->_throw(YAPI::INVALID_ARGUMENT, 'Invalid settings');
                 return YAPI::INVALID_ARGUMENT;
             }
-            $jpath = substr($each_str,  0, $eqpos);
+            $jpath = substr($each_str, 0, $eqpos);
             $eqpos = $eqpos + 1;
-            $value = substr($each_str,  $eqpos, $leng - $eqpos);
+            $value = substr($each_str, $eqpos, $leng - $eqpos);
             $new_jpath[] = $jpath;
-            $new_jpath_len[] = strlen($jpath);
+            $new_jpath_len[] = mb_strlen($jpath);
             $new_val_arr[] = $value;
         }
         $i = 0;
         while ($i < sizeof($new_jpath)) {
             $njpath = $new_jpath[$i];
-            $leng = strlen($njpath);
+            $leng = mb_strlen($njpath);
             $cpos = YAPI::Ystrpos($njpath,'/');
             if (($cpos < 0) || ($leng == 0)) {
                 continue;
             }
-            $fun = substr($njpath,  0, $cpos);
+            $fun = substr($njpath, 0, $cpos);
             $cpos = $cpos + 1;
-            $attr = substr($njpath,  $cpos, $leng - $cpos);
+            $attr = substr($njpath, $cpos, $leng - $cpos);
             $do_update = true;
             if ($fun == 'services') {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'firmwareRelease')) {
+            if ($do_update && ($attr == 'firmwareRelease')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'usbCurrent')) {
+            if ($do_update && ($attr == 'usbCurrent')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'upTime')) {
+            if ($do_update && ($attr == 'upTime')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'persistentSettings')) {
+            if ($do_update && ($attr == 'persistentSettings')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'adminPassword')) {
+            if ($do_update && ($attr == 'adminPassword')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'userPassword')) {
+            if ($do_update && ($attr == 'userPassword')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'rebootCountdown')) {
+            if ($do_update && ($attr == 'rebootCountdown')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'advertisedValue')) {
+            if ($do_update && ($attr == 'advertisedValue')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'poeCurrent')) {
+            if ($do_update && ($attr == 'poeCurrent')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'readiness')) {
+            if ($do_update && ($attr == 'readiness')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'ipAddress')) {
+            if ($do_update && ($attr == 'ipAddress')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'subnetMask')) {
+            if ($do_update && ($attr == 'subnetMask')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'router')) {
+            if ($do_update && ($attr == 'router')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'linkQuality')) {
+            if ($do_update && ($attr == 'linkQuality')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'ssid')) {
+            if ($do_update && ($attr == 'ssid')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'channel')) {
+            if ($do_update && ($attr == 'channel')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'security')) {
+            if ($do_update && ($attr == 'security')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'message')) {
+            if ($do_update && ($attr == 'message')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'signalValue')) {
+            if ($do_update && ($attr == 'signalValue')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'currentValue')) {
+            if ($do_update && ($attr == 'currentValue')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'currentRawValue')) {
+            if ($do_update && ($attr == 'currentRawValue')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'currentRunIndex')) {
+            if ($do_update && ($attr == 'currentRunIndex')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'pulseTimer')) {
+            if ($do_update && ($attr == 'pulseTimer')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'lastTimePressed')) {
+            if ($do_update && ($attr == 'lastTimePressed')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'lastTimeReleased')) {
+            if ($do_update && ($attr == 'lastTimeReleased')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'filesCount')) {
+            if ($do_update && ($attr == 'filesCount')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'freeSpace')) {
+            if ($do_update && ($attr == 'freeSpace')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'timeUTC')) {
+            if ($do_update && ($attr == 'timeUTC')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'rtcTime')) {
+            if ($do_update && ($attr == 'rtcTime')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'unixTime')) {
+            if ($do_update && ($attr == 'unixTime')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'dateTime')) {
+            if ($do_update && ($attr == 'dateTime')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'rawValue')) {
+            if ($do_update && ($attr == 'rawValue')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'lastMsg')) {
+            if ($do_update && ($attr == 'lastMsg')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'delayedPulseTimer')) {
+            if ($do_update && ($attr == 'delayedPulseTimer')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'rxCount')) {
+            if ($do_update && ($attr == 'rxCount')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'txCount')) {
+            if ($do_update && ($attr == 'txCount')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'msgCount')) {
+            if ($do_update && ($attr == 'msgCount')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'rxMsgCount')) {
+            if ($do_update && ($attr == 'rxMsgCount')) {
                 $do_update = false;
             }
-            if (($do_update) && ($attr == 'txMsgCount')) {
+            if ($do_update && ($attr == 'txMsgCount')) {
                 $do_update = false;
             }
             if ($do_update) {
                 $do_update = false;
-                $newval = $new_val_arr[$i];
                 $j = 0;
                 $found = false;
+                $newval = $new_val_arr[$i];
                 while (($j < sizeof($old_jpath)) && !($found)) {
                     if (($new_jpath_len[$i] == $old_jpath_len[$j]) && ($new_jpath[$i] == $old_jpath[$j])) {
                         $found = true;
                         $oldval = $old_val_arr[$j];
-                        if (!($newval == $oldval)) {
+                        if (!($newval == $oldval) && !($oldval == $old_serial)) {
                             $do_update = true;
                         }
                     }
@@ -11539,7 +11579,6 @@ class YModule extends YFunction
                     $old_calib = '';
                     $unit_name = '';
                     $sensorType = '';
-                    $new_calib = $newval;
                     $j = 0;
                     $found = false;
                     while (($j < sizeof($old_jpath)) && !($found)) {
@@ -11651,7 +11690,7 @@ class YModule extends YFunction
 
     /**
      * Returns the icon of the module. The icon is a PNG image and does not
-     * exceeds 1536 bytes.
+     * exceed 1536 bytes.
      *
      * @return string  a binary buffer with module icon, in png format.
      *         On failure, throws an exception or returns  YAPI::INVALID_STRING.
@@ -11675,7 +11714,7 @@ class YModule extends YFunction
         // $content                is a bin;
 
         $content = $this->_download('logs.txt');
-        return $content;
+        return YAPI::Ybin2str($content);
     }
 
     /**
@@ -11692,7 +11731,7 @@ class YModule extends YFunction
      */
     public function log(string $text): int
     {
-        return $this->_upload('logs.txt', $text);
+        return $this->_upload('logs.txt', YAPI::Ystr2bin($text));
     }
 
     /**
@@ -12008,7 +12047,7 @@ function yInitAPI(int $mode = 0, string &$errmsg = ""): int
  *
  * From an operating system standpoint, it is generally not required to call
  * this function since the OS will automatically free allocated resources
- * once your program is completed. However there are two situations when
+ * once your program is completed. However, there are two situations when
  * you may really want to use that function:
  *
  * - Free all dynamically allocated memory blocks in order to
@@ -12049,7 +12088,7 @@ function yEnableExceptions(): void
 }
 
 /**
- * Setup the Yoctopuce library to use modules connected on a given machine. Idealy this
+ * Set up the Yoctopuce library to use modules connected on a given machine. Idealy this
  * call will be made once at the begining of your application.  The
  * parameter will determine how the API will work. Use the following values:
  *
@@ -12066,7 +12105,7 @@ function yEnableExceptions(): void
  * computer, use the IP address 127.0.0.1. If the given IP is unresponsive, yRegisterHub
  * will not return until a time-out defined by ySetNetworkTimeout has elapsed.
  * However, it is possible to preventively test a connection  with yTestHub.
- * If you cannot afford a network time-out, you can use the non blocking yPregisterHub
+ * If you cannot afford a network time-out, you can use the non-blocking yPregisterHub
  * function that will establish the connection as soon as it is available.
  *
  *
@@ -12081,7 +12120,7 @@ function yEnableExceptions(): void
  * while trying to access the USB modules. In particular, this means
  * that you must stop the VirtualHub software before starting
  * an application that uses direct USB access. The workaround
- * for this limitation is to setup the library to use the VirtualHub
+ * for this limitation is to set up the library to use the VirtualHub
  * rather than direct USB access.
  *
  * If access control has been activated on the hub, virtual or not, you want to
@@ -12128,7 +12167,7 @@ function yPreregisterHub(string $url, string &$errmsg = ""): int
 }
 
 /**
- * Setup the Yoctopuce library to no more use modules connected on a previously
+ * Set up the Yoctopuce library to no more use modules connected on a previously
  * registered machine with RegisterHub.
  *
  * @param string $url : a string containing either "usb" or the
@@ -12260,7 +12299,7 @@ function yGetTickCount(): float
 /**
  * Checks if a given string is valid as logical name for a module or a function.
  * A valid logical name has a maximum of 19 characters, all among
- * A..Z, a..z, 0..9, _, and -.
+ * A...Z, a...z, 0...9, _, and -.
  * If you try to configure a logical name with an incorrect string,
  * the invalid characters are ignored.
  *
@@ -12935,19 +12974,19 @@ class YDataLogger extends YFunction
     /**
      * @throws YAPI_Exception on error
      */
-    public function parse_dataSets(string $json): array
+    public function parse_dataSets(string $jsonbuff): array
     {
-        $dslist = [];           // strArr;
+        $dslist = [];           // binArr;
         // $dataset                is a YDataSetPtr;
         $res = [];              // YDataSetArr;
 
-        $dslist = $this->_json_get_array($json);
+        $dslist = $this->_json_get_array($jsonbuff);
         while (sizeof($res) > 0) {
             array_pop($res);
         };
         foreach ($dslist as $each) {
             $dataset = new YDataSet($this);
-            $dataset->_parse($each);
+            $dataset->_parse(YAPI::Ybin2str($each));
             $res[] = $dataset;
         }
         return $res;

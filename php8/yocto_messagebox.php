@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ * $Id: yocto_messagebox.php 63695 2024-12-13 11:06:34Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -157,10 +157,10 @@ class YSms
      */
     public function get_msgClass(): int
     {
-        if ((($this->_mclass) & (16)) == 0) {
+        if ((($this->_mclass) & 16) == 0) {
             return -1;
         }
-        return (($this->_mclass) & (3));
+        return (($this->_mclass) & 3);
     }
 
     /**
@@ -168,7 +168,7 @@ class YSms
      */
     public function get_dcs(): int
     {
-        return (($this->_mclass) | (((($this->_alphab) << (2)))));
+        return (($this->_mclass) | ((($this->_alphab) << 2)));
     }
 
     /**
@@ -216,17 +216,17 @@ class YSms
         }
         if ($this->_alphab == 2) {
             // using UCS-2 alphabet
-            $isosize = ((strlen($this->_udata)) >> (1));
+            $isosize = ((strlen($this->_udata)) >> 1);
             $isolatin = ($isosize > 0 ? pack('C',array_fill(0, $isosize, 0)) : '');
             $i = 0;
             while ($i < $isosize) {
                 $isolatin[$i] = pack('C', ord($this->_udata[2*$i+1]));
                 $i = $i + 1;
             }
-            return $isolatin;
+            return YAPI::Ybin2str($isolatin);
         }
         // default: convert 8 bit to string as-is
-        return $this->_udata;
+        return YAPI::Ybin2str($this->_udata);
     }
 
     /**
@@ -244,7 +244,7 @@ class YSms
         }
         if ($this->_alphab == 2) {
             // using UCS-2 alphabet
-            $unisize = ((strlen($this->_udata)) >> (1));
+            $unisize = ((strlen($this->_udata)) >> 1);
             while (sizeof($res) > 0) {
                 array_pop($res);
             };
@@ -432,7 +432,7 @@ class YSms
      */
     public function set_dcs(int $val): int
     {
-        $this->_alphab = ((((($val) >> (2)))) & (3));
+        $this->_alphab = (((($val) >> 2)) & 3);
         $this->_mclass = (($val) & (16+3));
         $this->_npdu = 0;
         return YAPI::SUCCESS;
@@ -522,7 +522,7 @@ class YSms
         // $newdata                is a bin;
         // $newdatalen             is a int;
         // $i                      is a int;
-        if (strlen($val) == 0) {
+        if (mb_strlen($val) == 0) {
             return YAPI::SUCCESS;
         }
         if ($this->_alphab == 0) {
@@ -532,11 +532,11 @@ class YSms
             if ($newdatalen == 0) {
                 // 7-bit not possible, switch to unicode
                 $this->convertToUnicode();
-                $newdata = $val;
+                $newdata = YAPI::Ystr2bin($val);
                 $newdatalen = strlen($newdata);
             }
         } else {
-            $newdata = $val;
+            $newdata = YAPI::Ystr2bin($val);
             $newdatalen = strlen($newdata);
         }
         $udatalen = strlen($this->_udata);
@@ -616,14 +616,14 @@ class YSms
             $uni = $val[$i];
             if ($uni >= 65536) {
                 $surrogate = $uni - 65536;
-                $uni = ((((($surrogate) >> (10))) & (1023))) + 55296;
-                $udata[$udatalen] = pack('C', (($uni) >> (8)));
-                $udata[$udatalen+1] = pack('C', (($uni) & (255)));
+                $uni = (((($surrogate) >> 10) & 1023)) + 55296;
+                $udata[$udatalen] = pack('C', (($uni) >> 8));
+                $udata[$udatalen+1] = pack('C', (($uni) & 255));
                 $udatalen = $udatalen + 2;
-                $uni = ((($surrogate) & (1023))) + 56320;
+                $uni = ((($surrogate) & 1023)) + 56320;
             }
-            $udata[$udatalen] = pack('C', (($uni) >> (8)));
-            $udata[$udatalen+1] = pack('C', (($uni) & (255)));
+            $udata[$udatalen] = pack('C', (($uni) >> 8));
+            $udata[$udatalen+1] = pack('C', (($uni) & 255));
             $udatalen = $udatalen + 2;
             $i = $i + 1;
         }
@@ -724,7 +724,7 @@ class YSms
         // $val                    is a int;
         // $digit                  is a int;
         // $res                    is a bin;
-        $bytes = $addr;
+        $bytes = YAPI::Ystr2bin($addr);
         $srclen = strlen($bytes);
         $numlen = 0;
         $i = 0;
@@ -740,7 +740,7 @@ class YSms
             $res[0] = pack('C', 0);
             return $res;
         }
-        $res = (2+(($numlen+1) >> (1)) > 0 ? pack('C',array_fill(0, 2+(($numlen+1) >> (1)), 0)) : '');
+        $res = (2+(($numlen+1) >> 1) > 0 ? pack('C',array_fill(0, 2+(($numlen+1) >> 1), 0)) : '');
         $res[0] = pack('C', $numlen);
         if (ord($bytes[0]) == 43) {
             $res[1] = pack('C', 145);
@@ -753,18 +753,18 @@ class YSms
         while ($i < $srclen) {
             $val = ord($bytes[$i]);
             if (($val >= 48) && ($val < 58)) {
-                if ((($numlen) & (1)) == 0) {
+                if ((($numlen) & 1) == 0) {
                     $digit = $val - 48;
                 } else {
-                    $res[(($numlen) >> (1))] = pack('C', $digit + 16*($val-48));
+                    $res[(($numlen) >> 1)] = pack('C', $digit + 16*($val-48));
                 }
                 $numlen = $numlen + 1;
             }
             $i = $i + 1;
         }
         // pad with F if needed
-        if ((($numlen) & (1)) != 0) {
-            $res[(($numlen) >> (1))] = pack('C', $digit + 240);
+        if ((($numlen) & 1) != 0) {
+            $res[(($numlen) >> 1)] = pack('C', $digit + 240);
         }
         return $res;
     }
@@ -786,7 +786,7 @@ class YSms
             return '';
         }
         $res = '';
-        $addrType = ((ord($addr[$ofs])) & (112));
+        $addrType = ((ord($addr[$ofs])) & 112);
         if ($addrType == 80) {
             // alphanumeric number
             $siz = intVal((4*$siz) / (7));
@@ -803,8 +803,8 @@ class YSms
                 } else {
                     $byt = ord($addr[$ofs+$rpos]);
                     $rpos = $rpos + 1;
-                    $gsm7[$i] = pack('C', (($carry) | (((((($byt) << ($nbits)))) & (127)))));
-                    $carry = (($byt) >> ((7 - $nbits)));
+                    $gsm7[$i] = pack('C', (($carry) | (((($byt) << ($nbits))) & 127)));
+                    $carry = (($byt) >> (7 - $nbits));
                     $nbits = $nbits + 1;
                 }
                 $i = $i + 1;
@@ -815,16 +815,16 @@ class YSms
             if ($addrType == 16) {
                 $res = '+';
             }
-            $siz = ((($siz+1)) >> (1));
+            $siz = (($siz+1) >> 1);
             $i = 0;
             while ($i < $siz) {
                 $byt = ord($addr[$ofs+$i+1]);
-                $res = sprintf('%s%x%x', $res, (($byt) & (15)), (($byt) >> (4)));
+                $res = sprintf('%s%x%x', $res, (($byt) & 15), (($byt) >> 4));
                 $i = $i + 1;
             }
             // remove padding digit if needed
-            if (((ord($addr[$ofs+$siz])) >> (4)) == 15) {
-                $res = substr($res,  0, strlen($res)-1);
+            if (((ord($addr[$ofs+$siz])) >> 4) == 15) {
+                $res = substr($res, 0, mb_strlen($res)-1);
             }
             return $res;
         }
@@ -842,7 +842,7 @@ class YSms
         // $expasc                 is a bin;
         // $v1                     is a int;
         // $v2                     is a int;
-        $explen = strlen($exp);
+        $explen = mb_strlen($exp);
         if ($explen == 0) {
             $res = '';
             return $res;
@@ -871,10 +871,10 @@ class YSms
         }
         if (substr($exp, 4, 1) == '-' || substr($exp, 4, 1) == '/') {
             // ignore century
-            $exp = substr($exp,  2, $explen-2);
-            $explen = strlen($exp);
+            $exp = substr($exp, 2, $explen-2);
+            $explen = mb_strlen($exp);
         }
-        $expasc = $exp;
+        $expasc = YAPI::Ystr2bin($exp);
         $res = (7 > 0 ? pack('C',array_fill(0, 7, 0)) : '');
         $n = 0;
         $i = 0;
@@ -885,7 +885,7 @@ class YSms
                 if (($v2 >= 48) && ($v2 < 58)) {
                     $v1 = $v1 - 48;
                     $v2 = $v2 - 48;
-                    $res[$n] = pack('C', ((($v2) << (4))) + $v1);
+                    $res[$n] = pack('C', ((($v2) << 4)) + $v1);
                     $n = $n + 1;
                     $i = $i + 1;
                 }
@@ -953,7 +953,7 @@ class YSms
         $i = 0;
         while (($i < $siz) && ($i < 6)) {
             $byt = ord($exp[$ofs+$i]);
-            $res = sprintf('%s%x%x', $res, (($byt) & (15)), (($byt) >> (4)));
+            $res = sprintf('%s%x%x', $res, (($byt) & 15), (($byt) >> 4));
             if ($i < 3) {
                 if ($i < 2) {
                     $res = sprintf('%s-', $res);
@@ -970,17 +970,17 @@ class YSms
         if ($siz == 7) {
             $byt = ord($exp[$ofs+$i]);
             $sign = '+';
-            if ((($byt) & (8)) != 0) {
+            if ((($byt) & 8) != 0) {
                 $byt = $byt - 8;
                 $sign = '-';
             }
-            $byt = (10*((($byt) & (15)))) + ((($byt) >> (4)));
-            $hh = sprintf('%d', (($byt) >> (2)));
-            $ss = sprintf('%d', 15*((($byt) & (3))));
-            if (strlen($hh)<2) {
+            $byt = (10*((($byt) & 15))) + ((($byt) >> 4));
+            $hh = sprintf('%d', (($byt) >> 2));
+            $ss = sprintf('%d', 15*((($byt) & 3)));
+            if (mb_strlen($hh)<2) {
                 $hh = sprintf('0%s', $hh);
             }
-            if (strlen($ss)<2) {
+            if (mb_strlen($ss)<2) {
                 $ss = sprintf('0%s', $ss);
             }
             $res = sprintf('%s%s%s:%s', $res, $sign, $hh, $ss);
@@ -1067,10 +1067,10 @@ class YSms
                     $nbits = 7;
                 } else {
                     $thi_b = ord($this->_udata[$i]);
-                    $res[$wpos] = pack('C', (($carry) | (((((($thi_b) << ($nbits)))) & (255)))));
+                    $res[$wpos] = pack('C', (($carry) | (((($thi_b) << ($nbits))) & 255)));
                     $wpos = $wpos + 1;
                     $nbits = $nbits - 1;
-                    $carry = (($thi_b) >> ((7 - $nbits)));
+                    $carry = (($thi_b) >> (7 - $nbits));
                 }
                 $i = $i + 1;
             }
@@ -1313,7 +1313,7 @@ class YSms
         $rpos = 1+ord($pdu[0]);
         $pdutyp = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        $this->_deliv = ((($pdutyp) & (3)) == 0);
+        $this->_deliv = ((($pdutyp) & 3) == 0);
         if ($this->_deliv) {
             $addrlen = ord($pdu[$rpos]);
             $rpos = $rpos + 1;
@@ -1327,8 +1327,8 @@ class YSms
             $rpos = $rpos + 1;
             $this->_dest = $this->decodeAddress($pdu, $rpos, $addrlen);
             $this->_orig = '';
-            if (((($pdutyp) & (16))) != 0) {
-                if (((($pdutyp) & (8))) != 0) {
+            if (((($pdutyp) & 16)) != 0) {
+                if (((($pdutyp) & 8)) != 0) {
                     $tslen = 7;
                 } else {
                     $tslen= 1;
@@ -1337,12 +1337,12 @@ class YSms
                 $tslen = 0;
             }
         }
-        $rpos = $rpos + (((($addrlen+3)) >> (1)));
+        $rpos = $rpos + ((($addrlen+3) >> 1));
         $this->_pid = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
         $dcs = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        $this->_alphab = ((((($dcs) >> (2)))) & (3));
+        $this->_alphab = (((($dcs) >> 2)) & 3);
         $this->_mclass = (($dcs) & (16+3));
         $this->_stamp = $this->decodeTimeStamp($pdu, $rpos, $tslen);
         $rpos = $rpos + $tslen;
@@ -1351,7 +1351,7 @@ class YSms
         $carry = 0;
         $udlen = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        if ((($pdutyp) & (64)) != 0) {
+        if ((($pdutyp) & 64) != 0) {
             $udhsize = ord($pdu[$rpos]);
             $rpos = $rpos + 1;
             $this->_udh = ($udhsize > 0 ? pack('C',array_fill(0, $udhsize, 0)) : '');
@@ -1392,8 +1392,8 @@ class YSms
                 } else {
                     $thi_b = ord($pdu[$rpos]);
                     $rpos = $rpos + 1;
-                    $this->_udata[$i] = pack('C', (($carry) | (((((($thi_b) << ($nbits)))) & (127)))));
-                    $carry = (($thi_b) >> ((7 - $nbits)));
+                    $this->_udata[$i] = pack('C', (($carry) | (((($thi_b) << ($nbits))) & 127)));
+                    $carry = (($thi_b) >> (7 - $nbits));
                     $nbits = $nbits + 1;
                 }
                 $i = $i + 1;
@@ -1845,9 +1845,9 @@ class YMessageBox extends YFunction
             $this->clearCache();
             $bitmapStr = $this->get_slotsBitmap();
             $newBitmap = YAPI::_hexStrToBin($bitmapStr);
-            $idx = (($slot) >> (3));
+            $idx = (($slot) >> 3);
             if ($idx < strlen($newBitmap)) {
-                $bitVal = ((1) << (((($slot) & (7)))));
+                $bitVal = (1 << ((($slot) & 7)));
                 if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
                     $this->_prevBitmapStr = '';
                     $int_res = $this->set_command(sprintf('DS%d',$slot));
@@ -1883,25 +1883,25 @@ class YMessageBox extends YFunction
         // $suffixlen              is a int;
         // copied form the YCellular class
         // quote dangerous characters used in AT commands
-        $cmdLen = strlen($cmd);
+        $cmdLen = mb_strlen($cmd);
         $chrPos = YAPI::Ystrpos($cmd,'#');
         while ($chrPos >= 0) {
-            $cmd = sprintf('%s%c23%s', substr($cmd,  0, $chrPos), 37,
-            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmd = sprintf('%s%c23%s', substr($cmd, 0, $chrPos), 37,
+            substr($cmd, $chrPos+1, $cmdLen-$chrPos-1));
             $cmdLen = $cmdLen + 2;
             $chrPos = YAPI::Ystrpos($cmd,'#');
         }
         $chrPos = YAPI::Ystrpos($cmd,'+');
         while ($chrPos >= 0) {
-            $cmd = sprintf('%s%c2B%s', substr($cmd,  0, $chrPos), 37,
-            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmd = sprintf('%s%c2B%s', substr($cmd, 0, $chrPos), 37,
+            substr($cmd, $chrPos+1, $cmdLen-$chrPos-1));
             $cmdLen = $cmdLen + 2;
             $chrPos = YAPI::Ystrpos($cmd,'+');
         }
         $chrPos = YAPI::Ystrpos($cmd,'=');
         while ($chrPos >= 0) {
-            $cmd = sprintf('%s%c3D%s', substr($cmd,  0, $chrPos), 37,
-            substr($cmd,  $chrPos+1, $cmdLen-$chrPos-1));
+            $cmd = sprintf('%s%c3D%s', substr($cmd, 0, $chrPos), 37,
+            substr($cmd, $chrPos+1, $cmdLen-$chrPos-1));
             $cmdLen = $cmdLen + 2;
             $chrPos = YAPI::Ystrpos($cmd,'=');
         }
@@ -1912,8 +1912,8 @@ class YMessageBox extends YFunction
         while ($waitMore > 0) {
             $buff = $this->_download($cmd);
             $bufflen = strlen($buff);
-            $buffstr = $buff;
-            $buffstrlen = strlen($buffstr);
+            $buffstr = YAPI::Ybin2str($buff);
+            $buffstrlen = mb_strlen($buffstr);
             $idx = $bufflen - 1;
             while (($idx > 0) && (ord($buff[$idx]) != 64) && (ord($buff[$idx]) != 10) && (ord($buff[$idx]) != 13)) {
                 $idx = $idx - 1;
@@ -1921,8 +1921,8 @@ class YMessageBox extends YFunction
             if (ord($buff[$idx]) == 64) {
                 // continuation detected
                 $suffixlen = $bufflen - $idx;
-                $cmd = sprintf('at.txt?cmd=%s', substr($buffstr,  $buffstrlen - $suffixlen, $suffixlen));
-                $buffstr = substr($buffstr,  0, $buffstrlen - $suffixlen);
+                $cmd = sprintf('at.txt?cmd=%s', substr($buffstr, $buffstrlen - $suffixlen, $suffixlen));
+                $buffstr = substr($buffstr, 0, $buffstrlen - $suffixlen);
                 $waitMore = $waitMore - 1;
             } else {
                 // request complete
@@ -1939,7 +1939,7 @@ class YMessageBox extends YFunction
     public function fetchPdu(int $slot): ?YSms
     {
         // $binPdu                 is a bin;
-        $arrPdu = [];           // strArr;
+        $arrPdu = [];           // binArr;
         // $hexPdu                 is a str;
         // $sms                    is a YSms;
 
@@ -2217,8 +2217,8 @@ class YMessageBox extends YFunction
             }
             $i = $i + 1;
         }
-        $resstr = $resbin;
-        if (strlen($resstr) > $reslen) {
+        $resstr = YAPI::Ybin2str($resbin);
+        if (mb_strlen($resstr) > $reslen) {
             $resstr = substr($resstr, 0, $reslen);
         }
         return $resstr;
@@ -2240,7 +2240,7 @@ class YMessageBox extends YFunction
         if (!($this->_gsm2unicodeReady)) {
             $this->initGsm2Unicode();
         }
-        $asc = $msg;
+        $asc = YAPI::Ystr2bin($msg);
         $asclen = strlen($asc);
         $extra = 0;
         $i = 0;
@@ -2350,9 +2350,9 @@ class YMessageBox extends YFunction
         while ($pduIdx < sizeof($this->_pdus)) {
             $sms = $this->_pdus[$pduIdx];
             $slot = $sms->get_slot();
-            $idx = (($slot) >> (3));
+            $idx = (($slot) >> 3);
             if ($idx < strlen($newBitmap)) {
-                $bitVal = ((1) << (((($slot) & (7)))));
+                $bitVal = (1 << ((($slot) & 7)));
                 if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
                     $newArr[] = $sms;
                     if ($sms->get_concatCount() == 0) {
@@ -2360,13 +2360,13 @@ class YMessageBox extends YFunction
                     } else {
                         $sig = $sms->get_concatSignature();
                         $i = 0;
-                        while (($i < $nsig) && (strlen($sig) > 0)) {
+                        while (($i < $nsig) && (mb_strlen($sig) > 0)) {
                             if ($signatures[$i] == $sig) {
                                 $sig = '';
                             }
                             $i = $i + 1;
                         }
-                        if (strlen($sig) > 0) {
+                        if (mb_strlen($sig) > 0) {
                             $signatures[] = $sig;
                             $nsig = $nsig + 1;
                         }
@@ -2378,8 +2378,8 @@ class YMessageBox extends YFunction
         // receive new messages
         $slot = 0;
         while ($slot < $nslots) {
-            $idx = (($slot) >> (3));
-            $bitVal = ((1) << (((($slot) & (7)))));
+            $idx = (($slot) >> 3);
+            $bitVal = (1 << ((($slot) & 7)));
             $prevBit = 0;
             if ($idx < strlen($prevBitmap)) {
                 $prevBit = ((ord($prevBitmap[$idx])) & ($bitVal));
@@ -2393,13 +2393,13 @@ class YMessageBox extends YFunction
                     } else {
                         $sig = $sms->get_concatSignature();
                         $i = 0;
-                        while (($i < $nsig) && (strlen($sig) > 0)) {
+                        while (($i < $nsig) && (mb_strlen($sig) > 0)) {
                             if ($signatures[$i] == $sig) {
                                 $sig = '';
                             }
                             $i = $i + 1;
                         }
-                        if (strlen($sig) > 0) {
+                        if (mb_strlen($sig) > 0) {
                             $signatures[] = $sig;
                             $nsig = $nsig + 1;
                         }

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ * $Id: yocto_display.php 63695 2024-12-13 11:06:34Z seb $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -1270,7 +1270,7 @@ class YDisplay extends YFunction
     {
         $this->flushLayers();
         $this->_recording = false;
-        $this->_upload($sequenceName, $this->_sequence);
+        $this->_upload($sequenceName, YAPI::Ystr2bin($this->_sequence));
         //We need to use YPRINTF("") for Objective-C
         $this->_sequence = sprintf('');
         return YAPI::SUCCESS;
@@ -1407,7 +1407,7 @@ class YDisplay extends YFunction
         // $layercount             is a int;
         // $idx                    is a int;
         $layercount = $this->get_layerCount();
-        if (!(($layerId >= 0) && ($layerId < $layercount))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'invalid DisplayLayer index',null);
+        if (!(($layerId >= 0) && ($layerId < $layercount))) return $this->_throw(YAPI::INVALID_ARGUMENT,'invalid DisplayLayer index',null);
         if (sizeof($this->_allDisplayLayers) == 0) {
             $idx = 0;
             while ($idx < $layercount) {

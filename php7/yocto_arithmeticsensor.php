@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_arithmeticsensor.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_arithmeticsensor.php 63695 2024-12-13 11:06:34Z seb $
  *
  *  Implements YArithmeticSensor, the high-level API for ArithmeticSensor functions
  *
@@ -223,14 +223,14 @@ class YArithmeticSensor extends YSensor
         // $diags                  is a str;
         // $resval                 is a float;
         $id = $this->get_functionId();
-        $id = substr($id,  16, strlen($id) - 16);
+        $id = substr($id, 16, mb_strlen($id) - 16);
         $fname = sprintf('arithmExpr%s.txt', $id);
 
         $content = sprintf('// %s'."\n".'%s', $descr, $expr);
-        $data = $this->_uploadEx($fname, $content);
-        $diags = $data;
-        if (!(substr($diags, 0, 8) == 'Result: ')) return $this->_throw( YAPI::INVALID_ARGUMENT, $diags,YAPI::INVALID_DOUBLE);
-        $resval = floatval(substr($diags,  8, strlen($diags)-8));
+        $data = $this->_uploadEx($fname, YAPI::Ystr2bin($content));
+        $diags = YAPI::Ybin2str($data);
+        if (!(substr($diags, 0, 8) == 'Result: ')) return $this->_throw(YAPI::INVALID_ARGUMENT,$diags,YAPI::INVALID_DOUBLE);
+        $resval = floatval(substr($diags, 8, mb_strlen($diags)-8));
         return $resval;
     }
 
@@ -250,13 +250,13 @@ class YArithmeticSensor extends YSensor
         // $content                is a str;
         // $idx                    is a int;
         $id = $this->get_functionId();
-        $id = substr($id,  16, strlen($id) - 16);
+        $id = substr($id, 16, mb_strlen($id) - 16);
         $fname = sprintf('arithmExpr%s.txt', $id);
 
-        $content = $this->_download($fname);
+        $content = YAPI::Ybin2str($this->_download($fname));
         $idx = YAPI::Ystrpos($content,''."\n".'');
         if ($idx > 0) {
-            $content = substr($content,  $idx+1, strlen($content)-($idx+1));
+            $content = substr($content, $idx+1, mb_strlen($content)-($idx+1));
         }
         return $content;
     }
@@ -288,8 +288,8 @@ class YArithmeticSensor extends YSensor
         // $outputVal              is a float;
         // $fname                  is a str;
         $siz = sizeof($inputValues);
-        if (!($siz > 1)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'auxiliary function must be defined by at least two points',YAPI::INVALID_ARGUMENT);
-        if (!($siz == sizeof($outputValues))) return $this->_throw( YAPI::INVALID_ARGUMENT, 'table sizes mismatch',YAPI::INVALID_ARGUMENT);
+        if (!($siz > 1)) return $this->_throw(YAPI::INVALID_ARGUMENT,'auxiliary function must be defined by at least two points',YAPI::INVALID_ARGUMENT);
+        if (!($siz == sizeof($outputValues))) return $this->_throw(YAPI::INVALID_ARGUMENT,'table sizes mismatch',YAPI::INVALID_ARGUMENT);
         $defstr = '';
         $idx = 0;
         while ($idx < $siz) {
@@ -300,7 +300,7 @@ class YArithmeticSensor extends YSensor
         }
         $fname = sprintf('userMap%s.txt', $name);
 
-        return $this->_upload($fname, $defstr);
+        return $this->_upload($fname, YAPI::Ystr2bin($defstr));
     }
 
     /**
@@ -327,7 +327,7 @@ class YArithmeticSensor extends YSensor
         $fname = sprintf('userMap%s.txt', $name);
         $defbin = $this->_download($fname);
         $siz = strlen($defbin);
-        if (!($siz > 0)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'auxiliary function does not exist',YAPI::INVALID_ARGUMENT);
+        if (!($siz > 0)) return $this->_throw(YAPI::INVALID_ARGUMENT,'auxiliary function does not exist',YAPI::INVALID_ARGUMENT);
         while (sizeof($inputValues) > 0) {
             array_pop($inputValues);
         };

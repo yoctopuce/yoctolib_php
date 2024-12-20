@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multisenscontroller.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_multisenscontroller.php 63326 2024-11-13 09:34:10Z seb $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *
@@ -74,7 +74,7 @@ if (!defined('Y_COMMAND_INVALID')) {
  * YMultiSensController Class: Sensor chain configuration interface, available for instance in the
  * Yocto-Temperature-IR
  *
- * The YMultiSensController class allows you to setup a customized
+ * The YMultiSensController class allows you to set up a customized
  * sensor chain on devices featuring that functionality.
  */
 class YMultiSensController extends YFunction
@@ -339,11 +339,11 @@ class YMultiSensController extends YFunction
         // $res                    is a int;
         $cmd = sprintf('A%d', $addr);
         $res = $this->set_command($cmd);
-        if (!($res == YAPI::SUCCESS)) return $this->_throw( YAPI::IO_ERROR, 'unable to trigger address change',YAPI::IO_ERROR);
+        if (!($res == YAPI::SUCCESS)) return $this->_throw(YAPI::IO_ERROR,'unable to trigger address change',YAPI::IO_ERROR);
         YAPI::Sleep(1500);
         $res = $this->get_lastAddressDetected();
-        if (!($res > 0)) return $this->_throw( YAPI::IO_ERROR, 'IR sensor not found',YAPI::IO_ERROR);
-        if (!($res == $addr)) return $this->_throw( YAPI::IO_ERROR, 'address change failed',YAPI::IO_ERROR);
+        if (!($res > 0)) return $this->_throw(YAPI::IO_ERROR,'IR sensor not found',YAPI::IO_ERROR);
+        if (!($res == $addr)) return $this->_throw(YAPI::IO_ERROR,'address change failed',YAPI::IO_ERROR);
         return YAPI::SUCCESS;
     }
 
@@ -361,7 +361,7 @@ class YMultiSensController extends YFunction
     {
         // $res                    is a int;
         $res = $this->set_command('a');
-        if (!($res == YAPI::SUCCESS)) return $this->_throw( YAPI::IO_ERROR, 'unable to trigger address detection',$res);
+        if (!($res == YAPI::SUCCESS)) return $this->_throw(YAPI::IO_ERROR,'unable to trigger address detection',$res);
         YAPI::Sleep(1000);
         $res = $this->get_lastAddressDetected();
         return $res;

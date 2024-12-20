@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupmonitor.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_wakeupmonitor.php 63326 2024-11-13 09:34:10Z seb $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *
@@ -405,7 +405,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI::RTC_NOT_READY, 'RTC time not set',YAPI::RTC_NOT_READY);
+        if (!($currTime != 0)) return $this->_throw(YAPI::RTC_NOT_READY,'RTC time not set',YAPI::RTC_NOT_READY);
         $this->set_nextWakeUp($this->_endOfTime);
         $this->set_sleepCountdown($secBeforeSleep);
         return YAPI::SUCCESS;
@@ -428,7 +428,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI::RTC_NOT_READY, 'RTC time not set',YAPI::RTC_NOT_READY);
+        if (!($currTime != 0)) return $this->_throw(YAPI::RTC_NOT_READY,'RTC time not set',YAPI::RTC_NOT_READY);
         $this->set_nextWakeUp($currTime+$secUntilWakeUp);
         $this->set_sleepCountdown($secBeforeSleep);
         return YAPI::SUCCESS;
@@ -451,7 +451,7 @@ class YWakeUpMonitor extends YFunction
     {
         // $currTime               is a int;
         $currTime = $this->get_rtcTime();
-        if (!($currTime != 0)) return $this->_throw( YAPI::RTC_NOT_READY, 'RTC time not set',YAPI::RTC_NOT_READY);
+        if (!($currTime != 0)) return $this->_throw(YAPI::RTC_NOT_READY,'RTC time not set',YAPI::RTC_NOT_READY);
         $this->set_nextWakeUp($wakeUpTime);
         $this->set_sleepCountdown($secBeforeSleep);
         return YAPI::SUCCESS;

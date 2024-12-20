@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_pwmoutput.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: yocto_pwmoutput.php 61964 2024-07-29 15:54:55Z seb $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
@@ -98,7 +98,7 @@ if (!defined('Y_DUTYCYCLEATPOWERON_INVALID')) {
  * YPwmOutput Class: PWM generator control interface, available for instance in the Yocto-PWM-Tx
  *
  * The YPwmOutput class allows you to drive a pulse-width modulated output (PWM).
- * You can configure the frequency as well as the duty cycle, and setup progressive
+ * You can configure the frequency as well as the duty cycle, and set up progressive
  * transitions.
  */
 class YPwmOutput extends YFunction

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_genericsensor.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_genericsensor.php 61964 2024-07-29 15:54:55Z seb $
  *
  *  Implements YGenericSensor, the high-level API for GenericSensor functions
  *
@@ -326,7 +326,7 @@ class YGenericSensor extends YSensor
 
     /**
      * Changes the electric signal bias for zero shift adjustment.
-     * If your electric signal reads positive when it should be zero, setup
+     * If your electric signal reads positive when it should be zero, set up
      * a positive signalBias of the same value to fix the zero shift.
      * Remember to call the saveToFlash()
      * method of the module if the modification must be kept.

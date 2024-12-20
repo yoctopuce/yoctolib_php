@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupschedule.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_wakeupschedule.php 62195 2024-08-19 12:21:58Z seb $
  *
  *  Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *
@@ -486,7 +486,7 @@ class YWakeUpSchedule extends YFunction
         // $res                    is a long;
 
         $res = $this->get_minutesB();
-        $res = (($res) << (30));
+        $res = (($res) << 30);
         $res = $res + $this->get_minutesA();
         return $res;
     }
@@ -503,9 +503,9 @@ class YWakeUpSchedule extends YFunction
      */
     public function set_minutes(float $bitmap): int
     {
-        $this->set_minutesA((($bitmap) & (0x3fffffff)));
-        $bitmap = (($bitmap) >> (30));
-        return $this->set_minutesB((($bitmap) & (0x3fffffff)));
+        $this->set_minutesA((($bitmap) & 0x3fffffff));
+        $bitmap = (($bitmap) >> 30);
+        return $this->set_minutesB((($bitmap) & 0x3fffffff));
     }
 
     /**

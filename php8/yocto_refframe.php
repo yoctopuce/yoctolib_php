@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_refframe.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: yocto_refframe.php 63695 2024-12-13 11:06:34Z seb $
  *
  *  Implements YRefFrame, the high-level API for RefFrame functions
  *
@@ -101,7 +101,7 @@ if (!defined('Y_CALIBRATIONPARAM_INVALID')) {
  * YRefFrame Class: 3D reference frame configuration interface, available for instance in the
  * Yocto-3D-V2 or the Yocto-Inclinometer
  *
- * The YRefFrame class is used to setup the base orientation of the Yoctopuce inertial
+ * The YRefFrame class is used to set up the base orientation of the Yoctopuce inertial
  * sensors. Thanks to this, orientation functions relative to the earth surface plane
  * can use the proper reference frame. For some devices, the class also implements a
  * tridimensional sensor calibration process, which can compensate for local variations
@@ -223,7 +223,7 @@ class YRefFrame extends YFunction
      * indicated by the compass is the difference between the measured magnetic
      * heading and the reference bearing indicated here.
      *
-     * For instance, if you setup as reference bearing the value of the earth
+     * For instance, if you set up as reference bearing the value of the earth
      * magnetic declination, the compass will provide the orientation relative
      * to the geographic North.
      *
@@ -396,7 +396,7 @@ class YRefFrame extends YFunction
         if ($position < 0) {
             return self::MOUNTPOSITION_INVALID;
         }
-        return (($position) >> (2));
+        return (($position) >> 2);
     }
 
     /**
@@ -422,7 +422,7 @@ class YRefFrame extends YFunction
         if ($position < 0) {
             return self::MOUNTORIENTATION_INVALID;
         }
-        return (($position) & (3));
+        return (($position) & 3);
     }
 
     /**
@@ -454,7 +454,7 @@ class YRefFrame extends YFunction
     public function set_mountPosition(int $position, int $orientation): int
     {
         // $mixedPos               is a int;
-        $mixedPos = (($position) << (2)) + $orientation;
+        $mixedPos = (($position) << 2) + $orientation;
         return $this->set_mountPos($mixedPos);
     }
 
@@ -599,7 +599,7 @@ class YRefFrame extends YFunction
         $this->_calibStageProgress = 0;
         $this->_calibProgress = 1;
         $this->_calibInternalPos = 0;
-        $this->_calibPrevTick = intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
+        $this->_calibPrevTick = intval(((YAPI::GetTickCount()) & 0x7FFFFFFF));
         while (sizeof($this->_calibOrient) > 0) {
             array_pop($this->_calibOrient);
         };
@@ -663,14 +663,14 @@ class YRefFrame extends YFunction
             return YAPI::SUCCESS;
         }
         // make sure we leave at least 160 ms between samples
-        $currTick =  intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
-        if ((($currTick - $this->_calibPrevTick) & (0x7FFFFFFF)) < 160) {
+        $currTick =  intval(((YAPI::GetTickCount()) & 0x7FFFFFFF));
+        if ((($currTick - $this->_calibPrevTick) & 0x7FFFFFFF) < 160) {
             return YAPI::SUCCESS;
         }
         // load current accelerometer values, make sure we are on a straight angle
         // (default timeout to 0,5 sec without reading measure when out of range)
         $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
-        $this->_calibPrevTick = (($currTick + 500) & (0x7FFFFFFF));
+        $this->_calibPrevTick = (($currTick + 500) & 0x7FFFFFFF);
         $jsonData = $this->_download('api/accelerometer.json');
         $xVal = intVal($this->_json_get_key($jsonData, 'xValue')) / 65536.0;
         $yVal = intVal($this->_json_get_key($jsonData, 'yValue')) / 65536.0;
@@ -771,7 +771,7 @@ class YRefFrame extends YFunction
         $this->_calibStage = $this->_calibStage + 1;
         if ($this->_calibStage < 7) {
             $this->_calibStageHint = 'Turn the device on another face';
-            $this->_calibPrevTick = (($currTick + 500) & (0x7FFFFFFF));
+            $this->_calibPrevTick = (($currTick + 500) & 0x7FFFFFFF);
             $this->_calibStageProgress = 0;
             $this->_calibInternalPos = 0;
             return YAPI::SUCCESS;
@@ -863,8 +863,8 @@ class YRefFrame extends YFunction
         }
         // make sure we don't start before previous calibration is cleared
         if ($this->_calibStage == 1) {
-            $currTick = intval(((YAPI::GetTickCount()) & (0x7FFFFFFF)));
-            $currTick = (($currTick - $this->_calibPrevTick) & (0x7FFFFFFF));
+            $currTick = intval(((YAPI::GetTickCount()) & 0x7FFFFFFF));
+            $currTick = (($currTick - $this->_calibPrevTick) & 0x7FFFFFFF);
             if ($currTick < 1600) {
                 $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
                 $this->_calibStageProgress = intVal(($currTick) / (40));
@@ -874,7 +874,7 @@ class YRefFrame extends YFunction
         }
 
         $calibParam = $this->_download('api/refFrame/calibrationParam.txt');
-        $iCalib = YAPI::_decodeFloats($calibParam);
+        $iCalib = YAPI::_decodeFloats(YAPI::Ybin2str($calibParam));
         $cal3 = intVal(($iCalib[1]) / (1000));
         $calAcc = intVal(($cal3) / (100));
         $calMag = intVal(($cal3) / (10)) - 10*$calAcc;
@@ -1039,8 +1039,8 @@ class YRefFrame extends YFunction
         if ($scaleZ < 0) {
             $scaleZ = $scaleZ + 1024;
         }
-        $scaleLo = (((($scaleY) & (15))) << (12)) + (($scaleX) << (2)) + $scaleExp;
-        $scaleHi = (($scaleZ) << (6)) + (($scaleY) >> (4));
+        $scaleLo = ((($scaleY) & 15) << 12) + (($scaleX) << 2) + $scaleExp;
+        $scaleHi = (($scaleZ) << 6) + (($scaleY) >> 4);
         // Save calibration parameters
         $newcalib = sprintf('5,%d,%d,%d,%d,%d', $shiftX, $shiftY, $shiftZ, $scaleLo, $scaleHi);
         $this->_calibStage = 0;

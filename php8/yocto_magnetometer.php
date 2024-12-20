@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: yocto_magnetometer.php 61964 2024-07-29 15:54:55Z seb $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *
@@ -67,7 +67,7 @@ if (!defined('Y_ZVALUE_INVALID')) {
  * The YSensor class is the parent class for all Yoctopuce sensor types. It can be
  * used to read the current value and unit of any sensor, read the min/max
  * value, configure autonomous recording frequency and access recorded data.
- * It also provide a function to register a callback invoked each time the
+ * It also provides a function to register a callback invoked each time the
  * observed value changes, or at a predefined interval. Using this class rather
  * than a specific subclass makes it possible to create generic applications
  * that work with any Yoctopuce sensor, even those that do not yet exist.

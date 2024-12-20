@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_serialport.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ * $Id: yocto_serialport.php 63695 2024-12-13 11:06:34Z seb $
  *
  * Implements YSerialPort, the high-level API for SerialPort functions
  *
@@ -805,7 +805,7 @@ class YSerialPort extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
 
@@ -818,7 +818,7 @@ class YSerialPort extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -852,7 +852,7 @@ class YSerialPort extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         $res = [];              // strArr;
         // $idx                    is a int;
@@ -866,7 +866,7 @@ class YSerialPort extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         $idx = 0;
         while ($idx < $msglen) {
             $res[] = $this->_json_get_string($msgarr[$idx]);
@@ -914,9 +914,9 @@ class YSerialPort extends YFunction
         // $databin                is a bin;
 
         $databin = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
-        $availPosStr = $databin;
+        $availPosStr = YAPI::Ybin2str($databin);
         $atPos = YAPI::Ystrpos($availPosStr,'@');
-        $res = intVal(substr($availPosStr,  0, $atPos));
+        $res = intVal(substr($availPosStr, 0, $atPos));
         return $res;
     }
 
@@ -931,9 +931,9 @@ class YSerialPort extends YFunction
         // $databin                is a bin;
 
         $databin = $this->_download(sprintf('rxcnt.bin?pos=%d', $this->_rxptr));
-        $availPosStr = $databin;
+        $availPosStr = YAPI::Ybin2str($databin);
         $atPos = YAPI::Ystrpos($availPosStr,'@');
-        $res = intVal(substr($availPosStr,  $atPos+1, strlen($availPosStr)-$atPos-1));
+        $res = intVal(substr($availPosStr, $atPos+1, mb_strlen($availPosStr)-$atPos-1));
         return $res;
     }
 
@@ -955,16 +955,16 @@ class YSerialPort extends YFunction
         // $prevpos                is a int;
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        if (strlen($query) <= 80) {
+        if (mb_strlen($query) <= 80) {
             // fast query
             $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=!%s', $maxWait, $this->_escapeAttr($query));
         } else {
             // long query
             $prevpos = $this->end_tell();
-            $this->_upload('txdata', $query . ''."\r".''."\n".'');
+            $this->_upload('txdata', YAPI::Ystr2bin($query . ''."\r".''."\n".''));
             $url = sprintf('rxmsg.json?len=1&maxw=%d&pos=%d', $maxWait, $prevpos);
         }
 
@@ -976,7 +976,7 @@ class YSerialPort extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1003,10 +1003,10 @@ class YSerialPort extends YFunction
         // $prevpos                is a int;
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $res                    is a str;
-        if (strlen($hexString) <= 80) {
+        if (mb_strlen($hexString) <= 80) {
             // fast query
             $url = sprintf('rxmsg.json?len=1&maxw=%d&cmd=$%s', $maxWait, $hexString);
         } else {
@@ -1024,7 +1024,7 @@ class YSerialPort extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         if ($msglen == 0) {
             return '';
         }
@@ -1046,7 +1046,7 @@ class YSerialPort extends YFunction
      */
     public function uploadJob(string $jobfile, string $jsonDef): int
     {
-        $this->_upload($jobfile, $jsonDef);
+        $this->_upload($jobfile, YAPI::Ystr2bin($jsonDef));
         return YAPI::SUCCESS;
     }
 
@@ -1116,7 +1116,7 @@ class YSerialPort extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        $buff = $text;
+        $buff = YAPI::Ystr2bin($text);
         $bufflen = strlen($buff);
         if ($bufflen < 100) {
             // if string is pure text, we can send it as a simple command (faster)
@@ -1200,15 +1200,15 @@ class YSerialPort extends YFunction
         // $idx                    is a int;
         // $hexb                   is a int;
         // $res                    is a int;
-        $bufflen = strlen($hexString);
+        $bufflen = mb_strlen($hexString);
         if ($bufflen < 100) {
             return $this->sendCommand(sprintf('$%s',$hexString));
         }
-        $bufflen = (($bufflen) >> (1));
+        $bufflen = (($bufflen) >> 1);
         $buff = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {
-            $hexb = hexdec(substr($hexString,  2 * $idx, 2));
+            $hexb = hexdec(substr($hexString, 2 * $idx, 2));
             $buff[$idx] = pack('C', $hexb);
             $idx = $idx + 1;
         }
@@ -1233,7 +1233,7 @@ class YSerialPort extends YFunction
         // $bufflen                is a int;
         // $idx                    is a int;
         // $ch                     is a int;
-        $buff = sprintf('%s'."\r".''."\n".'', $text);
+        $buff = YAPI::Ystr2bin(sprintf('%s'."\r".''."\n".'', $text));
         $bufflen = strlen($buff)-2;
         if ($bufflen < 100) {
             // if string is pure text, we can send it as a simple command (faster)
@@ -1358,7 +1358,7 @@ class YSerialPort extends YFunction
             $bufflen = $bufflen - 1;
         }
         $this->_rxptr = $endpos;
-        $res = substr($buff,  0, $bufflen);
+        $res = substr(YAPI::Ybin2str($buff), 0, $bufflen);
         return $res;
     }
 
@@ -1548,7 +1548,7 @@ class YSerialPort extends YFunction
         // $res                    is a int;
 
         $buff = $this->_download('cts.txt');
-        if (!(strlen($buff) == 1)) return $this->_throw( YAPI::IO_ERROR, 'invalid CTS reply',YAPI::IO_ERROR);
+        if (!(strlen($buff) == 1)) return $this->_throw(YAPI::IO_ERROR,'invalid CTS reply',YAPI::IO_ERROR);
         $res = ord($buff[0]) - 48;
         return $res;
     }
@@ -1575,7 +1575,7 @@ class YSerialPort extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         $res = [];              // YSnoopingRecordArr;
         // $idx                    is a int;
@@ -1589,10 +1589,10 @@ class YSerialPort extends YFunction
         }
         // last element of array is the new position
         $msglen = $msglen - 1;
-        $this->_rxptr = intVal($msgarr[$msglen]);
+        $this->_rxptr = $this->_decode_json_int($msgarr[$msglen]);
         $idx = 0;
         while ($idx < $msglen) {
-            $res[] = new YSnoopingRecord($msgarr[$idx]);
+            $res[] = new YSnoopingRecord(YAPI::Ybin2str($msgarr[$idx]));
             $idx = $idx + 1;
         }
         return $res;
@@ -1655,7 +1655,7 @@ class YSerialPort extends YFunction
     {
         // $url                    is a str;
         // $msgbin                 is a bin;
-        $msgarr = [];           // strArr;
+        $msgarr = [];           // binArr;
         // $msglen                 is a int;
         // $idx                    is a int;
         if (!(!is_null($this->_eventCallback))) {
@@ -1674,13 +1674,13 @@ class YSerialPort extends YFunction
         $msglen = $msglen - 1;
         if (!(!is_null($this->_eventCallback))) {
             // first simulated event, use it only to initialize reference values
-            $this->_eventPos = intVal($msgarr[$msglen]);
+            $this->_eventPos = $this->_decode_json_int($msgarr[$msglen]);
             return YAPI::SUCCESS;
         }
-        $this->_eventPos = intVal($msgarr[$msglen]);
+        $this->_eventPos = $this->_decode_json_int($msgarr[$msglen]);
         $idx = 0;
         while ($idx < $msglen) {
-            call_user_func($this->_eventCallback, $this, new YSnoopingRecord($msgarr[$idx]));
+            call_user_func($this->_eventCallback, $this, new YSnoopingRecord(YAPI::Ybin2str($msgarr[$idx])));
             $idx = $idx + 1;
         }
         return YAPI::SUCCESS;
@@ -1700,7 +1700,7 @@ class YSerialPort extends YFunction
     public function writeStxEtx(string $text): int
     {
         // $buff                   is a bin;
-        $buff = sprintf('%c%s%c', 2, $text, 3);
+        $buff = YAPI::Ystr2bin(sprintf('%c%s%c', 2, $text, 3));
         // send string using file upload
         return $this->_upload('txdata', $buff);
     }
@@ -1745,21 +1745,21 @@ class YSerialPort extends YFunction
         // $url                    is a str;
         // $pat                    is a str;
         // $msgs                   is a bin;
-        $reps = [];             // strArr;
+        $reps = [];             // binArr;
         // $rep                    is a str;
         $res = [];              // intArr;
         // $replen                 is a int;
         // $hexb                   is a int;
         $funCode = $pduBytes[0];
-        $nib = (($funCode) >> (4));
-        $pat = sprintf('%02X[%X%X]%X.*', $slaveNo, $nib, ($nib+8), (($funCode) & (15)));
+        $nib = (($funCode) >> 4);
+        $pat = sprintf('%02X[%X%X]%X.*', $slaveNo, $nib, ($nib+8), (($funCode) & 15));
         $cmd = sprintf('%02X%02X', $slaveNo, $funCode);
         $i = 1;
         while ($i < sizeof($pduBytes)) {
-            $cmd = sprintf('%s%02X', $cmd, (($pduBytes[$i]) & (0xff)));
+            $cmd = sprintf('%s%02X', $cmd, (($pduBytes[$i]) & 0xff));
             $i = $i + 1;
         }
-        if (strlen($cmd) <= 80) {
+        if (mb_strlen($cmd) <= 80) {
             // fast query
             $url = sprintf('rxmsg.json?cmd=:%s&pat=:%s', $cmd, $pat);
         } else {
@@ -1771,10 +1771,10 @@ class YSerialPort extends YFunction
 
         $msgs = $this->_download($url);
         $reps = $this->_json_get_array($msgs);
-        if (!(sizeof($reps) > 1)) return $this->_throw( YAPI::IO_ERROR, 'no reply from MODBUS slave',$res);
+        if (!(sizeof($reps) > 1)) return $this->_throw(YAPI::IO_ERROR,'no reply from MODBUS slave',$res);
         if (sizeof($reps) > 1) {
             $rep = $this->_json_get_string($reps[0]);
-            $replen = ((strlen($rep) - 3) >> (1));
+            $replen = ((mb_strlen($rep) - 3) >> 1);
             $i = 0;
             while ($i < $replen) {
                 $hexb = hexdec(substr($rep, 2 * $i + 3, 2));
@@ -1783,10 +1783,10 @@ class YSerialPort extends YFunction
             }
             if ($res[0] != $funCode) {
                 $i = $res[1];
-                if (!($i > 1)) return $this->_throw( YAPI::NOT_SUPPORTED, 'MODBUS error: unsupported function code',$res);
-                if (!($i > 2)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'MODBUS error: illegal data address',$res);
-                if (!($i > 3)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'MODBUS error: illegal data value',$res);
-                if (!($i > 4)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'MODBUS error: failed to execute function',$res);
+                if (!($i > 1)) return $this->_throw(YAPI::NOT_SUPPORTED,'MODBUS error: unsupported function code',$res);
+                if (!($i > 2)) return $this->_throw(YAPI::INVALID_ARGUMENT,'MODBUS error: illegal data address',$res);
+                if (!($i > 3)) return $this->_throw(YAPI::INVALID_ARGUMENT,'MODBUS error: illegal data value',$res);
+                if (!($i > 4)) return $this->_throw(YAPI::INVALID_ARGUMENT,'MODBUS error: failed to execute function',$res);
             }
         }
         return $res;
@@ -1815,10 +1815,10 @@ class YSerialPort extends YFunction
         // $val                    is a int;
         // $mask                   is a int;
         $pdu[] = 0x01;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nBits) >> 8);
+        $pdu[] = (($nBits) & 0xff);
 
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
@@ -1843,7 +1843,7 @@ class YSerialPort extends YFunction
                 $val = $reply[$idx];
                 $mask = 1;
             } else {
-                $mask = (($mask) << (1));
+                $mask = (($mask) << 1);
             }
         }
         return $res;
@@ -1872,10 +1872,10 @@ class YSerialPort extends YFunction
         // $val                    is a int;
         // $mask                   is a int;
         $pdu[] = 0x02;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nBits) >> 8);
+        $pdu[] = (($nBits) & 0xff);
 
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
@@ -1900,7 +1900,7 @@ class YSerialPort extends YFunction
                 $val = $reply[$idx];
                 $mask = 1;
             } else {
-                $mask = (($mask) << (1));
+                $mask = (($mask) << 1);
             }
         }
         return $res;
@@ -1927,12 +1927,12 @@ class YSerialPort extends YFunction
         // $regpos                 is a int;
         // $idx                    is a int;
         // $val                    is a int;
-        if (!($nWords<=256)) return $this->_throw( YAPI::INVALID_ARGUMENT, 'Cannot read more than 256 words',$res);
+        if (!($nWords<=256)) return $this->_throw(YAPI::INVALID_ARGUMENT,'Cannot read more than 256 words',$res);
         $pdu[] = 0x03;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nWords) >> 8);
+        $pdu[] = (($nWords) & 0xff);
 
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
@@ -1944,7 +1944,7 @@ class YSerialPort extends YFunction
         $regpos = 0;
         $idx = 2;
         while ($regpos < $nWords) {
-            $val = (($reply[$idx]) << (8));
+            $val = (($reply[$idx]) << 8);
             $idx = $idx + 1;
             $val = $val + $reply[$idx];
             $idx = $idx + 1;
@@ -1976,10 +1976,10 @@ class YSerialPort extends YFunction
         // $idx                    is a int;
         // $val                    is a int;
         $pdu[] = 0x04;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nWords) >> 8);
+        $pdu[] = (($nWords) & 0xff);
 
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
@@ -1991,7 +1991,7 @@ class YSerialPort extends YFunction
         $regpos = 0;
         $idx = 2;
         while ($regpos < $nWords) {
-            $val = (($reply[$idx]) << (8));
+            $val = (($reply[$idx]) << 8);
             $idx = $idx + 1;
             $val = $val + $reply[$idx];
             $idx = $idx + 1;
@@ -2024,8 +2024,8 @@ class YSerialPort extends YFunction
             $value = 0xff;
         }
         $pdu[] = 0x05;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
         $pdu[] = $value;
         $pdu[] = 0x00;
 
@@ -2065,12 +2065,12 @@ class YSerialPort extends YFunction
         // $res                    is a int;
         $res = 0;
         $nBits = sizeof($bits);
-        $nBytes = ((($nBits + 7)) >> (3));
+        $nBytes = (($nBits + 7) >> 3);
         $pdu[] = 0x0f;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nBits) >> (8));
-        $pdu[] = (($nBits) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nBits) >> 8);
+        $pdu[] = (($nBits) & 0xff);
         $pdu[] = $nBytes;
         $bitpos = 0;
         $val = 0;
@@ -2085,7 +2085,7 @@ class YSerialPort extends YFunction
                 $val = 0;
                 $mask = 1;
             } else {
-                $mask = (($mask) << (1));
+                $mask = (($mask) << 1);
             }
         }
         if ($mask != 1) {
@@ -2099,7 +2099,7 @@ class YSerialPort extends YFunction
         if ($reply[0] != $pdu[0]) {
             return $res;
         }
-        $res = (($reply[3]) << (8));
+        $res = (($reply[3]) << 8);
         $res = $res + $reply[4];
         return $res;
     }
@@ -2124,10 +2124,10 @@ class YSerialPort extends YFunction
         // $res                    is a int;
         $res = 0;
         $pdu[] = 0x06;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($value) >> (8));
-        $pdu[] = (($value) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($value) >> 8);
+        $pdu[] = (($value) & 0xff);
 
         $reply = $this->queryMODBUS($slaveNo, $pdu);
         if (sizeof($reply) == 0) {
@@ -2166,16 +2166,16 @@ class YSerialPort extends YFunction
         $nWords = sizeof($values);
         $nBytes = 2 * $nWords;
         $pdu[] = 0x10;
-        $pdu[] = (($pduAddr) >> (8));
-        $pdu[] = (($pduAddr) & (0xff));
-        $pdu[] = (($nWords) >> (8));
-        $pdu[] = (($nWords) & (0xff));
+        $pdu[] = (($pduAddr) >> 8);
+        $pdu[] = (($pduAddr) & 0xff);
+        $pdu[] = (($nWords) >> 8);
+        $pdu[] = (($nWords) & 0xff);
         $pdu[] = $nBytes;
         $regpos = 0;
         while ($regpos < $nWords) {
             $val = $values[$regpos];
-            $pdu[] = (($val) >> (8));
-            $pdu[] = (($val) & (0xff));
+            $pdu[] = (($val) >> 8);
+            $pdu[] = (($val) & 0xff);
             $regpos = $regpos + 1;
         }
 
@@ -2186,7 +2186,7 @@ class YSerialPort extends YFunction
         if ($reply[0] != $pdu[0]) {
             return $res;
         }
-        $res = (($reply[3]) << (8));
+        $res = (($reply[3]) << 8);
         $res = $res + $reply[4];
         return $res;
     }
@@ -2220,20 +2220,20 @@ class YSerialPort extends YFunction
         $nWriteWords = sizeof($values);
         $nBytes = 2 * $nWriteWords;
         $pdu[] = 0x17;
-        $pdu[] = (($pduReadAddr) >> (8));
-        $pdu[] = (($pduReadAddr) & (0xff));
-        $pdu[] = (($nReadWords) >> (8));
-        $pdu[] = (($nReadWords) & (0xff));
-        $pdu[] = (($pduWriteAddr) >> (8));
-        $pdu[] = (($pduWriteAddr) & (0xff));
-        $pdu[] = (($nWriteWords) >> (8));
-        $pdu[] = (($nWriteWords) & (0xff));
+        $pdu[] = (($pduReadAddr) >> 8);
+        $pdu[] = (($pduReadAddr) & 0xff);
+        $pdu[] = (($nReadWords) >> 8);
+        $pdu[] = (($nReadWords) & 0xff);
+        $pdu[] = (($pduWriteAddr) >> 8);
+        $pdu[] = (($pduWriteAddr) & 0xff);
+        $pdu[] = (($nWriteWords) >> 8);
+        $pdu[] = (($nWriteWords) & 0xff);
         $pdu[] = $nBytes;
         $regpos = 0;
         while ($regpos < $nWriteWords) {
             $val = $values[$regpos];
-            $pdu[] = (($val) >> (8));
-            $pdu[] = (($val) & (0xff));
+            $pdu[] = (($val) >> 8);
+            $pdu[] = (($val) & 0xff);
             $regpos = $regpos + 1;
         }
 
@@ -2247,7 +2247,7 @@ class YSerialPort extends YFunction
         $regpos = 0;
         $idx = 2;
         while ($regpos < $nReadWords) {
-            $val = (($reply[$idx]) << (8));
+            $val = (($reply[$idx]) << 8);
             $idx = $idx + 1;
             $val = $val + $reply[$idx];
             $idx = $idx + 1;

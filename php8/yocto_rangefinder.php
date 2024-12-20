@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_rangefinder.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: yocto_rangefinder.php 63695 2024-12-13 11:06:34Z seb $
  *
  *  Implements YRangeFinder, the high-level API for RangeFinder functions
  *
@@ -401,7 +401,7 @@ class YRangeFinder extends YSensor
         if (!(substr($hwcal, 0, 1) == '@')) {
             return YAPI::INVALID_DOUBLE;
         }
-        return intVal(substr($hwcal, 1, strlen($hwcal)));
+        return intVal(substr($hwcal, 1, mb_strlen($hwcal)));
     }
 
     /**
