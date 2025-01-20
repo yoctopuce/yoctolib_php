@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 63695 2024-12-13 11:06:34Z seb $
+ * $Id: yocto_api.php 64192 2025-01-15 09:29:03Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -66,7 +66,7 @@ const YAPI_SSL_UNK_CERT                = -20; // The certificate is not correctl
 const YAPI_NO_TRUSTED_CA_CHECK         = 1; // Disables certificate checking
 const YAPI_NO_EXPIRATION_CHECK         = 2; // Disables certificate expiration date checking
 const YAPI_NO_HOSTNAME_CHECK           = 4; // Disable hostname checking
-const YAPI_LEGACY                      = 8; // Allow non secure connection (similar to v1.10)
+const YAPI_LEGACY                      = 8; // Allow non-secure connection (similar to v1.10)
 const YAPI_INVALID_INT = YAPI::INVALID_INT;
 const YAPI_INVALID_UINT = YAPI::INVALID_UINT;
 const YAPI_INVALID_LONG = YAPI::INVALID_LONG;
@@ -828,7 +828,7 @@ class YTcpHub
 
     public function isReadOnly(): bool
     {
-        return $this->writeProtected;
+        return $this->writeProtected && $this->user != 'admin' && !$this->isCachedHub();
     }
 
     public function get_networkTimeout(): int
@@ -2065,6 +2065,10 @@ class YAPIContext
         //--- (end of generated code: YAPIContext constructor)
     }
 
+    private function GetYAPISharedLibraryPath_internal()
+    {
+        return "";
+    }
     private function AddUdevRule_internal(bool $force): string
     {
         return "error: Not supported in PHP";
@@ -2151,6 +2155,22 @@ class YAPIContext
 
     //cannot be generated for PHP:
     //private function GetDeviceListValidity_internal()
+
+    /**
+     * Returns the path to the dynamic YAPI library. This function is useful for debugging problems loading the
+     * dynamic library YAPI:: This function is supported by the C#, Python and VB languages. The other
+     * libraries return an
+     * empty string.
+     *
+     * @return string  a string containing the path of the YAPI dynamic library.
+     */
+    public function GetYAPISharedLibraryPath(): string
+    {
+        return $this->GetYAPISharedLibraryPath_internal();
+    }
+
+    //cannot be generated for PHP:
+    //private function GetYAPISharedLibraryPath_internal()
 
     /**
      * Adds a UDEV rule which authorizes all users to access Yoctopuce modules
@@ -2405,6 +2425,8 @@ class YAPIContext
         return YAPI::getTcpHubFromRef($hubref);
     }
 
+
+
 }
 
 //^^^^ YAPIContext.php
@@ -2504,7 +2526,7 @@ class YAPI
     const NO_TRUSTED_CA_CHECK   = 1;       // Disables certificate checking
     const NO_EXPIRATION_CHECK   = 2;       // Disables certificate expiration date checking
     const NO_HOSTNAME_CHECK     = 4;       // Disable hostname checking
-    const LEGACY                = 8;       // Allow non secure connection (similar to v1.10)
+    const LEGACY                = 8;       // Allow non-secure connection (similar to v1.10)
 //--- (end of generated code: YFunction return codes)
 
     // yInitAPI constants (not really useful in JavaScript)
@@ -4021,6 +4043,21 @@ class YAPI
         return self::$_yapiContext->GetDeviceListValidity();
     }
     /**
+     * Returns the path to the dynamic YAPI library. This function is useful for debugging problems loading the
+     * dynamic library YAPI:: This function is supported by the C#, Python and VB languages. The other
+     * libraries return an
+     * empty string.
+     *
+     * @return string  a string containing the path of the YAPI dynamic library.
+     */
+    public static function GetYAPISharedLibraryPath(): string
+    {
+        if (is_null(self::$_hubs)) {
+            self::_init();
+        }
+        return self::$_yapiContext->GetYAPISharedLibraryPath();
+    }
+    /**
      * Adds a UDEV rule which authorizes all users to access Yoctopuce modules
      * connected to the USB ports. This function works only under Linux. The process that
      * calls this method must have root privileges because this method changes the Linux configuration.
@@ -4218,7 +4255,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.0.63797";
+        return "2.0.64286";
     }
 
     /**

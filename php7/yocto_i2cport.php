@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 63695 2024-12-13 11:06:34Z seb $
+ *  $Id: yocto_i2cport.php 64098 2025-01-08 10:59:39Z seb $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -1289,8 +1289,7 @@ class YI2cPort extends YFunction
     }
 
     /**
-     * Sends a text-encoded I2C code stream to the I2C bus, and terminate
-     * the message en relâchant le bus.
+     * Sends a text-encoded I2C code stream to the I2C bus, and release the bus.
      * An I2C code stream is a string made of hexadecimal data bytes,
      * but that may also include the I2C state transitions code:
      * "{S}" to emit a start condition,
