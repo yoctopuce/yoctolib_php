@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_steppermotor.php 63326 2024-11-13 09:34:10Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YStepperMotor, the high-level API for StepperMotor functions
  *

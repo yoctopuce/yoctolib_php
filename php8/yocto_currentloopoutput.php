@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_currentloopoutput.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YCurrentLoopOutput, the high-level API for CurrentLoopOutput functions
  *

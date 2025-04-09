@@ -1,7 +1,3 @@
-PHPV2 v2.0.64286
+PHPV2 v2.1.654
 
-- Remove exotic char form YCellular class
-- YAPI.Testhub("net") return YAPI.INVALID_ARGUMENT
-- Fix typos
-- Fix YHub->isReadOnly() result if connected as admin on a protected hub.
-- Fix missing attribute that can generate error in PHP 8.3
+- test build version

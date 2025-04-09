@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorledcluster.php 64098 2025-01-08 10:59:39Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YColorLedCluster, the high-level API for ColorLedCluster functions
  *

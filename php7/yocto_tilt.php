@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_tilt.php 61964 2024-07-29 15:54:55Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YTilt, the high-level API for Tilt functions
  *

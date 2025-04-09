@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_magnetometer.php 61964 2024-07-29 15:54:55Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YMagnetometer, the high-level API for Magnetometer functions
  *

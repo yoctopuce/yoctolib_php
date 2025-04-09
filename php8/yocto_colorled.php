@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_colorled.php 64082 2025-01-07 09:41:13Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YColorLed, the high-level API for ColorLed functions
  *

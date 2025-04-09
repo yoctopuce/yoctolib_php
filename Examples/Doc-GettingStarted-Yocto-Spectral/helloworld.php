@@ -5,7 +5,7 @@
 <BODY>
 <?php
   include('../../php8/yocto_api.php');
-  include('../../php8/yocto_spectralsensor.php');
+  include('../../php8/yocto_colorsensor.php');
 
   // Use explicit error handling rather than exceptions
   YAPI::DisableExceptions();
@@ -18,28 +18,27 @@
   @$serial = $_GET['serial'];
   if ($serial != '') {
       // Check if a specified module is available online
-      $spectralSensor = YSpectralSensor::FindSpectralSensor("$serial.spectralSensor");
-      if (!$spectralSensor->isOnline()) {
+      $colorSensor = YColorSensor::FindColorSensor("$serial.colorSensor");
+      if (!$colorSensor->isOnline()) {
           die("Module not connected (check serial and USB cable)");
       }
   } else {
       // or use any connected module suitable for the demo
-      $spectralSensor = YSpectralSensor::FirstSpectralSensor();
-      if(is_null($spectralSensor)) {
+      $colorSensor = YColorSensor::FirstColorSensor();
+      if(is_null($colorSensor)) {
           die("No module connected (check USB cable)");
       } else {
-          $serial = $spectralSensor->module()->get_serialnumber();
+          $serial = $colorSensor->module()->get_serialnumber();
       }
   }
   Print("Module to use: <input name='serial' value='$serial'><br>\n");
 
-  // sample code reading MCP9804 temperature sensor
-  $spectralSensor->set_gain(6);
-  $spectralSensor->set_integrationTime(150);
-  $spectralSensor->set_ledCurrent(6);
   
-  Printf("Current color : %s <br>", $spectralSensor->get_nearSimpleColor());
-  Printf("Color HEX : #%06x ", $spectralSensor->get_estimatedRGB());
+  $colorSensor->set_workingMode(0);
+  $colorSensor->set_estimationModel(0);
+  
+  Printf("Current color : %s <br>", $colorSensor->get_nearSimpleColor());
+  Printf("RGB HEX : #%06x ", $colorSensor->get_estimatedRGB());
   YAPI::FreeAPI();
 
   // trigger auto-refresh after one second

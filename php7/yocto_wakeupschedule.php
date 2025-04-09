@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_wakeupschedule.php 62195 2024-08-19 12:21:58Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YWakeUpSchedule, the high-level API for WakeUpSchedule functions
  *

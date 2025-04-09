@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 64098 2025-01-08 10:59:39Z seb $
+ *  $Id: yocto_i2cport.php 65159 2025-03-19 11:01:08Z mvuilleu $
  *
  *  Implements YI2cPort, the high-level API for I2cPort functions
  *
@@ -150,8 +150,7 @@ class YI2cSnoopingRecord
     /**
      * Returns the absolute position of the message end.
      *
-     * @return the absolute position of the message end.
-     * @throws YAPI_Exception on error
+     * @return int  the absolute position of the message end.
      */
     public function get_pos(): int
     {

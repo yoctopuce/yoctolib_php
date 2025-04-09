@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_network.php 63695 2024-12-13 11:06:34Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YNetwork, the high-level API for Network functions
  *

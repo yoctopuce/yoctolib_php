@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_voltageoutput.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YVoltageOutput, the high-level API for VoltageOutput functions
  *

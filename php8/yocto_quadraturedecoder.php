@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_quadraturedecoder.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: svn_id $
  *
  *  Implements YQuadratureDecoder, the high-level API for QuadratureDecoder functions
  *

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 64192 2025-01-15 09:29:03Z seb $
+ * $Id: yocto_api.php 65577 2025-04-07 13:55:55Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -4255,7 +4255,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.0.64286";
+        return "2.1.654";
     }
 
     /**
@@ -10887,7 +10887,7 @@ class YModule extends YFunction
         }
         $ext_settings = $ext_settings . '],'."\n".'"files":[';
         if ($this->hasFunction('files')) {
-            $json = $this->_download('files.json?a=dir&f=');
+            $json = $this->_download('files.json?a=dir&d=1&f=');
             if (strlen($json) == 0) {
                 return $json;
             }
@@ -10896,8 +10896,12 @@ class YModule extends YFunction
             foreach ($filelist as $each) {
                 $name = $this->_json_get_key($each, 'name');
                 if ((mb_strlen($name) > 0) && !($name == 'startupConf.json')) {
-                    $file_data_bin = $this->_download($this->_escapeAttr($name));
-                    $file_data = YAPI::_bytesToHexStr($file_data_bin);
+                    if (substr($name, mb_strlen($name)-1, 1) == '/') {
+                        $file_data = '';
+                    } else {
+                        $file_data_bin = $this->_download($this->_escapeAttr($name));
+                        $file_data = YAPI::_bytesToHexStr($file_data_bin);
+                    }
                     $item = sprintf('%s{"name":"%s", "data":"%s"}'."\n".'', $sep, $name, $file_data);
                     $ext_settings = $ext_settings . $item;
                     $sep = ',';

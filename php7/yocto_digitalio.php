@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_digitalio.php 63326 2024-11-13 09:34:10Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YDigitalIO, the high-level API for DigitalIO functions
  *

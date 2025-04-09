@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_segmenteddisplay.php 59977 2024-03-18 15:02:32Z mvuilleu $
+ *  $Id: svn_id $
  *
  *  Implements YSegmentedDisplay, the high-level API for SegmentedDisplay functions
  *

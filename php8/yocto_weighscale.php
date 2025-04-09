@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_weighscale.php 63695 2024-12-13 11:06:34Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YWeighScale, the high-level API for WeighScale functions
  *

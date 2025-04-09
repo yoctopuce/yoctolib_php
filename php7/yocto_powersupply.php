@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_powersupply.php 60995 2024-05-17 07:37:00Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YPowerSupply, the high-level API for PowerSupply functions
  *

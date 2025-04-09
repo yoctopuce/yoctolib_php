@@ -1232,7 +1232,14 @@ class YInputCapture extends YFunction
 }
 
     /**
-     * comment from .yc definition
+     * Continues the enumeration of instant snapshot triggers started using yFirstInputCapture().
+     * Caution: You can't make any assumption about the returned instant snapshot triggers order.
+     * If you want to find a specific an instant snapshot trigger, use InputCapture.findInputCapture()
+     * and a hardwareID or a logical name.
+     *
+     * @return ?YInputCapture  a pointer to a YInputCapture object, corresponding to
+     *         an instant snapshot trigger currently online, or a null pointer
+     *         if there are no more instant snapshot triggers to enumerate.
      */
     public function nextInputCapture(): ?YInputCapture
     {
@@ -1248,7 +1255,13 @@ class YInputCapture extends YFunction
     }
 
     /**
-     * comment from .yc definition
+     * Starts the enumeration of instant snapshot triggers currently accessible.
+     * Use the method YInputCapture::nextInputCapture() to iterate on
+     * next instant snapshot triggers.
+     *
+     * @return ?YInputCapture  a pointer to a YInputCapture object, corresponding to
+     *         the first instant snapshot trigger currently online, or a null pointer
+     *         if there are none.
      */
     public static function FirstInputCapture(): ?YInputCapture
     {
@@ -1302,7 +1315,13 @@ function yFindInputCapture(string $func): YInputCapture
 }
 
 /**
- * comment from .yc definition
+ * Starts the enumeration of instant snapshot triggers currently accessible.
+ * Use the method YInputCapture::nextInputCapture() to iterate on
+ * next instant snapshot triggers.
+ *
+ * @return ?YInputCapture  a pointer to a YInputCapture object, corresponding to
+ *         the first instant snapshot trigger currently online, or a null pointer
+ *         if there are none.
  */
 function yFirstInputCapture(): ?YInputCapture
 {

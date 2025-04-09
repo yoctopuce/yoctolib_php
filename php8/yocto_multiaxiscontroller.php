@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_multiaxiscontroller.php 63326 2024-11-13 09:34:10Z seb $
+ *  $Id: svn_id $
  *
  *  Implements YMultiAxisController, the high-level API for MultiAxisController functions
  *
