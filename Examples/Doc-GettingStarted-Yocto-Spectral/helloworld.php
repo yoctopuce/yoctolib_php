@@ -34,8 +34,8 @@
   Print("Module to use: <input name='serial' value='$serial'><br>\n");
 
   
-  $colorSensor->set_workingMode(0);
-  $colorSensor->set_estimationModel(0);
+  $colorSensor->set_workingMode(Y_WORKINGMODE_AUTO);
+  $colorSensor->set_estimationModel(Y_ESTIMATIONMODEL_REFLECTION);
   
   Printf("Current color : %s <br>", $colorSensor->get_nearSimpleColor());
   Printf("RGB HEX : #%06x ", $colorSensor->get_estimatedRGB());
