@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 65577 2025-04-07 13:55:55Z seb $
+ * $Id: yocto_api.php 66046 2025-04-24 09:40:34Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -4255,7 +4255,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.5971";
+        return "2.1.6320";
     }
 
     /**
@@ -7255,7 +7255,7 @@ class YConsolidatedDataSet
 //vvvv YHub.php
 
 /**
- * YHub Class: Hub Interface
+ * YHub Class: YoctoHub or VirtualHub currently in use by the API.
  *
  *
  */
