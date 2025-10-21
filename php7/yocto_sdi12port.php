@@ -64,7 +64,7 @@ class YSdi12SnoopingRecord
 
     //--- (end of generated code: YSdi12SnoopingRecord attributes)
 
-    function __construct(string $str_func)
+    function __construct(string $str_json)
     {
         //--- (generated code: YSdi12SnoopingRecord constructor)
         //--- (end of generated code: YSdi12SnoopingRecord constructor)
@@ -1504,7 +1504,7 @@ class YSdi12Port extends YFunction
         if ($bufflen < 100) {
             return $this->sendCommand(sprintf('$%s',$hexString));
         }
-        $bufflen = (($bufflen) >> 1);
+        $bufflen = ($bufflen >> 1);
         $buff = ($bufflen > 0 ? pack('C',array_fill(0, $bufflen, 0)) : '');
         $idx = 0;
         while ($idx < $bufflen) {

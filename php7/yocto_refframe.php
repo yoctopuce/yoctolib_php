@@ -396,7 +396,7 @@ class YRefFrame extends YFunction
         if ($position < 0) {
             return self::MOUNTPOSITION_INVALID;
         }
-        return (($position) >> 2);
+        return ($position >> 2);
     }
 
     /**
@@ -422,7 +422,7 @@ class YRefFrame extends YFunction
         if ($position < 0) {
             return self::MOUNTORIENTATION_INVALID;
         }
-        return (($position) & 3);
+        return ($position & 3);
     }
 
     /**
@@ -454,7 +454,7 @@ class YRefFrame extends YFunction
     public function set_mountPosition(int $position, int $orientation): int
     {
         // $Pos               is a int;
-        $Pos = (($position) << 2) + $orientation;
+        $Pos = ($position << 2) + $orientation;
         return $this->set_mountPos($Pos);
     }
 
@@ -482,11 +482,11 @@ class YRefFrame extends YFunction
 
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
-        $caltyp = intVal(($iCalib[0]) / (1000));
+        $caltyp = intVal($iCalib[0] / 1000);
         if ($caltyp != 33) {
             return YAPI::NOT_SUPPORTED;
         }
-        $res = intVal(($iCalib[1]) / (1000));
+        $res = intVal($iCalib[1] / 1000);
         return $res;
     }
 
@@ -513,11 +513,11 @@ class YRefFrame extends YFunction
 
         $calibParam = $this->get_calibrationParam();
         $iCalib = YAPI::_decodeFloats($calibParam);
-        $caltyp = intVal(($iCalib[0]) / (1000));
+        $caltyp = intVal($iCalib[0] / 1000);
         if ($caltyp != 33) {
             return YAPI::NOT_SUPPORTED;
         }
-        $res = intVal(($iCalib[2]) / (1000));
+        $res = intVal($iCalib[2] / 1000);
         return $res;
     }
 
@@ -762,7 +762,7 @@ class YRefFrame extends YFunction
         // Stage done, compute preliminary result
         $intpos = ($this->_calibStage - 1) * $this->_calibCount;
         $this->_calibSort($intpos, $intpos + $this->_calibCount);
-        $intpos = $intpos + intVal(($this->_calibCount) / (2));
+        $intpos = $intpos + intVal(($this->_calibCount) / 2);
         $this->_calibLogMsg = sprintf('Stage %d: median is %d,%d,%d', $this->_calibStage,
                                       intval(round(1000*$this->_calibDataAccX[$intpos])),
                                       intval(round(1000*$this->_calibDataAccY[$intpos])),
@@ -782,7 +782,7 @@ class YRefFrame extends YFunction
         $zVal = 0;
         $idx = 0;
         while ($idx < 6) {
-            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
+            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / 2);
             $orient = $this->_calibOrient[$idx];
             if ($orient == 0 || $orient == 1) {
                 $zVal = $zVal + $this->_calibDataAccZ[$intpos];
@@ -820,7 +820,7 @@ class YRefFrame extends YFunction
         $zVal = 0;
         $idx = 0;
         while ($idx < 6) {
-            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / (2));
+            $intpos = $idx * $this->_calibCount + intVal(($this->_calibCount) / 2);
             $orient = $this->_calibOrient[$idx];
             if ($orient == 0 || $orient == 1) {
                 $zVal = $zVal + $this->_calibDataAcc[$intpos];
@@ -867,7 +867,7 @@ class YRefFrame extends YFunction
             $currTick = (($currTick - $this->_calibPrevTick) & 0x7FFFFFFF);
             if ($currTick < 1600) {
                 $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
-                $this->_calibStageProgress = intVal(($currTick) / (40));
+                $this->_calibStageProgress = intVal($currTick / 40);
                 $this->_calibProgress = 1;
                 return YAPI::SUCCESS;
             }
@@ -875,9 +875,9 @@ class YRefFrame extends YFunction
 
         $calibParam = $this->_download('api/refFrame/calibrationParam.txt');
         $iCalib = YAPI::_decodeFloats(YAPI::Ybin2str($calibParam));
-        $cal3 = intVal(($iCalib[1]) / (1000));
-        $calAcc = intVal(($cal3) / (100));
-        $calMag = intVal(($cal3) / (10)) - 10*$calAcc;
+        $cal3 = intVal($iCalib[1] / 1000);
+        $calAcc = intVal($cal3 / 100);
+        $calMag = intVal($cal3 / 10) - 10*$calAcc;
         $calGyr = (($cal3) % (10));
         if ($calGyr < 3) {
             $this->_calibStageHint = 'Set down the device on a steady horizontal surface';
@@ -1026,9 +1026,9 @@ class YRefFrame extends YFunction
             }
         }
         if ($scaleExp > 0) {
-            $scaleX = (($scaleX) >> ($scaleExp));
-            $scaleY = (($scaleY) >> ($scaleExp));
-            $scaleZ = (($scaleZ) >> ($scaleExp));
+            $scaleX = ($scaleX >> $scaleExp);
+            $scaleY = ($scaleY >> $scaleExp);
+            $scaleZ = ($scaleZ >> $scaleExp);
         }
         if ($scaleX < 0) {
             $scaleX = $scaleX + 1024;
@@ -1039,8 +1039,8 @@ class YRefFrame extends YFunction
         if ($scaleZ < 0) {
             $scaleZ = $scaleZ + 1024;
         }
-        $scaleLo = ((($scaleY) & 15) << 12) + (($scaleX) << 2) + $scaleExp;
-        $scaleHi = (($scaleZ) << 6) + (($scaleY) >> 4);
+        $scaleLo = (($scaleY & 15) << 12) + ($scaleX << 2) + $scaleExp;
+        $scaleHi = ($scaleZ << 6) + ($scaleY >> 4);
         // Save calibration parameters
         $newcalib = sprintf('5,%d,%d,%d,%d,%d', $shiftX, $shiftY, $shiftZ, $scaleLo, $scaleHi);
         $this->_calibStage = 0;

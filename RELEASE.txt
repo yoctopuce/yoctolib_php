@@ -1,3 +1,8 @@
-PHPV2 v2.1.6320
+PHPV2 v2.1.9553
 
-- Add documentation of YHub class
+- Improve error message when RegisterHub on non configured Hubs
+- Add support for new calibration context
+- Fix unplug of device that was not correctly detected the app only execute set_XXX functions
+- Fix compatibiliity with PHP 8.4
+- Fix use of YSdi12SnoopingRecord class
+- Fix error "YAPI::Ystr2bin(): Return value must be of type string, bool returned" in http callback

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 63695 2024-12-13 11:06:34Z seb $
+ * $Id: yocto_messagebox.php 68482 2025-08-21 10:07:30Z mvuilleu $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -216,7 +216,7 @@ class YSms
         }
         if ($this->_alphab == 2) {
             // using UCS-2 alphabet
-            $isosize = ((strlen($this->_udata)) >> 1);
+            $isosize = (strlen($this->_udata) >> 1);
             $isolatin = ($isosize > 0 ? pack('C',array_fill(0, $isosize, 0)) : '');
             $i = 0;
             while ($i < $isosize) {
@@ -244,7 +244,7 @@ class YSms
         }
         if ($this->_alphab == 2) {
             // using UCS-2 alphabet
-            $unisize = ((strlen($this->_udata)) >> 1);
+            $unisize = (strlen($this->_udata) >> 1);
             while (sizeof($res) > 0) {
                 array_pop($res);
             };
@@ -432,8 +432,8 @@ class YSms
      */
     public function set_dcs(int $val): int
     {
-        $this->_alphab = (((($val) >> 2)) & 3);
-        $this->_mclass = (($val) & (16+3));
+        $this->_alphab = ((($val >> 2)) & 3);
+        $this->_mclass = ($val & (16+3));
         $this->_npdu = 0;
         return YAPI::SUCCESS;
     }
@@ -616,14 +616,14 @@ class YSms
             $uni = $val[$i];
             if ($uni >= 65536) {
                 $surrogate = $uni - 65536;
-                $uni = (((($surrogate) >> 10) & 1023)) + 55296;
-                $udata[$udatalen] = pack('C', (($uni) >> 8));
-                $udata[$udatalen+1] = pack('C', (($uni) & 255));
+                $uni = ((($surrogate >> 10) & 1023)) + 55296;
+                $udata[$udatalen] = pack('C', ($uni >> 8));
+                $udata[$udatalen+1] = pack('C', ($uni & 255));
                 $udatalen = $udatalen + 2;
-                $uni = ((($surrogate) & 1023)) + 56320;
+                $uni = (($surrogate & 1023)) + 56320;
             }
-            $udata[$udatalen] = pack('C', (($uni) >> 8));
-            $udata[$udatalen+1] = pack('C', (($uni) & 255));
+            $udata[$udatalen] = pack('C', ($uni >> 8));
+            $udata[$udatalen+1] = pack('C', ($uni & 255));
             $udatalen = $udatalen + 2;
             $i = $i + 1;
         }
@@ -753,18 +753,18 @@ class YSms
         while ($i < $srclen) {
             $val = ord($bytes[$i]);
             if (($val >= 48) && ($val < 58)) {
-                if ((($numlen) & 1) == 0) {
+                if (($numlen & 1) == 0) {
                     $digit = $val - 48;
                 } else {
-                    $res[(($numlen) >> 1)] = pack('C', $digit + 16*($val-48));
+                    $res[($numlen >> 1)] = pack('C', $digit + 16*($val-48));
                 }
                 $numlen = $numlen + 1;
             }
             $i = $i + 1;
         }
         // pad with F if needed
-        if ((($numlen) & 1) != 0) {
-            $res[(($numlen) >> 1)] = pack('C', $digit + 240);
+        if (($numlen & 1) != 0) {
+            $res[($numlen >> 1)] = pack('C', $digit + 240);
         }
         return $res;
     }
@@ -786,10 +786,10 @@ class YSms
             return '';
         }
         $res = '';
-        $addrType = ((ord($addr[$ofs])) & 112);
+        $addrType = (ord($addr[$ofs]) & 112);
         if ($addrType == 80) {
             // alphanumeric number
-            $siz = intVal((4*$siz) / (7));
+            $siz = intVal((4*$siz) / 7);
             $gsm7 = ($siz > 0 ? pack('C',array_fill(0, $siz, 0)) : '');
             $rpos = 1;
             $carry = 0;
@@ -803,8 +803,8 @@ class YSms
                 } else {
                     $byt = ord($addr[$ofs+$rpos]);
                     $rpos = $rpos + 1;
-                    $gsm7[$i] = pack('C', (($carry) | (((($byt) << ($nbits))) & 127)));
-                    $carry = (($byt) >> (7 - $nbits));
+                    $gsm7[$i] = pack('C', ($carry | ((($byt << $nbits)) & 127)));
+                    $carry = ($byt >> (7 - $nbits));
                     $nbits = $nbits + 1;
                 }
                 $i = $i + 1;
@@ -819,11 +819,11 @@ class YSms
             $i = 0;
             while ($i < $siz) {
                 $byt = ord($addr[$ofs+$i+1]);
-                $res = sprintf('%s%x%x', $res, (($byt) & 15), (($byt) >> 4));
+                $res = sprintf('%s%x%x', $res, ($byt & 15), ($byt >> 4));
                 $i = $i + 1;
             }
             // remove padding digit if needed
-            if (((ord($addr[$ofs+$siz])) >> 4) == 15) {
+            if ((ord($addr[$ofs+$siz]) >> 4) == 15) {
                 $res = substr($res, 0, mb_strlen($res)-1);
             }
             return $res;
@@ -851,15 +851,15 @@ class YSms
             $n = intVal(substr($exp, 1, $explen-1));
             $res = (1 > 0 ? pack('C',array_fill(0, 1, 0)) : '');
             if ($n > 30*86400) {
-                $n = 192+intVal((($n+6*86400)) / ((7*86400)));
+                $n = 192+intVal(($n+6*86400) / (7*86400));
             } else {
                 if ($n > 86400) {
-                    $n = 166+intVal((($n+86399)) / (86400));
+                    $n = 166+intVal(($n+86399) / 86400);
                 } else {
                     if ($n > 43200) {
-                        $n = 143+intVal((($n-43200+1799)) / (1800));
+                        $n = 143+intVal(($n-43200+1799) / 1800);
                     } else {
-                        $n = -1+intVal((($n+299)) / (300));
+                        $n = -1+intVal(($n+299) / 300);
                     }
                 }
             }
@@ -885,7 +885,7 @@ class YSms
                 if (($v2 >= 48) && ($v2 < 58)) {
                     $v1 = $v1 - 48;
                     $v2 = $v2 - 48;
-                    $res[$n] = pack('C', ((($v2) << 4)) + $v1);
+                    $res[$n] = pack('C', (($v2 << 4)) + $v1);
                     $n = $n + 1;
                     $i = $i + 1;
                 }
@@ -904,7 +904,7 @@ class YSms
                 $v1 = ord($expasc[$i+1]);
                 $v2 = ord($expasc[$i+2]);
                 if (($v1 >= 48) && ($v1 < 58) && ($v1 >= 48) && ($v1 < 58)) {
-                    $v1 = intVal(((10*($v1 - 48)+($v2 - 48))) / (15));
+                    $v1 = intVal((10*($v1 - 48)+($v2 - 48)) / 15);
                     $n = $n - 1;
                     $v2 = 4 * ord($res[$n]) + $v1;
                     if (ord($expasc[$i-3]) == 45) {
@@ -953,7 +953,7 @@ class YSms
         $i = 0;
         while (($i < $siz) && ($i < 6)) {
             $byt = ord($exp[$ofs+$i]);
-            $res = sprintf('%s%x%x', $res, (($byt) & 15), (($byt) >> 4));
+            $res = sprintf('%s%x%x', $res, ($byt & 15), ($byt >> 4));
             if ($i < 3) {
                 if ($i < 2) {
                     $res = sprintf('%s-', $res);
@@ -970,13 +970,13 @@ class YSms
         if ($siz == 7) {
             $byt = ord($exp[$ofs+$i]);
             $sign = '+';
-            if ((($byt) & 8) != 0) {
+            if (($byt & 8) != 0) {
                 $byt = $byt - 8;
                 $sign = '-';
             }
-            $byt = (10*((($byt) & 15))) + ((($byt) >> 4));
-            $hh = sprintf('%d', (($byt) >> 2));
-            $ss = sprintf('%d', 15*((($byt) & 3)));
+            $byt = (10*(($byt & 15))) + (($byt >> 4));
+            $hh = sprintf('%d', ($byt >> 2));
+            $ss = sprintf('%d', 15*(($byt & 3)));
             if (mb_strlen($hh)<2) {
                 $hh = sprintf('0%s', $hh);
             }
@@ -999,9 +999,9 @@ class YSms
         $res = strlen($this->_udata);
         if ($this->_alphab == 0) {
             if ($udhsize > 0) {
-                $res = $res + intVal(((8 + 8*$udhsize + 6)) / (7));
+                $res = $res + intVal((8 + 8*$udhsize + 6) / 7);
             }
-            $res = intVal((($res * 7 + 7)) / (8));
+            $res = intVal(($res * 7 + 7) / 8);
         } else {
             if ($udhsize > 0) {
                 $res = $res + 1 + $udhsize;
@@ -1037,7 +1037,7 @@ class YSms
         if ($this->_alphab == 0) {
             // 7-bit encoding
             if ($udhsize > 0) {
-                $udhlen = intVal(((8 + 8*$udhsize + 6)) / (7));
+                $udhlen = intVal((8 + 8*$udhsize + 6) / 7);
                 $nbits = 7*$udhlen - 8 - 8*$udhsize;
             }
             $res[0] = pack('C', $udhlen+$udlen);
@@ -1067,10 +1067,10 @@ class YSms
                     $nbits = 7;
                 } else {
                     $thi_b = ord($this->_udata[$i]);
-                    $res[$wpos] = pack('C', (($carry) | (((($thi_b) << ($nbits))) & 255)));
+                    $res[$wpos] = pack('C', ($carry | ((($thi_b << $nbits)) & 255)));
                     $wpos = $wpos + 1;
                     $nbits = $nbits - 1;
-                    $carry = (($thi_b) >> (7 - $nbits));
+                    $carry = ($thi_b >> (7 - $nbits));
                 }
                 $i = $i + 1;
             }
@@ -1108,9 +1108,9 @@ class YSms
         $udlen = strlen($this->_udata);
         $mss = 140 - 1 - 5 - $udhsize;
         if ($this->_alphab == 0) {
-            $mss = intVal((($mss * 8 - 6)) / (7));
+            $mss = intVal(($mss * 8 - 6) / 7);
         }
-        $this->_npdu = intVal((($udlen+$mss-1)) / ($mss));
+        $this->_npdu = intVal(($udlen+$mss-1) / $mss);
         while (sizeof($this->_parts) > 0) {
             array_pop($this->_parts);
         };
@@ -1313,7 +1313,7 @@ class YSms
         $rpos = 1+ord($pdu[0]);
         $pdutyp = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        $this->_deliv = ((($pdutyp) & 3) == 0);
+        $this->_deliv = (($pdutyp & 3) == 0);
         if ($this->_deliv) {
             $addrlen = ord($pdu[$rpos]);
             $rpos = $rpos + 1;
@@ -1327,8 +1327,8 @@ class YSms
             $rpos = $rpos + 1;
             $this->_dest = $this->decodeAddress($pdu, $rpos, $addrlen);
             $this->_orig = '';
-            if (((($pdutyp) & 16)) != 0) {
-                if (((($pdutyp) & 8)) != 0) {
+            if ((($pdutyp & 16)) != 0) {
+                if ((($pdutyp & 8)) != 0) {
                     $tslen = 7;
                 } else {
                     $tslen= 1;
@@ -1342,8 +1342,8 @@ class YSms
         $rpos = $rpos + 1;
         $dcs = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        $this->_alphab = (((($dcs) >> 2)) & 3);
-        $this->_mclass = (($dcs) & (16+3));
+        $this->_alphab = ((($dcs >> 2)) & 3);
+        $this->_mclass = ($dcs & (16+3));
         $this->_stamp = $this->decodeTimeStamp($pdu, $rpos, $tslen);
         $rpos = $rpos + $tslen;
         // parse user data (including udh)
@@ -1351,7 +1351,7 @@ class YSms
         $carry = 0;
         $udlen = ord($pdu[$rpos]);
         $rpos = $rpos + 1;
-        if ((($pdutyp) & 64) != 0) {
+        if (($pdutyp & 64) != 0) {
             $udhsize = ord($pdu[$rpos]);
             $rpos = $rpos + 1;
             $this->_udh = ($udhsize > 0 ? pack('C',array_fill(0, $udhsize, 0)) : '');
@@ -1363,12 +1363,12 @@ class YSms
             }
             if ($this->_alphab == 0) {
                 // 7-bit encoding
-                $udhlen = intVal(((8 + 8*$udhsize + 6)) / (7));
+                $udhlen = intVal((8 + 8*$udhsize + 6) / 7);
                 $nbits = 7*$udhlen - 8 - 8*$udhsize;
                 if ($nbits > 0) {
                     $thi_b = ord($pdu[$rpos]);
                     $rpos = $rpos + 1;
-                    $carry = (($thi_b) >> ($nbits));
+                    $carry = ($thi_b >> $nbits);
                     $nbits = 8 - $nbits;
                 }
             } else {
@@ -1392,8 +1392,8 @@ class YSms
                 } else {
                     $thi_b = ord($pdu[$rpos]);
                     $rpos = $rpos + 1;
-                    $this->_udata[$i] = pack('C', (($carry) | (((($thi_b) << ($nbits))) & 127)));
-                    $carry = (($thi_b) >> (7 - $nbits));
+                    $this->_udata[$i] = pack('C', ($carry | ((($thi_b << $nbits)) & 127)));
+                    $carry = ($thi_b >> (7 - $nbits));
                     $nbits = $nbits + 1;
                 }
                 $i = $i + 1;
@@ -1845,10 +1845,10 @@ class YMessageBox extends YFunction
             $this->clearCache();
             $bitmapStr = $this->get_slotsBitmap();
             $newBitmap = YAPI::_hexStrToBin($bitmapStr);
-            $idx = (($slot) >> 3);
+            $idx = ($slot >> 3);
             if ($idx < strlen($newBitmap)) {
-                $bitVal = (1 << ((($slot) & 7)));
-                if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
+                $bitVal = (1 << (($slot & 7)));
+                if (((ord($newBitmap[$idx]) & $bitVal)) != 0) {
                     $this->_prevBitmapStr = '';
                     $int_res = $this->set_command(sprintf('DS%d',$slot));
                     if ($int_res < 0) {
@@ -2350,10 +2350,10 @@ class YMessageBox extends YFunction
         while ($pduIdx < sizeof($this->_pdus)) {
             $sms = $this->_pdus[$pduIdx];
             $slot = $sms->get_slot();
-            $idx = (($slot) >> 3);
+            $idx = ($slot >> 3);
             if ($idx < strlen($newBitmap)) {
-                $bitVal = (1 << ((($slot) & 7)));
-                if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
+                $bitVal = (1 << (($slot & 7)));
+                if (((ord($newBitmap[$idx]) & $bitVal)) != 0) {
                     $newArr[] = $sms;
                     if ($sms->get_concatCount() == 0) {
                         $newMsg[] = $sms;
@@ -2378,13 +2378,13 @@ class YMessageBox extends YFunction
         // receive new messages
         $slot = 0;
         while ($slot < $nslots) {
-            $idx = (($slot) >> 3);
-            $bitVal = (1 << ((($slot) & 7)));
+            $idx = ($slot >> 3);
+            $bitVal = (1 << (($slot & 7)));
             $prevBit = 0;
             if ($idx < strlen($prevBitmap)) {
-                $prevBit = ((ord($prevBitmap[$idx])) & ($bitVal));
+                $prevBit = (ord($prevBitmap[$idx]) & $bitVal);
             }
-            if ((((ord($newBitmap[$idx])) & ($bitVal))) != 0) {
+            if (((ord($newBitmap[$idx]) & $bitVal)) != 0) {
                 if ($prevBit == 0) {
                     $sms = $this->fetchPdu($slot);
                     $newArr[] = $sms;
@@ -2410,6 +2410,9 @@ class YMessageBox extends YFunction
         }
         $this->_pdus = $newArr;
         // append complete concatenated messages
+        while (sizeof($newAgg) > 0) {
+            array_pop($newAgg);
+        };
         $i = 0;
         while ($i < $nsig) {
             $sig = $signatures[$i];

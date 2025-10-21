@@ -38,9 +38,9 @@
  *
  *********************************************************************/
 
-//--- (YMicroPython return codes)
-//--- (end of YMicroPython return codes)
-//--- (YMicroPython definitions)
+//--- (generated code: YMicroPython return codes)
+//--- (end of generated code: YMicroPython return codes)
+//--- (generated code: YMicroPython definitions)
 if (!defined('Y_DEBUGMODE_OFF')) {
     define('Y_DEBUGMODE_OFF', 0);
 }
@@ -56,8 +56,14 @@ if (!defined('Y_LASTMSG_INVALID')) {
 if (!defined('Y_HEAPUSAGE_INVALID')) {
     define('Y_HEAPUSAGE_INVALID', YAPI_INVALID_UINT);
 }
+if (!defined('Y_HEAPFRAG_INVALID')) {
+    define('Y_HEAPFRAG_INVALID', YAPI_INVALID_UINT);
+}
 if (!defined('Y_XHEAPUSAGE_INVALID')) {
     define('Y_XHEAPUSAGE_INVALID', YAPI_INVALID_UINT);
+}
+if (!defined('Y_STACKUSAGE_INVALID')) {
+    define('Y_STACKUSAGE_INVALID', YAPI_INVALID_UINT);
 }
 if (!defined('Y_CURRENTSCRIPT_INVALID')) {
     define('Y_CURRENTSCRIPT_INVALID', YAPI_INVALID_STRING);
@@ -65,20 +71,23 @@ if (!defined('Y_CURRENTSCRIPT_INVALID')) {
 if (!defined('Y_STARTUPSCRIPT_INVALID')) {
     define('Y_STARTUPSCRIPT_INVALID', YAPI_INVALID_STRING);
 }
+if (!defined('Y_STARTUPDELAY_INVALID')) {
+    define('Y_STARTUPDELAY_INVALID', YAPI_INVALID_DOUBLE);
+}
 if (!defined('Y_COMMAND_INVALID')) {
     define('Y_COMMAND_INVALID', YAPI_INVALID_STRING);
 }
-//--- (end of YMicroPython definitions)
-    #--- (YMicroPython yapiwrapper)
+//--- (end of generated code: YMicroPython definitions)
+    #--- (generated code: YMicroPython yapiwrapper)
 
-   #--- (end of YMicroPython yapiwrapper)
+   #--- (end of generated code: YMicroPython yapiwrapper)
 
 function yInternalEventCallback($obj, $value)
 {
     $obj->_internalEventHandler($value);
 }
 
-//--- (YMicroPython declaration)
+//--- (generated code: YMicroPython declaration)
 //vvvv YMicroPython.php
 
 /**
@@ -91,21 +100,27 @@ class YMicroPython extends YFunction
 {
     const LASTMSG_INVALID = YAPI::INVALID_STRING;
     const HEAPUSAGE_INVALID = YAPI::INVALID_UINT;
+    const HEAPFRAG_INVALID = YAPI::INVALID_UINT;
     const XHEAPUSAGE_INVALID = YAPI::INVALID_UINT;
+    const STACKUSAGE_INVALID = YAPI::INVALID_UINT;
     const CURRENTSCRIPT_INVALID = YAPI::INVALID_STRING;
     const STARTUPSCRIPT_INVALID = YAPI::INVALID_STRING;
+    const STARTUPDELAY_INVALID = YAPI::INVALID_DOUBLE;
     const DEBUGMODE_OFF = 0;
     const DEBUGMODE_ON = 1;
     const DEBUGMODE_INVALID = -1;
     const COMMAND_INVALID = YAPI::INVALID_STRING;
-    //--- (end of YMicroPython declaration)
+    //--- (end of generated code: YMicroPython declaration)
 
-    //--- (YMicroPython attributes)
+    //--- (generated code: YMicroPython attributes)
     protected string $_lastMsg = self::LASTMSG_INVALID;        // Text
     protected int $_heapUsage = self::HEAPUSAGE_INVALID;      // Percent
+    protected int $_heapFrag = self::HEAPFRAG_INVALID;       // Percent
     protected int $_xheapUsage = self::XHEAPUSAGE_INVALID;     // Percent
+    protected int $_stackUsage = self::STACKUSAGE_INVALID;     // Percent
     protected string $_currentScript = self::CURRENTSCRIPT_INVALID;  // Text
     protected string $_startupScript = self::STARTUPSCRIPT_INVALID;  // Text
+    protected float $_startupDelay = self::STARTUPDELAY_INVALID;   // MeasureVal
     protected int $_debugMode = self::DEBUGMODE_INVALID;      // OnOff
     protected string $_command = self::COMMAND_INVALID;        // Text
     protected mixed $_logCallback = null;                         // YMicroPythonLogCallback
@@ -114,18 +129,18 @@ class YMicroPython extends YFunction
     protected int $_logPos = 0;                            // int
     protected string $_prevPartialLog = "";                           // str
 
-    //--- (end of YMicroPython attributes)
+    //--- (end of generated code: YMicroPython attributes)
 
     function __construct(string $str_func)
     {
-        //--- (YMicroPython constructor)
+        //--- (generated code: YMicroPython constructor)
         parent::__construct($str_func);
         $this->_className = 'MicroPython';
 
-        //--- (end of YMicroPython constructor)
+        //--- (end of generated code: YMicroPython constructor)
     }
 
-    //--- (YMicroPython implementation)
+    //--- (generated code: YMicroPython implementation)
 
     function _parseAttr(string $name, mixed $val): int
     {
@@ -136,14 +151,23 @@ class YMicroPython extends YFunction
         case 'heapUsage':
             $this->_heapUsage = intval($val);
             return 1;
+        case 'heapFrag':
+            $this->_heapFrag = intval($val);
+            return 1;
         case 'xheapUsage':
             $this->_xheapUsage = intval($val);
+            return 1;
+        case 'stackUsage':
+            $this->_stackUsage = intval($val);
             return 1;
         case 'currentScript':
             $this->_currentScript = $val;
             return 1;
         case 'startupScript':
             $this->_startupScript = $val;
+            return 1;
+        case 'startupDelay':
+            $this->_startupDelay = round($val / 65.536) / 1000.0;
             return 1;
         case 'debugMode':
             $this->_debugMode = intval($val);
@@ -176,10 +200,10 @@ class YMicroPython extends YFunction
     }
 
     /**
-     * Returns the percentage of micropython main memory in use,
+     * Returns the percentage of MicroPython main memory in use,
      * as observed at the end of the last garbage collection.
      *
-     * @return int  an integer corresponding to the percentage of micropython main memory in use,
+     * @return int  an integer corresponding to the percentage of MicroPython main memory in use,
      *         as observed at the end of the last garbage collection
      *
      * On failure, throws an exception or returns YMicroPython::HEAPUSAGE_INVALID.
@@ -198,10 +222,32 @@ class YMicroPython extends YFunction
     }
 
     /**
-     * Returns the percentage of micropython external memory in use,
+     * Returns the fragmentation ratio of MicroPython main memory,
      * as observed at the end of the last garbage collection.
      *
-     * @return int  an integer corresponding to the percentage of micropython external memory in use,
+     * @return int  an integer corresponding to the fragmentation ratio of MicroPython main memory,
+     *         as observed at the end of the last garbage collection
+     *
+     * On failure, throws an exception or returns YMicroPython::HEAPFRAG_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_heapFrag(): int
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::HEAPFRAG_INVALID;
+            }
+        }
+        $res = $this->_heapFrag;
+        return $res;
+    }
+
+    /**
+     * Returns the percentage of MicroPython external memory in use,
+     * as observed at the end of the last garbage collection.
+     *
+     * @return int  an integer corresponding to the percentage of MicroPython external memory in use,
      *         as observed at the end of the last garbage collection
      *
      * On failure, throws an exception or returns YMicroPython::XHEAPUSAGE_INVALID.
@@ -216,6 +262,28 @@ class YMicroPython extends YFunction
             }
         }
         $res = $this->_xheapUsage;
+        return $res;
+    }
+
+    /**
+     * Returns the maximum percentage of MicroPython call stack in use,
+     * as observed at the end of the last garbage collection.
+     *
+     * @return int  an integer corresponding to the maximum percentage of MicroPython call stack in use,
+     *         as observed at the end of the last garbage collection
+     *
+     * On failure, throws an exception or returns YMicroPython::STACKUSAGE_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_stackUsage(): int
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::STACKUSAGE_INVALID;
+            }
+        }
+        $res = $this->_stackUsage;
         return $res;
     }
 
@@ -297,10 +365,53 @@ class YMicroPython extends YFunction
     }
 
     /**
-     * Returns the activation state of micropython debugging interface.
+     * Changes the wait time before running the startup script on power on, between 0.1
+     * second and 25 seconds. Remember to call the saveToFlash() method of the
+     * module if the modification must be kept.
+     *
+     * @param float $newval : a floating point number corresponding to the wait time before running the
+     * startup script on power on, between 0.1
+     *         second and 25 seconds
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_startupDelay(float $newval): int
+    {
+        $rest_val = strval(round($newval * 65536.0));
+        return $this->_setAttr("startupDelay", $rest_val);
+    }
+
+    /**
+     * Returns the wait time before running the startup script on power on,
+     * measured in seconds.
+     *
+     * @return float  a floating point number corresponding to the wait time before running the startup
+     * script on power on,
+     *         measured in seconds
+     *
+     * On failure, throws an exception or returns YMicroPython::STARTUPDELAY_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_startupDelay(): float
+    {
+        // $res                    is a double;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::STARTUPDELAY_INVALID;
+            }
+        }
+        $res = $this->_startupDelay;
+        return $res;
+    }
+
+    /**
+     * Returns the activation state of MicroPython debugging interface.
      *
      * @return int  either YMicroPython::DEBUGMODE_OFF or YMicroPython::DEBUGMODE_ON, according to the
-     * activation state of micropython debugging interface
+     * activation state of MicroPython debugging interface
      *
      * On failure, throws an exception or returns YMicroPython::DEBUGMODE_INVALID.
      * @throws YAPI_Exception on error
@@ -318,10 +429,10 @@ class YMicroPython extends YFunction
     }
 
     /**
-     * Changes the activation state of micropython debugging interface.
+     * Changes the activation state of MicroPython debugging interface.
      *
      * @param int $newval : either YMicroPython::DEBUGMODE_OFF or YMicroPython::DEBUGMODE_ON, according to
-     * the activation state of micropython debugging interface
+     * the activation state of MicroPython debugging interface
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -452,6 +563,22 @@ class YMicroPython extends YFunction
             $state = substr($this->get_advertisedValue(), 0, 1);
         }
         return YAPI::SUCCESS;
+    }
+
+    /**
+     * Clears MicroPython interpreter console log buffer.
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function clearLogs(): int
+    {
+        // $res                    is a int;
+
+        $res = $this->set_command('z');
+        return $res;
     }
 
     /**
@@ -611,9 +738,25 @@ class YMicroPython extends YFunction
     /**
      * @throws YAPI_Exception
      */
+    public function heapFrag(): int
+{
+    return $this->get_heapFrag();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
     public function xheapUsage(): int
 {
     return $this->get_xheapUsage();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function stackUsage(): int
+{
+    return $this->get_stackUsage();
 }
 
     /**
@@ -646,6 +789,22 @@ class YMicroPython extends YFunction
     public function setStartupScript(string $newval): int
 {
     return $this->set_startupScript($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setStartupDelay(float $newval): int
+{
+    return $this->set_startupDelay($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function startupDelay(): float
+{
+    return $this->get_startupDelay();
 }
 
     /**
@@ -721,12 +880,12 @@ class YMicroPython extends YFunction
         return self::FindMicroPython($next_hwid);
     }
 
-    //--- (end of YMicroPython implementation)
+    //--- (end of generated code: YMicroPython implementation)
 
 }
 //^^^^ YMicroPython.php
 
-//--- (YMicroPython functions)
+//--- (generated code: YMicroPython functions)
 
 /**
  * Retrieves a MicroPython interpreter for a given identifier.
@@ -775,5 +934,5 @@ function yFirstMicroPython(): ?YMicroPython
     return YMicroPython::FirstMicroPython();
 }
 
-//--- (end of YMicroPython functions)
+//--- (end of generated code: YMicroPython functions)
 

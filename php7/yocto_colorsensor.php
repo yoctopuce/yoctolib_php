@@ -56,6 +56,9 @@ if (!defined('Y_WORKINGMODE_AUTO')) {
 if (!defined('Y_WORKINGMODE_EXPERT')) {
     define('Y_WORKINGMODE_EXPERT', 1);
 }
+if (!defined('Y_WORKINGMODE_AUTOGAIN')) {
+    define('Y_WORKINGMODE_AUTOGAIN', 2);
+}
 if (!defined('Y_WORKINGMODE_INVALID')) {
     define('Y_WORKINGMODE_INVALID', -1);
 }
@@ -107,6 +110,9 @@ if (!defined('Y_INTEGRATIONTIME_INVALID')) {
 if (!defined('Y_GAIN_INVALID')) {
     define('Y_GAIN_INVALID', YAPI_INVALID_UINT);
 }
+if (!defined('Y_AUTOGAIN_INVALID')) {
+    define('Y_AUTOGAIN_INVALID', YAPI_INVALID_STRING);
+}
 if (!defined('Y_SATURATION_INVALID')) {
     define('Y_SATURATION_INVALID', YAPI_INVALID_UINT);
 }
@@ -157,11 +163,13 @@ class YColorSensor extends YFunction
     const ESTIMATIONMODEL_INVALID = -1;
     const WORKINGMODE_AUTO = 0;
     const WORKINGMODE_EXPERT = 1;
+    const WORKINGMODE_AUTOGAIN = 2;
     const WORKINGMODE_INVALID = -1;
     const LEDCURRENT_INVALID = YAPI::INVALID_UINT;
     const LEDCALIBRATION_INVALID = YAPI::INVALID_UINT;
     const INTEGRATIONTIME_INVALID = YAPI::INVALID_UINT;
     const GAIN_INVALID = YAPI::INVALID_UINT;
+    const AUTOGAIN_INVALID = YAPI::INVALID_STRING;
     const SATURATION_INVALID = YAPI::INVALID_UINT;
     const ESTIMATEDRGB_INVALID = YAPI::INVALID_UINT;
     const ESTIMATEDHSL_INVALID = YAPI::INVALID_UINT;
@@ -193,6 +201,7 @@ class YColorSensor extends YFunction
     protected $_ledCalibration = self::LEDCALIBRATION_INVALID; // UInt31
     protected $_integrationTime = self::INTEGRATIONTIME_INVALID; // UInt31
     protected $_gain = self::GAIN_INVALID;           // UInt31
+    protected $_autoGain = self::AUTOGAIN_INVALID;       // AutoGainConfig
     protected $_saturation = self::SATURATION_INVALID;     // SaturationBits
     protected $_estimatedRGB = self::ESTIMATEDRGB_INVALID;   // U24Color
     protected $_estimatedHSL = self::ESTIMATEDHSL_INVALID;   // U24Color
@@ -238,6 +247,9 @@ class YColorSensor extends YFunction
             return 1;
         case 'gain':
             $this->_gain = intval($val);
+            return 1;
+        case 'autoGain':
+            $this->_autoGain = $val;
             return 1;
         case 'saturation':
             $this->_saturation = intval($val);
@@ -322,8 +334,8 @@ class YColorSensor extends YFunction
      * In Auto mode, sensor parameters are automatically set based on the selected estimation model.
      * In Expert mode, sensor parameters such as gain and integration time are configured manually.
      *
-     * @return int  either YColorSensor::WORKINGMODE_AUTO or YColorSensor::WORKINGMODE_EXPERT, according to
-     * the sensor working mode
+     * @return int  a value among YColorSensor::WORKINGMODE_AUTO, YColorSensor::WORKINGMODE_EXPERT and
+     * YColorSensor::WORKINGMODE_AUTOGAIN corresponding to the sensor working mode
      *
      * On failure, throws an exception or returns YColorSensor::WORKINGMODE_INVALID.
      * @throws YAPI_Exception on error
@@ -346,8 +358,8 @@ class YColorSensor extends YFunction
      * In Expert mode, sensor parameters such as gain and integration time are configured manually.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
-     * @param int $newval : either YColorSensor::WORKINGMODE_AUTO or YColorSensor::WORKINGMODE_EXPERT,
-     * according to the sensor working mode
+     * @param int $newval : a value among YColorSensor::WORKINGMODE_AUTO, YColorSensor::WORKINGMODE_EXPERT
+     * and YColorSensor::WORKINGMODE_AUTOGAIN corresponding to the sensor working mode
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
@@ -522,6 +534,56 @@ class YColorSensor extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("gain", $rest_val);
+    }
+
+    /**
+     * Returns the current autogain parameters of the sensor as a character string.
+     * The returned parameter format is: "Min < Channel < Max:Saturation".
+     *
+     * @return string  a string corresponding to the current autogain parameters of the sensor as a character string
+     *
+     * On failure, throws an exception or returns YColorSensor::AUTOGAIN_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_autoGain(): string
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::AUTOGAIN_INVALID;
+            }
+        }
+        $res = $this->_autoGain;
+        return $res;
+    }
+
+    /**
+     * Sets the sensor's autogain parameters using a character string.
+     * The parameter format is: "Min < Channel < Max:Saturation".
+     * Spaces in the string are important and must be respected.
+     * The Min and Max values define the lower and upper raw thresholds used to adjust the gain.
+     * The channel name must be specified as a string, among the available channels: "F1" to "VIS".
+     * The measured value corresponds to the signal read on the selected channel.
+     * If the measured value exceeds the Max value, the gain decreases.
+     * If the measured value is below the Min value, the gain increases.
+     * The Saturation parameter defines the system behavior when saturation is detected:
+     * - If saturation is enabled, the gain is automatically reduced when saturation occurs.
+     * - If saturation is disabled, the gain remains unchanged even if saturation is detected.
+     * This mechanism keeps the signal within an optimal range, preventing saturation or insufficient amplification.
+     * This method can only be used when the sensor is in autogain mode.
+     * Remember to call the saveToFlash() method of the module if the modification must be kept.
+     *
+     * @param string $newval : a string
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_autoGain(string $newval): int
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("autoGain", $rest_val);
     }
 
     /**
@@ -942,6 +1004,22 @@ class YColorSensor extends YFunction
     public function setGain(int $newval): int
 {
     return $this->set_gain($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function autoGain(): string
+{
+    return $this->get_autoGain();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAutoGain(string $newval): int
+{
+    return $this->set_autoGain($newval);
 }
 
     /**

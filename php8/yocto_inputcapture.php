@@ -362,7 +362,7 @@ class YInputCaptureData
                 $recOfs = $recOfs + 1;
             }
         }
-        if ((($recOfs) & 1) == 1) {
+        if (($recOfs & 1) == 1) {
             // align to next word
             $recOfs = $recOfs + 1;
         }
@@ -1112,7 +1112,7 @@ class YInputCapture extends YFunction
         if ($msDuration > 1000) {
             $msDuration = 1000;
         }
-        $snapStart = intVal((-$msDuration) / (2));
+        $snapStart = intVal(-$msDuration / 2);
         $snapUrl = sprintf('snap.bin?t=%d&d=%d', $snapStart, $msDuration);
 
         $snapData = $this->_download($snapUrl);
