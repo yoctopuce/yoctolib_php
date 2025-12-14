@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 68482 2025-08-21 10:07:30Z mvuilleu $
+ * $Id: yocto_messagebox.php 70161 2025-11-12 08:44:16Z seb $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *
@@ -522,7 +522,7 @@ class YSms
         // $newdata                is a bin;
         // $newdatalen             is a int;
         // $i                      is a int;
-        if (mb_strlen($val) == 0) {
+        if (strlen($val) == 0) {
             return YAPI::SUCCESS;
         }
         if ($this->_alphab == 0) {
@@ -824,7 +824,7 @@ class YSms
             }
             // remove padding digit if needed
             if ((ord($addr[$ofs+$siz]) >> 4) == 15) {
-                $res = substr($res, 0, mb_strlen($res)-1);
+                $res = substr($res, 0, strlen($res)-1);
             }
             return $res;
         }
@@ -842,7 +842,7 @@ class YSms
         // $expasc                 is a bin;
         // $v1                     is a int;
         // $v2                     is a int;
-        $explen = mb_strlen($exp);
+        $explen = strlen($exp);
         if ($explen == 0) {
             $res = '';
             return $res;
@@ -872,7 +872,7 @@ class YSms
         if (substr($exp, 4, 1) == '-' || substr($exp, 4, 1) == '/') {
             // ignore century
             $exp = substr($exp, 2, $explen-2);
-            $explen = mb_strlen($exp);
+            $explen = strlen($exp);
         }
         $expasc = YAPI::Ystr2bin($exp);
         $res = (7 > 0 ? pack('C',array_fill(0, 7, 0)) : '');
@@ -977,10 +977,10 @@ class YSms
             $byt = (10*(($byt & 15))) + (($byt >> 4));
             $hh = sprintf('%d', ($byt >> 2));
             $ss = sprintf('%d', 15*(($byt & 3)));
-            if (mb_strlen($hh)<2) {
+            if (strlen($hh)<2) {
                 $hh = sprintf('0%s', $hh);
             }
-            if (mb_strlen($ss)<2) {
+            if (strlen($ss)<2) {
                 $ss = sprintf('0%s', $ss);
             }
             $res = sprintf('%s%s%s:%s', $res, $sign, $hh, $ss);
@@ -1883,7 +1883,7 @@ class YMessageBox extends YFunction
         // $suffixlen              is a int;
         // copied form the YCellular class
         // quote dangerous characters used in AT commands
-        $cmdLen = mb_strlen($cmd);
+        $cmdLen = strlen($cmd);
         $chrPos = YAPI::Ystrpos($cmd,'#');
         while ($chrPos >= 0) {
             $cmd = sprintf('%s%c23%s', substr($cmd, 0, $chrPos), 37,
@@ -1913,7 +1913,7 @@ class YMessageBox extends YFunction
             $buff = $this->_download($cmd);
             $bufflen = strlen($buff);
             $buffstr = YAPI::Ybin2str($buff);
-            $buffstrlen = mb_strlen($buffstr);
+            $buffstrlen = strlen($buffstr);
             $idx = $bufflen - 1;
             while (($idx > 0) && (ord($buff[$idx]) != 64) && (ord($buff[$idx]) != 10) && (ord($buff[$idx]) != 13)) {
                 $idx = $idx - 1;
@@ -2218,7 +2218,7 @@ class YMessageBox extends YFunction
             $i = $i + 1;
         }
         $resstr = YAPI::Ybin2str($resbin);
-        if (mb_strlen($resstr) > $reslen) {
+        if (strlen($resstr) > $reslen) {
             $resstr = substr($resstr, 0, $reslen);
         }
         return $resstr;
@@ -2360,13 +2360,13 @@ class YMessageBox extends YFunction
                     } else {
                         $sig = $sms->get_concatSignature();
                         $i = 0;
-                        while (($i < $nsig) && (mb_strlen($sig) > 0)) {
+                        while (($i < $nsig) && (strlen($sig) > 0)) {
                             if ($signatures[$i] == $sig) {
                                 $sig = '';
                             }
                             $i = $i + 1;
                         }
-                        if (mb_strlen($sig) > 0) {
+                        if (strlen($sig) > 0) {
                             $signatures[] = $sig;
                             $nsig = $nsig + 1;
                         }
@@ -2393,13 +2393,13 @@ class YMessageBox extends YFunction
                     } else {
                         $sig = $sms->get_concatSignature();
                         $i = 0;
-                        while (($i < $nsig) && (mb_strlen($sig) > 0)) {
+                        while (($i < $nsig) && (strlen($sig) > 0)) {
                             if ($signatures[$i] == $sig) {
                                 $sig = '';
                             }
                             $i = $i + 1;
                         }
-                        if (mb_strlen($sig) > 0) {
+                        if (strlen($sig) > 0) {
                             $signatures[] = $sig;
                             $nsig = $nsig + 1;
                         }

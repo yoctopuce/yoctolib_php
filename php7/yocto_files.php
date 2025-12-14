@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 68569 2025-08-27 06:59:08Z seb $
+ * $Id: yocto_files.php 70518 2025-11-26 16:18:50Z mvuilleu $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -349,7 +349,7 @@ class YFiles extends YFunction
     {
         // $json                   is a bin;
         $filelist = [];         // binArr;
-        if (mb_strlen($filename) == 0) {
+        if (strlen($filename) == 0) {
             return false;
         }
         $json = $this->sendCommand(sprintf('dir&f=%s',$filename));
@@ -440,14 +440,11 @@ class YFiles extends YFunction
         // $part                   is a int;
         // $res                    is a int;
         $sz = strlen($content);
-        if ($sz == 0) {
-            $res = YAPI::_bincrc($content, 0, 0);
-            return $res;
-        }
 
         $fsver = $this->_getVersion();
         if ($fsver < 40) {
             $res = YAPI::_bincrc($content, 0, $sz);
+            $res = (($res & 0x7fffffff) - 2 * (($res >> 1) & 0x40000000));
             return $res;
         }
         $blkcnt = intVal(($sz + 255) / 256);
@@ -466,6 +463,7 @@ class YFiles extends YFunction
             $blkidx = $blkidx + 1;
         }
         $res = ((YAPI::_bincrc($meta, 0, 4 * $blkcnt)) ^ intval(0xffffffff));
+        $res = (($res & 0x7fffffff) - 2 * (($res >> 1) & 0x40000000));
         return $res;
     }
 

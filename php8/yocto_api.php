@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 69547 2025-10-20 13:42:38Z seb $
+ * $Id: yocto_api.php 70666 2025-12-09 10:26:00Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -450,7 +450,7 @@ class YTcpHub
         ]);
     }
 
-    function verfiyStreamAddr(bool $fullTest = true, string &$errmsg = ''): int
+    function verfiyStreamAddr(bool $fullTest = true, ?string &$errmsg = ''): int
     {
         if ($this->streamaddr == 'tcp://CALLBACK') {
 
@@ -1040,7 +1040,7 @@ class YTcpReq
     }
 
 
-    function process(string &$errmsg = ''): int
+    function process(?string &$errmsg = ''): int
     {
         if ($this->eof()) {
             if ($this->errorType != YAPI::SUCCESS) {
@@ -4322,7 +4322,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.9553";
+        return "2.1.10736";
     }
 
     /**
@@ -4406,7 +4406,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function InitAPI(int $mode = YAPI::DETECT_NONE, string &$errmsg = ''): int
+    public static function InitAPI(int $mode = YAPI::DETECT_NONE, ?string &$errmsg = ''): int
     {
         if (is_null(self::$_hubs)) {
             self::_init();
@@ -4640,7 +4640,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function RegisterHub(string $url, string &$errmsg = ''): int
+    public static function RegisterHub(string $url, ?string &$errmsg = ''): int
     {
         if (is_null(self::$_hubs)) {
             self::_init();
@@ -4658,6 +4658,7 @@ class YAPI
             return YAPI::SUCCESS;
         }
         $url_detail = self::_parseRegisteredURL($url);
+        $errmsg = '';
         if ($url_detail['proto'] == "wss" || $url_detail['proto'] == "ws") {
             $errmsg = "Websocket is not available in PHP";
             return YAPI::NOT_SUPPORTED;
@@ -4729,7 +4730,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function PreregisterHub(string $url, string &$errmsg = ''): int
+    public static function PreregisterHub(string $url, ?string &$errmsg = ''): int
     {
         if (is_null(self::$_hubs)) {
             self::_init();
@@ -4828,7 +4829,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function TestHub(string $url, int $mstimeout, string &$errmsg = ''): int
+    public static function TestHub(string $url, int $mstimeout, ?string &$errmsg = ''): int
     {
         if ($url == 'net') {
             $errmsg = "Invalid URL";
@@ -4883,7 +4884,7 @@ class YAPI
      * @param string $errmsg
      * @return int
      */
-    static public function _forwardHTTPreq(string $proto, string $host, string $relurl, $cbdata, string &$errmsg): int
+    static public function _forwardHTTPreq(string $proto, string $host, string $relurl, $cbdata, ?string &$errmsg): int
     {
         $errno = 0;
         $errstr = '';
@@ -5035,7 +5036,7 @@ class YAPI
      *
      * On failure, throws an exception or returns a negative error code.
      */
-    public static function ForwardHTTPCallback(string $url, string &$errmsg = ""): int
+    public static function ForwardHTTPCallback(string $url, ?string &$errmsg = ""): int
     {
         $url_detail = self::_parseRegisteredURL('callback');
         if (isset(self::$_hubs[$url_detail['rooturl']])) {
@@ -5080,7 +5081,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function UpdateDeviceList(string &$errmsg = ''): int
+    public static function UpdateDeviceList(?string &$errmsg = ''): int
     {
         $yreq = self::_updateDeviceList_internal(false, true);
         if ($yreq->errorType != YAPI::SUCCESS) {
@@ -5107,7 +5108,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function HandleEvents(string &$errmsg = ''): int
+    public static function HandleEvents(?string &$errmsg = ''): int
     {
         // monitor hubs for events
         /** @noinspection PhpStatementHasEmptyBodyInspection */
@@ -5164,7 +5165,7 @@ class YAPI
      *
      * On failure returns a negative error code.
      */
-    public static function Sleep(float $ms_duration, string &$errmsg = ''): int
+    public static function Sleep(float $ms_duration, ?string &$errmsg = ''): int
     {
         $end = YAPI::GetTickCount() + $ms_duration;
         self::HandleEvents($errmsg);
@@ -5746,7 +5747,7 @@ class YFirmwareUpdate
         // $err                    is a str;
         // $leng                   is a int;
         $err = YAPI::Ybin2str($this->_settings);
-        $leng = mb_strlen($err);
+        $leng = strlen($err);
         if (($leng >= 6) && ('error:' == substr($err, 0, 6))) {
             $this->_progress = -1;
             $this->_progress_msg = substr($err, 6, $leng - 6);
@@ -6145,7 +6146,7 @@ class YDataStream
      */
     public function get_startTimeUTC(): float
     {
-        return intval(round($this->_startTime));
+        return round($this->_startTime);
     }
 
     /**
@@ -8013,6 +8014,28 @@ class YFunction
     public function _parserHelper(): int
     {
         return 0;
+    }
+
+    /**
+     * @throws YAPI_Exception on error
+     */
+    public function _is_valid_pass(string $passwd): bool
+    {
+        // $tmp                    is a str;
+        if (strlen($passwd) > YAPI_HASH_BUF_SIZE) {
+            $tmp = sprintf('Password too long (max %d chars) :%s', YAPI_HASH_BUF_SIZE, $passwd);
+            $this->_throw(YAPI::INVALID_ARGUMENT, $tmp);
+            return false;
+        }
+        if (YAPI::Ystrpos($passwd,'@') >=0) {
+            $this->_throw(YAPI::INVALID_ARGUMENT, 'Character @ is not allowed in password');
+            return false;
+        }
+        if (YAPI::Ystrpos($passwd,'/') >=0) {
+            $this->_throw(YAPI::INVALID_ARGUMENT, 'Character / is not allowed in password');
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -10671,7 +10694,7 @@ class YModule extends YFunction
         // $modpos                 is a int;
         $cleanHwId = $func;
         $modpos = YAPI::Ystrpos($func,'.module');
-        if ($modpos != (mb_strlen($func) - 7)) {
+        if ($modpos != (strlen($func) - 7)) {
             $cleanHwId = $func . '.module';
         }
         $obj = YFunction::_FindFromCache('Module', $cleanHwId);
@@ -10981,7 +11004,7 @@ class YModule extends YFunction
                 $url = sprintf('api/%s/sensorType',$ii_0);
                 $t_type = YAPI::Ybin2str($this->_download($url));
                 if ($t_type == 'RES_NTC' || $t_type == 'RES_LINEAR') {
-                    $pageid = substr($ii_0, 11, mb_strlen($ii_0) - 11);
+                    $pageid = substr($ii_0, 11, strlen($ii_0) - 11);
                     if ($pageid == '') {
                         $pageid = '1';
                     }
@@ -11004,8 +11027,8 @@ class YModule extends YFunction
             $sep = '';
             foreach ($filelist as $ii_1) {
                 $name = $this->_json_get_key($ii_1, 'name');
-                if ((mb_strlen($name) > 0) && !($name == 'startupConf.json')) {
-                    if (substr($name, mb_strlen($name)-1, 1) == '/') {
+                if ((strlen($name) > 0) && !($name == 'startupConf.json')) {
+                    if (substr($name, strlen($name)-1, 1) == '/') {
                         $file_data = '';
                     } else {
                         $file_data_bin = $this->_download($this->_escapeAttr($name));
@@ -11222,7 +11245,7 @@ class YModule extends YFunction
         if ($cparams == '' || $cparams == '0') {
             return 1;
         }
-        if ((mb_strlen($cparams) < 2) || (YAPI::Ystrpos($cparams,'.') >= 0)) {
+        if ((strlen($cparams) < 2) || (YAPI::Ystrpos($cparams,'.') >= 0)) {
             return 0;
         } else {
             return 2;
@@ -11528,7 +11551,7 @@ class YModule extends YFunction
         foreach ($old_dslist as $ii_0) {
             $each_str = $this->_json_get_string($ii_0);
             // split json path and attr
-            $leng = mb_strlen($each_str);
+            $leng = strlen($each_str);
             $eqpos = YAPI::Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
                 $this->_throw(YAPI::INVALID_ARGUMENT, 'Invalid settings');
@@ -11538,7 +11561,7 @@ class YModule extends YFunction
             $eqpos = $eqpos + 1;
             $value = substr($each_str, $eqpos, $leng - $eqpos);
             $old_jpath[] = $jpath;
-            $old_jpath_len[] = mb_strlen($jpath);
+            $old_jpath_len[] = strlen($jpath);
             $old_val_arr[] = $value;
             if ($jpath == 'module/serialNumber') {
                 $old_serial = $value;
@@ -11562,7 +11585,7 @@ class YModule extends YFunction
             // remove quotes
             $each_str = $this->_json_get_string($ii_1);
             // split json path and attr
-            $leng = mb_strlen($each_str);
+            $leng = strlen($each_str);
             $eqpos = YAPI::Ystrpos($each_str,'=');
             if (($eqpos < 0) || ($leng == 0)) {
                 $this->_throw(YAPI::INVALID_ARGUMENT, 'Invalid settings');
@@ -11572,13 +11595,13 @@ class YModule extends YFunction
             $eqpos = $eqpos + 1;
             $value = substr($each_str, $eqpos, $leng - $eqpos);
             $new_jpath[] = $jpath;
-            $new_jpath_len[] = mb_strlen($jpath);
+            $new_jpath_len[] = strlen($jpath);
             $new_val_arr[] = $value;
         }
         $i = 0;
         while ($i < sizeof($new_jpath)) {
             $njpath = $new_jpath[$i];
-            $leng = mb_strlen($njpath);
+            $leng = strlen($njpath);
             $cpos = YAPI::Ystrpos($njpath,'/');
             if (($cpos < 0) || ($leng == 0)) {
                 continue;
@@ -12187,7 +12210,7 @@ function yGetAPIVersion(): string
  *
  * On failure returns a negative error code.
  */
-function yInitAPI(int $mode = 0, string &$errmsg = ""): int
+function yInitAPI(int $mode = 0, ?string &$errmsg = ""): int
 {
     return YAPI::InitAPI($mode, $errmsg);
 }
@@ -12292,7 +12315,7 @@ function yEnableExceptions(): void
  *
  * On failure returns a negative error code.
  */
-function yRegisterHub(string $url, string &$errmsg = ""): int
+function yRegisterHub(string $url, ?string &$errmsg = ""): int
 {
     return YAPI::RegisterHub($url, $errmsg);
 }
@@ -12313,7 +12336,7 @@ function yRegisterHub(string $url, string &$errmsg = ""): int
  *
  * On failure returns a negative error code.
  */
-function yPreregisterHub(string $url, string &$errmsg = ""): int
+function yPreregisterHub(string $url, ?string &$errmsg = ""): int
 {
     return YAPI::PreregisterHub($url, $errmsg);
 }
@@ -12345,7 +12368,7 @@ function yUnregisterHub(string $url): void
  *
  * On failure returns a negative error code.
  */
-function yTestHub(string $url, int $mstimeout, string &$errmsg = ""): int
+function yTestHub(string $url, int $mstimeout, ?string &$errmsg = ""): int
 {
     return YAPI::TestHub($url, $mstimeout, $errmsg);
 }
@@ -12363,7 +12386,7 @@ function yTestHub(string $url, int $mstimeout, string &$errmsg = ""): int
  *
  * On failure, throws an exception or returns a negative error code.
  */
-function yForwardHTTPCallback(string $url, string &$errmsg = ""): int
+function yForwardHTTPCallback(string $url, ?string &$errmsg = ""): int
 {
     return YAPI::ForwardHTTPCallback($url, $errmsg);
 }
@@ -12385,7 +12408,7 @@ function yForwardHTTPCallback(string $url, string &$errmsg = ""): int
  *
  * On failure returns a negative error code.
  */
-function yUpdateDeviceList(string &$errmsg = ""): int
+function yUpdateDeviceList(?string &$errmsg = ""): int
 {
     return YAPI::UpdateDeviceList($errmsg);
 }
@@ -12407,7 +12430,7 @@ function yUpdateDeviceList(string &$errmsg = ""): int
  *
  * On failure returns a negative error code.
  */
-function yHandleEvents(string &$errmsg = ""): int
+function yHandleEvents(?string &$errmsg = ""): int
 {
     return YAPI::HandleEvents($errmsg);
 }
@@ -12431,7 +12454,7 @@ function yHandleEvents(string &$errmsg = ""): int
  *
  * On failure returns a negative error code.
  */
-function ySleep(float $ms_duration, string &$errmsg = ""): int
+function ySleep(float $ms_duration, ?string &$errmsg = ""): int
 {
     return YAPI::Sleep($ms_duration, $errmsg);
 }
