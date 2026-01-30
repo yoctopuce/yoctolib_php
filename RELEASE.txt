@@ -1,6 +1,3 @@
-PHPV2 v2.1.10736
+PHPV2 v2.1.11632
 
-- Prevent setting passwords with unsupported characters (@ and /)
-- Fix behavior of YSerialPort.readByte when there is no data available
-- Fix Prog-FirmwareUpdate example to properly handle VirtualHub-4web and VirtualHub-V2
-- Fix handling of $errmsg for PHP 8.4
+- Add new DisplayLayer methods

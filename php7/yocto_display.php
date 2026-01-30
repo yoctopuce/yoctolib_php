@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_display.php 63695 2024-12-13 11:06:34Z seb $
+ * $Id: yocto_display.php 71629 2026-01-29 15:08:26Z mvuilleu $
  *
  * Implements yFindDisplay(), the high-level API for Display functions
  *
@@ -76,6 +76,9 @@ if (!defined('Y_DISPLAYTYPE_GRAY')) {
 if (!defined('Y_DISPLAYTYPE_RGB')) {
     define('Y_DISPLAYTYPE_RGB', 2);
 }
+if (!defined('Y_DISPLAYTYPE_EPAPER')) {
+    define('Y_DISPLAYTYPE_EPAPER', 3);
+}
 if (!defined('Y_DISPLAYTYPE_INVALID')) {
     define('Y_DISPLAYTYPE_INVALID', -1);
 }
@@ -84,6 +87,12 @@ if (!defined('Y_STARTUPSEQ_INVALID')) {
 }
 if (!defined('Y_BRIGHTNESS_INVALID')) {
     define('Y_BRIGHTNESS_INVALID', YAPI_INVALID_UINT);
+}
+if (!defined('Y_AUTOINVERTDELAY_INVALID')) {
+    define('Y_AUTOINVERTDELAY_INVALID', YAPI_INVALID_UINT);
+}
+if (!defined('Y_DISPLAYPANEL_INVALID')) {
+    define('Y_DISPLAYPANEL_INVALID', YAPI_INVALID_STRING);
 }
 if (!defined('Y_DISPLAYWIDTH_INVALID')) {
     define('Y_DISPLAYWIDTH_INVALID', YAPI_INVALID_UINT);
@@ -136,6 +145,9 @@ const Y_ALIGN_BOTTOM_RIGHT = 15;
  */
 class YDisplayLayer
 {
+    const NO_INK                         = -1;
+    const BG_INK                         = -2;
+    const FG_INK                         = -3;
     const ALIGN_TOP_LEFT                 = 0;
     const ALIGN_CENTER_LEFT              = 1;
     const ALIGN_BASELINE_LEFT            = 2;
@@ -155,6 +167,8 @@ class YDisplayLayer
     //--- (end of generated code: YDisplayLayer declaration)
 
     //--- (generated code: YDisplayLayer attributes)
+    protected $_polyPrevX = 0;                            // int
+    protected $_polyPrevY = 0;                            // int
 
     //--- (end of generated code: YDisplayLayer attributes)
     protected $_display;
@@ -246,8 +260,11 @@ class YDisplayLayer
     }
 
     /**
-     * Selects the pen color for all subsequent drawing functions,
-     * including text drawing. The pen color is provided as an RGB value.
+     * Selects the color to be used for all subsequent drawing functions,
+     * for filling as well as for line and text drawing.
+     * To select a different fill and outline color, use
+     * selectFillColor and selectLineColor.
+     * The pen color is provided as an RGB value.
      * For grayscale or monochrome displays, the value is
      * automatically converted to the proper range.
      *
@@ -265,7 +282,10 @@ class YDisplayLayer
 
     /**
      * Selects the pen gray level for all subsequent drawing functions,
-     * including text drawing. The gray level is provided as a number between
+     * for filling as well as for line and text drawing.
+     * To select a different fill and outline color, use
+     * selectFillColor and selectLineColor.
+     * The gray level is provided as a number between
      * 0 (black) and 255 (white, or whichever the lightest color is).
      * For monochrome displays (without gray levels), any value
      * lower than 128 is rendered as black, and any value equal
@@ -300,20 +320,99 @@ class YDisplayLayer
     }
 
     /**
-     * Enables or disables anti-aliasing for drawing oblique lines and circles.
-     * Anti-aliasing provides a smoother aspect when looked from far enough,
-     * but it can add fuzziness when the display is looked from very close.
-     * At the end of the day, it is your personal choice.
-     * Anti-aliasing is enabled by default on grayscale and color displays,
-     * but you can disable it if you prefer. This setting has no effect
-     * on monochrome displays.
+     * Selects the color to be used for filling rectangular bars,
+     * discs and polygons. The color is provided as an RGB value.
+     * For grayscale or monochrome displays, the value is
+     * automatically converted to the proper range.
+     * You can also use the constants FG_INK to use the
+     * default drawing colour, BG_INK to use the default
+     * background colour, and NO_INK to disable filling.
      *
-     * @param boolean $mode : true to enable anti-aliasing, false to
-     *         disable it.
+     * @param int $color : the desired drawing color, as a 24-bit RGB value,
+     *         or one of the constants NO_INK, FG_INK
+     *         or BG_INK
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
      * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function selectFillColor(int $color): int
+    {
+        // $r                      is a int;
+        // $g                      is a int;
+        // $b                      is a int;
+        if ($color==-1) {
+            return $this->command_push('f_');
+        }
+        if ($color==-2) {
+            return $this->command_push('f-');
+        }
+        if ($color==-3) {
+            return $this->command_push('f.');
+        }
+        $r = (($color >> 20) & 15);
+        $g = (($color >> 12) & 15);
+        $b = (($color >> 4) & 15);
+        return $this->command_push(sprintf('f%x%x%x',$r,$g,$b));
+    }
+
+    /**
+     * Selects the color to be used for drawing the outline of rectangular
+     * bars, discs and polygons, as well as for drawing lines and text.
+     * The color is provided as an RGB value.
+     * For grayscale or monochrome displays, the value is
+     * automatically converted to the proper range.
+     * You can also use the constants FG_INK to use the
+     * default drawing colour, BG_INK to use the default
+     * background colour, and NO_INK to disable outline drawing.
+     *
+     * @param int $color : the desired drawing color, as a 24-bit RGB value,
+     *         or one of the constants NO_INK, FG_INK
+     *         or BG_INK
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function selectLineColor(int $color): int
+    {
+        // $r                      is a int;
+        // $g                      is a int;
+        // $b                      is a int;
+        if ($color==-1) {
+            return $this->command_push('l_');
+        }
+        if ($color==-2) {
+            return $this->command_push('l-');
+        }
+        if ($color==-3) {
+            return $this->command_push('l*');
+        }
+        $r = (($color >> 20) & 15);
+        $g = (($color >> 12) & 15);
+        $b = (($color >> 4) & 15);
+        return $this->command_push(sprintf('l%x%x%x',$r,$g,$b));
+    }
+
+    /**
+     * Selects the line width for drawing the outline of rectangular
+     * bars, discs and polygons, as well as for drawing lines.
+     *
+     * @param int $width : the desired line width, in pixels
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function selectLineWidth(int $width): int
+    {
+        return $this->command_push(sprintf('t%d',$width));
+    }
+
+    /**
      * @throws YAPI_Exception on error
      */
     public function setAntialiasingMode(bool $mode): int
@@ -456,10 +555,10 @@ class YDisplayLayer
     }
 
     /**
-     * Draws a GIF image at the specified position. The GIF image must have been previously
-     * uploaded to the device built-in memory. If you experience problems using an image
-     * file, check the device logs for any error message such as missing image file or bad
-     * image file format.
+     * Draws an image previously uploaded to the device filesystem, at the specified position.
+     * At present time, GIF images are the only supported image format. If you experience
+     * problems using an image file, check the device logs for any error message such as
+     * missing image file or bad image file format.
      *
      * @param int $x : the distance from left of layer to the left of the image, in pixels
      * @param int $y : the distance from top of layer to the top of the image, in pixels
@@ -504,6 +603,27 @@ class YDisplayLayer
     }
 
     /**
+     * Draws a GIF image provided as a binary buffer at the specified position.
+     * If the image drawing must be included in an animation sequence, save it
+     * in the device filesystem first and use drawImage instead.
+     *
+     * @param int $x : the distance from left of layer to the left of the image, in pixels
+     * @param int $y : the distance from top of layer to the top of the image, in pixels
+     * @param string $gifimage : a binary object with the content of a GIF file
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function drawGIF(int $x, int $y, string $gifimage): int
+    {
+        // $destname               is a str;
+        $destname = sprintf('layer%d:G,-1@%d,%d',$this->_id,$x,$y);
+        return $this->_display->upload($destname,$gifimage);
+    }
+
+    /**
      * Moves the drawing pointer of this layer to the specified position.
      *
      * @param int $x : the distance from left of layer, in pixels
@@ -535,6 +655,61 @@ class YDisplayLayer
     public function lineTo(int $x, int $y): int
     {
         return $this->command_flush(sprintf('-%d,%d',$x,$y));
+    }
+
+    /**
+     * Starts drawing a polygon with the first corner at the specified position.
+     *
+     * @param int $x : the distance from left of layer, in pixels
+     * @param int $y : the distance from top of layer, in pixels
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function polygonStart(int $x, int $y): int
+    {
+        $this->_polyPrevX = $x;
+        $this->_polyPrevY = $y;
+        return $this->command_push(sprintf('[%d,%d',$x,$y));
+    }
+
+    /**
+     * Adds a point to the currently open polygon, previously opened using
+     * polygonStart.
+     *
+     * @param int $x : the distance from left of layer to the new point, in pixels
+     * @param int $y : the distance from top of layer to the new point, in pixels
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function polygonAdd(int $x, int $y): int
+    {
+        // $dx                     is a int;
+        // $dy                     is a int;
+        $dx = $x - $this->_polyPrevX;
+        $dy = $y - $this->_polyPrevY;
+        $this->_polyPrevX = $x;
+        $this->_polyPrevY = $y;
+        return $this->command_flush(sprintf(';%d,%d',$dx,$dy));
+    }
+
+    /**
+     * Close the currently open polygon, fill its content the fill color currently
+     * selected for the layer, and draw its outline using the selected line color.
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function polygonEnd(): int
+    {
+        return $this->command_flush(']');
     }
 
     /**
@@ -774,16 +949,19 @@ class YDisplay extends YFunction
     const ENABLED_INVALID = -1;
     const STARTUPSEQ_INVALID = YAPI::INVALID_STRING;
     const BRIGHTNESS_INVALID = YAPI::INVALID_UINT;
+    const AUTOINVERTDELAY_INVALID = YAPI::INVALID_UINT;
     const ORIENTATION_LEFT = 0;
     const ORIENTATION_UP = 1;
     const ORIENTATION_RIGHT = 2;
     const ORIENTATION_DOWN = 3;
     const ORIENTATION_INVALID = -1;
+    const DISPLAYPANEL_INVALID = YAPI::INVALID_STRING;
     const DISPLAYWIDTH_INVALID = YAPI::INVALID_UINT;
     const DISPLAYHEIGHT_INVALID = YAPI::INVALID_UINT;
     const DISPLAYTYPE_MONO = 0;
     const DISPLAYTYPE_GRAY = 1;
     const DISPLAYTYPE_RGB = 2;
+    const DISPLAYTYPE_EPAPER = 3;
     const DISPLAYTYPE_INVALID = -1;
     const LAYERWIDTH_INVALID = YAPI::INVALID_UINT;
     const LAYERHEIGHT_INVALID = YAPI::INVALID_UINT;
@@ -795,7 +973,9 @@ class YDisplay extends YFunction
     protected $_enabled = self::ENABLED_INVALID;        // Bool
     protected $_startupSeq = self::STARTUPSEQ_INVALID;     // Text
     protected $_brightness = self::BRIGHTNESS_INVALID;     // Percent
-    protected $_orientation = self::ORIENTATION_INVALID;    // Orientation
+    protected $_autoInvertDelay = self::AUTOINVERTDELAY_INVALID; // UInt31
+    protected $_orientation = self::ORIENTATION_INVALID;    // DisplayOrientation
+    protected $_displayPanel = self::DISPLAYPANEL_INVALID;   // DisplayPanel
     protected $_displayWidth = self::DISPLAYWIDTH_INVALID;   // UInt31
     protected $_displayHeight = self::DISPLAYHEIGHT_INVALID;  // UInt31
     protected $_displayType = self::DISPLAYTYPE_INVALID;    // DisplayType
@@ -834,8 +1014,14 @@ class YDisplay extends YFunction
         case 'brightness':
             $this->_brightness = intval($val);
             return 1;
+        case 'autoInvertDelay':
+            $this->_autoInvertDelay = intval($val);
+            return 1;
         case 'orientation':
             $this->_orientation = intval($val);
+            return 1;
+        case 'displayPanel':
+            $this->_displayPanel = $val;
             return 1;
         case 'displayWidth':
             $this->_displayWidth = intval($val);
@@ -978,6 +1164,51 @@ class YDisplay extends YFunction
     }
 
     /**
+     * Returns the interval between automatic display inversions, or 0 if automatic
+     * inversion is disabled. Using the automatic inversion mechanism reduces the
+     * burn-in that occurs on OLED screens over long periods when the same content
+     * remains displayed on the screen.
+     *
+     * @return int  an integer corresponding to the interval between automatic display inversions, or 0 if automatic
+     *         inversion is disabled
+     *
+     * On failure, throws an exception or returns YDisplay::AUTOINVERTDELAY_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_autoInvertDelay(): int
+    {
+        // $res                    is a int;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::AUTOINVERTDELAY_INVALID;
+            }
+        }
+        $res = $this->_autoInvertDelay;
+        return $res;
+    }
+
+    /**
+     * Changes the interval between automatic display inversions.
+     * The parameter is the number of seconds, or 0 to disable automatic inversion.
+     * Using the automatic inversion mechanism reduces the burn-in that occurs on OLED
+     * screens over long periods when the same content remains displayed on the screen.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param int $newval : an integer corresponding to the interval between automatic display inversions
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_autoInvertDelay(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("autoInvertDelay", $rest_val);
+    }
+
+    /**
      * Returns the currently selected display orientation.
      *
      * @return int  a value among YDisplay::ORIENTATION_LEFT, YDisplay::ORIENTATION_UP,
@@ -989,7 +1220,7 @@ class YDisplay extends YFunction
      */
     public function get_orientation(): int
     {
-        // $res                    is a enumORIENTATION;
+        // $res                    is a enumDISPLAYORIENTATION;
         if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
             if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
                 return self::ORIENTATION_INVALID;
@@ -1015,6 +1246,46 @@ class YDisplay extends YFunction
     {
         $rest_val = strval($newval);
         return $this->_setAttr("orientation", $rest_val);
+    }
+
+    /**
+     * Returns the exact model of the display panel.
+     *
+     * @return string  a string corresponding to the exact model of the display panel
+     *
+     * On failure, throws an exception or returns YDisplay::DISPLAYPANEL_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_displayPanel(): string
+    {
+        // $res                    is a string;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::DISPLAYPANEL_INVALID;
+            }
+        }
+        $res = $this->_displayPanel;
+        return $res;
+    }
+
+    /**
+     * Changes the model of display to match the connected display panel.
+     * This function has no effect if the module does not support the selected
+     * display panel.
+     * Remember to call the saveToFlash()
+     * method of the module if the modification must be kept.
+     *
+     * @param string $newval : a string corresponding to the model of display to match the connected display panel
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_displayPanel(string $newval): int
+    {
+        $rest_val = $newval;
+        return $this->_setAttr("displayPanel", $rest_val);
     }
 
     /**
@@ -1060,8 +1331,9 @@ class YDisplay extends YFunction
     /**
      * Returns the display type: monochrome, gray levels or full color.
      *
-     * @return int  a value among YDisplay::DISPLAYTYPE_MONO, YDisplay::DISPLAYTYPE_GRAY and
-     * YDisplay::DISPLAYTYPE_RGB corresponding to the display type: monochrome, gray levels or full color
+     * @return int  a value among YDisplay::DISPLAYTYPE_MONO, YDisplay::DISPLAYTYPE_GRAY,
+     * YDisplay::DISPLAYTYPE_RGB and YDisplay::DISPLAYTYPE_EPAPER corresponding to the display type:
+     * monochrome, gray levels or full color
      *
      * On failure, throws an exception or returns YDisplay::DISPLAYTYPE_INVALID.
      * @throws YAPI_Exception on error
@@ -1216,6 +1488,53 @@ class YDisplay extends YFunction
         $this->flushLayers();
         $this->resetHiddenLayerFlags();
         return $this->sendCommand('Z');
+    }
+
+    /**
+     * Forces an ePaper screen to perform a regenerative update using the slow
+     * update method. Periodic use of the slow method (total panel update with
+     * multiple inversions) prevents ghosting effects and improves contrast.
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function regenerateDisplay(): int
+    {
+        return $this->sendCommand('z');
+    }
+
+    /**
+     * Disables screen refresh for a short period of time. The combination of
+     * postponeRefresh and triggerRefresh can be used as an
+     * alternative to double-buffering to avoid flickering during display updates.
+     *
+     * @param int $duration : duration of deactivation in milliseconds (max. 30 seconds)
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function postponeRefresh(int $duration): int
+    {
+        return $this->sendCommand(sprintf('H%d',$duration));
+    }
+
+    /**
+     * Trigger an immediate screen refresh. The combination of
+     * postponeRefresh and triggerRefresh can be used as an
+     * alternative to double-buffering to avoid flickering during display updates.
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function triggerRefresh(): int
+    {
+        return $this->sendCommand('H0');
     }
 
     /**
@@ -1419,6 +1738,202 @@ class YDisplay extends YFunction
     }
 
     /**
+     * Returns a color image with the current content of the display.
+     * The image is returned as a binary object, where each byte represents a pixel,
+     * from left to right and from top to bottom. The palette used to map byte
+     * values to RGB colors is filled into the list provided as argument.
+     * In all cases, the first palette entry (value 0) corresponds to the
+     * screen default background color.
+     * The image dimensions are given by the display width and height.
+     *
+     * @param Integer[] $palette : a list to be filled with the image palette
+     *
+     * @return string  a binary object if the call succeeds.
+     *
+     * On failure, throws an exception or returns an empty binary object.
+     * @throws YAPI_Exception on error
+     */
+    public function readDisplay(array $palette): string
+    {
+        // $zipmap                 is a bin;
+        // $zipsize                is a int;
+        // $zipwidth               is a int;
+        // $zipheight              is a int;
+        // $ziprotate              is a int;
+        // $zipcolors              is a int;
+        // $zipcol                 is a int;
+        // $zipbits                is a int;
+        // $zipmask                is a int;
+        // $srcpos                 is a int;
+        // $endrun                 is a int;
+        // $srcpat                 is a int;
+        // $srcbit                 is a int;
+        // $srcval                 is a int;
+        // $srcx                   is a int;
+        // $srcy                   is a int;
+        // $srci                   is a int;
+        // $incx                   is a int;
+        // $pixmap                 is a bin;
+        // $pixcount               is a int;
+        // $pixval                 is a int;
+        // $pixpos                 is a int;
+        // $rotmap                 is a bin;
+        $pixmap = '';
+        // Check if the display firmware has autoInvertDelay and pixels.bin support
+
+        if ($this->get_autoInvertDelay() < 0) {
+            // Old firmware, use uncompressed GIF output to rebuild pixmap
+            $zipmap = $this->_download('display.gif');
+            $zipsize = strlen($zipmap);
+            if ($zipsize == 0) {
+                return $pixmap;
+            }
+            if (!($zipsize >= 32)) return $this->_throw(YAPI::IO_ERROR,'not a GIF image',$pixmap);
+            if (!((ord($zipmap[0]) == 71) && (ord($zipmap[2]) == 70))) return $this->_throw(YAPI::INVALID_ARGUMENT,'not a GIF image',$pixmap);
+            $zipwidth = ord($zipmap[6]) + 256 * ord($zipmap[7]);
+            $zipheight = ord($zipmap[8]) + 256 * ord($zipmap[9]);
+            while (sizeof($palette) > 0) {
+                array_pop($palette);
+            };
+            $zipcol = ord($zipmap[13]) * 65536 + ord($zipmap[14]) * 256 + ord($zipmap[15]);
+            $palette[] = $zipcol;
+            $zipcol = ord($zipmap[16]) * 65536 + ord($zipmap[17]) * 256 + ord($zipmap[18]);
+            $palette[] = $zipcol;
+            $pixcount = $zipwidth * $zipheight;
+            $pixmap = ($pixcount > 0 ? pack('C',array_fill(0, $pixcount, 0)) : '');
+            $pixpos = 0;
+            $srcpos = 30;
+            $zipsize = $zipsize - 2;
+            while ($srcpos < $zipsize) {
+                // load next run size
+                $endrun = $srcpos + 1 + ord($zipmap[$srcpos]);
+                $srcpos = $srcpos + 1;
+                while ($srcpos < $endrun) {
+                    $srcval = ord($zipmap[$srcpos]);
+                    $srcpos = $srcpos + 1;
+                    $srcbit = 8;
+                    while ($srcbit != 0) {
+                        if ($srcbit < 3) {
+                            $srcval = $srcval + (ord($zipmap[$srcpos]) << $srcbit);
+                            $srcpos = $srcpos + 1;
+                        }
+                        $pixval = ($srcval & 7);
+                        $srcval = ($srcval >> 3);
+                        if (!(($pixval > 1) && ($pixval != 4))) return $this->_throw(YAPI::INVALID_ARGUMENT,'unexpected encoding',$pixmap);
+                        $pixmap[$pixpos] = pack('C', $pixval);
+                        $pixpos = $pixpos + 1;
+                        $srcbit = $srcbit - 3;
+                    }
+                }
+            }
+            return $pixmap;
+        }
+        // New firmware, use compressed pixels.bin
+        $zipmap = $this->_download('pixels.bin');
+        $zipsize = strlen($zipmap);
+        if ($zipsize == 0) {
+            return $pixmap;
+        }
+        if (!($zipsize >= 16)) return $this->_throw(YAPI::IO_ERROR,'not a pixmap',$pixmap);
+        if (!((ord($zipmap[0]) == 80) && (ord($zipmap[2]) == 88))) return $this->_throw(YAPI::INVALID_ARGUMENT,'not a pixmap',$pixmap);
+        $zipwidth = ord($zipmap[4]) + 256 * ord($zipmap[5]);
+        $zipheight = ord($zipmap[6]) + 256 * ord($zipmap[7]);
+        $ziprotate = ord($zipmap[8]);
+        $zipcolors = ord($zipmap[9]);
+        while (sizeof($palette) > 0) {
+            array_pop($palette);
+        };
+        $srcpos = 10;
+        $srci = 0;
+        while ($srci < $zipcolors) {
+            $zipcol = ord($zipmap[$srcpos]) * 65536 + ord($zipmap[$srcpos+1]) * 256 + ord($zipmap[$srcpos+2]);
+            $palette[] = $zipcol;
+            $srcpos = $srcpos + 3;
+            $srci = $srci + 1;
+        }
+        $zipbits = 1;
+        while ((1 << $zipbits) < $zipcolors) {
+            $zipbits = $zipbits + 1;
+        }
+        $zipmask = (1 << $zipbits) - 1;
+        $pixcount = $zipwidth * $zipheight;
+        $pixmap = ($pixcount > 0 ? pack('C',array_fill(0, $pixcount, 0)) : '');
+        $srcx = 0;
+        $srcy = 0;
+        $incx = intVal(8 / $zipbits);
+        $srcval = 0;
+        while ($srcpos < $zipsize) {
+            // load next compression pattern byte
+            $srcpat = ord($zipmap[$srcpos]);
+            $srcpos = $srcpos + 1;
+            $srcbit = 7;
+            while ($srcbit >= 0) {
+                // get next bitmap byte
+                if (($srcpat & 128) != 0) {
+                    $srcval = ord($zipmap[$srcpos]);
+                    $srcpos = $srcpos + 1;
+                }
+                $srcpat = ($srcpat << 1);
+                $pixpos = $srcy * $zipwidth + $srcx;
+                // produce 8 pixels (or 4, if bitmap uses 2 bits per pixel)
+                $srci = 8 - $zipbits;
+                while ($srci >= 0) {
+                    $pixval = (($srcval >> $srci) & $zipmask);
+                    $pixmap[$pixpos] = pack('C', $pixval);
+                    $pixpos = $pixpos + 1;
+                    $srci = $srci - $zipbits;
+                }
+                $srcy = $srcy + 1;
+                if ($srcy >= $zipheight) {
+                    $srcy = 0;
+                    $srcx = $srcx + $incx;
+                    // drop last bytes if image is not a multiple of 8
+                    if ($srcx >= $zipwidth) {
+                        $srcbit = 0;
+                    }
+                }
+                $srcbit = $srcbit - 1;
+            }
+        }
+        // rotate pixmap to match display orientation
+        if ($ziprotate == 0) {
+            return $pixmap;
+        }
+        if (($ziprotate & 2) != 0) {
+            // rotate buffer 180 degrees by swapping pixels
+            $srcpos = 0;
+            $pixpos = $pixcount - 1;
+            while ($srcpos < $pixpos) {
+                $pixval = ord($pixmap[$srcpos]);
+                $pixmap[$srcpos] = pack('C', ord($pixmap[$pixpos]));
+                $pixmap[$pixpos] = pack('C', $pixval);
+                $srcpos = $srcpos + 1;
+                $pixpos = $pixpos - 1;
+            }
+        }
+        if (($ziprotate & 1) == 0) {
+            return $pixmap;
+        }
+        // rotate 90 ccw: first pixel is bottom left
+        $rotmap = ($pixcount > 0 ? pack('C',array_fill(0, $pixcount, 0)) : '');
+        $srcx = 0;
+        $srcy = $zipwidth - 1;
+        $srcpos = 0;
+        while ($srcpos < $pixcount) {
+            $pixval = ord($pixmap[$srcpos]);
+            $pixpos = $srcy * $zipheight + $srcx;
+            $rotmap[$pixpos] = pack('C', $pixval);
+            $srcy = $srcy - 1;
+            if ($srcy < 0) {
+                $srcx = $srcx + 1;
+                $srcy = $zipwidth - 1;
+            }
+            $srcpos = $srcpos + 1;
+        }
+        return $rotmap;
+    }
+
+    /**
      * @throws YAPI_Exception
      */
     public function enabled(): int
@@ -1469,6 +1984,22 @@ class YDisplay extends YFunction
     /**
      * @throws YAPI_Exception
      */
+    public function autoInvertDelay(): int
+{
+    return $this->get_autoInvertDelay();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setAutoInvertDelay(int $newval): int
+{
+    return $this->set_autoInvertDelay($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
     public function orientation(): int
 {
     return $this->get_orientation();
@@ -1480,6 +2011,22 @@ class YDisplay extends YFunction
     public function setOrientation(int $newval): int
 {
     return $this->set_orientation($newval);
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function displayPanel(): string
+{
+    return $this->get_displayPanel();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setDisplayPanel(string $newval): int
+{
+    return $this->set_displayPanel($newval);
 }
 
     /**
