@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 70518 2025-11-26 16:18:50Z mvuilleu $
+ * $Id: yocto_files.php 72052 2026-02-17 07:43:32Z mvuilleu $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *
@@ -117,12 +117,6 @@ class YFileRecord
     }
 
     //--- (end of generated code: YFileRecord implementation)
-
-    function contentEquals(string $bin_content): bool
-    {
-        return ($this->_size == strlen($bin_content) &&
-            $this->_crc == crc32($bin_content));
-    }
 }
 
 //^^^^ YFileRecord.php

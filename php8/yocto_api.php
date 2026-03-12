@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 71338 2026-01-19 14:10:09Z seb $
+ * $Id: yocto_api.php 72344 2026-03-09 14:01:56Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -448,7 +448,7 @@ class YTcpHub
         $arr = [
             'ssl' => $ssl_options,
             'http' => [
-                'timeout' => $this->get_networkTimeout()/1000
+                'timeout' => $this->get_networkTimeout() / 1000
             ]
         ];
         return stream_context_create($arr);
@@ -477,7 +477,7 @@ class YTcpHub
             $useragent = strtolower($_SERVER['HTTP_USER_AGENT']);
             $patern = 'yoctohub';
             if (substr($useragent, 0, 10) != 'virtualhub' && substr($useragent, 0, strlen($patern)) != $patern) {
-                $errmsg = "no user agent provided:[".$useragent."]";
+                $errmsg = "no user agent provided:[" . $useragent . "]";
                 $this->callbackCache = array();
                 return YAPI::IO_ERROR;
             }
@@ -2087,6 +2087,7 @@ class YAPIContext
     {
         return "";
     }
+
     private function AddUdevRule_internal(bool $force): string
     {
         return "error: Not supported in PHP";
@@ -2463,7 +2464,6 @@ class YAPIContext
     }
 
 
-
 }
 
 //^^^^ YAPIContext.php
@@ -2824,6 +2824,14 @@ class YAPI
                                 YAPI::addRefreshEvent($fun);
                             }
                         }
+                        if (self::$_firstArrival && !is_null(self::$_arrivalCallback)) {
+                            // call callback on first RegisterDeviceArrival call
+                            $module = YModule::FindModule($serial . '.module');
+                            // force (re)loading the module object with up-to-date information
+                            // this will also ensure we have a valid serialNumber in cache on unplug
+                            $module->load(YAPI::$defaultCacheValidity);
+                            self::$_pendingCallbacks[] = ['event' => '+', 'serial' => $serial, 'module' => $module];
+                        }
                     }
                     if (isset($devinfo['index'])) {
                         $devydx = $devinfo['index'];
@@ -2833,13 +2841,17 @@ class YAPI
                         // Add new device
                         new YDevice($rooturl, $devinfo, $loadval["services"]["yellowPages"]);
                         if (!is_null(self::$_arrivalCallback)) {
-                            self::$_pendingCallbacks[] = "+$serial";
+                            $module = YModule::FindModule($serial . ".module");
+                            // force (re)loading the module object with up-to-date information
+                            // this will also ensure we have a valid serialNumber in cache on unplug
+                            $module->load(YAPI::$defaultCacheValidity);
+                            self::$_pendingCallbacks[] = ['event' => '+', 'serial' => $serial, 'module' => $module];
                         }
                     } elseif ($currdev->getLogicalName() != $devinfo['logicalName']) {
                         // Reindex device from its own data
                         $currdev->refresh();
                         if (!is_null(self::$_namechgCallback)) {
-                            self::$_pendingCallbacks[] = "/$serial";
+                            self::$_pendingCallbacks[] = ['event' => '/', 'serial' => $serial, 'module' => YModule::FindModule($serial . ".module")];
                         }
                     } elseif (isset($refresh[$serial]) || $currdev->getRootUrl() != $rooturl ||
                         $currdev->getBeacon() != $devinfo['beacon']) {
@@ -2873,27 +2885,30 @@ class YAPI
         if ($bool_invokecallbacks) {
             $nbevents = sizeof(self::$_pendingCallbacks);
             for ($i = 0; $i < $nbevents; $i++) {
+                /** @var array $evt */
                 $evt = self::$_pendingCallbacks[$i];
-                $serial = substr($evt, 1);
-                switch (substr($evt, 0, 1)) {
+                $serial = $evt['serial'];
+                switch (substr($evt['event'], 0, 1)) {
                     case '+':
                         if (!is_null(self::$_arrivalCallback)) {
                             $cb = self::$_arrivalCallback;
-                            $cb(YModule::FindModule($serial . ".module"));
+                            $cb($evt['module']);
                         }
                         break;
                     case '/':
                         if (!is_null(self::$_namechgCallback)) {
                             $cb = self::$_namechgCallback;
-                            $cb(YModule::FindModule($serial . ".module"));
+                            $cb($evt['module']);
                         }
                         break;
                     case '-':
                         if (!is_null(self::$_removalCallback)) {
                             $cb = self::$_removalCallback;
-                            $cb(YModule::FindModule($serial . ".module"));
+                            $cb($evt['module']);
                         }
-                        self::forgetDevice(self::$_devs[$serial]);
+                        if (isset(self::$_devs[$serial])) {
+                            self::forgetDevice(self::$_devs[$serial]);
+                        }
                         break;
                 }
             }
@@ -3098,7 +3113,7 @@ class YAPI
                                     if ($parts[2] == '0') {
                                         YAPI::_unplugDevice($parts[1]);
                                     }
-                                    // no break on purpose
+                                // no break on purpose
                                 case 4: // function name change
                                 case 8: // function name change (ydx)
                                     $hub->devListExpires = 0;
@@ -3351,10 +3366,10 @@ class YAPI
     public static function _unplugDevice(string $serial): void
     {
         if (!is_null(self::$_removalCallback)) {
-            self::$_pendingCallbacks[] = "-{$serial}";
-        } else {
-            self::forgetDevice(self::$_devs[$serial]);
+            self::$_pendingCallbacks[] = ['event' => '-', 'serial' => $serial, 'module' => YModule::FindModule($serial . ".module")];
         }
+        self::forgetDevice(self::$_devs[$serial]);
+
     }
 
 
@@ -4326,7 +4341,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.11632";
+        return "2.1.12413";
     }
 
     /**
@@ -7414,7 +7429,7 @@ class YHub
             return $hub != null ? 1 : 0;
         }
         if ($attrName == "connectionState") {
-            if ($hub == null){
+            if ($hub == null) {
                 return YHub::UNREGISTERED;
             }
             return $hub->getConnectionState();
@@ -7903,9 +7918,11 @@ class YFunction
 
     /**
      * Registers the callback function that is invoked on every change of advertised value.
-     * The callback is invoked only during the execution of ySleep or yHandleEvents.
-     * This provides control over the time when the callback is triggered. For good responsiveness, remember to call
-     * one of these two functions periodically. To unregister a callback, pass a null pointer as argument.
+     * The callback is then invoked only during the execution of ySleep or yHandleEvents.
+     * This provides control over the time when the callback is triggered. For good responsiveness,
+     * remember to call one of these two functions periodically. The callback is called once juste after beeing
+     * registered, passing the current advertised value  of the function, provided that it is not an empty string.
+     * To unregister a callback, pass a null pointer as argument.
      *
      * @param callable $callback : the callback function to call, or a null pointer. The callback function
      * should take two
@@ -8194,8 +8211,8 @@ class YFunction
      * SERIAL     is the serial number of the module if the module is connected or "unresolved", and
      * FUNCTIONID is  the hardware identifier of the function if the module is connected.
      * For example, this method returns Relay(MyCustomName.relay1)=RELAYLO1-123456.relay1 if the
-     * module is already connected or Relay(BadCustomeName.relay1)=unresolved if the module has
-     * not yet been connected. This method does not trigger any USB or TCP transaction and can therefore be used in
+     * module is connected or Relay(BadCustomeName.relay1)=unresolved if the module is
+     * not connected. This method does not trigger any USB or TCP transaction and can therefore be used in
      * a debugger.
      *
      * @return string  a string that describes the function
@@ -8809,6 +8826,7 @@ class YCalibCtx
         $this->hdl = $hdl;
     }
 }
+
 //--- (generated code: YSensor declaration)
 //vvvv YSensor.php
 

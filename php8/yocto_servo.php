@@ -155,9 +155,9 @@ class YServo extends YFunction
     }
 
     /**
-     * Returns the current servo position.
+     * Returns the current servo position, usually a value between -1000 and 1000.
      *
-     * @return int  an integer corresponding to the current servo position
+     * @return int  an integer corresponding to the current servo position, usually a value between -1000 and 1000
      *
      * On failure, throws an exception or returns YServo::POSITION_INVALID.
      * @throws YAPI_Exception on error
@@ -175,9 +175,10 @@ class YServo extends YFunction
     }
 
     /**
-     * Changes immediately the servo driving position.
+     * Changes immediately the servo  position, the parameter is  a value between -1000 and +1000.
      *
-     * @param int $newval : an integer corresponding to immediately the servo driving position
+     * @param int $newval : an integer corresponding to immediately the servo  position, the parameter is 
+     * a value between -1000 and +1000
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
      *
