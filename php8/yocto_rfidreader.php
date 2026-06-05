@@ -66,6 +66,12 @@ class YRfidTagInfo
     const IEC_14443_NTAG_215             = 8;
     const IEC_14443_NTAG_216             = 9;
     const IEC_14443_NTAG_424_DNA         = 10;
+    const IEC_15693_ST25DV               = 11;
+    const IEC_15693_ST25TV               = 12;
+    const IEC_15693_TAGIT_HFI            = 13;
+    const IEC_15693_MB89R                = 14 ;
+    const IEC_15693_ICODE_DNA            = 15;
+    const IEC_15693_ICODE_SLI            = 16;
     //--- (end of generated code: YRfidTagInfo declaration)
 
     //--- (generated code: YRfidTagInfo attributes)
@@ -212,6 +218,25 @@ class YRfidTagInfo
         if ($tagType == self::IEC_14443_NTAG_424_DNA) {
             $typeStr = 'NTAG 424 DNA';
         }
+        if ($tagType == self::IEC_15693_ST25DV) {
+            $typeStr = 'ST25DVxx';
+        }
+        if ($tagType == self::IEC_15693_ST25TV) {
+            $typeStr = 'ST25TVxx';
+        }
+        if ($tagType == self::IEC_15693_TAGIT_HFI) {
+            $typeStr = 'TI TAGIT HFI';
+        }
+        if ($tagType == self::IEC_15693_MB89R) {
+            $typeStr = 'MB89Rxx';
+        }
+        if ($tagType == self::IEC_15693_ICODE_DNA) {
+            $typeStr = 'ICODE DNA';
+        }
+        if ($tagType == self::IEC_15693_ICODE_SLI) {
+            $typeStr = 'ICODE SLI';
+        }
+
         $this->_tagId = $tagId;
         $this->_tagType = $tagType;
         $this->_typeStr = $typeStr;
@@ -363,6 +388,14 @@ class YRfidStatus
     const INVALID_SIZE                   = -154;
     const BAD_PASSWORD_FORMAT            = -155;
     const RADIO_IS_OFF                   = -156;
+    const NOT_AVAILABLE_ON_THIS_TAG      = -157;
+    const PASSWORD_FEATURE_NOT_SUPPORTED = -158;
+    const BAD_PASSWORD_LENGTH            = -159 ;
+    const BAD_PASSWORD_TYPE              = -160;
+    const BAD_PASSWORD                   = -161;
+    const PASSWORD_REQUIRED              = -162;
+    const MULTIWRITE_NOT_SUPPORTED       = -163;
+    const MULTIREAD_NOT_SUPPORTED        = -164;
     //--- (end of generated code: YRfidStatus declaration)
 
     //--- (generated code: YRfidStatus attributes)
@@ -535,7 +568,7 @@ class YRfidStatus
                 $errMsg = 'Block / byte is already locked and thus cannot be locked again.';
             }
             if ($errCode == self::BLOCK_LOCKED) {
-                $errMsg = 'Block / byte is locked and its content cannot be changed';
+                $errMsg = 'Block / byte is either locked and its content cannot be changed or operation might require a password.';
             }
             if ($errCode == self::BLOCK_NOT_SUCESSFULLY_PROGRAMMED) {
                 $errMsg = 'Block was not successfully programmed';
@@ -795,6 +828,30 @@ class YRfidStatus
             if ($errCode == self::RADIO_IS_OFF) {
                 $errMsg = 'Radio is OFF (refreshRate=0).';
             }
+            if ($errCode == self::NOT_AVAILABLE_ON_THIS_TAG) {
+                $errMsg = 'Tag does not provide $this feature.';
+            }
+            if ($errCode == self::PASSWORD_FEATURE_NOT_SUPPORTED) {
+                $errMsg = 'Password feature not supported $this tag.';
+            }
+            if ($errCode == self::BAD_PASSWORD_LENGTH) {
+                $errMsg = 'Incorrect password length';
+            }
+            if ($errCode == self::BAD_PASSWORD_TYPE) {
+                $errMsg = 'Bad password type.';
+            }
+            if ($errCode == self::BAD_PASSWORD) {
+                $errMsg = 'Bad password.';
+            }
+            if ($errCode == self::PASSWORD_REQUIRED) {
+                $errMsg = 'Operation requires a password';
+            }
+            if ($errCode == self::MULTIWRITE_NOT_SUPPORTED) {
+                $errMsg = 'Multi block write unavailable on $this tag.';
+            }
+            if ($errCode == self::MULTIREAD_NOT_SUPPORTED) {
+                $errMsg = 'Multi block read unavailable on $this tag.';
+            }
             if ($errBlk >= 0) {
                 $errMsg = sprintf('%s (block %d)', $errMsg, $errBlk);
             }
@@ -838,6 +895,13 @@ class YRfidOptions
     const NO_RFID_KEY                    = 0;
     const MIFARE_KEY_A                   = 1;
     const MIFARE_KEY_B                   = 2;
+    const ST25DV_CONFIG_PWD              = 3;
+    const ST25DV_PWD1                    = 4;
+    const ST25DV_PWD2                    = 5;
+    const ST25DV_PWD3                    = 6;
+    const ST25TV_CONFIG_PWD              = 7;
+    const ST25TV_PWD1                    = 8;
+    const ST25TV_PWD2                    = 9;
     //--- (end of generated code: YRfidOptions declaration)
 
     //--- (generated code: YRfidOptions attributes)
@@ -1266,7 +1330,11 @@ class YRfidReader extends YFunction
      * Changes an RFID tag configuration to prevents any further write to
      * the selected blocks. This operation is definitive and irreversible.
      * Depending on the tag type and block index, adjascent blocks may become
-     * read-only as well, based on the locking granularity.
+     * read-only as well, based on the locking granularity.  Note that some tags
+     * may allow only a few blocks to be locked, for instance ST25DVxxx  tags
+     * allows a lock on block 0 and 1 only.
+     *
+     *
      *
      * @param string $tagId : identifier of the tag to use
      * @param int $firstBlock : first block to lock
@@ -1759,6 +1827,120 @@ class YRfidReader extends YFunction
             $res = $status->get_yapiError();
         }
         return $res;
+    }
+
+    /**
+     * Reads a byte from the Tag configuration (ISO 15693 ST25DVxx only).
+     * This function is actually a call to the 0xA0 RFID command and is specific to
+     * ST25DVxx tags. Check ST25DVxx datasheet for more information about
+     * the data organisation of ST25DVxx tags configuration.
+     *
+     * @param string $tagId : identifier of the tag to use
+     * @param int $addr  : offset of the byte in the tag configuation
+     *
+     * @param YRfidOptions $options : an YRfidOptions object with the optional
+     *         command execution parameters, such as security key
+     *         if required
+     * @param YRfidStatus $status : an RfidStatus object that will contain
+     *         the detailled status of the operation
+     *
+     * @return int  the requested byte value (0...255)
+     *
+     * On failure, throws an exception or returns a negative error code. When it
+     * happens, you can get more information from the status object.
+     * @throws YAPI_Exception on error
+     */
+    public function tagGetConfigByte(string $tagId, int $addr, YRfidOptions $options, YRfidStatus &$status): int
+    {
+        // $optstr                 is a str;
+        // $url                    is a str;
+        // $json                   is a bin;
+        // $res                    is a int;
+        $optstr = $options->imm_getParams();
+        $url = sprintf('rfid.json?a=gcfg&t=%s&b=%d%s',$tagId,$addr, $optstr);
+
+        $json = $this->_download($url);
+        $this->_chkerror($tagId, $json, $status);
+        if ($status->get_yapiError() == YAPI::SUCCESS) {
+            $res = intVal($this->_json_get_key($json, 'res'));
+        } else {
+            $res = $status->get_yapiError();
+        }
+        return $res;
+    }
+
+    /**
+     * Changes a byte in the tag's configuration (ISO 15693 ST25DVxx only).
+     * Warning: modifing the tag configation may alter its behavior in a non-reversible way.
+     * This operation requires the CONFIG_PWD password to be set in the options,
+     * default value is "0000000000000000" (16 zeros). This function is actually
+     * a call to the 0xA1 RFID command and is specific to ST25DVxx tags. Check
+     * ST25DVxx datasheet for more information about the data organisation
+     * of ST25DVxx tags configuration.
+     *
+     * @param string $tagId : identifier of the tag to use
+     * @param int $addr  : address of the byte to write
+     * @param int $value : the value to write (0...255)
+     * @param YRfidOptions $options : an YRfidOptions object with the optional
+     *         command execution parameters, such as security key
+     *         if required
+     * @param YRfidStatus $status : an RfidStatus object that will contain
+     *         the detailled status of the operation
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code. When it
+     * happens, you can get more information from the status object.
+     * @throws YAPI_Exception on error
+     */
+    public function tagSetConfigByte(string $tagId, int $addr, int $value, YRfidOptions $options, YRfidStatus &$status): int
+    {
+        // $optstr                 is a str;
+        // $url                    is a str;
+        // $json                   is a bin;
+        $optstr = $options->imm_getParams();
+        $url = sprintf('rfid.json?a=scfg&t=%s&b=%d&v=%d%s',$tagId,$addr,$value,$optstr);
+
+        $json = $this->_download($url);
+        return $this->_chkerror($tagId, $json, $status);
+    }
+
+    /**
+     * Set a password that will be required to access the tag  (ISO 15693 ST25DVxx only).
+     * The password must be a string of characters representing 8 bytes in hexadecimal.
+     * There are several types of password for the same tag; please consult your tags
+     * documentation to understand their respective applications. Once the password
+     * has been configured, operations requiring this password must be initiated with
+     * the password defined in the KeyType and HexKey fields of the
+     * options parameter for the operations in question. It is not necessarily
+     * required to consistently provide the same password for every operation during the
+     * same session with a tag.
+     *
+     * @param string $tagId : identifier of the tag to use
+     * @param int $passwordType  : type of password to be set (YRfidOptions.ST25D_CONFIG_PWD,YRfidOptions.ST25D_PWD1,YRfidOptions.ST25D_PWD2..)
+     * @param string $password : the password (16 characters hex string encoding 8 bytes)
+     * @param YRfidOptions $options : an YRfidOptions object with the optional
+     *         command execution parameters, such as security key
+     *         if required
+     * @param YRfidStatus $status : an RfidStatus object that will contain
+     *         the detailled status of the operation
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code. When it
+     * happens, you can get more information from the status object.
+     * @throws YAPI_Exception on error
+     */
+    public function tagSetPassword(string $tagId, int $passwordType, string $password, YRfidOptions $options, YRfidStatus &$status): int
+    {
+        // $optstr                 is a str;
+        // $url                    is a str;
+        // $json                   is a bin;
+        $optstr = $options->imm_getParams();
+        $url = sprintf('rfid.json?a=spwd&t=%s&b=%d&p=%s%s',$tagId,$passwordType,$password,$optstr);
+
+        $json = $this->_download($url);
+        return $this->_chkerror($tagId, $json, $status);
     }
 
     /**

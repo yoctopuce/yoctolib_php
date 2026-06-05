@@ -41,6 +41,15 @@
 //--- (YOrientation return codes)
 //--- (end of YOrientation return codes)
 //--- (YOrientation definitions)
+if (!defined('Y_COUNTERCLOCKWISE_FALSE')) {
+    define('Y_COUNTERCLOCKWISE_FALSE', 0);
+}
+if (!defined('Y_COUNTERCLOCKWISE_TRUE')) {
+    define('Y_COUNTERCLOCKWISE_TRUE', 1);
+}
+if (!defined('Y_COUNTERCLOCKWISE_INVALID')) {
+    define('Y_COUNTERCLOCKWISE_INVALID', -1);
+}
 if (!defined('Y_COMMAND_INVALID')) {
     define('Y_COMMAND_INVALID', YAPI_INVALID_STRING);
 }
@@ -64,11 +73,15 @@ if (!defined('Y_ZEROOFFSET_INVALID')) {
  */
 class YOrientation extends YSensor
 {
+    const COUNTERCLOCKWISE_FALSE = 0;
+    const COUNTERCLOCKWISE_TRUE = 1;
+    const COUNTERCLOCKWISE_INVALID = -1;
     const COMMAND_INVALID = YAPI::INVALID_STRING;
     const ZEROOFFSET_INVALID = YAPI::INVALID_DOUBLE;
     //--- (end of YOrientation declaration)
 
     //--- (YOrientation attributes)
+    protected $_counterClockwise = self::COUNTERCLOCKWISE_INVALID; // Bool
     protected $_command = self::COMMAND_INVALID;        // Text
     protected $_zeroOffset = self::ZEROOFFSET_INVALID;     // MeasureVal
 
@@ -88,6 +101,9 @@ class YOrientation extends YSensor
     function _parseAttr(string $name,  $val): int
     {
         switch ($name) {
+        case 'counterClockwise':
+            $this->_counterClockwise = intval($val);
+            return 1;
         case 'command':
             $this->_command = $val;
             return 1;
@@ -96,6 +112,45 @@ class YOrientation extends YSensor
             return 1;
         }
         return parent::_parseAttr($name, $val);
+    }
+
+    /**
+     * Returns a value indicating whether the sensor is operating in a counterclockwise direction.
+     *
+     * @return int  either YOrientation::COUNTERCLOCKWISE_FALSE or YOrientation::COUNTERCLOCKWISE_TRUE,
+     * according to a value indicating whether the sensor is operating in a counterclockwise direction
+     *
+     * On failure, throws an exception or returns YOrientation::COUNTERCLOCKWISE_INVALID.
+     * @throws YAPI_Exception on error
+     */
+    public function get_counterClockwise(): int
+    {
+        // $res                    is a enumBOOL;
+        if ($this->_cacheExpiration <= YAPI::GetTickCount()) {
+            if ($this->load(YAPI::$_yapiContext->GetCacheValidity()) != YAPI::SUCCESS) {
+                return self::COUNTERCLOCKWISE_INVALID;
+            }
+        }
+        $res = $this->_counterClockwise;
+        return $res;
+    }
+
+    /**
+     * Defines the operating direction of the sensor.
+     * Remember to call the saveToFlash() method of the module if the
+     * modification must be kept.
+     *
+     * @param int $newval : either YOrientation::COUNTERCLOCKWISE_FALSE or YOrientation::COUNTERCLOCKWISE_TRUE
+     *
+     * @return int  YAPI::SUCCESS if the call succeeds.
+     *
+     * On failure, throws an exception or returns a negative error code.
+     * @throws YAPI_Exception on error
+     */
+    public function set_counterClockwise(int $newval): int
+    {
+        $rest_val = strval($newval);
+        return $this->_setAttr("counterClockwise", $rest_val);
     }
 
     /**
@@ -127,7 +182,6 @@ class YOrientation extends YSensor
      * can typically be used  to compensate for mechanical offset. This offset can also be set
      * automatically using the zero() method.
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
-     * On failure, throws an exception or returns a negative error code.
      *
      * @param float $newval : a floating point number
      *
@@ -215,8 +269,7 @@ class YOrientation extends YSensor
      * Remember to call the saveToFlash() method of the module if the modification must be kept.
      *
      * @return int  YAPI::SUCCESS if the call succeeds.
-     *
-     * On failure, throws an exception or returns a negative error code.
+     *         On failure, throws an exception or returns a negative error code.
      * @throws YAPI_Exception on error
      */
     public function zero(): int
@@ -302,6 +355,22 @@ class YOrientation extends YSensor
     {
         return $this->sendCommand('-');
     }
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function counterClockwise(): int
+{
+    return $this->get_counterClockwise();
+}
+
+    /**
+     * @throws YAPI_Exception
+     */
+    public function setCounterClockwise(int $newval): int
+{
+    return $this->set_counterClockwise($newval);
+}
 
     /**
      * @throws YAPI_Exception
