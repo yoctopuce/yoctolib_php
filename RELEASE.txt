@@ -1,3 +1,4 @@
-PHPV2 v2.1.14544
+PHPV2 v2.1.14699
 
-- Add support for new device firmware
+- Add support for new RFID tags
+- Fix YAPI::DownloadHostCertificate function what where not working with URL that contain authentication

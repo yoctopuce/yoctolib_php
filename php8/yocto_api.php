@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 72344 2026-03-09 14:01:56Z seb $
+ * $Id: yocto_api.php 74696 2026-06-11 10:12:39Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -2113,14 +2113,12 @@ class YAPIContext
                 'capture_peer_cert_chain' => true
             )
         );
-        $url = str_replace('http://', 'tls://', $url);
-        $url = str_replace('https://', 'tls://', $url);
-        if (strpos($url, 'tls://') !== 0) {
-            $url = 'tls://' . $url;
-        }
+        $url_detail = YAPI::_parseRegisteredURL($url);
+
+        $baseurl = 'tls://' . $url_detail['host'] . ':' . $url_detail['port'] . $url_detail['subdomain'];
 
         $sslContext = @stream_context_create($contextOptions);
-        $resource = @stream_socket_client($url, $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $sslContext);
+        $resource = @stream_socket_client($baseurl, $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $sslContext);
         if ($resource) {
             $params = stream_context_get_params($resource);
             $ca = "";
@@ -4341,7 +4339,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.14544";
+        return "2.1.14699";
     }
 
     /**
@@ -4505,7 +4503,7 @@ class YAPI
         self::$exceptionsDisabled = false;
     }
 
-    private static function _parseRegisteredURL(string $str_url): array
+    public static function _parseRegisteredURL(string $str_url): array
     {
         $res = [];
         $res['org_url'] = $str_url;
