@@ -42,7 +42,7 @@
 //--- (end of YCarbonDioxide return codes)
 //--- (YCarbonDioxide definitions)
 if (!defined('Y_ABCPERIOD_INVALID')) {
-    define('Y_ABCPERIOD_INVALID', YAPI_INVALID_UINT);
+    define('Y_ABCPERIOD_INVALID', YAPI_INVALID_INT);
 }
 if (!defined('Y_COMMAND_INVALID')) {
     define('Y_COMMAND_INVALID', YAPI_INVALID_STRING);
@@ -65,12 +65,12 @@ if (!defined('Y_COMMAND_INVALID')) {
  */
 class YCarbonDioxide extends YSensor
 {
-    const ABCPERIOD_INVALID = YAPI::INVALID_UINT;
+    const ABCPERIOD_INVALID = YAPI::INVALID_INT;
     const COMMAND_INVALID = YAPI::INVALID_STRING;
     //--- (end of YCarbonDioxide declaration)
 
     //--- (YCarbonDioxide attributes)
-    protected int $_abcPeriod = self::ABCPERIOD_INVALID;      // UInt31
+    protected int $_abcPeriod = self::ABCPERIOD_INVALID;      // Int
     protected string $_command = self::COMMAND_INVALID;        // Text
 
     //--- (end of YCarbonDioxide attributes)
@@ -219,7 +219,7 @@ class YCarbonDioxide extends YSensor
      */
     public function triggerForcedCalibration(float $refVal): int
     {
-        return $this->set_command(sprintf('F%dC', intval(round(1000*$refVal))));
+        return $this->set_command(sprintf('F%dC', intval(round($refVal))));
     }
 
     /**

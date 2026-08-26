@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 74696 2026-06-11 10:12:39Z seb $
+ * $Id: yocto_api.php 75351 2026-08-02 19:45:07Z mvuilleu $
  *
  * High-level programming interface, common to all modules
  *
@@ -4339,7 +4339,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.15129";
+        return "2.1.15681";
     }
 
     /**
@@ -8680,6 +8680,13 @@ class YFunction
         }
     }
 
+    // Internal method to force reloading even lazy attributes (eg. displayWidth, etc)
+    public function _clearLazyCache()
+    {
+        $this->clearCache();
+        $this->_cacheExpiration = 0;
+    }
+
     /**
      * Gets the YModule object for the device on which the function is located.
      * If the function cannot be located on any module, the returned instance of
@@ -10784,7 +10791,12 @@ class YModule extends YFunction
      */
     public function revertFromFlash(): int
     {
-        return $this->set_persistentSettings(self::PERSISTENTSETTINGS_LOADED);
+        // $res                    is a int;
+
+        $res = $this->set_persistentSettings(self::PERSISTENTSETTINGS_LOADED);
+        if (!($res==YAPI::SUCCESS)) return $this->_throw($res,'unable to trigger revert settings',$res);
+        $this->_clearLazyCache();
+        return $res;
     }
 
     /**
