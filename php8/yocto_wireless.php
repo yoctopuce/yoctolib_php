@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_wireless.php 68569 2025-08-27 06:59:08Z seb $
+ * $Id: yocto_wireless.php version 2.1.16087 (build 76087) $
  *
  * Implements yFindWireless(), the high-level API for Wireless functions
  *

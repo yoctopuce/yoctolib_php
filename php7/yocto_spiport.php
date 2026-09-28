@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_spiport.php 70736 2025-12-12 07:53:30Z mvuilleu $
+ *  $Id: yocto_spiport.php version 2.1.16087 (build 76087) $
  *
  *  Implements YSpiPort, the high-level API for SpiPort functions
  *

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_carbondioxide.php version 2.1.16087 (build 76087) $
  *
  *  Implements YCarbonDioxide, the high-level API for CarbonDioxide functions
  *

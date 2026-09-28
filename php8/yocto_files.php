@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_files.php 72052 2026-02-17 07:43:32Z mvuilleu $
+ * $Id: yocto_files.php version 2.1.16087 (build 76087) $
  *
  * Implements yFindFiles(), the high-level API for Files functions
  *

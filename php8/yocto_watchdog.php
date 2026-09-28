@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_watchdog.php version 2.1.16087 (build 76087) $
  *
  *  Implements YWatchdog, the high-level API for Watchdog functions
  *

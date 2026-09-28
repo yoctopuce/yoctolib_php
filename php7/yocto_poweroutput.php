@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_poweroutput.php version 2.1.16087 (build 76087) $
  *
  *  Implements YPowerOutput, the high-level API for PowerOutput functions
  *

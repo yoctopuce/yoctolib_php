@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_colorsensor.php version 2.1.16087 (build 76087) $
  *
  *  Implements YColorSensor, the high-level API for ColorSensor functions
  *

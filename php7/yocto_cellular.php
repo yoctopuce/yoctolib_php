@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_cellular.php 70161 2025-11-12 08:44:16Z seb $
+ *  $Id: yocto_cellular.php version 2.1.16087 (build 76087) $
  *
  *  Implements YCellRecord, the high-level API for CellRecord functions
  *

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_audioin.php version 2.1.16087 (build 76087) $
  *
  *  Implements YAudioIn, the high-level API for AudioIn functions
  *

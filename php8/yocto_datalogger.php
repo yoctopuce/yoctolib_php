@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_datalogger.php 28127 2017-07-25 07:54:14Z seb $
+ * $Id: yocto_datalogger.php version 2.1.16087 (build 76087) $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *

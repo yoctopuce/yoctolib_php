@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_wakeupmonitor.php version 2.1.16087 (build 76087) $
  *
  *  Implements YWakeUpMonitor, the high-level API for WakeUpMonitor functions
  *

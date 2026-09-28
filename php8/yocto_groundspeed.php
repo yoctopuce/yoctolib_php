@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_groundspeed.php version 2.1.16087 (build 76087) $
  *
  *  Implements YGroundSpeed, the high-level API for GroundSpeed functions
  *

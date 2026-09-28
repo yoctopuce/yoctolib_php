@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: yocto_i2cport.php 52998 2023-01-31 10:49:23Z seb $
+ *  $Id: yocto_inputcapture.php version 2.1.16087 (build 76087) $
  *
  *  Implements YInputCapture, the high-level API for YInputCapture functions
  *

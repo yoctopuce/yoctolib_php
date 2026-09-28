@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_gyro.php 62195 2024-08-19 12:21:58Z seb $
+ * $Id: yocto_gyro.php version 2.1.16087 (build 76087) $
  *
  * Implements YGyro, the high-level API for Gyro functions
  *

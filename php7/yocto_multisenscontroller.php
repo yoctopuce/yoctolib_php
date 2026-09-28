@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_multisenscontroller.php version 2.1.16087 (build 76087) $
  *
  *  Implements YMultiSensController, the high-level API for MultiSensController functions
  *

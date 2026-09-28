@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_api.php 75351 2026-08-02 19:45:07Z mvuilleu $
+ * $Id: yocto_api.php version 2.1.16087 (build 76087) $
  *
  * High-level programming interface, common to all modules
  *
@@ -4339,7 +4339,7 @@ class YAPI
      */
     public static function GetAPIVersion(): string
     {
-        return "2.1.15681";
+        return "2.1.16087";
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_rfidreader.php version 2.1.16087 (build 76087) $
  *
  *  Implements YRfidReader, the high-level API for RfidReader functions
  *

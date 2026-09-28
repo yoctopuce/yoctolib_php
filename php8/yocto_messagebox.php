@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- * $Id: yocto_messagebox.php 72410 2026-03-11 07:18:41Z mvuilleu $
+ * $Id: yocto_messagebox.php version 2.1.16087 (build 76087) $
  *
  * Implements YMessageBox, the high-level API for MessageBox functions
  *

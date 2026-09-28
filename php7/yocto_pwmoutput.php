@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************
  *
- *  $Id: svn_id $
+ *  $Id: yocto_pwmoutput.php version 2.1.16087 (build 76087) $
  *
  *  Implements YPwmOutput, the high-level API for PwmOutput functions
  *
